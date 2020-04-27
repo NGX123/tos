@@ -25,6 +25,7 @@ VTIME is set to 1 - maximum amount of time to wait for read, if times out return
 #include <stdio.h> //standard i/o library
 #include <errno.h> //used for error handling
 #include <sys/ioctl.h> //terminal input output control
+#include <string.h> //extended strings functionality
 
 
 
@@ -121,7 +122,10 @@ int getCursorPosition(int *rows, int *cols) {
 
     buf[i] = '\0';
 
+    //We check if there is the escape sequnce and command in buffer
     if (buf[0] != '\x1b' || buf[1] != '[') return -1;
+
+    //We get the two numbers seperated by ; and put them into rows and cols
     if (sscanf(&buf[2], "%d;%d", rows, cols) != 2) return -1;
 
     return 0;
@@ -134,7 +138,7 @@ int getWindowSize(int *rows, int *cols) {
     struct winsize ws;
 
     //ioctl with TIOCGWINSZ gives the size of  the output window into strcucture
-    if (1 || ioctl(STDOUT_FILENO, TIOCGWINSZ, &ws) == -1 || ws.ws_col == 0) {
+    if (ioctl(STDOUT_FILENO, TIOCGWINSZ, &ws) == -1 || ws.ws_col == 0) {
         if (write(STDOUT_FILENO, "\x1b[999C\x1b[999B", 12) != 12) return -1;
         return getCursorPosition(rows, cols);
     } 
@@ -149,13 +153,42 @@ int getWindowSize(int *rows, int *cols) {
 
 
 
+/*** append buffer ***/
+struct abuf{
+    char *b; //adress in memmory
+    int len; //length
+};
+
+#define ABUF_INIT {NULL, 0}
+
+void abAppend(struct abuf *ab, const char *s, int len){
+    char *new = realloc(ab->b, ab->len + len);
+
+    if (new == NULL) return;
+    memcpy(&new[ab->len], s, len);
+    ab->b = new;
+    ab->len += len;
+}
+
+void abFree(struct abuf *ab){
+    free(ab->b);
+}
+
+
+
+
 /*** output ***/
 void editorDrawRows() {
     //Prints ~ to fill all the lines that are not in use on the screen
 
     int y;
     for (y = 0; y < E.screenrows; y++) {
-        write(STDOUT_FILENO, "~\r\n", 3);
+        write(STDOUT_FILENO, "~", 1);
+
+        //As a separate statement so ~ is printed on the last line
+        if (y < E.screenrows - 1){
+            write(STDOUT_FILENO, "\r\n", 2);
+        }
     }
 }
 
