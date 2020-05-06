@@ -1,33 +1,26 @@
 /*** Includes ***/
 #include <malloc.h>
 #include <stdlib.h>
-
-
-/*** Types ***/
-typedef unsigned char byte;
-
-typedef unsigned short word;
-
-
+#include <string.h>
 
 /*** CPU ***/
 //CPU structure
 typedef struct {
-    byte v[16];      // V(main) registers 
-    byte memory[4096]; // Memory 
+    __uint8_t v[16];      // V(main) registers 
+    __uint8_t memory[4096]; // Memory 
 
-    word sp;           // Stack Pointer register
-    byte stack[16];    // RPL register storage / Stack       
+    __uint16_t sp;           // Stack Pointer register
+    __uint8_t stack[16];    // RPL register storage / Stack       
 
-    word pc;           // Program Counter 
-    word opcode;      // The current operand 
-    word i;            // Index register  
+    __uint16_t pc;           // Program Counter 
+    __uint16_t opcode;      // The current operand 
+    __uint16_t i;            // Index register  
 
-    byte delay_timer;           // Delay Timer register                              
-    byte sound_timer;           // Sound Timer register   
+    __uint8_t delay_timer;           // Delay Timer register                              
+    __uint8_t sound_timer;           // Sound Timer register   
 
-    byte gfx[64 * 32];
-    byte key[16];                             
+    __uint8_t gfx[64 * 32];
+    __uint8_t key[16];                             
                                                                                                           
 } chip8;
 

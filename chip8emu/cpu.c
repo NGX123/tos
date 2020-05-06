@@ -2,32 +2,33 @@
 
 chip8 chip;
 
-void init(void){
-    chip.pc = 0x200;
-
-    for (int i = 0; i < 2048; ++i)
-        chip.gfx[i] = 0;
-
-    for (int i = 0; i < 16; ++i) {
-        chip.stack[i] = 0;
-        chip.key[i] = 0;
-        chip.v[i] = 0;
-    }
-
-    for (int i = 0; i <= 4096; ++i)
-        chip.memory[i] = 0;
-    
-       
-    for (int i = 0; i < 80; i++)
-        chip.memory[i] = chip8_fontset[i];
-
-    chip.sound_timer = 0;
-    chip.delay_timer = 0;
-}
-
-
 void cpu_cycle(void){
-    chip.opcode = chip.memory[chip.pc];
+    //adds 8 zeros to the end of the first part of opcode and then changes them to second part using OR
+    chip.opcode = chip.memory[chip.pc] << 8 | chip.memory[chip.pc + 1];
 
-    switch(chip.opcode & 0x000F)
+    //Leaves only the first number to know the instruction code 
+    switch(chip.opcode & 0xF000){
+        case 0x0000:
+                printf("0");
+        
+        case 0x1000:
+            chip.pc = chip.opcode & 0x0FFF;
+            break;
+
+        case 0x2000:
+            chip.stack[chip.sp] = chip.pc;
+            ++chip.sp;
+            chip.pc = chip.opcode & 0x0FFF;
+            break;
+
+        case 0x3000:
+            if (chip.v[(chip.opcode & 0x0F00) >> 8] == (chip.opcode & 0x00FF))
+                chip.pc += 4;
+            else
+                chip.pc += 2;
+            break;
+           
+        // case 0x4000:
+        //     if (chip.v[chip.opcode & 0x0F00] != (chip.opcode & 0x00FF))
+    }
 }   
