@@ -2,6 +2,7 @@
 #include <malloc.h>
 #include <stdlib.h>
 #include <string.h>
+#include <SDL2/SDL.h>
 
 /*** CPU ***/
 //CPU structure
@@ -20,7 +21,9 @@ typedef struct {
     __uint8_t sound_timer;           // Sound Timer register   
 
     __uint8_t gfx[64 * 32];
-    __uint8_t key[16];                             
+    __uint8_t key[16]; 
+
+    __uint8_t drawFlag;                            
                                                                                                           
 } chip8;
 
@@ -44,4 +47,24 @@ unsigned char chip8_fontset[80] =
     0xE0, 0x90, 0x90, 0x90, 0xE0, //D
     0xF0, 0x80, 0xF0, 0x80, 0xF0, //E
     0xF0, 0x80, 0xF0, 0x80, 0x80  //F
+};
+
+//Keymap
+__uint8_t keymap[16] = {
+    SDLK_x,
+    SDLK_1,
+    SDLK_2,
+    SDLK_3,
+    SDLK_q,
+    SDLK_w,
+    SDLK_e,
+    SDLK_a,
+    SDLK_s,
+    SDLK_d,
+    SDLK_z,
+    SDLK_c,
+    SDLK_4,
+    SDLK_r,
+    SDLK_f,
+    SDLK_v,
 };

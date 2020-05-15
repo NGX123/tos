@@ -1,18 +1,11 @@
 #include "cpu.c"
 
 
-int loadRom(char *file){
-    
-    // ROM filename
-    char filename[strlen(file)];
-    for (long i = 0; i < strlen(file); i++){
-        filename[i] = file[i];
-    }
-    
+int loadRom(char *file){    
     // Read rom
-    FILE* rom = fopen(filename, "rb");
+    FILE* rom = fopen(file, "rb");
     if (rom == NULL){
-        printf("Failed to read rom");
+        printf("Error: Failed to read rom");
         return 1;
     }
 
@@ -24,14 +17,14 @@ int loadRom(char *file){
     // Alocate memory for rom
     unsigned char* rom_buffer = (unsigned char *)malloc(sizeof(char) * rom_size);
     if (rom_buffer == NULL){
-        printf("Failed to allocate memory");
+        printf("Error: Failed to allocate memory");
         return 1;
     }
 
     // Load rom into the buffer
     size_t result = fread(rom_buffer, sizeof(char), rom_size, rom);
     if (result != rom_size){
-        printf("Failed to load rom");
+        printf("Error: Failed to load rom");
         return 1;
     }
     
@@ -42,7 +35,7 @@ int loadRom(char *file){
         }
     }
     else {
-        printf("ROM too large to fit in memory");
+        printf("Error: ROM too large to fit in memory");
         return 1;
     }
 
@@ -93,14 +86,7 @@ int main(int argc, char *argv[]){
 
     init();
 
-    // Load rom and check for if success
-    int rom_status = loadRom(argv[1]);
-    if (rom_status == 1){
-        printf("Error: ROM can not be loaded");
-        return 1;
-    }
+    int w = 1024; //width
+    int h = 512; //height
 
-    
-    cpu_cycle();
-}
 
