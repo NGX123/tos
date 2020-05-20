@@ -49,4 +49,9 @@ x100000+ - FREE
 0x0 - Interrupt Vector Table (1 KB)
 
 
+Stack - cpu has a limited amount of registers, so we cn store our temporary variable in the 
+main memory, without counting the memory address each time - we do this using the stack.
+The stack uses two extra registers bp and sp, first we set the start of the stack in memory
+and them we can write and read from it, but important thing is that stack grows down wards
+in the memory e.g. start - 0x8000 finish - 0x6ffe
 */
