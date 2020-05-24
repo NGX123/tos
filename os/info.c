@@ -54,4 +54,8 @@ main memory, without counting the memory address each time - we do this using th
 The stack uses two extra registers bp and sp, first we set the start of the stack in memory
 and them we can write and read from it, but important thing is that stack grows down wards
 in the memory e.g. start - 0x8000 finish - 0x6ffe
+
+Addressing - like in c if there is an address of a string it pints only to it's start
+and if you add numbers to the address you move forward, for assembler label is an address
+so you can add to it
 */

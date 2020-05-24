@@ -1,3 +1,10 @@
+; Includes a file
+%include "file.asm"         
+
+; [org address], Tell the assembler where this code will be loaded 
+[org 0x7c00]
+
+
 ; Copy a value into register/memory - mov <dst>, <src>
 mov ax, 12
 
@@ -20,6 +27,15 @@ add ax, bx
 label: 
     db 'Booting os' ,0 ; here we decalre a string, last byte is zero so we know where the finishe is
     
+
+
+; PADDING ; 
+times 510-($-$$) db 0   ;  Compiled programm needs to fit in 512 bytes, with 2 reserved for 
+                        ;   magic number, so here programm is padded with enough zeros(db 0) 
+                        ;   to  get to the 510 byte 
+                        
+dw 0xaa55               ; fill the last two bytes with magic number
+
 
 
 ; REGISTERS ;
@@ -49,10 +65,10 @@ int 0x10                ; interrupt that prints out character stored in ax regis
 
 ; STACK ;
 ; There are two stack registers sp and bp, you could put 16 bits on the stack per one time
-; Push - push register, pushes a word to the stack
+; Push - push <what>, register pushes a word to the stack
 push 'A'
 
-; Pop - takes the top of the stack and puts it into the register
+; Pop - pop <where>, takes the top of the stack and puts it into the register
 pop bx
 
 
@@ -65,3 +81,20 @@ cmp ax, 4                  ; compares the ax value to 4
 je then_block              ; jump to then_block if they are equal
 mov bx, 45                 ; else exxecute this code
 jmp the_end                ; jump over then block 
+
+
+
+; FUNCTIONS ;
+; The functions work by jumping to address and then coming back 
+; call <address>, jump to label, and pushes address onto the stack
+call label  
+
+; ret, pops the address from the stack and returns to it               
+ret            
+
+; pusha - in the proccess of using a function some registers can be change and this function
+;   pushes all of them on the stack to backup
+pusha
+
+; popa - restores the original register values
+popa
