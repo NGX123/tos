@@ -46,8 +46,7 @@ mov cx, 0x234   ; store 234 hex in cx regitster
 mov dx, 't'     ; store ASCII code for 't' in dx
 mov bx, ax      ; copy value of ax into bx 
 
-
-; Setting high and low bits ofn register
+; Setting high and low bits of register
 mov ax, 0       ; copy zero into register - 0x0000
 mov ah, 0x56    ; move 0x56 into first 8 bits of register - 0x5600
 mov al, 0x23    ; move 0x23 into last 8 bits of register - 0x5623
