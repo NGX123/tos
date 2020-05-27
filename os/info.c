@@ -80,9 +80,15 @@ Note: you can't set segment registers directly, only by moving value into bx and
 register
 
 
-
 --- DISK DRIVE ---
+The data is written to the disk by the head magnetising and demagnetisind certain surface 
+located on one of the disks inside the hard disk. So addressing on the disk hapens in a 3D
+coordinate system. 
 
+The addressing system is called Cylinder-Head-Sector
+ + Cylinder - haeds discrete distance from outer edge of platter 
+ + Head - on which platter surface(track) head is located
+ + Sector - cicluar track devided into sectors of capacity 512 bytes
 
 
 
