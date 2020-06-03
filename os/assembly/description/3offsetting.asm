@@ -1,5 +1,5 @@
 ; Shows cases of addressing by printing x in different ways
-
+; Offsetting in 16bit mode
 
 mov ah, 0x0e ; int 10/ ah = 0eh -> scrolling teletype BIOS routine
 

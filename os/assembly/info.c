@@ -11,6 +11,8 @@ Hexadecimals -
 Debugging and making
 CPU EMU - qemu(qemu-system-i386) <image>
 Assembler - nasm file.asm -f format -o output.bin, format used is bin(raw binary)
+Compiler - gcc -ffreestanding -c file.c -o o 
+           ld -o basic.bin -Ttext 0x0 --oformat binary o
 Hex view
  + xxd <file.bin>
  + od -t x1 -A n <file.bin>
@@ -61,6 +63,7 @@ so you can add to it
 
 
 --- MEMORY SEGEMTS ---
+[16 bit mode]
 The main memory is devided into segments that are indexed by segment registers, when we specify
 the 16-bit address, cpu automatically calculates the absolute address by shifting it 1 to left
 and adding address to offset address set in register "ds". 
@@ -93,3 +96,4 @@ The addressing system is called Cylinder-Head-Sector
 
 
 */
+
