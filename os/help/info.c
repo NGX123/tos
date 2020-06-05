@@ -9,7 +9,7 @@ i686-elf-as boot.s -o boot.o    (GAS)
 
 
 
-// Compiling
+// Compiling - using cross compiler
 i686-elf-gcc -c kernel.c -o kernel.o -std=gnu99 -ffreestanding -O2 -Wall -Wextra
 
     -c -o           - input file and output file
@@ -21,7 +21,7 @@ i686-elf-gcc -c kernel.c -o kernel.o -std=gnu99 -ffreestanding -O2 -Wall -Wextra
 
 
 
-// Link the kernel and bootloader
+// Link the kernel and bootloader - using cross compiler
 i686-elf-gcc -T linker.ld -o myos.bin -ffreestanding -O2 -nostdlib boot.o kernel.o -lgcc
 
     -nostdlib       - no use of standard lib during linking
@@ -35,8 +35,8 @@ i686-elf-gcc -T linker.ld -o myos.bin -ffreestanding -O2 -nostdlib boot.o kernel
 
 // Make the bootable iso
 mkdir -p iso/boot/grub
-cp myos.bin iso/boot/
-cp grub.cfg iso/boot/grub/
+mv myos.bin iso/boot/
+mv grub.cfg iso/boot/grub/
 
 / There are two types of grubs grub and grub2, depending on which is used it may be: 
     - grub-command

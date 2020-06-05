@@ -1,3 +1,4 @@
+; Defined constants
 MBALIGN equ 1 << 0              ; align loaded modules on page boundaries
 MEMINFO equ 1 << 1              ; provide memory map
 FLAGS   equ MBALIGN | MEMINFO   ; muliboot 'flag'
