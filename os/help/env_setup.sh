@@ -5,7 +5,6 @@ sudo dnf -y install binutils @development-tools
 # Create directories to store source and build directory
 mkdir -p ~/Special/src/cross-compiler/binutils2.30/build
 mkdir -p ~/Special/src/cross-compiler/gcc9.3.0/build
-mkdir -p ~/Special/src/grub
 
 
 # Download and unpack source code  
@@ -19,9 +18,6 @@ wget https://ftp.gnu.org/gnu/gcc/gcc-9.3.0/gcc-9.3.0.tar.gz
 tar -xzf gcc-9.3.0.tar.gz
 rm gcc-9.3.0.tar.gz
 
-cd ~/Special/src/grub
-git clone https://git.savannah.gnu.org/git/grub.git
-
 
 
 # Get ready for the build
@@ -30,9 +26,6 @@ mkdir -p ~/opt/cross-compiler
 export PREFIX="$HOME/opt/cross-compiler"
 export TARGET=i686-elf
 export PATH="$PREFIX/bin:$PATH"
-
-
-mkdir -p ~/opt/grub
 
 
 
@@ -56,16 +49,7 @@ make install-target-libgcc
 
 
 
-# Building GRUB
-cd ~/Special/src/grub
-./bootstrap
-./configure --prefix="$HOME/opt/grub" --target=i386 --with-platform=efi
-make
-make install
-
-
-
 #Check
 qemu-system-i386 --version
 $HOME/opt/cross-compiler/bin/$TARGET-gcc --version
-$HOME/opt/grub/bin/grub-mkrescue
+grub2-mkrescue --version
