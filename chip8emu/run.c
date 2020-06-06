@@ -77,16 +77,4 @@ void init(void){
 
 
 
-int main(int argc, char *argv[]){
-    // Check if ROM is supplied
-    if (argc != 2){
-        printf("Error: No ROM supplied");
-        return 1;
-    }
-
-    init();
-
-    int w = 1024; //width
-    int h = 512; //height
-
-
+// Failed to initialize - SDL lib can be used for graphics

@@ -7,14 +7,14 @@ SECTIONS
     /* Begin putting sections at 1MiB, a place for kernels to be loaded by bootloaders*/
     . = 1M;
 
-    /* Put multiboot header, so the bootloader recognizes us, then put text section*/
+    /*Make .text and .multiboot sections follow .text permissions, align and fix size*/
     .text BLOCK(4K) : ALIGN(4K)
     {
         *(.multiboot)
         *(.text)
     }
 
-    /* Read-only data */
+    /* Make .rodata section follow .rodata permissions, align and fix size */
     .rodata BLOCK(4K) : ALIGN(4K)
     {
         *(.rodata)

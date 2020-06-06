@@ -13,6 +13,6 @@ mv myos.bin iso/boot/
 cp ../help/grub.cfg iso/boot/grub/
 
 grub2-mkrescue -o myos.iso iso
-qemu-system-i386 -cdrom myos.iso
+qemu-system-i386 -serial file:serial.log -cdrom myos.iso
 
 rm -rf kernel.o boot.o myos.iso myos.bin iso/
