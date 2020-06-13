@@ -1,18 +1,14 @@
 // File: vga_print.h
 // Description: includes functions to print strings and numbers to the VGA text buffer at 0xb8000
-// Problems: background stays black at any configration
+// Problems: 
 
 
 
 // Includes of platform independant librararies
-#include <stddef.h>
-#include <stdbool.h>
 #include <stdint.h>
 
 // Defines
 #define VGA 0xb8000
-
-uint8_t color;
 
 
 // Colors for fore and background of text in vga text mode
@@ -37,19 +33,16 @@ enum VGA_COLOR {
 
 
 
+// Outputs the text and colors to the VGA text buffer
+void write_string(enum VGA_COLOR fg, enum VGA_COLOR bg, const char *string){
+    // Mixing colours into one byte
+    uint8_t color = fg | bg << 4;
 
-//ORs together backgound and foreground color to make an attribute byte
-void make_attributes(enum VGA_COLOR fg, enum VGA_COLOR bg){
-    color = bg | fg << 4;
-}
 
-
-// Outputs  the text and colors to the VGA text buffer
-void write_string(int colour, const char *string){
     // Pointer to VGA character buffer
     volatile char *video = (volatile char*)VGA;
     while(*string != 0){
         *video++ = *string++;
-        *video++ = colour;
+        *video++ = color;
     }
 }
