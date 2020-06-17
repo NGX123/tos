@@ -5,7 +5,6 @@
 
 
 // Includes
-#include "x86.h"
 #define PORT 0x3f8
 
 // Initialize the serial port configuration

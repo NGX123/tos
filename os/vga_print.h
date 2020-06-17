@@ -9,7 +9,7 @@
 
 // Defines
 #define VGA 0xb8000
-
+char* current_vga;
 
 // Colors for fore and background of text in vga text mode
 enum VGA_COLOR {
@@ -45,4 +45,13 @@ void write_string(enum VGA_COLOR fg, enum VGA_COLOR bg, const char *string){
         *video++ = *string++;
         *video++ = color;
     }
+
+    current_vga = *video;
+}
+
+// Outputs a character
+void write_char(enum VGA_COLOR fg, enum VGA_COLOR bg, const char character){
+    // Mixing colours into one byte
+    uint8_t color = fg | bg << 4;
+
 }
