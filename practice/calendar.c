@@ -138,6 +138,7 @@ int month_converter(char month){
     
 }
 
+// Return a list of days suitable for the calendar interface function 
 
 
 
@@ -286,7 +287,7 @@ int displayCalendar(){
     printf(" \n\
     Year - %d   Month - %s
     ++++++++++++++++++++++++++++++++++++++++++++++++++
-    
+
     ")
 }
 
