@@ -1,12 +1,14 @@
+// File: addressbook.c
+// Description: an addressbook to be added to the custom unix project
+// Functions: fopen, fread, fwrite, fclose      printf, scanf, strcmp      exit, malloc, realloc, free 
+
+
+
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
 
-void testw();
-void errorCorrect();
-// File: addressbook.c
-// Description: an addressbook to be added to the custom unix project
-// Functions: fopen, fread, fwrite, fclose      printf, scanf, strcmp      exit, malloc, realloc, free 
+
 
 // Defines and declarations
 struct contact {
@@ -79,6 +81,18 @@ void writef(char filename[]){
     }
 }
 
+// Creates a new file in case inputted in main() does not exist
+void newFile(char filename[]){
+    printf("It looks like the file does not exit, new file created\n");
+
+    FILE *tmpFile = fopen(filename, "wb");
+    fclose(tmpFile);
+
+    if (readf(filename) == -1){
+        printf("Failed to open the file\n");
+        exit(1);
+    }
+}
 
 
 
@@ -220,21 +234,6 @@ void listContacts(){
 
 
 
-// Creates a new file in case inputted in main() does not exist
-void newFile(char filename[]){
-    printf("It looks like the file does not exit, new file created\n");
-
-    FILE *tmpFile = fopen(filename, "wb");
-    fclose(tmpFile);
-
-    if (readf(filename) == -1){
-        printf("Failed to open the file\n");
-        exit(1);
-    }
-        
-}
-
-
 int main(){
     int option;
     int run = 1;
@@ -268,8 +267,7 @@ int main(){
             removeContact();
         else if (option == 5)
             listContacts();
-        // else if (option == 7)
-        //     testw();
+
         // else if (option == 5)
         //     errorCorrect();
         else
@@ -283,39 +281,6 @@ int main(){
 }
 
 
-// TEST funcs
-void testw(){
-    int num = 1;
-    struct contact test = {0};
-    strcpy(test.name, "Volodimir");
-    strcpy(test.surname, "Ilich");
-    strcpy(test.phone, "0502804541");
-    strcpy(test.email, "ytx@ck.su");
-
-    FILE* fp = fopen("contacts.cts", "wb");
-
-    printf("testw - %s\n", test.name);
-
-    if (fp == NULL){
-        printf("File can not be opened\n");
-        exit(1);
-    }
-
-    if (fwrite(&num, sizeof(num), 1, fp) == -1){
-        printf("Failed to write number to the file\n");
-        exit(1);
-    }
-
-    if (fwrite(&test, sizeof(test), num, fp) == -1){
-        printf("Failed to write struct to the file\n");
-        exit(1);
-    }
-
-    if (fclose(fp) != 0) { 
-        printf("Failed to close the file\n");           /// HERE WAS THE PROBLEM - ALWAYS CLOSE FILES
-        exit(1);
-    }
-}
 
 // Erorr correction
 void errorCorrect(){
