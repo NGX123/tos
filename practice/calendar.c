@@ -2,8 +2,6 @@
 // Description: calendar with support for events and other extra features for the custom UNIX project
 // Functions: fopen, fread, fwrite, fclose      printf, scanf, strcmp      exit, malloc, realloc, free 
 
-// Structure that holds information about an event
-
 
 
 #include <stdio.h>
@@ -32,6 +30,7 @@ struct eventDay {
 struct eventDay* buffer;
 int amount;
 int location;
+
 
 
 
@@ -139,6 +138,10 @@ int month_converter(char month){
 }
 
 // Return a list of days suitable for the calendar interface function 
+int monthDays(char date[]){
+
+}
+
 
 
 
@@ -277,19 +280,45 @@ int listEvents(){
     }
 }
 
-int displayCalendar(){
-    char date[10];
-    int option;
 
-    printf("Input date in format dd-mm-yy: ");
+
+
+
+/// CALENDAR INTERFACE ///
+void displayCalendar(){
+    int flag = 0, k = 0;
+    char date[12], day[3], month[3], year[5];
+    printf("Input the date for calendar to be displayed in format dd-mm-yyyy: ");
     scanf("%s", date);
 
-    printf(" \n\
-    Year - %d   Month - %s
-    ++++++++++++++++++++++++++++++++++++++++++++++++++
+    for (int i = 0; i < 12; i++){
+        if (date[i] == '-'){
+            flag++;
+            k = 0;
+        }
+            
 
-    ")
+        if (flag == 0 && date[i] != '-'){
+            day[k] = date[i];
+            k++;
+        }
+
+        else if (flag == 1 && date[i] != '-'){
+            month[k] = date[i];
+            k++;
+        }
+
+        else if (flag == 2 && date[i] != '-'){
+            year[k] = date[i];
+            k++;
+        }
+    }
+    day[2] = '\0';
+    month[2] = '\0';
+    printf("Day - %s, Month - %s, Year - %s", day, month, year);
 }
+
+
 
 
 
@@ -304,6 +333,7 @@ int main(){
     if (readf(filename) == -1)
         newFile(filename);
 
+    // Problemn indentation
     while (run){
         printf("\nPick an action:    \n\
         1. Quit                      \n\
@@ -311,6 +341,8 @@ int main(){
         3. Add                       \n\
         4. Remove                    \n\
         5. List                      \n\
+        6. Display Calendar(DO NOT USE)\n\
+        >  \
         ");
         scanf("%d", &option);
 
