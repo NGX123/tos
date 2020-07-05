@@ -290,6 +290,7 @@ void displayCalendar(){
     char date[12], day[3], month[3], year[5];
     printf("Input the date for calendar to be displayed in format dd-mm-yyyy: ");
     scanf("%s", date);
+    printf("%s\n", date);
 
     for (int i = 0; i < 12; i++){
         if (date[i] == '-'){
@@ -299,22 +300,23 @@ void displayCalendar(){
             
 
         if (flag == 0 && date[i] != '-'){
-            day[k] = date[i];
-            k++;
+            day[k++] = date[i];
+            printf("Flag %d\n", flag);
         }
 
         else if (flag == 1 && date[i] != '-'){
-            month[k] = date[i];
-            k++;
+            month[k++] = date[i];
+            printf("Flag %d\n", flag);
         }
 
         else if (flag == 2 && date[i] != '-'){
-            year[k] = date[i];
-            k++;
+            year[k++] = date[i];
+            printf("Flag %d\n", flag);
         }
     }
     day[2] = '\0';
     month[2] = '\0';
+    year[5] = '\0';
     printf("Day - %s, Month - %s, Year - %s", day, month, year);
 }
 
@@ -342,8 +344,7 @@ int main(){
         4. Remove                    \n\
         5. List                      \n\
         6. Display Calendar(DO NOT USE)\n\
-        >  \
-        ");
+        > ");
         scanf("%d", &option);
 
 

@@ -226,7 +226,7 @@ void removeContact(){
 
 // List contacts
 void listContacts(){
-    printf("Current amount of contacts: %d\n", amount);
+    printf("Amount of contacts: %d", amount);
     for (int i = 0; i < amount; i++)
         printf("%s\n", buffer[i].name);
 }
