@@ -117,7 +117,7 @@ void newFile(char filename[]){
 
 /// DATE FUNCTIONS ///
 // Finds out day of the week
-int weekDay(int Day, int Month,int Year)
+int weekDay(int Day, int Month, int Year)
 {
     int ZMonth, ZYear, WeekDay;
     if(Month < 3)
@@ -132,14 +132,22 @@ int weekDay(int Day, int Month,int Year)
     return WeekDay;
 }
 
-// Converts month from their character name to their number
-int month_converter(char month){
-    
-}
-
 // Return a list of days suitable for the calendar interface function 
-int monthDays(char date[]){
-
+char* monthDays(char day[], char month[], char year[]){
+    int iday = atoi(day), imonth = atoi(month), iyear = atoi(year), i, j, tempint_falg;
+    int weekday = weekDay(iday, imonth, iyear);
+    char monthdays[32], temp_int[2];
+    
+    printf("Weekday - %d\n", weekday);
+    for (i = 0; i <= weekday; i++)
+        monthdays[i] = ' ';
+    
+    for (j = 1; i < 32; i++, j++)
+        
+        monthdays[i] = j+'0';
+    
+    for (i = 0; i < 32; i++)
+        printf("%c", monthdays[i]);
 }
 
 
@@ -153,7 +161,6 @@ void addEvent(){
     char tmpStr[20];
     buffer = realloc(buffer, sizeof(struct eventDay) * amount);
 
-    // COULD CONTAIN ERROR - change swithc back to else if
     for (int i=0; i <= 8; i++)
         switch(i){
             case 1:
@@ -287,37 +294,35 @@ int listEvents(){
 /// CALENDAR INTERFACE ///
 void displayCalendar(){
     int flag = 0, k = 0;
-    char date[12], day[3], month[3], year[5];
+    char date[12];
+    char year[5];
+    char month[3];
+    char day[3];
+
     printf("Input the date for calendar to be displayed in format dd-mm-yyyy: ");
     scanf("%s", date);
-    printf("%s\n", date);
-
     for (int i = 0; i < 12; i++){
         if (date[i] == '-'){
             flag++;
             k = 0;
         }
-            
-
-        if (flag == 0 && date[i] != '-'){
+           
+        else if (flag == 0 && date[i] != '-')
             day[k++] = date[i];
-            printf("Flag %d\n", flag);
-        }
 
-        else if (flag == 1 && date[i] != '-'){
+        else if (flag == 1 && date[i] != '-')
             month[k++] = date[i];
-            printf("Flag %d\n", flag);
-        }
-
-        else if (flag == 2 && date[i] != '-'){
+         
+        else if (flag == 2 && date[i] != '-')
             year[k++] = date[i];
-            printf("Flag %d\n", flag);
-        }
     }
     day[2] = '\0';
     month[2] = '\0';
     year[5] = '\0';
-    printf("Day - %s, Month - %s, Year - %s", day, month, year);
+    printf("    Date - %s-%s-%s   \n", day, month, year);
+    printf("Su Mo Tu We Th Fr Sa\n");
+    monthDays(day, month, year);
+
 }
 
 
@@ -335,7 +340,6 @@ int main(){
     if (readf(filename) == -1)
         newFile(filename);
 
-    // Problemn indentation
     while (run){
         printf("\nPick an action:    \n\
         1. Quit                      \n\
