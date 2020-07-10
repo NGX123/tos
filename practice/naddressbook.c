@@ -1,5 +1,5 @@
 // File: addressbook.c
-// Description: an addressbook to be added to the custom unix project
+// Description: addressbook for NUXOS
 // Functions: fopen, fread, fwrite, fclose      printf, scanf, strcmp      exit, malloc, realloc, free 
 
 

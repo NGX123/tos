@@ -1,7 +1,7 @@
 // File: calendar.c
-// Description: calendar with support for events and other extra features for the custom UNIX project
+// Description: calendar with support for events and other extra features for NUXOS
 // Functions: fopen, fread, fwrite, fclose      printf, scanf, strcmp      exit, malloc, realloc, free 
-
+// Problems: calendar interface - display month, year, day
 
 
 #include <stdio.h>
