@@ -2,7 +2,7 @@
 
 crosss=$HOME/opt/cross-compiler/bin/i686-elf-gcc
 
-nasm -felf32 boot/boot.asm -o boot.o
+nasm -felf32 boot/boot.s -o boot.o
 #$HOME/opt/cross-compiler/bin/i686-elf-as boot.asm -o boot.o
 
 $crosss -c kernel.c -o kernel.o -std=gnu99 -ffreestanding -O2 -Wall -Wextra
