@@ -8,7 +8,7 @@ CHECKSUM equ -(MAGIC + FLAGS)   ; checksum of above, to prove we are multiboot
 
 
 
-;; Multiboot(grub) section ;;
+;;; Multiboot(grub) section ;;;
 section .multiboot 
 
 ; Writes special data aligned to 3 bytes according to the multiboot standard for programm to be loaded by GRUB
@@ -20,7 +20,7 @@ align 4
 
 
 
-;; Stack Section ;;
+;;; Stack Section ;;;
 section .bss 
 
 ; Stack requires to be 16 bytes aligned, then 16 kib are allocated for the stack
@@ -33,7 +33,7 @@ stack_top:
 
 
 
-;; Code section ;;
+;;; Code section ;;;
 section .text 
 
 ; Linker specifies _start as the entry to the kernel, bootloader jumps here once his work is done(loads us into 32-bit protected mode)
@@ -45,13 +45,9 @@ _start:
         cli
         lgdt [gdt_descriptor]
         jmp 0x08:flush
-        
-        ; Call external C function
-        
-
-        ; cli
 
 flush:
+        ; Call external C function
         extern kernel_main
         call kernel_main
 
@@ -60,6 +56,10 @@ flush:
         jmp .hang
 .end:
 
+
+
+
+;;; GDT ;;;
 ; A label to calculate size of gdt from start to end
 gdt_start:
 
