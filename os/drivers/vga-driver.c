@@ -4,34 +4,9 @@
 
 
 
-// Includes of platform independant librararies
 #include <stdint.h>
-
-// Defines
+#include "drivers.h"
 #define VGA 0xb8000
-char* current_vga;
-
-// Colors for fore and background of text in vga text mode
-enum VGA_COLOR {
-    black = 0x0,
-    blue = 0x1,
-    green = 0x2,
-    cyan = 0x3,
-    red = 0x4,
-    purple = 0x5,
-    brown = 0x6,
-    gray = 0x7,
-    dark_grey = 0x8,
-    light_blue = 0x9,
-    light_green = 0xA,
-    light_cyan = 0xB,
-    light_red = 0xC,
-    light_purple = 0xD,
-    yellow = 0xE,
-    white = 0xF
-};
-
-
 
 // Outputs the text and colors to the VGA text buffer
 void write_string(enum VGA_COLOR fg, enum VGA_COLOR bg, const char *string){
