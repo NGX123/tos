@@ -46,13 +46,12 @@ global _start:function ; (_start.end - _start) ; add if something does not work
 _start:
         ; Setup stack by loading memory address of the top of the stack into stack register 
         mov esp, stack_top
-
-        ; Copy ASM GDT here
         
         ; Call external C function
         extern kernel_main
         call kernel_main
         
+        ; call load_idt_asm
 
 ; Infinite loop
 .hang:  hlt
@@ -94,27 +93,18 @@ load_idt:
 	sti
 	ret
 
-
-
+isr0:                 
+	mov ax, 'F'
+        mov [0xb8000], ax
+        mov ax, 0x32
+        mov [0xb8001], ax
+	iretd
 
 
 ;; ASSEMBLY EXTERNAL FILES ;;
 ; GDT code
 ;%include "init/gdt.s"
 
-;         cli
-;         lgdt [gdt_descriptor]
-;         jmp 0x08:flush ; 0x08 points to the code segment
-
-; ; Label for the far jump
-; flush:
-;         ; Reload segment registers
-;         mov   ax, 0x10 ; 0x10 points at the new data selector
-;         mov   ds, ax
-;         mov   es, ax
-;         mov   fs, ax
-;         mov   gs, ax
-;         mov   ss, ax
-
 
 ; IDT code
+;%include "init/idt.s"

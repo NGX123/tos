@@ -2,7 +2,7 @@
 // Description: custom cat program for NUXOS
 // Functions: fopen, fgetc, fclose      printf, strcmp      exit
 /* Problems: 
-    find a better way to implement flags(e.g -t)
+    + find a better way to implement flags(e.g -t)
     add flags - b, e, -s, -t 
     fix -n flag to print line number one too and number others sequentialy
     fix input of same flags like -A and -v*/

@@ -1,6 +1,5 @@
 // File: vga_print.h
 // Description: includes functions to print strings and numbers to the VGA text buffer at 0xb8000
-// Problems: 
 
 
 

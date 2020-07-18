@@ -1,6 +1,8 @@
 // File: gdt.c
 // Description: includes defenitions for loading the global descriptor table
 
+
+
 extern void load_gdt(unsigned long);
 
 // A gdt entry to be loaded using pointer

@@ -1,6 +1,23 @@
 ; File: gdt.s
 ; Description: includes GDT data structure and pointer
 
+; Function to load the global descriptor table
+load_gdt_asm:
+        cli
+        lgdt [gdt_descriptor]
+        jmp 0x08:flush ; 0x08 points to the code segment
+
+                ; Label for the far jump
+                flush:
+                        ; Reload segment registers
+                        mov   ax, 0x10 ; 0x10 points at the new data selector
+                        mov   ds, ax
+                        mov   es, ax
+                        mov   fs, ax
+                        mov   gs, ax
+                        mov   ss, ax
+                        ret
+
 
 
 ; A label to calculate size of gdt from start to end

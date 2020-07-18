@@ -10,9 +10,12 @@
 void kernel_main(){
     write_string(red, black, "Faro");
     write_char(green, blue, 'A');
-    setFlat();
     init_serial();
     write_serial("faro");
+    
+    setFlat();
+    // idt_init();
+    
     
 }
 

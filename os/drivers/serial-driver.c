@@ -1,6 +1,6 @@
-// File: serial.h
+// File: serial.c
 // Description: this file includes functions for interacting with serial port 
-// Problems: 
+
 
 
 #include "../kernel/x86.h"

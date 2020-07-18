@@ -30,3 +30,4 @@ void init_serial();
 void write_serial(char* a);
 
 void setFlat();
+// void idt_init(void);
