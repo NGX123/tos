@@ -94,10 +94,10 @@ load_idt:
 	ret
 
 isr0:                 
-	mov ax, 'F'
-        mov [0xb8000], ax
-        mov ax, 0x32
-        mov [0xb8001], ax
+	mov eax, 'F'
+        mov [0xb8000], eax
+        mov eax, 0x32
+        mov [0xb8001], eax
 	iretd
 
 
