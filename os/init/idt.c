@@ -4,7 +4,8 @@
 #define IDT_COUNT 1
 
 extern void load_idt(unsigned long);
-unsigned long isr;
+extern unsigned long isr0;
+
 struct idt_entry{
     unsigned short offset1;
     unsigned short selector;
@@ -21,12 +22,22 @@ struct idt_pointer{
 } __attribute__((packed));
 
 struct idt_entry IDT[IDT_COUNT];
+struct idt_pointer ip;
+
+
 
 void idt_init(){
-    for (int i = 0; i < IDT_COUNT; i++){
-        //IDT[i].offset1
-        IDT[i].selector = 0x08;
-        IDT.zero = 0x0;
-        IDT.flags = 
-    }
+
+    IDT[0].offset1 = isr0 & 0xffff;
+    IDT[0].selector = 0x08;
+    IDT[0].zero = 0x0;
+    IDT[0].flags = 0xAE;
+    IDT[0].offset2 = (isr0 & 0xffff0000) >> 16;
+    
+
+    ip.size = (sizeof(struct idt_entry) * IDT_COUNT) - 1;
+    ip.address = (unsigned long)IDT;
+
+
+    load_idt((unsigned long)&ip);
 }

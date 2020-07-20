@@ -14,7 +14,7 @@ void kernel_main(){
     write_serial("faro");
     
     setFlat();
-    // idt_init();
+    idt_init();
     
     
 }

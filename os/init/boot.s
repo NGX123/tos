@@ -51,7 +51,8 @@ _start:
         extern kernel_main
         call kernel_main
         
-        ; call load_idt_asm
+        ;int 0
+        ;call asm_load_idt
 
 ; Infinite loop
 .hang:  hlt
@@ -65,6 +66,7 @@ _start:
 ;;; DECLARATIONS ;;;
 global load_gdt:function
 global load_idt:function
+global isr0
 
 ;; C FUNCTION DECLARATIONS ;;
 ; Loads Global descriptor table and is a function
@@ -82,23 +84,23 @@ load_gdt:
                 mov   fs, ax
                 mov   gs, ax
                 mov   ss, ax
-                mov ax, 'F'
-                mov [0xb8000], ax
                 ret
 
 ; Loads Interrupt Descriptor Table and is a function
 load_idt:
 	mov edx, [esp + 4]
-	lidt [edx]
-	sti
+	lidt[edx]
+        ;sti
+        mov ax, 'Z'
+        mov [0xb8001], ax
 	ret
 
 isr0:                 
-	mov eax, 'F'
-        mov [0xb8000], eax
-        mov eax, 0x32
-        mov [0xb8001], eax
-	iretd
+	mov ax, 'S'
+        mov [0xb8004], ax
+        mov ax, 0x32
+        mov [0xb8005], ax
+	iret
 
 
 ;; ASSEMBLY EXTERNAL FILES ;;
@@ -108,3 +110,7 @@ isr0:
 
 ; IDT code
 ;%include "init/idt.s"
+
+
+
+
