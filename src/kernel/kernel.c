@@ -4,7 +4,7 @@
 
 
 
-#include "../drivers/drivers.h"
+#include "kernel.h"
 
 // Core function of the kernel that is called by bootloader
 void kernel_main(){
@@ -13,6 +13,7 @@ void kernel_main(){
     init_serial();
     write_serial("faro");
     
+    outb(0x20, 0x20);
     setFlat();
     idt_init();
     
