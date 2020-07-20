@@ -4,7 +4,7 @@
 
 
 #include <stdint.h>
-#include "drivers.h"
+#include "../kernel/kernel.h"
 #define VGA 0xb8000
 
 // Outputs the text and colors to the VGA text buffer
