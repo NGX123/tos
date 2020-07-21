@@ -3,30 +3,45 @@
 
 
 
-#include <stdint.h>
 #include "../kernel/kernel.h"
-#define VGA 0xb8000
+volatile char *cursor = (volatile char*)VGA;
 
-// Outputs the text and colors to the VGA text buffer
-void write_string(enum VGA_COLOR fg, enum VGA_COLOR bg, const char *string){
+
+// Outputs a character
+void printc(enum VGA_COLOR fg, enum VGA_COLOR bg, const char character){
     // Mixing colours into one byte
     uint8_t color = fg | bg << 4;
 
+    *cursor++ = character;
+    *cursor++ = color;
+}
+
+// Outputs the text and colors to the VGA text buffer
+void prints(enum VGA_COLOR fg, enum VGA_COLOR bg, const char *string){
+    // Mixing colours into one byte
+    uint8_t color = fg | bg << 4;
 
     // Pointer to VGA character buffer
-    volatile char *video = (volatile char*)VGA;
     while(*string != 0){
-        *video++ = *string++;
-        *video++ = color;
+        *cursor++ = *string++;
+        *cursor++ = color;
     }
 }
 
-// Outputs a character
-void write_char(enum VGA_COLOR fg, enum VGA_COLOR bg, const char character){
-    // Mixing colours into one byte
-    uint8_t color = fg | bg << 4;
 
-    volatile char *video = (volatile char*)VGA;
-    *video++ = character;
-    *video = color;
+
+
+
+
+// EXTRA
+void display_gdt(){
+    prints(green, black, "Initialized: GDT, ");
+}
+
+void display_idt(){
+    prints(green, black, "Initialised: IDT, ");
+}
+
+void software_int_test(){
+    prints(green, black, "Initialised: Inturreupts");
 }
