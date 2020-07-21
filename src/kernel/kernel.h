@@ -3,6 +3,8 @@
 
 #include <stdint.h>
 #include "x86.h"
+#define VGA 0xb8000
+
 // Colors for fore and background of text in vga text mode
 enum VGA_COLOR {
     black = 0x0,
@@ -22,10 +24,9 @@ enum VGA_COLOR {
     yellow = 0xE,
     white = 0xF
 };
-char* current_vga;
 
-void write_char(enum VGA_COLOR fg, enum VGA_COLOR bg, const char character);
-void write_string(enum VGA_COLOR fg, enum VGA_COLOR bg, const char *string);
+void printc(enum VGA_COLOR fg, enum VGA_COLOR bg, const char character);
+void prints(enum VGA_COLOR fg, enum VGA_COLOR bg, const char *string);
 
 void init_serial();
 void write_serial(char* a);
