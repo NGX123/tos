@@ -50,8 +50,6 @@ _start:
         ; Call external C function
         extern kernel_main
         call kernel_main
-        
-        int 0x00
 
 ; Infinite loop
 .hang:  hlt
@@ -65,10 +63,8 @@ _start:
 ;;; DECLARATIONS ;;;
 global load_gdt:function
 global load_idt:function
-global isr0
 extern display_idt
 extern display_gdt
-extern software_int_test
 
 ;; C FUNCTION DECLARATIONS ;;
 ; Loads Global descriptor table and is a function
@@ -94,22 +90,13 @@ load_gdt:
 load_idt:
 	mov edx, [esp + 4]
 	lidt[edx]
-        ;sti
+        sti
         call display_idt
 	ret
 
-isr0:                 
-	call software_int_test
-	iret
-
-
-;; ASSEMBLY EXTERNAL FILES ;;
-; GDT code
-;%include "init/gdt.s"
-
 
 ; IDT code
-;%include "init/idt.s"
+%include "init/idt.s"
 
 
 
