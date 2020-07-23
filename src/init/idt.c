@@ -3,8 +3,13 @@
 
 #define IDT_COUNT 256
 #include "../kernel/x86.h"
+#include "../kernel/kernel.h"
+
+extern void keyboard_handler();
 extern void load_idt();
 extern int irq0();
+extern int irq1();
+
 
 // Defines a data structure for IDT
 struct idt_entry{
@@ -47,12 +52,19 @@ void idt_init(){
 
 
 
+    
     // Initialize the IDT entry with values
 	IDT[32].offset_lowerbits = (unsigned long)irq0 & 0xffff;
 	IDT[32].selector = 0x08; /* KERNEL_CODE_SEGMENT_OFFSET */
 	IDT[32].zero = 0;
 	IDT[32].flags = 0x8e; /* INTERRUPT_GATE */
 	IDT[32].offset_higherbits = ((unsigned long)irq0 & 0xffff0000) >> 16;
+
+    IDT[33].offset_lowerbits = (unsigned long)irq1 & 0xffff;
+	IDT[33].selector = 0x08; /* KERNEL_CODE_SEGMENT_OFFSET */
+	IDT[33].zero = 0;
+	IDT[33].flags = 0x8e; /* INTERRUPT_GATE */
+	IDT[33].offset_higherbits = ((unsigned long)irq1 & 0xffff0000) >> 16;
 
     ip.size = (sizeof(struct idt_entry) * IDT_COUNT) - 1;
     ip.address = (unsigned long)IDT;
@@ -65,4 +77,8 @@ void idt_init(){
 void irq0_handler(void) {
     outb(0x20, 0x20); //EOI
 }
- 
+
+void irq1_handler(void){
+    keyboard_handler();
+    outb(0x20, 0x20);
+}
