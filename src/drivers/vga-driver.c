@@ -1,6 +1,6 @@
 // File: vga_print.h
 // Description: includes functions to print strings and numbers to the VGA text buffer at 0xb8000
-
+// Problem: backspace can clear outside the buffer
 
 
 #include "../kernel/kernel.h"
@@ -28,7 +28,10 @@ void prints(enum VGA_COLOR fg, enum VGA_COLOR bg, const char *string){
     }
 }
 
-
+void backspace(){
+    *cursor-- = 0;
+    *cursor-- = 0;
+}
 
 
 
