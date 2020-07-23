@@ -2,7 +2,6 @@
 // Description: incldes declaration for the functions
 
 #include <stdint.h>
-#include "x86.h"
 #define VGA 0xb8000
 
 // Colors for fore and background of text in vga text mode
@@ -33,3 +32,4 @@ void write_serial(char* a);
 
 void setFlat();
 void idt_init(void);
+void keyboard_init();

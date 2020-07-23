@@ -5,6 +5,7 @@
 
 
 #include "kernel.h"
+#include "x86.h"
 
 // Core function of the kernel that is called by bootloader
 void kernel_main(){
@@ -20,7 +21,7 @@ void kernel_main(){
     idt_init();
     // Initialization notice in assembly 
 
-    
+    keyboard_init();
     
     
     
