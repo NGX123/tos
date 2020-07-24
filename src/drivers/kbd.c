@@ -5,7 +5,10 @@
 
 #include "../kernel/x86.h"
 #include "../kernel/kernel.h"
+#include <stdint.h>
 #define NO 0
+
+extern void backspacexy();
 extern void backspace();
 
 char keys[] = {
@@ -16,15 +19,8 @@ char keys[] = {
     NO, NO, NO, ' ', NO, NO, NO, 'o'
 };
 
-
-// Initializes keyboard before run
-void keyboard_init(){
-    // outb(0x64, 0xAD);
-    // outb(0x64, 0xA7);
-}
-
 void keyboard_handler(){
-    unsigned int status = inb(0x64);
+    uint32_t status = inb(0x64);
     char scancode;
 
     if (status & 0x01) {
@@ -32,11 +28,15 @@ void keyboard_handler(){
         if(scancode < 0)
 			return;
         if (keys[scancode] == '\b')
-            backspace();
+            //backspace();
+            backspacexy();
         else if (keys[scancode] == '\t')
             for (int i = 0; i <= 4; i++)
-                printc(green, black, ' ');
+                //printc(green, black, ' ');
+                printcxy(green, black, ' ');
         else 
-            printc(green, black, keys[scancode]);
+            //printc(green, black, keys[scancode]);
+            printcxy(green, black, keys[scancode]);
     }
 }
+
