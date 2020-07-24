@@ -13,19 +13,19 @@ extern int irq1();
 
 // Defines a data structure for IDT
 struct idt_entry{
-    unsigned short offset_lowerbits;
-    unsigned short selector;
+    uint16_t offset_lowerbits;
+    uint16_t selector;
 
-    unsigned char zero;
-    unsigned char flags;
-    unsigned short offset_higherbits;
+    uint8_t zero;
+    uint8_t flags;
+    uint16_t offset_higherbits;
 
 } __attribute__((packed));
 
 // Defines a pointer to the IDT data structure
 struct idt_pointer{
-    unsigned short size;
-    unsigned long address;
+    uint16_t size;
+    uint64_t address;
 } __attribute__((packed));
 
 
@@ -54,22 +54,22 @@ void idt_init(){
 
     
     // Initialize the IDT entry with values
-	IDT[32].offset_lowerbits = (unsigned long)irq0 & 0xffff;
+	IDT[32].offset_lowerbits = (uint64_t)irq0 & 0xffff;
 	IDT[32].selector = 0x08; /* KERNEL_CODE_SEGMENT_OFFSET */
 	IDT[32].zero = 0;
 	IDT[32].flags = 0x8e; /* INTERRUPT_GATE */
-	IDT[32].offset_higherbits = ((unsigned long)irq0 & 0xffff0000) >> 16;
+	IDT[32].offset_higherbits = ((uint64_t)irq0 & 0xffff0000) >> 16;
 
-    IDT[33].offset_lowerbits = (unsigned long)irq1 & 0xffff;
+    IDT[33].offset_lowerbits = (uint64_t)irq1 & 0xffff;
 	IDT[33].selector = 0x08; /* KERNEL_CODE_SEGMENT_OFFSET */
 	IDT[33].zero = 0;
 	IDT[33].flags = 0x8e; /* INTERRUPT_GATE */
-	IDT[33].offset_higherbits = ((unsigned long)irq1 & 0xffff0000) >> 16;
+	IDT[33].offset_higherbits = ((uint64_t)irq1 & 0xffff0000) >> 16;
 
     ip.size = (sizeof(struct idt_entry) * IDT_COUNT) - 1;
-    ip.address = (unsigned long)IDT;
+    ip.address = (uint64_t)IDT;
 
-    load_idt((unsigned long)&ip);
+    load_idt((uint64_t)&ip);
 }
 
 
