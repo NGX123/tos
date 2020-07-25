@@ -1,6 +1,8 @@
 // File: kernel.h
 // Description: incldes declaration for the functions
 
+
+
 #include <stdint.h>
 #define VGA 0xb8000
 
@@ -24,6 +26,8 @@ enum VGA_COLOR {
     white = 0xF
 };
 
+
+// External functions
 void printc(enum VGA_COLOR fg, enum VGA_COLOR bg, const char character);
 void prints(enum VGA_COLOR fg, enum VGA_COLOR bg, const char *string);
 
@@ -33,3 +37,7 @@ void write_serial(char* a);
 void setFlat();
 void idt_init(void);
 void keyboard_init();
+
+void enable_cursor(uint8_t cursor_start, uint8_t cursor_end);
+void disable_cursor();
+void update_cursor(int x, int y); 
