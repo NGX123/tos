@@ -3,12 +3,14 @@
 
 
 
+// Includes
 #include "../kernel/x86.h"
 #include "../kernel/kernel.h"
 #include <stdint.h>
+
+// Defines
 #define NO 0
 
-extern void backspacexy();
 extern void backspace();
 
 char keys[] = {
@@ -28,15 +30,12 @@ void keyboard_handler(){
         if(scancode < 0)
 			return;
         if (keys[scancode] == '\b')
-            //backspace();
-            backspacexy();
+            backspace();
         else if (keys[scancode] == '\t')
             for (int i = 0; i <= 4; i++)
-                //printc(green, black, ' ');
-                printcxy(green, black, ' ');
+                printc(green, black, ' ');
         else 
-            //printc(green, black, keys[scancode]);
-            printcxy(green, black, keys[scancode]);
+            printc(green, black, keys[scancode]);
     }
 }
 

@@ -5,7 +5,7 @@ ASFLAGS = -felf32
 CFLAGS = -std=gnu99 -ffreestanding -nostdlib -O2 -Wall -Wextra -c
 LDFLAGS = -T make/linker.ld -ffreestanding -nostdlib -O2  -lgcc
 
-SOURCES = drivers/*.c kernel/*.c init/*.c playground/*.c
+SOURCES = drivers/*.c kernel/*.c init/*.c #playground/*.c
 OBJECTS = *.o #boot.o kernel.o
 
 
