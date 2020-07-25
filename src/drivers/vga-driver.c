@@ -1,6 +1,6 @@
 // File: vga_print.h
 // Description: includes functions to print strings and numbers to the VGA text buffer at 0xb8000
-// Problem: backspace can clean outside text buffer, print can print outside text buffer, no scrolling, cursor disappears when letter is removed and only appears when letter is added on the places where it was peviously removed from
+// Problem: backspace can clean outside text buffer, print can print outside text buffer, no scrolling, cursor shows green after deletion and then turns white after returned to the place where letter was deleted
 
 
 /// Includes ///
@@ -14,7 +14,7 @@
 #define BLANK 0
 
 /// Declarations ///
-volatile char *cursor = (volatile char*)VGA;
+volatile char *text_buffer = (volatile char*)VGA;
 int cell; // Counts cells(2 bytes - char + color)
 int byte; // Counts each byte in video memory
 int x;
@@ -67,10 +67,10 @@ void printc(enum VGA_COLOR fg, enum VGA_COLOR bg, const char character){
     // Mixing colours into one byte
     uint8_t color = fg | bg << 4;
 
-    cursor[byte++] = character;
-    cursor[byte++] = color;
+    text_buffer[byte++] = character;
+    text_buffer[byte++] = color;
 
-    cell++;
+    ++cell;
     updatexy();
 }
 
@@ -81,10 +81,10 @@ void prints(enum VGA_COLOR fg, enum VGA_COLOR bg, const char *string){
 
     // Pointer to VGA character buffer
     while(*string != 0){
-        cursor[byte++] = *string++;
-        cursor[byte++] = color;
+        text_buffer[byte++] = *string++;
+        text_buffer[byte++] = color;
         
-        cell++;
+        ++cell;
     }
     
     updatexy();
@@ -92,9 +92,11 @@ void prints(enum VGA_COLOR fg, enum VGA_COLOR bg, const char *string){
 
 // Removes last printed letter
 void backspace(){
-    cursor[byte--] = BLANK;
-    cursor[byte--] = BLANK;
-    //cursor[byte] = BLANK;
+    //text_buffer[byte--] = BLANK;
+    //text_buffer[byte--] = BLANK;
+    --byte;
+    --byte;
+    text_buffer[byte] = BLANK;
 
     --cell;
     updatexy();
