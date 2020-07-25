@@ -16,15 +16,10 @@ void kernel_main(){
     prints(green, black, "Initialised: Serial, ");
 
     setFlat();
-    // Initialisation notice in assembly
     
     idt_init();
-    // Initialization notice in assembly 
 
-    keyboard_init();
-    
-    
-    
-    
+    //enable_cursor(start, end);
+    //prints(green, black, "Initialised: Cursor, ");
 }
 
