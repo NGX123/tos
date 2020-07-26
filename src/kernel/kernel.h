@@ -28,8 +28,9 @@ enum VGA_COLOR {
 
 
 // External functions
-void printc(enum VGA_COLOR fg, enum VGA_COLOR bg, const char character);
-void prints(enum VGA_COLOR fg, enum VGA_COLOR bg, const char *string);
+//void printc(enum VGA_COLOR fg, enum VGA_COLOR bg, const char character);
+//void prints(enum VGA_COLOR fg, enum VGA_COLOR bg, const char *string);
+void printk(char* string);
 
 void init_serial();
 void write_serial(char* a);
