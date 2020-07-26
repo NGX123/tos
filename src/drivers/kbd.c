@@ -12,13 +12,14 @@
 #define NO 0
 
 extern void backspace();
+extern void enter();
 
 char keys[] = {
     NO, '~', '1', '2', '3', '4', '5', '6', '7', '8', '9', '0', '-', '=', '\b',
-    '\t', 'q', 'w', 'e', 'r', 't', 'y', 'u', 'i', 'o', 'p', '[', ']', NO, 
+    '\t', 'q', 'w', 'e', 'r', 't', 'y', 'u', 'i', 'o', 'p', '[', ']', '\n', 
     NO, 'a', 's', 'd', 'f', 'g', 'h', 'j', 'k', 'l', ';', '\'', '\\',
     NO, NO, 'z', 'x', 'c', 'v', 'b', 'n', 'm', ',', '.', '/', NO,
-    NO, NO, NO, ' ', NO, NO, NO, 'o'
+    NO, NO, ' ', NO, NO, NO
 };
 
 void keyboard_handler(){
@@ -29,11 +30,16 @@ void keyboard_handler(){
         scancode = inb(0x60);
         if(scancode < 0)
 			return;
-        if (keys[scancode] == '\b')
+    
+        if (keys[scancode] == NO)
+            /* Do not print special or not setup keys */;
+        else if (keys[scancode] == '\b')
             backspace();
         else if (keys[scancode] == '\t')
             for (int i = 0; i <= 4; i++)
                 printc(green, black, ' ');
+        else if (keys[scancode] == '\n')
+            enter();
         else 
             printc(green, black, keys[scancode]);
     }
