@@ -15,6 +15,8 @@
 
 /// Declarations ///
 volatile char *text_buffer = (volatile char*)VGA;
+enum VGA_COLOR terminal_fg = green;
+enum VGA_COLOR terminal_bg = black;
 int cell; // Counts cells(2 bytes - char + color)
 int byte; // Counts each byte in video memory
 int x;
@@ -71,15 +73,15 @@ void printc(enum VGA_COLOR fg, enum VGA_COLOR bg, const char character){
     text_buffer[byte++] = color;
 
     ++cell;
+    // Change the color of the cursor by changing next cell color
+    text_buffer[cell * 2 + 1] = color; 
     updatexy();
 }
 
 // Outputs the text and colors to the VGA text buffer
 void prints(enum VGA_COLOR fg, enum VGA_COLOR bg, const char *string){
-    // Mixing colours into one byte
     uint8_t color = fg | bg << 4;
 
-    // Pointer to VGA character buffer
     while(*string != 0){
         text_buffer[byte++] = *string++;
         text_buffer[byte++] = color;
@@ -87,18 +89,49 @@ void prints(enum VGA_COLOR fg, enum VGA_COLOR bg, const char *string){
         ++cell;
     }
     
+    text_buffer[cell * 2 + 1] = color;
     updatexy();
 }
 
 // Removes last printed letter
 void backspace(){
-    //text_buffer[byte--] = BLANK;
-    //text_buffer[byte--] = BLANK;
+    uint8_t color = terminal_fg | terminal_bg << 4;
+    
     --byte;
     --byte;
     text_buffer[byte] = BLANK;
 
     --cell;
+    text_buffer[cell * 2 + 1] = color; 
+    updatexy();
+}
+
+// Moves onto the next line
+void enter(){
+    uint8_t color = terminal_fg | terminal_bg << 4;
+
+    ++y;
+    x = 0;
+    cell = y * 80 + x;
+    byte = cell * 2;
+
+    text_buffer[cell * 2 + 1] = color;
+    updatexy();
+}
+
+// Can print with all symbols like \t and automatiacally uses the console color without the need to set it up
+void printk(char *string){
+    uint8_t color = terminal_fg | terminal_bg << 4;
+
+    for (int i = 0; string[i] != 0; i++){
+        if (string[i] == '\n')
+            enter();
+        else if (string[i] == '\t')
+            for (int i = 0; i <= 4; i++)
+                printc(green, black, ' ');
+        else 
+            printc(terminal_fg, terminal_bg, string[i]);        
+    }
     updatexy();
 }
 
@@ -107,15 +140,13 @@ void backspace(){
 
 // Info prints ///
 void display_gdt(){
-    prints(green, black, "Initialized: GDT, ");
+    // prints(terminal_fg, terminal_bg, "Initialized: GDT, ");
+    printk("Initialized: GDT\n");
 }
 
 void display_idt(){
-    prints(green, black, "Initialised: IDT, ");
-}
-
-void software_int_test(){
-    prints(green, black, "Initialised: Interrupts");
+    // prints(terminal_fg, terminal_bg, "Initialised: IDT, ");
+    printk("Initialised: IDT\n");
 }
 
 
