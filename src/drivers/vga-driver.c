@@ -1,6 +1,6 @@
 // File: vga_print.h
 // Description: includes functions to print strings and numbers to the VGA text buffer at 0xb8000
-// Problem: backspace can clean outside text buffer, print can print outside text buffer, no scrolling, cursor shows green after deletion and then turns white after returned to the place where letter was deleted
+
 
 
 /// Includes ///
@@ -119,6 +119,21 @@ void enter(){
     updatexy();
 }
 
+// Moves cursor accrording to keyboard arrows 
+void arrows(const char direction){
+    if (direction == '<'){
+        --byte;
+        --byte;
+        --cell;
+    }
+    else if (text_buffer[cell * 2] != 0){
+        ++byte;
+        ++byte;
+        ++cell;
+    }
+    updatexy();
+}
+
 // Can print with all symbols like \t and automatiacally uses the console color without the need to set it up
 void printk(char *string){
     uint8_t color = terminal_fg | terminal_bg << 4;
@@ -155,7 +170,10 @@ void display_idt(){
 // EXTRA ///
 void clear(){
     volatile char* text_buffer = (char*)VGA;
-    for (int i; i <= 2000; i++){
+    for (int i; i <= 4000; i++){
         text_buffer[i] = BLANK;
     }
+    byte = 0;
+    cell = 0;
+    updatexy();
 }
