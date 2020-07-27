@@ -1,0 +1,7 @@
+List of known bugs 
+
+vga-driver.c
+ + Backspace can clean memory out of the text buffer
+ + Print can print outside the text buffer
+ + Arrow buttons will not move the cursor if accidently out of the text and into next/previous blank line
+
