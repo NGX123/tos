@@ -9,6 +9,7 @@
 
 // Core function of the kernel that is called by bootloader
 void kernel_main(){
+    clear();
     enable_cursor(0, 15);
     printk("Initialised: Screen\n");
     
