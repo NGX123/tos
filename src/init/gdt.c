@@ -1,6 +1,6 @@
 // File: gdt.c
 // Description: includes defenitions for loading the global descriptor table
-
+// WHEN CHANGING TO LONG MODE CHANGE THE "uint32_t" in the adresses to "uint64_t"
 
 #include <stdint.h>
 extern void load_gdt(uint64_t);
@@ -49,7 +49,7 @@ void setFlat(){
     }
 
     gp.limit = (sizeof(struct gdt_entry) * 3) - 1;
-    gp.base = (uint64_t)gdt;
-    load_gdt((uint64_t)&gp);
+    gp.base = (uint32_t)gdt;
+    load_gdt((uint32_t)&gp);
 }
 
