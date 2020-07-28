@@ -121,8 +121,6 @@ void arrows(const char direction){
 
 // Can print with all symbols like \t and automatiacally uses the console color without the need to set it up
 void printk(char *string){
-    uint8_t color = terminal_fg | terminal_bg << 4;
-
     for (int i = 0; string[i] != 0; i++){
         if (string[i] == '\n')
             enter();
@@ -155,7 +153,7 @@ void display_idt(){
 // EXTRA ///
 void clear(){
     volatile char* text_buffer = (char*)VGA;
-    for (int i; i <= 4000; i++){
+    for (int i = 0; i <= 4000; i++){
         text_buffer[i] = BLANK;
     }
     byte = 0;
