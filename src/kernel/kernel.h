@@ -6,6 +6,8 @@
 #include <stdint.h>
 #define VGA 0xb8000
 
+char unsigned stdin;
+
 // Colors for fore and background of text in vga text mode
 enum VGA_COLOR {
     black = 0x0,
@@ -28,8 +30,6 @@ enum VGA_COLOR {
 
 
 // External functions
-//void printc(enum VGA_COLOR fg, enum VGA_COLOR bg, const char character);
-//void prints(enum VGA_COLOR fg, enum VGA_COLOR bg, const char *string);
 void printk(char* string);
 void clear();
 

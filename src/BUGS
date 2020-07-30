@@ -3,5 +3,10 @@ List of known bugs
 vga-driver.c
  + Backspace can clean memory out of the text buffer
  + Print can print outside the text buffer
- + Arrow buttons will not move the cursor if accidently out of the text and into next/previous blank line
+ + Arrow buttons will not move forward if the cursor gets on the tab or similar which is 4 spaces and cursor will not move forward if space is in front of it
+
+kbd.c
+ + CAPS won't turn off
+ + In shift mode symbols print with extra random unreleated symbols (e.g. shift + q outputs Qb)
+ 
 
