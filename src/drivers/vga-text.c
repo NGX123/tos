@@ -4,23 +4,30 @@
 
 
 /// Includes ///
-#include "../kernel/kernel.h"
 #include "../kernel/x86.h"
+#include "driver.h"
 
 /// Defines ///
+#define VGA 0xb8000
 #define VGA_WIDTH 80
 #define COLUMNS 80
 #define ROWS 25  
 #define BLANK 0
 
+
+
+
 /// Declarations ///
-volatile char *text_buffer = (volatile char*)VGA;
-enum VGA_COLOR terminal_fg = green;
-enum VGA_COLOR terminal_bg = black;
-int cell; // Counts cells(2 bytes - char + color)
-int byte; // Counts each byte in video memory
-int x;
-int y;
+// Colors for fore and background of text in vga text mode
+extern unsigned char keyboard_buffer[10];
+extern int keyboard_buffer_counter;
+static volatile char *text_buffer = (volatile char*)VGA;
+static enum VGA_COLOR terminal_fg = green;
+static enum VGA_COLOR terminal_bg = black;
+static int cell; // Counts cells(2 bytes - char + color)
+static int byte; // Counts each byte in video memory
+static int x;
+static int y;
 
 
 
@@ -54,7 +61,7 @@ void update_cursor(int x, int y)
 	outb(0x3D5, (uint8_t) ((pos >> 8) & 0xFF));
 }
 
-void updatexy(){
+static void updatexy(){
     x = cell % 80; 
     y = (int)(cell / 80);
     update_cursor(x, y);
@@ -119,6 +126,10 @@ void arrows(const char direction){
     updatexy();
 }
 
+
+
+
+/// Normal functions ///
 // Can print with all symbols like \t and automatiacally uses the console color without the need to set it up
 void printk(char *string){
     for (int i = 0; string[i] != 0; i++){
@@ -131,6 +142,23 @@ void printk(char *string){
             printc(terminal_fg, terminal_bg, string[i]);        
     }
     updatexy();
+}
+
+void scank(char* string){
+    char input_field[160];
+    char counter_previous;
+
+    int i = 0;
+    while (i < 160){
+        if (keyboard_buffer[keyboard_buffer_counter] == '\n')
+            break;
+        if (keyboard_buffer_counter == counter_previous)
+            continue;
+        else 
+            input_field[i] = keyboard_buffer[keyboard_buffer_counter];
+        counter_previous = keyboard_buffer_counter;
+        ++i;
+    }
 }
 
 
