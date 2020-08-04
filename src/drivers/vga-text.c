@@ -19,9 +19,7 @@
 
 /// Declarations ///
 // Colors for fore and background of text in vga text mode
-extern unsigned char keyboard_buffer[10];
-extern int keyboard_buffer_counter;
-static volatile char *text_buffer = (volatile char*)VGA;
+static volatile char* text_buffer = (volatile char*)VGA;
 static enum VGA_COLOR terminal_fg = green;
 static enum VGA_COLOR terminal_bg = black;
 static int cell; // Counts cells(2 bytes - char + color)
@@ -144,24 +142,9 @@ void printk(char *string){
     updatexy();
 }
 
-void scank(char* string){
-    char input_field[160];
-    char counter_previous;
-
-    int i = 0;
-    while (i < 160){
-        if (keyboard_buffer[keyboard_buffer_counter] == '\n')
-            break;
-        if (keyboard_buffer_counter == counter_previous)
-            continue;
-        else 
-            input_field[i] = keyboard_buffer[keyboard_buffer_counter];
-        counter_previous = keyboard_buffer_counter;
-        ++i;
-    }
+void scank(){
+    
 }
-
-
 
 
 // Info prints ///
