@@ -5,7 +5,7 @@
 
 // Includes
 #include "../kernel/x86.h"
-#include "../kernel/kernel.h"
+#include "driver.h"
 #include <stdint.h>
 
 // Defines
@@ -17,10 +17,6 @@
 #define CAPSLOCK 0x3A
 #define LARROW 0x4B
 #define RARROW 0x4D
-// #define INSERT 0xE0 // 0x52
-// #define PAGE_UP 0xE0 // 0x7D
-// #define PAGE_DOWN 0xE0 // 0x7A
-// cursor up 0x48, cursor down 0x50, cursor right 0x4D, cursor left 0x4B
 
 extern void backspace();
 extern void enter();
@@ -45,30 +41,21 @@ char shiftset[] = {
 
 void keyboard_handler(){
     uint32_t status = inb(0x64);
-    unsigned char caps_flag;
-    unsigned char scancode;
-    char scanset = scanset1[scancode];
+    char scancode;
 
     if (status & 0x01) {
         scancode = inb(0x60);
 
+        if(scancode < 0)
+			return;
         
-        if (scanset == CAPSLOCK && caps_flag == 0x01){
-                scanset = scanset1[scancode];
-                return;
-        }
-        if (caps_flag == 0x01)
-            scanset = shiftset[scancode];
-        else if (caps_flag == 0x00 || scancode == 0xB6 || scancode == 0xAA){
-            scanset = scanset1[scancode];
-            caps_flag = 0x00;
-        }
-        
-        switch (scanset){
+        switch (scanset1[scancode]){
             case NO:
             case ESC:
             case CONTROL:
             case ALT:
+            case CAPSLOCK:
+            case SHIFT:
                 break;
             case '\b':
                 backspace();
@@ -86,13 +73,8 @@ void keyboard_handler(){
             case RARROW:
                 arrows('>'); 
                 break;
-            case CAPSLOCK:
-            case SHIFT:
-                caps_flag = 0x01;
-                break;
             default:
-                if (scanset != CAPSLOCK)
-                    printc(green, black, scanset);
+                printc(green, black, scanset1[scancode]);
                 break;
         }
     }
