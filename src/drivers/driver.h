@@ -24,9 +24,6 @@ enum VGA_COLOR {
     white = 0xF
 };
 
-extern char unsigned* stdin;
-extern char unsigned* stdout;
-
 void printc(enum VGA_COLOR fg, enum VGA_COLOR bg, const char character);
 void printk(char* string);
 void clear();
