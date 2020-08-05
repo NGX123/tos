@@ -10,3 +10,5 @@ kbd.c
  + In shift mode symbols print with extra random unreleated symbols (e.g. shift + q outputs Qb)
  
 
+kernel.h driver.h
+ + if problems occur extern can be removed
