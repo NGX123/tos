@@ -46,37 +46,40 @@ void keyboard_handler(){
     if (status & 0x01) {
         scancode = inb(0x60);
 
-        if(scancode < 0)
-			return;
-        
-        switch (scanset1[scancode]){
-            case NO:
-            case ESC:
-            case CONTROL:
-            case ALT:
-            case CAPSLOCK:
-            case SHIFT:
-                break;
-            case '\b':
-                backspace();
-                break;
-            case '\t':
-                for (int i = 0; i <= 4; i++)
-                    printc(green, black, ' ');
-                break;
-            case '\n':
-                enter();
-                break;
-            case LARROW:
-                arrows('<');
-                break;
-            case RARROW:
-                arrows('>'); 
-                break;
-            default:
-                printc(green, black, scanset1[scancode]);
-                break;
-        }
+
+
+        // RETURN TO TEST
+        // if(scancode < 0)
+		// 	return;
+
+        // switch (scanset1[scancode]){
+        //     case NO:
+        //     case ESC:
+        //     case CONTROL:
+        //     case ALT:
+        //     case CAPSLOCK:
+        //     case SHIFT:
+        //         break;
+        //     case '\b':
+        //         backspace();
+        //         break;
+        //     case '\t':
+        //         for (int i = 0; i <= 4; i++)
+        //             printc(green, black, ' ');
+        //         break;
+        //     case '\n':
+        //         enter();
+        //         break;
+        //     case LARROW:
+        //         arrows('<');
+        //         break;
+        //     case RARROW:
+        //         arrows('>'); 
+        //         break;
+        //     default:
+        //         printc(green, black, scanset1[scancode]);
+        //         break;
+        // }
     }
 }
 
