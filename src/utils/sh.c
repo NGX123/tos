@@ -89,8 +89,7 @@ static void format_input(char input[]){
     i = 0;
 
     // Get the starts of the words
-    word_starts = malloc(sizeof(int) * 2);
-    if (word_starts == NULL){
+    if ((word_starts = malloc(sizeof(int) * 2)) == NULL){
         printf("Error: Failed to allocate memory for the amount of words");
         exit(0);
     }
@@ -98,8 +97,7 @@ static void format_input(char input[]){
     for (i = 1; input[i] != 0; i++){
         if (input[i] != ' ' && input[i-1] == ' '){
             word_starts[j++] = i;
-            word_starts = realloc(word_starts, sizeof(int) * (j + 1));
-            if (word_starts == NULL){
+            if ((word_starts = realloc(word_starts, sizeof(int) * (j + 1))) == NULL){
                 printf("Error: Failed to allocate memory for the amount of words");
                 exit(0);
             }
@@ -114,8 +112,7 @@ static void format_input(char input[]){
     i = 0; //j = 0;
 
     // Put words into malloced list
-    exec_input = malloc(sizeof(char*) * words);
-    if (exec_input == NULL){
+    if ((exec_input = malloc(sizeof(char*) * words)) == NULL){
         printf("Error: Failed to allocate memory for words");
         exit(0);
     }
@@ -128,9 +125,7 @@ static void format_input(char input[]){
             word_length = len - word_starts[k];
 
         printf("\nWord length - %d\n", word_length);
-
-        exec_input[i] = malloc(sizeof(char) * (word_length + 1));
-        if (exec_input[i] == NULL){
+        if ((exec_input[i] = malloc(sizeof(char) * (word_length + 1))) == NULL){
             printf("Error: Failed to allocate memory for the word");
             exit(0);
         }
