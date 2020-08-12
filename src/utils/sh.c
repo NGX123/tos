@@ -13,7 +13,7 @@
 static int buffer_size = 1, var_size = 1;
 static char** buffer;
 
-static void format_input(char input[]){
+static char** format_input(char input[]){
     int i = 0, j = 0, k = 0, l = 0, len = 0, words = 0;
     int* word_starts;
     int word_length;
@@ -124,7 +124,7 @@ static void format_input(char input[]){
         else 
             word_length = len - word_starts[k];
 
-        printf("\nWord length - %d\n", word_length);
+        printf("\nWord length - %d", word_length);
         if ((exec_input[i] = malloc(sizeof(char) * (word_length + 1))) == NULL){
             printf("Error: Failed to allocate memory for the word");
             exit(0);
@@ -137,6 +137,7 @@ static void format_input(char input[]){
         exec_input[i][l] = 0;
         ++k;
     }
+    printf("\n");
     i = 0; k = 0; l = 0; len = 0; //j = 0;
 
     // Print the words from the array
@@ -144,17 +145,26 @@ static void format_input(char input[]){
         printf("\n%s", exec_input[i]);
     
 
-    // Free memory
+    // Final actions
     free(word_starts);
+    exec_input = realloc(exec_input, j+1);
+    printf("\nj - %d", j);
+    exec_input[j+1] = 0;
+    return exec_input;
 }
 
 int main(){
+    int i;
     char* input_buffer = NULL;
+    char** exec_input;
     size_t size = 0;
 
     while(1){
         getline(&input_buffer, &size, stdin);
-        format_input(input_buffer);
+        exec_input = format_input(input_buffer);
+
+        for(i = 0; exec_input[i] != 0; i++); //check the amount of variables passed
+        printf("\ni - %d", i);
     }
     
     //free(input);
