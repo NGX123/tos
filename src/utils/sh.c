@@ -14,7 +14,7 @@ static int buffer_size = 1, var_size = 1;
 static char** buffer;
 
 static void format_input(char input[]){
-    int i = 0, j = 0, k = 0, len = 0, words = 0;
+    int i = 0, j = 0, k = 0, l = 0, len = 0, words = 0;
     int* word_starts;
     int word_length;
 
@@ -39,7 +39,7 @@ static void format_input(char input[]){
         else
             i++;
     }
-    i = 0; j = 0; len = 0; 
+    i = 0; j = 0; k = 0; l = 0; len = 0; 
     
     // Removes '\t' and '\n'
     len = strlen(input);
@@ -54,14 +54,14 @@ static void format_input(char input[]){
         else 
             ++i;
     }     
-    i = 0; j = 0; len = 0; 
+    i = 0; j = 0; k = 0; l = 0; len = 0;
 
     // Remove spaces at the end of the string 
     len = strlen(input);
     for (i = len; input[i] == 0 || input[i] == ' '; i--)
         if (input[i] == ' ')
             input[i] = 0;
-    i = 0; j = 0; len = 0; 
+    i = 0; j = 0; k = 0; l = 0; len = 0;
 
     // Remove spaces at the start of the string
     len = strlen(input);
@@ -69,7 +69,7 @@ static void format_input(char input[]){
         for (j = i; j < len; j++)
                 input[j] = input[j+1];
             --len;  
-    i = 0; j = 0; len = 0; 
+    i = 0; j = 0; k = 0; l = 0; len = 0;
 
     // Counts words in the string
     if (strlen(input) > 1){
@@ -78,7 +78,7 @@ static void format_input(char input[]){
             if (input[i] == ' ' && input[i+1] != '\0' && input[i+1] != ' ')
                 ++words;
     }
-    i = 0; j = 0; len = 0; 
+    i = 0; j = 0; k = 0; l = 0; len = 0;
 
     // Output the string after cleaning
     printf("\nString - %s\nAmount of words = %d\nAll symbols - ", input, words);
@@ -93,7 +93,7 @@ static void format_input(char input[]){
             printf("%c", input[i]);
     }
     printf("\n");
-    i = 0; j = 0; len = 0; 
+    i = 0; j = 0; k = 0; l = 0; len = 0;
 
     // Get the starts of the words
     word_starts = malloc(sizeof(int) * 2);
@@ -104,33 +104,41 @@ static void format_input(char input[]){
             word_starts = realloc(word_starts, sizeof(int) * (j + 1));
         }
     }
-    i = 0; len = 0; //j = 0;
+    i = 0; k = 0; l = 0; len = 0; //j = 0;
     
     // Print the starts of words
-    printf("\n");
     for (i = 0; i < j; i++)
-        printf("Word starts - %d\n", word_starts[i]);
-    i = 0; len = 0; //j = 0;
+        printf("\nWord starts - %d", word_starts[i]);
+    printf("\n");
+    i = 0; k = 0; l = 0; len = 0; //j = 0;
 
     // Put words into malloced list
     char **exec_input = malloc(sizeof(char*) * words);
     len = strlen(input);
     for (i = 0, k = 0; i < j; i++){
         if (k != (j - 1))
-            word_length = word_starts[k+1] - 1 - word_starts[k++];
+            word_length = word_starts[k+1] - 1 - word_starts[k];
         else 
-            word_length = len - word_starts[k++];
+            word_length = len - word_starts[k];
 
-        exec_input[i] = malloc(sizeof(char) * word_length);
-        printf("\n");
-        printf("Word length - %d", word_length);
-    }
+        printf("\nWord length - %d\n", word_length);
+
+        exec_input[i] = malloc(sizeof(char) * (word_length + 1));
+
+        for (l = 0; l <= word_length; l++)
+            exec_input[i][l] = input[word_starts[k] + l];
         
+        exec_input[i][l] = 0;
+        ++k;
+    }
+    i = 0; k = 0; l = 0; len = 0; //j = 0;
 
+    for (i = 0; i < j; i++)
+        printf("\n%s", exec_input[i]);
+    
 
     // Free memory
     free(word_starts);
-    free(input);
 }
 
 int main(){
@@ -142,6 +150,6 @@ int main(){
         format_input(input_buffer);
     }
     
-
+    //free(input);
     return 0;
 }
