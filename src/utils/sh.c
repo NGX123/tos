@@ -1,7 +1,7 @@
 // File: sh.c
 // Description: system shell
-// Functions: getline, malloc, realloc
-// Problems: double spaces occur after cleaning in some combinations of tabs and spaces
+// Functions: getline, malloc, realloc, free, strtok, strlen, strcpy, printf
+// Problems:
 
 
 
@@ -10,39 +10,49 @@
 #include <string.h>
 #include <unistd.h>
 
-static int buffer_size = 1, var_size = 1;
-static char** buffer;
 char **exec_input;
 
-static void format_input(char input[]){
+static void format_input(char* input){
     char delimeter[2] = " ";
     char* token;
+    int i, j, len, buff_size = 1;
+
+    // Removes '\t' and '\n'
+    len = strlen(input);
+    for (i = 0; i < len;){
+        if (input[i] == '\n')
+            input[i++] = 0;
+        else if (input[i] == '\t'){
+            for (j = i; j < len; j++)
+                input[j] = input[j+1];
+            --len;  
+        }
+        else 
+            ++i;
+    }     
+    i = 0; j = 0; len = 0;
+
+    // Put tokens into a list
+    exec_input = malloc(sizeof(char*) * buff_size);
+    token = strtok(input, delimeter);
+    for(i = 0; token != NULL; i++) {
+        exec_input[i] = malloc(sizeof(char) * (strlen(token)+1));
+        strcpy(exec_input[i], token);
+        exec_input = realloc(exec_input, sizeof(char*) * ++buff_size);
+        token = strtok(NULL, delimeter);
+    }
+    exec_input[i] = NULL;
+    i = 0;
 
     printf("\n\n\n");
-    token = strtok(input, delimeter);
-    while( token != NULL ) {
-      printf( " %s\n", token );
-    
-      token = strtok(NULL, delimeter);
-    }
+    for (i = 0; exec_input[i] != NULL; i++)
+        printf("%s\n", exec_input[i]);
     
     
-    // // Removes '\t' and '\n'
-    // len = strlen(input);
-    // for (i = 0; i < len;){
-    //     if (input[i] == '\n')
-    //         input[i++] = 0;
-    //     else if (input[i] == '\t'){
-    //         for (j = i; j < len; j++)
-    //             input[j] = input[j+1];
-    //         --len;  
-    //     }
-    //     else 
-    //         ++i;
-    // }     
-    // i = 0; j = 0; len = 0;
 
-    
+
+
+
 }
 
 int main(){
@@ -53,16 +63,40 @@ int main(){
     while(1){
         getline(&input_buffer, &size, stdin);
         format_input(input_buffer);
+        
+        // Exit
+        if (strcmp(exec_input[0], "exit") == 0){
+            for (i = 0; exec_input[i] != NULL; i++)
+                free(exec_input[i]);
+            free(exec_input);
+            free(input_buffer);
+            exit(0);
+        }    
+
+        // Free buffers
+        for (i = 0; exec_input[i] != NULL; i++)
+                free(exec_input[i]);
+        free(exec_input);
     }
     
-    //free(input_buffer);
+    free(input_buffer);
     return 0;
 }
 
-
-
-
-
+    // Removes consecutive zeros
+    // len = strlen(input);
+    // for(i = 0; i < len;)
+    // {
+    //     if(input[i] == ' ' && input[i] == input[i+1])
+    //     {
+    //         for(j = i; j < len; j++)
+    //             input[j] = input[j+1];
+    //         --len;
+    //     }
+    //     else
+    //         i++;
+    // }
+    // i = 0; j = 0; len = 0; 
 
     /*
     + Strip the string free of tabs and enter symbols, 
