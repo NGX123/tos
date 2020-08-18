@@ -1,8 +1,8 @@
 // File: sh.c
 // Description: system shell
 // Functions: getline, malloc, realloc, free, strtok, strlen, strcpy, printf
-// Problems: leaks may be possible with full_path variable and concat function
-
+// Problems: leaks may be possible with full_path variable and concat function, add cd functionality to tell when there is too much arguments
+// To add: path function - adds paths to the include_paths variable, add output redirection with >, add funcionality to start multiple command in one statement with &, batch mode
 
 
 #include <stdlib.h>
@@ -14,13 +14,23 @@
 char **exec_input;
 
 // Help functions
+void error_handler(int error_type){
+    // 0 - execution or checking failed == recoverable
+    // 1 - Allocation error = fatal
+    // 2 - system call failed = fatal 
+    if (error_type > 0){
+        printf("Error: An error has occured");
+        exit(0);
+    }
+    else if (error_type == 2)
+        printf("Error: command not found or you do not have access to it\n");
+}
+
 char* concat(const char *s1, const char *s2)
 {
     char *result = malloc(strlen(s1) + strlen(s2) + 1); 
-    if (result == NULL){
-        printf("Error: Failed to concatenate strings");
-        exit(0);
-    }
+    if (result == NULL)
+        error_handler(1);
     strcpy(result, s1);
     strcat(result, s2);
     return result;
@@ -50,27 +60,21 @@ static void format_input(char* input){
 
     // Put tokens into a list
     exec_input = malloc(sizeof(char*) * buff_size);
-    if (exec_input == NULL){
-        printf("Error: Failed to allocate space for tokens");
-        exit(0);
-    }
+    if (exec_input == NULL)
+        error_handler(1);
     token = strtok(input, delimeter);
     for(i = 0; token != NULL; i++) {
         // Allocation and error detection
         exec_input[i] = malloc(sizeof(char) * (strlen(token)+1));
-        if (exec_input[i] == NULL){
-            printf("Error: Failed to allocate space for the token");
-            exit(0);
-        }
+        if (exec_input[i] == NULL)
+            error_handler(1);
 
         strcpy(exec_input[i], token);
 
         // Reallocation and error detection
         exec_input = realloc(exec_input, sizeof(char*) * ++buff_size);
-        if (exec_input == NULL){
-            printf("Error: Failed to reallocate space for the next token");
-            exit(0);
-        }
+        if (exec_input == NULL)
+            error_handler(1);
         
         token = strtok(NULL, delimeter);
     }
@@ -111,12 +115,14 @@ int main(){
             exit(0);
         }    
 
+        // CD
+        if (strcmp(exec_input[0], "cd") == 0)
+            chdir(exec_input[1]);
+
         // Create a new procces for the binary executable
         pid2 = fork();
-        if (pid2 < 0){
-            printf("Error: failed to start a new proccess");
-            exit(0);
-        }
+        if (pid2 < 0)
+            error_handler(2);
         // Execute the program
         else if (pid2 == 0){
             if (access(exec_input[0], X_OK) == -1){
@@ -131,7 +137,7 @@ int main(){
                     free(full_path);
                     token = strtok(NULL, delimeter);
                 }      
-                printf("Error: command not found or you do not have access to it\n");
+                error_handler(0);
                 exit(0);        
             }
 
