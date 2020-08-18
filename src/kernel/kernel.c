@@ -1,6 +1,5 @@
 // File: kernel.c
 // Description: this is the main file which starts all other files
-// Problems:
 
 
 
