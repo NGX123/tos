@@ -2,6 +2,8 @@
 // Description: contains declarations for driver functions
 
 
+#ifndef DRIVER_H
+#define DRIVER_H
 
 #include <stdint.h>
 
@@ -27,3 +29,4 @@ enum VGA_COLOR {
 extern void printc(enum VGA_COLOR fg, enum VGA_COLOR bg, const char character);
 extern void printk(char* string);
 extern void clear();
+#endif

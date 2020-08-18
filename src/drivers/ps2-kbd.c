@@ -4,7 +4,7 @@
 
 
 // Includes
-#include "../kernel/x86.h"
+#include "x86.h"
 #include "driver.h"
 #include <stdint.h>
 

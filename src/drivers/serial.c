@@ -2,8 +2,7 @@
 // Description: this file includes functions for interacting with serial port 
 
 
-
-#include "../kernel/x86.h"
+#include "x86.h"
 #define PORT 0x3f8
 
 // Initialize the serial port configuration

@@ -2,7 +2,7 @@ CC = $(HOME)/opt/cross-compiler/bin/i686-elf-gcc
 AS = nasm
 
 ASFLAGS = -felf32
-CFLAGS = -std=gnu99 -ffreestanding -nostdlib -O2 -Wall -Wextra -c
+CFLAGS = -I libs/headers -std=gnu99 -ffreestanding -nostdlib -O2 -Wall -Wextra -c
 LDFLAGS = -T make/linker.ld -ffreestanding -nostdlib -O2  -lgcc
 
 SOURCES = drivers/*.c kernel/*.c init/*.c #playground/*.c

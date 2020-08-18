@@ -2,6 +2,8 @@
 // Description: incldes declaration for the functions
 
 
+#ifndef KERNEL_H
+#define KERNEL_H
 
 #include <stdint.h>
 
@@ -19,3 +21,4 @@ extern void  keyboard_init();
 extern void  enable_cursor(uint8_t cursor_start, uint8_t cursor_end);
 extern void  disable_cursor();
 extern void  update_cursor(int x, int y); 
+#endif
