@@ -50,19 +50,37 @@ static void format_input(char* input){
 
     // Put tokens into a list
     exec_input = malloc(sizeof(char*) * buff_size);
+    if (exec_input == NULL){
+        printf("Error: Failed to allocate space for tokens");
+        exit(0);
+    }
     token = strtok(input, delimeter);
     for(i = 0; token != NULL; i++) {
+        // Allocation and error detection
         exec_input[i] = malloc(sizeof(char) * (strlen(token)+1));
+        if (exec_input[i] == NULL){
+            printf("Error: Failed to allocate space for the token");
+            exit(0);
+        }
+
         strcpy(exec_input[i], token);
+
+        // Reallocation and error detection
         exec_input = realloc(exec_input, sizeof(char*) * ++buff_size);
+        if (exec_input == NULL){
+            printf("Error: Failed to reallocate space for the next token");
+            exit(0);
+        }
+        
         token = strtok(NULL, delimeter);
     }
     exec_input[i] = NULL;
     i = 0;
-
-    printf("\n\n\n");
-    for (i = 0; exec_input[i] != NULL; i++)
-        printf("%s\n", exec_input[i]);
+    
+    // DEBUG PRINT STATEMENTS
+    // printf("\n\n\n");
+    // for (i = 0; exec_input[i] != NULL; i++)
+    //     printf("%s\n", exec_input[i]);
 }
 
 int main(){
@@ -80,7 +98,7 @@ int main(){
 
     while(1){
         // Get input
-        printf("> ");
+        printf("\n> ");
         getline(&input_buffer, &size, stdin);
         format_input(input_buffer);
         
@@ -113,7 +131,7 @@ int main(){
                     free(full_path);
                     token = strtok(NULL, delimeter);
                 }      
-                printf("Error: command not found or you do not have access to it");
+                printf("Error: command not found or you do not have access to it\n");
                 exit(0);        
             }
 
