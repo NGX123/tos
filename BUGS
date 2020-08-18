@@ -9,6 +9,12 @@ kbd.c
  + CAPS won't turn off
  + In shift mode symbols print with extra random unreleated symbols (e.g. shift + q outputs Qb)
  
+cat.c
+ + find a better way to implement flags(e.g. -t)
+ + add flags - b, e, s, t
+ + -n flag does not print line numbers normally
+ + there are problems with input of the same flags like -A and -v
 
-kernel.h driver.h
- + if problems occur extern can be removed
+sh.c 
+ + leaks may be possible in full_path variable and concat function
+ + cd does not tell if too much arguments were given(but still uses only the first

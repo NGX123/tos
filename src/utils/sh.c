@@ -1,8 +1,8 @@
 // File: sh.c
 // Description: system shell
 // Functions: getline, malloc, realloc, free, strtok, strlen, strcpy, printf
-// Problems: leaks may be possible with full_path variable and concat function, add cd functionality to tell when there is too much arguments
 // To add: path function - adds paths to the include_paths variable, add output redirection with >, add funcionality to start multiple command in one statement with &, batch mode
+
 
 
 #include <stdlib.h>
