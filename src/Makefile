@@ -1,22 +1,41 @@
+# Cross-compiler 
 CC = $(HOME)/opt/cross-compiler/bin/i686-elf-gcc
-# CC = gcc 		# No cross compiler
 AS = nasm
 
 ASFLAGS = -felf32
 CFLAGS = -I libs/headers -std=gnu99 -ffreestanding -nostdlib -O2 -Wall -Wextra -c
 LDFLAGS = -T make/linker.ld -ffreestanding -nostdlib -O2  -lgcc
-# CFLAGS = -I libs/headers -ffreestanding -nostdlib -nostdinc -nostartfiles -nodefaultlibs -fno-builtin -fno-stack-protector  -Wall -Wextra -Werror -m32 -c		# No cross compiler flags
-# LDFLAGS = -T make/linker.ld -ffreestanding -nostdlib -m elf_i386																								# No cross compiler flags
+
+
+# No Cross-compiler(Look in little osdev book for flags)
+CC_NOCROSS = gcc 		
+AS_NOCROSS = nasm
+
+ASFLAGS_NOCROSS = -felf32
+CFLAGS_NOCROSS = -I libs/headers -ffreestanding -nostdlib -nodefaultlibs -nostartfiles -fno-builtin -fno-stack-protector -Wall -Wextra -m32 -c		# -nostdinc
+LDFLAGS_NOCROSS = -T make/linker.ld -ffreestanding -nostdlib -m elf_i386																								
+
 
 SOURCES = drivers/*.c kernel/*.c init/*.c libs/*.c #playground/*.c
 OBJECTS = *.o #boot.o kernel.o
 
 
-# Main compilation command
+# Main compilation command with cross-compiler
 all:
 	$(AS) $(ASFLAGS) init/boot.s -o boot.o
 	$(CC) $(CFLAGS) $(SOURCES)
 	$(CC) $(LDFLAGS) $(OBJECTS) -o os.o
+
+	mkdir -p iso/boot/grub
+	mv os.o iso/boot/
+	cp make/grub.cfg iso/boot/grub/
+	grub2-mkrescue -o os.iso iso
+
+# Main compilation command with system compiler
+all-nocross:
+	$(AS_NOCROSS) $(ASFLAGS_NOCROSS) init/boot.s -o boot.o
+	$(CC_NOCROSS) $(CFLAGS_NOCROSS) $(SOURCES)
+	ld $(LDFLAGS_NOCROSS) $(OBJECTS) -o os.o
 
 	mkdir -p iso/boot/grub
 	mv os.o iso/boot/
@@ -34,20 +53,4 @@ qemu-serial:
 # Cleans objects after the 
 clean:
 	rm -rf *.o *iso
-
-
-
-# Test before adding to main compilaion routine
-test:
-	$(AS) $(ASFLAGS) init/boot.s -o boot.o
-
-	$(CC) $(CFLAGS) drivers/*.c 
-	$(CC) $(CFLAGS) kernel/*.c
-	
-	$(CC) $(LDFLAGS) $(OBJECTS) -o os.o
-	
-	mkdir -p iso/boot/grub
-	mv os.o iso/boot/
-	cp make/grub.cfg iso/boot/grub/
-	grub2-mkrescue -o os.iso iso
 
