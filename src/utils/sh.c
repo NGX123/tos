@@ -20,9 +20,9 @@ void error_handler(int error_type){
     // 2 - system call failed = fatal 
     if (error_type > 0){
         printf("Error: An error has occured");
-        exit(0);
+        exit(1);
     }
-    else if (error_type == 2)
+    else if (error_type == 0)
         printf("Error: command not found or you do not have access to it\n");
 }
 
@@ -64,12 +64,10 @@ static void format_input(char* input){
         error_handler(1);
     token = strtok(input, delimeter);
     for(i = 0; token != NULL; i++) {
-        // Allocation and error detection
-        exec_input[i] = malloc(sizeof(char) * (strlen(token)+1));
+        // Allocation and error detection - Errors may occur with strdup, if so switch back to the manual malloc
+        exec_input[i] = strdup(token);
         if (exec_input[i] == NULL)
             error_handler(1);
-
-        strcpy(exec_input[i], token);
 
         // Reallocation and error detection
         exec_input = realloc(exec_input, sizeof(char*) * ++buff_size);
