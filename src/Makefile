@@ -1,9 +1,12 @@
 CC = $(HOME)/opt/cross-compiler/bin/i686-elf-gcc
+# CC = gcc 		# No cross compiler
 AS = nasm
 
 ASFLAGS = -felf32
 CFLAGS = -I libs/headers -std=gnu99 -ffreestanding -nostdlib -O2 -Wall -Wextra -c
 LDFLAGS = -T make/linker.ld -ffreestanding -nostdlib -O2  -lgcc
+# CFLAGS = -I libs/headers -ffreestanding -nostdlib -nostdinc -nostartfiles -nodefaultlibs -fno-builtin -fno-stack-protector  -Wall -Wextra -Werror -m32 -c		# No cross compiler flags
+# LDFLAGS = -T make/linker.ld -ffreestanding -nostdlib -m elf_i386																								# No cross compiler flags
 
 SOURCES = drivers/*.c kernel/*.c init/*.c libs/*.c #playground/*.c
 OBJECTS = *.o #boot.o kernel.o
