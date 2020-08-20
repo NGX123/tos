@@ -11,27 +11,6 @@ extern void load_idt();
 extern int irq0();
 extern int irq1();
 
-
-// Defines a data structure for IDT
-struct idt_entry{
-    uint16_t offset_lowerbits;
-    uint16_t selector;
-
-    uint8_t zero;
-    uint8_t flags;
-    uint16_t offset_higherbits;
-
-} __attribute__((packed));
-
-// Defines a pointer to the IDT data structure
-struct idt_pointer{
-    uint16_t size;
-    uint64_t address;
-} __attribute__((packed));
-
-
-
-
 // Initializations
 struct idt_entry IDT[IDT_COUNT];
 struct idt_pointer ip;
@@ -51,9 +30,6 @@ void idt_init(){
     outb(0xA1, 0x0);
 
 
-
-
-    
     // Initialize the IDT entry with values
 	IDT[32].offset_lowerbits = (uint32_t)irq0 & 0xffff;
 	IDT[32].selector = 0x08; /* KERNEL_CODE_SEGMENT_OFFSET */
