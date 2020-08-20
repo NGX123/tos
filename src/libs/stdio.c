@@ -42,7 +42,7 @@ static void printint(int xx, int base, int sgn)
         putchar(buf[i]);
 }
 
-// Small printf function - only understands %d, %x, %p, %s.
+// Small printf function - only understands %d, %x, %p, %s, %c
 void printf(const char *fmt, ...)
 {
   char *s;
