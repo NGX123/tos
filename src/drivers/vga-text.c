@@ -68,21 +68,7 @@ static void updatexy(){
 
 
 
-/// Display Output functions ///
-// Outputs a character
-void printc(enum VGA_COLOR fg, enum VGA_COLOR bg, const char character){
-    // Mixing colours into one byte
-    uint8_t color = fg | bg << 4;
-
-    text_buffer[byte++] = character;
-    text_buffer[byte++] = color;
-
-    ++cell;
-    // Change the color of the cursor by changing next cell color
-    text_buffer[cell * 2 + 1] = color; 
-    updatexy();
-}
-
+// Special symbol functions
 // Removes last printed letter
 void backspace(){
     uint8_t color = terminal_fg | terminal_bg << 4;
@@ -126,6 +112,28 @@ void arrows(const char direction){
 
 
 
+/// Display Output functions ///
+// Outputs a character
+void printc(enum VGA_COLOR fg, enum VGA_COLOR bg, const char character){
+    if (character == '\n')
+        enter();
+    else if (character == '\t')
+        for (int i = 0; i <= 4; i++)
+            printc(green, black, ' ');
+    else{
+        // Mixing colours into one byte
+        uint8_t color = fg | bg << 4;
+
+        text_buffer[byte++] = character;
+        text_buffer[byte++] = color;
+
+        ++cell;
+        
+        // Change the color of the cursor by changing next cell color
+        text_buffer[cell * 2 + 1] = color; 
+        updatexy();
+    } 
+}
 
 /// Normal functions ///
 // Can print with all symbols like \t and automatiacally uses the console color without the need to set it up
