@@ -5,10 +5,14 @@
 
 #include "kernel.h"
 #include "x86.h"
+#include "string.h"
+#include "stdio.h"
+// Move to normal implementation
+#include "../drivers/acpi.h"
 
 // Core function of the kernel that is called by bootloader
 void kernel_main(){
-    clear();
+    findRSDPDescriptor();
     enable_cursor(0, 15);
     printk("Initialised: Screen\n");
     

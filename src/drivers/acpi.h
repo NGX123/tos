@@ -6,7 +6,7 @@
 #include "stdio.h"
 #include "string.h"
 
-// Contains the structure structure for the RSPD Descriptor in ACPI v2
+// Strucuture for the RSPD Descriptor in ACPI v2
 struct RSDPDescriptor {
     char Signature[8];
     uint8_t Checksum;
@@ -15,7 +15,7 @@ struct RSDPDescriptor {
     uint32_t RsdtAddress;
 } __attribute__ ((packed));
 
-// Contains the structure structure for the RSPD Descriptor in ACPI v2
+// Structure for the RSPD Descriptor in ACPI v2
 struct RSDPDescriptor20 {
  struct RSDPDescriptor firstPart;
  
@@ -46,10 +46,11 @@ void findRSDPDescriptor(){
 
             if (strcmp("RSD PTR ", array) == 0){
                 printf("\nACPI Device found\n");
-                rsdp_tables[l] = (struct RSDPDescriptor*)start_serch[i];
-                printf("%d", rsdp_tables[l++]->Revision);                
-            }
-                
+                rsdp_tables[l] = (struct RSDPDescriptor*)&start_serch[i];
+                printf("start_serch[i] - %p\n", &start_serch[i]);
+                printf("rsdp - %p\n", rsdp_tables[l]);
+                printf("%d", rsdp_tables[l++]->Revision);              
+            }       
         }
     }
 }
