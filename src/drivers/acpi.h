@@ -46,8 +46,8 @@ void findRSDPDescriptor(){
 
             if (strcmp("RSD PTR ", array) == 0){
                 printf("\nACPI Device found\n");
-                rsdp_tables[l] = (struct RSDPDescriptor*)&start_serch[i];
-                printf("%s", rsdp_tables[l++]->Revision);                
+                rsdp_tables[l] = (struct RSDPDescriptor*)start_serch[i];
+                printf("%d", rsdp_tables[l++]->Revision);                
             }
                 
         }
