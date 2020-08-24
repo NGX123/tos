@@ -7,12 +7,11 @@
 #include "x86.h"
 #include "string.h"
 #include "stdio.h"
-// Move to normal implementation
-#include "../drivers/acpi.h"
+#include "acpi.h"
 
 // Core function of the kernel that is called by bootloader
 void kernel_main(){
-    findRSDPDescriptor();
+    findRSDPinEBDA();
     enable_cursor(0, 15);
     printk("Initialised: Screen\n");
     
@@ -23,7 +22,5 @@ void kernel_main(){
     setFlat();
     
     idt_init();
-
-    
 }
 
