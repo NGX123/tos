@@ -6,7 +6,7 @@
 #include <stdint.h>
 
 // ACPIv1 RSPD structure
-struct RSDPDescriptor {
+struct RSDP {
     char Signature[8];
     uint8_t Checksum;
     char OEMID[6];
@@ -15,8 +15,8 @@ struct RSDPDescriptor {
 } __attribute__ ((packed));
 
 // ACPIv2 RSPD structure
-struct RSDPDescriptor20 {
- struct RSDPDescriptor firstPart;
+struct RSDP2 {
+ struct RSDP firstPart;
  
  uint32_t Length;
  uint64_t XsdtAddress;
@@ -37,9 +37,24 @@ struct ACPISDT {
     uint32_t CreatorRevision;
 };
 
+// RSDT structure
+struct RSDT {
+    struct ACPISDT h;
+    uint32_t sdtptr;
+};
+
+// XSDT structure(for ACPIv2)
+struct XSDT {
+    struct ACPISDT h;
+    uint32_t stdptr;
+};
+
 // Finds pointer to RSDP in EBDA
-extern void findRSDPinEBDA();
+extern struct RSDP* findRSDPinEBDA();
 
 // Finds pointer to RSDP in Extra Memory
-extern void findRSDPinEXTMEM();
+extern struct RSDP* findRSDPinEXTMEM();
+
+// Find the RSDT by RSDP
+extern void findSDT(struct RSDP* RSDPstruct);
 #endif
