@@ -8,6 +8,27 @@
 #include "string.h"
 #include "acpi.h"
 
+// One function to control the ACPI and the only one to be exposed
+// 1 - find the fadt, 
+void* ACPIcontrol(int action){
+    if (action == 1){
+        // Find the RSDP
+        struct RSDP* RSDPstruct;
+        struct FADT* FADTstruct;
+        if ((RSDPstruct = findRSDPinEBDA()) == NULL)
+            if ((RSDPstruct = findRSDPinEXTMEM()) == NULL)
+                return NULL;
+
+        if ((FADTstruct = findSDT(RSDPstruct, "FACP")) == NULL)
+            return NULL;
+        else{
+            return (struct FADT*)FADTstruct;
+        }
+            
+    }
+    return NULL;
+}
+
 // Finds for RSDP in EBDA
 struct RSDP* findRSDPinEBDA(){
     volatile char* EBDApointer = (volatile char*)0x40E;
@@ -35,10 +56,7 @@ struct RSDP* findRSDPinEBDA(){
         }
     }
     // Case if signature not found
-    if (strcmp("RSD PTR ", signature) != 0)
-        RSDPstruct =  NULL;
-
-    return RSDPstruct;
+    return NULL;
 }
 
 // Search for RSDP in  Extra Memory
@@ -74,35 +92,17 @@ struct RSDP* findRSDPinEXTMEM(){
 }
 
 // Find the SDTs in memory
-void findSDT(struct RSDP* RSDPstruct){
-    int i, j;
+void* findSDT(struct RSDP* RSDPstruct, char* signature){
+    int i;
     struct RSDT* RSDTstruct = (struct RSDT*)RSDPstruct->RsdtAddress;
     int entries_amount = (RSDTstruct->h.Length - sizeof(struct ACPISDT)) / 4;
-    printf("\nSignatureRSDT - %s\n", RSDTstruct->h.Signature);
 
     for (i = 0; i < entries_amount; i++){
         struct ACPISDT* ACPISDTtmp = (struct ACPISDT*)(RSDTstruct->sdtptr+i);
-        char strtmp[5];
-        for (j = 0; j < 4; j++)
-            strtmp[j] = ACPISDTtmp->Signature[j];
-        strtmp[j] = 0; 
-
-        printf("%s\n", strtmp);
+    
+        if (strncmp(ACPISDTtmp->Signature, signature, 4) == 0)
+            return (void*)ACPISDTtmp;
     }
-}
 
-// void *findFACP(void *RootSDT)
-// {
-//     RSDT *rsdt = (RSDT *) RootSDT;
-//     int entries = (rsdt->h.Length - sizeof(rsdt->h)) / 4;
- 
-//     for (int i = 0; i < entries; i++)
-//     {
-//         ACPISDTHeader *h = (ACPISDTHeader *) rsdt->PointerToOtherSDT[i];
-//         if (!strncmp(h->Signature, "FACP", 4))
-//             return (void *) h;
-//     }
- 
-//     // No FACP found
-//     return NULL;
-// }
+    return NULL;
+}

@@ -11,7 +11,10 @@
 
 // Core function of the kernel that is called by bootloader
 void kernel_main(){
-    findRSDPinEBDA();
+    struct FADT* FADTstruct;
+    if ((FADTstruct = (struct FADT*)ACPIcontrol(1)) != NULL)
+        printk("Initialised: ACPI\n");
+
     enable_cursor(0, 15);
     printk("Initialised: Screen\n");
     
