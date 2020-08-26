@@ -8,98 +8,101 @@
 #include "string.h"
 #include "acpi.h"
 
-struct RSDPDescriptor *rsdp_struct;
-
-/// RSDP ///
 // Finds for RSDP in EBDA
-void findRSDPinEBDA(){
+struct RSDP* findRSDPinEBDA(){
     volatile char* EBDApointer = (volatile char*)0x40E;
-    volatile char* EBDA = (volatile char*)*EBDApointer;
+    volatile char* EBDA = (volatile char*)((int)*EBDApointer);
     
-    char array[9];      
-    int i = 0;          // Counter for going through all memory
-    int j = 0;          // Counter for going through the string in memory
-    int k = 0;          // Counter for going through the string in array  
+    struct RSDP* RSDPstruct;    // RSDP structure
+    char signature[9];          // Signature 
+    int i = 0;                  // Counter for going through all memory
+    int j = 0;                  // Counter for going through the string in memory
+    int k = 0;                  // Counter for going through the string in array  
 
     // Search EBDA
     for (i = 0; i != 1023; i++){
+        // Put the signature in the array
         if (EBDA[i] == 'R'){
             for (j = i, k = 0; j != (i+8); j++, k++)
-                array[k] = EBDA[j];
-            array[k] = 0;
-
-            if (strcmp("RSD PTR ", array) == 0){
-                printf("\nRSDP struct found\n");
-                rsdp_struct = (struct RSDPDescriptor*)&EBDA[i];
-
-                printf("\nSignature - %s\n", array);
-                printf("Checksum - %d\n", rsdp_struct->Checksum);
-                printf("OEM ID - %s\n", rsdp_struct->OEMID);   
-                printf("Revision - %d\n", rsdp_struct->Revision);  
-                printf("Address - %p\n", rsdp_struct->RsdtAddress); 
-                //findRSDT();
-                break;       
+                signature[k] = EBDA[j];
+            signature[k] = 0;
+            
+            // Case if signature found
+            if (strcmp("RSD PTR ", signature) == 0){
+                RSDPstruct = (struct RSDP*)&EBDA[i];
+                return RSDPstruct;       
             }       
         }
     }
-    if (strcmp("RSD PTR ", array) != 0)
-        findRSDPinEXTMEM();
+    // Case if signature not found
+    if (strcmp("RSD PTR ", signature) != 0)
+        RSDPstruct =  NULL;
+
+    return RSDPstruct;
 }
 
 // Search for RSDP in  Extra Memory
-void findRSDPinEXTMEM(){
+struct RSDP* findRSDPinEXTMEM(){
     volatile char* EXTMEMstart = (volatile char*)0x000E0000;
     volatile char* EXTMEMend = (volatile char*)0x000FFFFF;
 
-    char array[9];      // Array for storing the string
+    struct RSDP* RSDPstruct;
+    char signature[9];  // Array for storing the string
     int i;              // Counter for going through all memory
     int j;              // Counter for going through string in memory
     int k;              // Counter for going through string in array
     
-    printf("No RSDP found in the EBDA, searching extra memory\n");
     for (i = 0; &EXTMEMstart[i] != EXTMEMend; i++){
+        // Put signature into array
         if (EXTMEMstart[i] == 'R'){
             for (j = i, k = 0; j != (i+8); j++, k++)
-                array[k] = EXTMEMstart[j];
-            array[k] = 0;
+                signature[k] = EXTMEMstart[j];
+            signature[k] = 0;
 
-            if (strcmp("RSD PTR ", array) == 0){
-                printf("\nRSDP struct found\n");
-                rsdp_struct = (struct RSDPDescriptor*)&EXTMEMstart[i];
-
-                printf("\nSignature - %s\n", array);
-                printf("Checksum - %d\n", rsdp_struct->Checksum);
-                printf("OEM ID - %s\n", rsdp_struct->OEMID);   
-                printf("Revision - %d\n", rsdp_struct->Revision);  
-                printf("Address - %p\n", rsdp_struct->RsdtAddress);
-                //findRSDT();
-                break;     
+            // Case if signature was found
+            if (strcmp("RSD PTR ", signature) == 0){
+                RSDPstruct = (struct RSDP*)&EXTMEMstart[i];
+                return RSDPstruct;   
             }       
         }
     }
-    if (strcmp("RSD PTR ", array) != 0)
-        printf("Failed to initialize ACPI\n");
+    // Case if signature not found
+    if (strcmp("RSD PTR ", signature) != 0)
+        RSDPstruct = NULL;
+
+    return RSDPstruct;
 }
 
+// Find the SDTs in memory
+void findSDT(struct RSDP* RSDPstruct){
+    int i, j;
+    struct RSDT* RSDTstruct = (struct RSDT*)RSDPstruct->RsdtAddress;
+    int entries_amount = (RSDTstruct->h.Length - sizeof(struct ACPISDT)) / 4;
+    printf("\nSignatureRSDT - %s\n", RSDTstruct->h.Signature);
 
+    for (i = 0; i < entries_amount; i++){
+        struct ACPISDT* ACPISDTtmp = (struct ACPISDT*)(RSDTstruct->sdtptr+i);
+        char strtmp[5];
+        for (j = 0; j < 4; j++)
+            strtmp[j] = ACPISDTtmp->Signature[j];
+        strtmp[j] = 0; 
 
+        printf("%s\n", strtmp);
+    }
+}
 
-/// RSDT ///
-// RSDT structure
-// struct RSDT {
-//     struct ACPISDT h;
-//     uint32_t SDTpointer[(h.Length - sizeof(h.Length)) / 4];
-// };
-
-// // XSDT structure(for ACPIv2)
-// struct XSDT {
-//     struct ACPISDT h;
-//     uint32_t SDTpointer[(h.Length - sizeof(h.Length)) / 8];
-// };
-    
-// void findRSDT(){
-//     struct RSDT* RSDTaddress = (struct RSDT*)rsdp_tables[0]->RsdtAddress;
-
-//     printf("\nSignatureRSDT - %s\n", RSDTaddress->h.Signature);
-
+// void *findFACP(void *RootSDT)
+// {
+//     RSDT *rsdt = (RSDT *) RootSDT;
+//     int entries = (rsdt->h.Length - sizeof(rsdt->h)) / 4;
+ 
+//     for (int i = 0; i < entries; i++)
+//     {
+//         ACPISDTHeader *h = (ACPISDTHeader *) rsdt->PointerToOtherSDT[i];
+//         if (!strncmp(h->Signature, "FACP", 4))
+//             return (void *) h;
+//     }
+ 
+//     // No FACP found
+//     return NULL;
 // }
