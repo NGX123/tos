@@ -64,7 +64,7 @@ extern struct RSDP* findRSDPinEBDA();
 // Finds pointer to RSDP in Extra Memory
 extern struct RSDP* findRSDPinEXTMEM();
 
-// Find the RSDT by RSDP
+// Find the different SDTs using RSDT
 extern void* findSDT(struct RSDP* RSDPstruct, char* signature);
 
 // The main function to control the ACPI

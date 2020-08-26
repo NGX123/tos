@@ -55,7 +55,6 @@ struct RSDP* findRSDPinEBDA(){
             }       
         }
     }
-    // Case if signature not found
     return NULL;
 }
 
@@ -84,11 +83,7 @@ struct RSDP* findRSDPinEXTMEM(){
             }       
         }
     }
-    // Case if signature not found
-    if (strcmp("RSD PTR ", signature) != 0)
-        RSDPstruct = NULL;
-
-    return RSDPstruct;
+    return NULL;
 }
 
 // Find the SDTs in memory
