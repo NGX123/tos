@@ -19,6 +19,5 @@ sh.c
  + leaks may be possible in full_path variable and concat function
  + cd does not tell if too much arguments were given(but still uses only the first
 
-x86.c x86.h
- + may have problems with inline assembly
- + may need inline declaration
+acpi.c
+ + does not have a handler for XSDT
