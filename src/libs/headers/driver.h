@@ -27,7 +27,7 @@ enum VGA_COLOR {
     white = 0xF
 };
 
-extern void printc(enum VGA_COLOR fg, enum VGA_COLOR bg, const char character);
-extern void printk(char* string);
-extern void clear();
+extern void initScreen();
+extern void changeColor(enum VGA_COLOR fg, enum VGA_COLOR bg);
+extern void printScreen(const char character);
 #endif
