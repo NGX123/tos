@@ -20,8 +20,9 @@
 /// Declarations ///
 // Colors for fore and background of text in vga text mode
 static volatile char* text_buffer = (volatile char*)VGA;
-static enum VGA_COLOR terminal_fg = green;
-static enum VGA_COLOR terminal_bg = black;
+static enum VGA_COLOR terminal_fg;
+static enum VGA_COLOR terminal_bg;
+static uint8_t color;
 static int cell; // Counts cells(2 bytes - char + color)
 static int byte; // Counts each byte in video memory
 static int x;
@@ -30,9 +31,9 @@ static int y;
 
 
 
-/// Cursor functions ///
+/// CURSOR ///
 // Enable the cursor
-void enable_cursor(uint8_t cursor_start, uint8_t cursor_end)
+static void enable_cursor(uint8_t cursor_start, uint8_t cursor_end)
 {
 	outb(0x3D4, 0x0A);
 	outb(0x3D5, (inb(0x3D5) & 0xC0) | cursor_start);
@@ -42,14 +43,14 @@ void enable_cursor(uint8_t cursor_start, uint8_t cursor_end)
 }
 
 // Disable the cursor 
-void disable_cursor()
+static void disable_cursor()
 {
 	outb(0x3D4, 0x0A);
 	outb(0x3D5, 0x20);
 }
 
 // Update the position of the cursor 
-void update_cursor(int x, int y)
+static void update_cursor(int x, int y)
 {
 	uint16_t pos = y * VGA_WIDTH + x;
  
@@ -68,9 +69,9 @@ static void updatexy(){
 
 
 
-// Special symbol functions
+//// SPECIAL SYMBOLS ///
 // Removes last printed letter
-void backspace(){
+static void backspace(){
     uint8_t color = terminal_fg | terminal_bg << 4;
     
     --byte;
@@ -83,7 +84,7 @@ void backspace(){
 }
 
 // Moves onto the next line
-void enter(){
+static void enter(){
     uint8_t color = terminal_fg | terminal_bg << 4;
 
     ++y;
@@ -96,7 +97,7 @@ void enter(){
 }
 
 // Moves cursor accrording to keyboard arrows 
-void arrows(const char direction){
+static void arrows(const char direction){
     if (direction == '<'){
         --byte;
         --byte;
@@ -110,20 +111,45 @@ void arrows(const char direction){
     updatexy();
 }
 
+// Clears the screen and moves the cursor to the start
+static void clear(){
+    volatile char* text_buffer = (char*)VGA;
+    for (int i = 0; i <= 4000; i++){
+        text_buffer[i] = BLANK;
+    }
+    byte = 0;
+    cell = 0;
+    updatexy();
+}
 
 
-/// Display Output functions ///
-// Outputs a character
-void printc(enum VGA_COLOR fg, enum VGA_COLOR bg, const char character){
+
+
+/// DRIVER INTERFACE ///
+// Initialises the screen
+void initScreen(){
+    terminal_fg = green;
+    terminal_fg = black;
+    color = terminal_fg | terminal_bg << 4;
+
+    enable_cursor(0, 15);
+}
+
+// Changes screen color 
+void changeColor(enum VGA_COLOR fg, enum VGA_COLOR bg) {
+    terminal_fg = fg;
+    terminal_bg = bg;
+    color = terminal_fg | terminal_bg << 4;
+}
+
+// Outputs a character to the screen
+void printScreen(const char character){
     if (character == '\n')
         enter();
     else if (character == '\t')
         for (int i = 0; i <= 4; i++)
             printc(green, black, ' ');
     else{
-        // Mixing colours into one byte
-        uint8_t color = fg | bg << 4;
-
         text_buffer[byte++] = character;
         text_buffer[byte++] = color;
 
@@ -133,49 +159,4 @@ void printc(enum VGA_COLOR fg, enum VGA_COLOR bg, const char character){
         text_buffer[cell * 2 + 1] = color; 
         updatexy();
     } 
-}
-
-/// Normal functions ///
-// Can print with all symbols like \t and automatiacally uses the console color without the need to set it up
-void printk(char *string){
-    for (int i = 0; string[i] != 0; i++){
-        if (string[i] == '\n')
-            enter();
-        else if (string[i] == '\t')
-            for (int i = 0; i <= 4; i++)
-                printc(green, black, ' ');
-        else 
-            printc(terminal_fg, terminal_bg, string[i]);        
-    }
-    updatexy();
-}
-
-void scank(){
-    
-}
-
-
-// Info prints ///
-void display_gdt(){
-    // prints(terminal_fg, terminal_bg, "Initialized: GDT, ");
-    printk("Initialized: GDT\n");
-}
-
-void display_idt(){
-    // prints(terminal_fg, terminal_bg, "Initialised: IDT, ");
-    printk("Initialised: IDT\n");
-}
-
-
-
-
-// EXTRA ///
-void clear(){
-    volatile char* text_buffer = (char*)VGA;
-    for (int i = 0; i <= 4000; i++){
-        text_buffer[i] = BLANK;
-    }
-    byte = 0;
-    cell = 0;
-    updatexy();
 }
