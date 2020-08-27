@@ -5,12 +5,13 @@
 
 // Prints a character to the screen
 void putchar(int chara){
-    printc(green, black, chara);
+    printScreen(chara);
 }
 
 // Prints a string to the screen
-void puts(char* str){
-    printk(str);
+void puts(char* str){   
+    for (int i = 0; str[i] != 0; i++)
+        putchar(str[i]);
 }
 
 
