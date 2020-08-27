@@ -147,8 +147,16 @@ void printScreen(const char character){
     if (character == '\n')
         enter();
     else if (character == '\t')
-        for (int i = 0; i <= 4; i++)
-            printc(green, black, ' ');
+        for (int i = 0; i <= 4; i++){
+            text_buffer[byte++] = ' ';
+            text_buffer[byte++] = color;
+
+            ++cell;
+        
+            // Change the color of the cursor by changing next cell color
+            text_buffer[cell * 2 + 1] = color; 
+            updatexy();
+        }  
     else{
         text_buffer[byte++] = character;
         text_buffer[byte++] = color;
