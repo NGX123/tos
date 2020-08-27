@@ -14,7 +14,7 @@ void kernel_main(){
     struct FADT* FADTstruct;
 
     // Turns the cursor on and sets it size
-    enable_cursor(0, 15);
+    initScreen();
     printk("Initialised: Screen\n");
 
     // Sets the flat memory mode and initializes GDT
