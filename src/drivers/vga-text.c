@@ -14,7 +14,8 @@
 #define ROWS 25  
 #define BLANK 0
 
-
+#define LARROW 0x4B
+#define RARROW 0x4D
 
 
 /// Declarations ///
@@ -112,15 +113,15 @@ static void arrows(const char direction){
 }
 
 // Clears the screen and moves the cursor to the start
-static void clear(){
-    volatile char* text_buffer = (char*)VGA;
-    for (int i = 0; i <= 4000; i++){
-        text_buffer[i] = BLANK;
-    }
-    byte = 0;
-    cell = 0;
-    updatexy();
-}
+// static void clear(){
+//     volatile char* text_buffer = (char*)VGA;
+//     for (int i = 0; i <= 4000; i++){
+//         text_buffer[i] = BLANK;
+//     }
+//     byte = 0;
+//     cell = 0;
+//     updatexy();
+// }
 
 
 
@@ -129,7 +130,7 @@ static void clear(){
 // Initialises the screen
 void initScreen(){
     terminal_fg = green;
-    terminal_fg = black;
+    terminal_bg = black;
     color = terminal_fg | terminal_bg << 4;
 
     enable_cursor(0, 15);
@@ -157,6 +158,12 @@ void printScreen(const char character){
             text_buffer[cell * 2 + 1] = color; 
             updatexy();
         }  
+    else if (character == LARROW)
+        arrows('<');
+    else if (character == RARROW)
+        arrows('>');
+    else if (character == '\b')
+        backspace();
     else{
         text_buffer[byte++] = character;
         text_buffer[byte++] = color;

@@ -49,21 +49,21 @@ void keyboard_handler(){
 
 
         // RETURN TO TEST
-        if(scancode < 0)
-			return;
+        // if(scancode < 0)
+		// 	return;
 
-        switch (scanset1[(int)scancode]){
-            case NO:
-            case ESC:
-            case CONTROL:
-            case ALT:
-            case CAPSLOCK:
-            case SHIFT:
-                break;
-            default:
-                printScreen(scanset1[(int)scancode]);
-                break;
-        }
+        // switch (scanset1[(int)scancode]){
+        //     case NO:
+        //     case ESC:
+        //     case CONTROL:
+        //     case ALT:
+        //     case CAPSLOCK:
+        //     case SHIFT:
+        //         break;
+        //     default:
+        //         printScreen(scanset1[(int)scancode]);
+        //         break;
+        // }
     }
 }
 
