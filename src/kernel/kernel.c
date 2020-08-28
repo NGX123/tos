@@ -3,11 +3,15 @@
 
 
 
-#include "kernel.h"
+#include "driver.h"
 #include "x86.h"
 #include "string.h"
 #include "stdio.h"
 #include "acpi.h"
+#include "libk.h"
+
+extern void  setFlat();
+extern void  idt_init();
 
 // Core function of the kernel that is called by bootloader
 void kernel_main(){
@@ -15,7 +19,7 @@ void kernel_main(){
 
     // Turns the cursor on and sets it size
     initScreen();
-    printk("Initialised: Screen\n");
+    printsys("Initialised: Screen\n");
 
     // Sets the flat memory mode and initializes GDT
     setFlat();
@@ -26,13 +30,13 @@ void kernel_main(){
     // Writes data to set the ACPI mode
     if ((FADTstruct = (struct FADT*)ACPIcontrol(1)) != NULL){
         outb(FADTstruct->SMI_CommandPort, FADTstruct->AcpiEnable);  // Initialise the ACPI mode
-        printk("Initialised: ACPI\n");
+        printsys("Initialised: ACPI\n");
     }
         
     // Writes to serial port to configure it
-    init_serial();
-    write_serial("Serial test run");
-    printk("Initialised: Serial\n");
+    initSerial();
+    writeSerial("Serial test run");
+    printsys("Initialised: Serial\n");
 
     
 }
