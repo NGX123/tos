@@ -4,7 +4,6 @@
 
 #define IDT_COUNT 256
 #include "x86.h"
-#include "../kernel/kernel.h"
 
 extern void keyboard_handler();
 extern void load_idt();
