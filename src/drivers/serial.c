@@ -6,7 +6,7 @@
 #define PORT 0x3f8
 
 // Initialize the serial port configuration
-void init_serial() {
+void initSerial() {
    outb(PORT + 1, 0x00);    // Disable all interrupts
    outb(PORT + 3, 0x80);    // Enable DLAB (set baud rate divisor)
    outb(PORT + 0, 0x03);    // Set divisor to 3 (lo byte) 38400 baud
@@ -22,7 +22,7 @@ int is_transmit_empty() {
 }
  
 // Send the data through serial port
-void write_serial(char* a) {
+void writeSerial(char* a) {
     while (is_transmit_empty() == 0);
     while (*a != 0){
         outb(PORT, *a);
