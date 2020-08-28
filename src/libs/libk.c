@@ -11,9 +11,9 @@ void printsys(char* string){
 
 // Info prints ///
 void display_gdt(){
-    printf("Initialized: GDT\n");
+    printsys("Initialized: GDT\n");
 }
 
 void display_idt(){
-    printf("Initialised: IDT\n");
+    printsys("Initialised: IDT\n");
 }
