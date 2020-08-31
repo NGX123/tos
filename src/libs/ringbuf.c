@@ -3,14 +3,7 @@
 
 
 
-struct RBufStruct {
-    int capacity;               // Capacity
-    int size;                   // Current size(filled in)
-    int readIndex;              // Current position to read from the buffer
-    int writeIndex;             // Current position to write to the buffer
-    char* buffer;               // Pointer to the buffer
-};
-typedef struct RBufStruct ring_buffer_t; 
+#include "ringbuf.h"
 
 void RingBufferInit(ring_buffer_t* ringBuffer, int capacity, char* pointer){
     ringBuffer->capacity = capacity;

@@ -17,13 +17,13 @@ typedef struct RBufStruct ring_buffer_t;
 
 // Initialises the ring_buffer structure with values
 // Returns: nothing
-void RingBufferInit(ring_buffer_t* ringBuffer, int capacity, char* pointer);
+extern void RingBufferInit(ring_buffer_t* ringBuffer, int capacity, char* pointer);
 
 // Writes to the ring buffer
 // Returns: 0 on succesfull write, 1 if buffer is full
-int writeBuf(ring_buffer_t* ringBuffer, char writeValue);
+extern int writeBuf(ring_buffer_t* ringBuffer, char writeValue);
 
 // Reads from the ring buffer
 // Returns: ascii code of read character if succesfull, 1 if buffer is empty 
-int readBuf(ring_buffer_t* ringBuffer);
+extern int readBuf(ring_buffer_t* ringBuffer);
 #endif

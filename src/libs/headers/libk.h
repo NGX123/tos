@@ -6,11 +6,11 @@
 #ifndef LIBK_H
 #define LIBK_H
 // Prints a system message with special formatting
-void printsys(char* string);
+extern void printsys(char* string);
 
 // Print a message when gdt was initialised
-void display_gdt();
+extern void display_gdt();
 
 // Print a message when idt was initialised
-void display_idt();
+extern void display_idt();
 #endif
