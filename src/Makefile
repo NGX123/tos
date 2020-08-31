@@ -52,5 +52,5 @@ qemu-serial:
 
 # Cleans objects after the 
 clean:
-	rm -rf *.o *iso
+	rm -rf *.o *.out *iso 
 
