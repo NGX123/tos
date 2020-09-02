@@ -8,6 +8,41 @@
 #include "string.h"
 #include "acpi.h"
 
+// Checksum RSDP structure
+int checksumRSDP(struct RSDP* RSDPstruct){
+    int i;
+    uint8_t check = 0;
+    uint8_t* bptr = (uint8_t*)RSDPstruct;
+
+    for (i = 0; i < (int)sizeof(struct RSDP); i++){
+        check += *bptr;
+        bptr++;
+    }
+
+    if (check == 0)
+        return 0;
+    
+    return -1;
+}
+
+// checks for a given header and validates checksum
+int checksumHeaderACPI(unsigned int *ptr)
+{
+    char *checkPtr = (char*) ptr;
+    int len = *(ptr + 1);
+    char check = 0;
+    
+    while (0 < len--){
+        check += *checkPtr;
+        checkPtr++;
+    }
+
+    if (check == 0)
+        return 0;
+
+   return -1;
+}
+
 // One function to control the ACPI and the only one to be exposed
 // 1 - find the fadt, 
 void* ACPIcontrol(int action){
@@ -51,7 +86,8 @@ struct RSDP* findRSDPinEBDA(){
             // Case if signature found
             if (strcmp("RSD PTR ", signature) == 0){
                 RSDPstruct = (struct RSDP*)&EBDA[i];
-                return RSDPstruct;       
+                if (checksumRSDP(RSDPstruct) == 0)
+                    return RSDPstruct;       
             }       
         }
     }
@@ -79,7 +115,8 @@ struct RSDP* findRSDPinEXTMEM(){
             // Case if signature was found
             if (strcmp("RSD PTR ", signature) == 0){
                 RSDPstruct = (struct RSDP*)&EXTMEMstart[i];
-                return RSDPstruct;   
+                if (checksumRSDP(RSDPstruct) == 0)
+                    return RSDPstruct;   
             }       
         }
     }
@@ -90,13 +127,16 @@ struct RSDP* findRSDPinEXTMEM(){
 void* findSDT(struct RSDP* RSDPstruct, char* signature){
     int i;
     struct RSDT* RSDTstruct = (struct RSDT*)RSDPstruct->RsdtAddress;
+    if (checksumHeaderACPI((unsigned int*)RSDTstruct) != 0)
+        return NULL;
     int entries_amount = (RSDTstruct->h.Length - sizeof(struct ACPISDT)) / 4;
 
     for (i = 0; i < entries_amount; i++){
         struct ACPISDT* ACPISDTtmp = (struct ACPISDT*)(RSDTstruct->sdtptr+i);
     
         if (strncmp(ACPISDTtmp->Signature, signature, 4) == 0)
-            return (void*)ACPISDTtmp;
+            if (checksumHeaderACPI((unsigned int*)ACPISDTtmp) == 0)
+                return (void*)ACPISDTtmp;
     }
 
     return NULL;
