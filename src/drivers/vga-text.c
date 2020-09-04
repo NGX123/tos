@@ -144,7 +144,7 @@ void changeColor(enum VGA_COLOR fg, enum VGA_COLOR bg) {
 }
 
 // Outputs a character to the screen
-void printScreen(const char character){
+void printScreen(const uint8_t character){
     if (character == '\n')
         enter();
     else if (character == '\t')
