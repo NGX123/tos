@@ -6,7 +6,6 @@
 /// Includes ///
 #include "x86.h"
 #include "driver.h"
-#include "kbd.h"
 
 /// Defines ///
 #define VGA 0xb8000
@@ -15,8 +14,8 @@
 #define ROWS 25  
 #define BLANK 0
 
-#define LARROW 0x4B
-#define RARROW 0x4D
+#define LARROW 0x80
+#define RARROW 0x81
 
 
 /// Declarations ///
