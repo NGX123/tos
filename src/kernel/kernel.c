@@ -12,6 +12,7 @@
 
 extern void  setFlat();
 extern void  idt_init();
+extern int keyboardInit(struct FADT* FADTstruct, uint8_t mode);
 
 // Core function of the kernel that is called by bootloader
 void kernel_main(){
@@ -38,6 +39,8 @@ void kernel_main(){
     writeSerial("Serial test run");
     printsys("Initialised: Serial\n");
 
-    
+    // Initialise Keyboard
+    if (keyboardInit(FADTstruct, 1) != -1)
+        printsys("Initialised: Keyboard\n");   
 }
 
