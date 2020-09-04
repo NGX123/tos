@@ -11,13 +11,16 @@
 #define KBS_DIB              0x01    // kbd data in buffer
 
 #define NO 0x0
-#define C(x) (x - '@')
 #define ESC 0x01
 #define CONTROL 0x1D
 #define ALT 0x38
 #define CAPSLOCK 0x3A
-#define LARROW 0x4B
-#define RARROW 0x4D
+#define LARROW_SCAN 0x4B
+#define RARROW_SCAN 0x4D
+
+#define C(x) (x - '@')
+#define LARROW 0x80
+#define RARROW 0x81
 
 // Scanset 1 keymap
 static uint8_t scanset1[] =
