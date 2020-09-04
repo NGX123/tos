@@ -4,6 +4,7 @@ AS = nasm
 
 ASFLAGS = -felf32
 CFLAGS = -I libs/headers -std=gnu99 -ffreestanding -nostdlib -O2 -Wall -Wextra -c
+CEXTRAWARNINGS = -pedantic -Wcast-align -Wcast-qual -Wdisabled-optimization -Wformat=2 -Winit-self -Wlogical-op -Wmissing-declarations -Wmissing-include-dirs -Wredundant-decls -Wshadow -Wsign-conversion -Wstrict-overflow=5 -Wswitch-default -Wundef -Wno-unused
 LDFLAGS = -T make/linker.ld -ffreestanding -nostdlib -O2  -lgcc
 
 
@@ -36,6 +37,17 @@ all-nocross:
 	$(AS_NOCROSS) $(ASFLAGS_NOCROSS) init/boot.s -o boot.o
 	$(CC_NOCROSS) $(CFLAGS_NOCROSS) $(SOURCES)
 	ld $(LDFLAGS_NOCROSS) $(OBJECTS) -o os.o
+
+	mkdir -p iso/boot/grub
+	mv os.o iso/boot/
+	cp make/grub.cfg iso/boot/grub/
+	grub2-mkrescue -o os.iso iso
+
+# Compiler with a ton of extra warnings
+all-extrawarning:
+	$(AS) $(ASFLAGS) init/boot.s -o boot.o
+	$(CC) $(CEXTRAWARNINGS) $(CFLAGS) $(SOURCES)
+	$(CC) $(LDFLAGS) $(OBJECTS) -o os.o
 
 	mkdir -p iso/boot/grub
 	mv os.o iso/boot/
