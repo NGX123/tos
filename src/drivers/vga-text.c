@@ -6,6 +6,7 @@
 /// Includes ///
 #include "x86.h"
 #include "driver.h"
+#include "kbd.h"
 
 /// Defines ///
 #define VGA 0xb8000
