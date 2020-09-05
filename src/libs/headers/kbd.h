@@ -6,9 +6,10 @@
 #include <stdint.h>
 
 // Defines
-#define KEYBOARD_STATUS_PORT 0x64
-#define KEYBOARD_DATA_PORT   0x60
-#define KBS_DIB              0x01    // kbd data in buffer
+#define KEYBOARD_STATUS_PORT  0x64
+#define KEYBOARD_COMMAND_PORT 0x64
+#define KEYBOARD_DATA_PORT    0x60
+#define KBS_DIB               0x01    // kbd data in buffer
 
 #define NO 0x0
 #define ESC 0x01
