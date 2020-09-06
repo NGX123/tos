@@ -8,9 +8,9 @@
 #include "stdio.h"
 #include "libk.h"
 
-#include "vga.h"
-#include "x86.h"
-#include "acpi.h"
+#include "drivers/vga.h"
+#include "drivers/x86.h"
+#include "drivers/acpi.h"
 
 
 extern void initSerial();

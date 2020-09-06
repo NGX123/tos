@@ -3,7 +3,7 @@
 // WHEN CHANGING TO LONG MODE CHANGE THE "uint32_t" in the adresses to "uint64_t"
 
 #include <stdint.h>
-#include "x86.h"
+#include "drivers/x86.h"
 extern void load_gdt(uint64_t);
 
 // Our GDT, with 3 entries, and finally our special GDT pointer

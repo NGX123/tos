@@ -6,7 +6,8 @@
 #include <stdint.h>
 #include "stdio.h"
 #include "string.h"
-#include "acpi.h"
+
+#include "drivers/acpi.h"
 
 // Checksum RSDP structure
 int checksumRSDP(struct RSDP* RSDPstruct){

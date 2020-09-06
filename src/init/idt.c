@@ -3,7 +3,7 @@
 // WHEN CHANGING TO LONG MODE CHANGE THE "uint32_t" in the adresses to "uint64_t"
 
 #define IDT_COUNT 256
-#include "x86.h"
+#include "drivers/x86.h"
 
 extern void keyboard_handler();
 extern void load_idt();
