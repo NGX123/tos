@@ -1,7 +1,7 @@
 // File: stdio.c
 // Description: standard input/output library
 
-#include <driver.h>
+#include "vga.h"
 
 // Prints a character to the screen
 void putchar(int chara){
