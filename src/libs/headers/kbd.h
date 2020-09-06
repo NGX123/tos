@@ -3,6 +3,8 @@
 
 
 
+#ifndef KBD_H
+#define KBD_H
 #include <stdint.h>
 
 // Defines
@@ -16,8 +18,8 @@
 #define CONTROL 0x1D
 #define ALT 0x38
 #define CAPSLOCK 0x3A
-#define LARROW_SCAN 0x4B
-#define RARROW_SCAN 0x4D
+#define LARROW_SCAN 0xE4B
+#define RARROW_SCAN 0xE4D
 
 #define C(x) (x - '@')
 #define LARROW 0x80
@@ -84,3 +86,4 @@ struct keyPacket {
   uint8_t specialkeyStatus; // Tells if the key is spacial and is not used in the typical keyboard function(e.g. home)
 };
 typedef struct keyPacket keypacket_t;
+#endif
