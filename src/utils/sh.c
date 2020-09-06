@@ -14,6 +14,7 @@
 char **exec_input;
 
 // Help functions
+// Prints error messages based on supplied number
 void error_handler(int error_type){
     // 0 - execution or checking failed == recoverable
     // 1 - Allocation error = fatal
@@ -23,9 +24,10 @@ void error_handler(int error_type){
         exit(1);
     }
     else if (error_type == 0)
-        printf("Error: command not found or you do not have access to it\n");
+        printf("Error: binary not found or you do not have access to it\n");
 }
 
+// Concatenates two strings
 char* concat(const char *s1, const char *s2)
 {
     char *result = malloc(strlen(s1) + strlen(s2) + 1); 
@@ -37,7 +39,7 @@ char* concat(const char *s1, const char *s2)
 }
 
 
-
+// Removes unneeded stuff from the input and puts it into tokens
 static void format_input(char* input){
     char delimeter[2] = " ";
     char* token;
@@ -85,11 +87,37 @@ static void format_input(char* input){
     //     printf("%s\n", exec_input[i]);
 }
 
+// Shell built-ins
+int cd(char **args){
+    if (args[1] == NULL) 
+        printf("Error: Not enough arguments for cd\n");
+    else 
+        if (chdir(args[1]) != 0) {
+            error_handler(0);
+    return 1;
+}
+
+int execute(){
+    for (int i = 0; i < )
+}
+
+// The main loop of the shell
+void shell_loop(void){
+    char* input_buffer = NULL;
+    size_t size = 0;
+
+    while (1){
+        printf("\n> ");
+        getline(&input_buffer, &size, stdin);
+        format_input(input_buffer);
+        execute();
+    }
+}
+
 int main(){
-    int i, j;               
+    int i;               
     int pid2, pid2_wait;
     
-    char* check_buffer = NULL;
     char* input_buffer = NULL;
     size_t size = 0;
 
