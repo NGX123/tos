@@ -11,13 +11,12 @@
 #include "drivers/vga.h"
 #include "drivers/x86.h"
 #include "drivers/acpi.h"
-
+#include "drivers/kbd.h"
 
 extern void initSerial();
 extern void writeSerial(char* a);
 extern void  setFlat();
 extern void  idt_init();
-extern int keyboardInit(uint8_t mode);
 
 // Core function of the kernel that is called by bootloader
 void kernel_main(){
