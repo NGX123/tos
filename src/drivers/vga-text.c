@@ -18,7 +18,6 @@
 #define LARROW 0x80
 #define RARROW 0x81
 
-
 /// Declarations ///
 // Colors for fore and background of text in vga text mode
 static volatile char* text_buffer = (volatile char*)VGA;
@@ -77,13 +76,11 @@ static void backspace(){
     uint8_t color = terminal_fg | terminal_bg << 4;
     
     text_buffer[byte] = BLANK;
-    text_buffer[byte+1] = BLANK;
 
     --cell;
     byte = cell * 2;
 
     text_buffer[byte] = BLANK;
-    text_buffer[byte+1] = BLANK;
 
     text_buffer[cell * 2 + 1] = color; 
     updatexy();
