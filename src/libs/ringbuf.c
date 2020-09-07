@@ -5,19 +5,19 @@
 
 #include "ringbuf.h"
 
-void RingBufferInit(ring_buffer_t* ringBuffer, int capacity, char* pointer){
+// Initialises the ring buffer
+void RingBufferInit(ring_buffer_t* ringBuffer, int capacity, uint8_t* bufferPointer){
     ringBuffer->capacity = capacity;
     ringBuffer->size = 0;
     ringBuffer->readIndex = 0;
     ringBuffer->writeIndex = -1;
-    ringBuffer->buffer = pointer;
-    //return ringBuffer;
+    ringBuffer->buffer = bufferPointer;
 }
 
 // Writes to the ring buffer
-int writeBuf(ring_buffer_t* ringBuffer, char writeValue){
+int writeBuf(ring_buffer_t* ringBuffer, uint8_t writeValue){
     if (ringBuffer->size == ringBuffer->capacity)
-        return 1;
+        return -1;
     else {
         ringBuffer->writeIndex = (ringBuffer->writeIndex + 1) % ringBuffer->capacity;
 
@@ -31,7 +31,7 @@ int writeBuf(ring_buffer_t* ringBuffer, char writeValue){
 // Reads from the ring buffer
 int readBuf(ring_buffer_t* ringBuffer){
     if (ringBuffer->size == 0)
-        return 1;
+        return -1;
     else {
         int readValue = ringBuffer->buffer[ringBuffer->readIndex];
         
