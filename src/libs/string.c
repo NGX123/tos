@@ -1,7 +1,8 @@
 // File: string.c
 // Description: string library, some or most implementation taken from Linux-1.3(Copyright Linus Torvalds)
 
-#include <string.h>
+#include "string.h"
+
 char * ___strtok = NULL;
 
 char * strcpy(char * dest,const char *src)

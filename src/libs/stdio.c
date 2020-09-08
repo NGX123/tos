@@ -2,6 +2,7 @@
 // Description: standard input/output library
 
 #include "drivers/vga.h"
+#include "stdio.h"
 
 // Prints a character to the screen
 void putchar(int chara){

@@ -4,6 +4,7 @@
 
 
 #include "stdio.h"
+#include "libk.h"
 
 void printsys(char* string){
     printf("[ INIT ] %s", string);
