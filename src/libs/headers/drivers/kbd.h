@@ -22,9 +22,6 @@ typedef struct keyPacket keypacket_t;
 // Initialises the keyboard
 extern int keyboardInit(uint8_t mode);
 
-// Reads from the keyboard buffer
-extern int keyboardBufRead();
-
-// Writes to the keyboard buffer
-extern int keyboardBufWrite();
+// Reads from the keyboard buffer into buf*
+extern int keyboardBufRead(uint8_t* data, int amount);
 #endif
