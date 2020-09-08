@@ -7,16 +7,17 @@
 #include <stdint.h>
 #include "stdio.h"
 #include "ringbuf.h"
+#include "headers/kbd-defines.h"
 
 #include "drivers/x86.h"
 #include "drivers/vga.h"
 #include "drivers/kbd.h"
 
-#define BUFSIZE 255
-static keypacket_t packetBuffer[BUFSIZE];
-static ring_buffer_t packetRingBufferStruct;
 
 #define BUFSIZE 255
+// static keypacket_t packetBuffer[BUFSIZE];
+// static ring_buffer_t packetRingBufferStruct;
+
 static uint8_t charBuffer[BUFSIZE];
 static ring_buffer_t charRingBufferStruct;
 
@@ -25,14 +26,18 @@ static uint8_t kbd_mode = 0;
 /// MODES ///
 // Keyboard standard mode interpretation function
 // Standard mode - arrows keys are straight passed to the display, all shortcuts are passed to system as interrupts(not made yet), normal keys are passed to the read buffer
-static void keyboardStdMode(uint32_t scancode, uint8_t character, uint8_t capsStatus){
-    // if (capsStatus == 0){
-    //     if (scanset1[scancode] >= 32 && scanset1[scancode] <= 127)
-    //         writeBuf(&charRingBufferStruct, character);
-    // }
-    // else 
-    //     if (shiftmap[scancode] >= 32 && shiftmap[scancode] <= 127)
-    //         //readBuffer[0] = shiftmap[scancode]; // change to appropriote circle buffer function 
+static void keyboardStdMode(uint32_t scancode, uint8_t character){
+    // Write normal characters to the buffer
+    if (character >= 32 && character <= 127)
+        writeBuf(&charRingBufferStruct, character);
+    // Backspace
+    else if (character == '\b')
+        writeBuf(&charRingBufferStruct, character);
+    // Arrows
+    else if (scancode == LARROW_SCAN)
+        writeBuf(&charRingBufferStruct, scancode);
+    else if (scancode == RARROW_SCAN)
+        writeBuf(&charRingBufferStruct, scancode);
 }
 
 // Keyboard display mode interpretation function
@@ -53,16 +58,23 @@ static void keyboardDisplayMode(uint32_t scancode, uint8_t character){
         printScreen(RARROW);
 }
 
+// TO BE IMPLEMENTED LATER //
 // Keyboard key packet mode interpretation function
 // Packet mode - all keys(including shortcuts) are sent in a special keypress packet to a extra buffer
-static void keyboardPacketMode(uint32_t scancode, uint8_t capslock){
+// static void keyboardPacketMode(uint32_t scancode, uint8_t capslock){
     // keypacket_t scancodeStruct;
 
     // scancodeStruct.scancode = scancode;
     // scancodeStruct.capslockStatus = capslock;
     // //specalReadBuffer[0] = scancodeStruct;   // change to appropriote circle buffer function
-}
+// }
 
+// Keyboard tty(hybrid) mode interpretation function
+// TTY mode - prints the text on the screen and put's it into the buffer
+static void keyboardTtyMode(uint32_t scancode, uint8_t character){
+    keyboardDisplayMode(scancode, character);
+    keyboardStdMode(scancode, character);
+}
 
 /// INTERRUPT HANDLER ///
 void keyboard_handler(){
@@ -120,8 +132,10 @@ void keyboard_handler(){
     // Combine to get either low or high
     caps = shiftStatus ^ capslockStatus;
 
-    // Initialize the character variable
+
+    // Initialize the character variable // 
     character = 0;
+
     // Lowercase normal character
     if (!caps && !ctrlStatus && !altStatus && !(scancode & 0x80))
         character = scanset1[scancode];
@@ -134,15 +148,17 @@ void keyboard_handler(){
     else if (ctrlStatus && !altStatus)
         character = ctlmap[scancode];
 
-    // printf("\n%d %d %d %d %d %d\n", altStatus, ctrlStatus, shiftStatus, capslockStatus, insertStatus, caps); 
-    // Keyboard mode handling
+
+    // Keyboard mode handling //
     if (kbd_mode == 0)
-        keyboardStdMode(scancode, character, caps);
+        keyboardStdMode(scancode, character);
     else if (kbd_mode == 1)
         keyboardDisplayMode(scancode, character);
-    else if (kbd_mode == 2)
-        keyboardPacketMode(scancode, caps);
-    else if (kbd_mode == 3) // Off mode
+    // else if (kbd_mode == 2)
+    //     keyboardPacketMode(scancode, caps);
+    else if (kbd_mode == 3)
+        keyboardTtyMode(scancode, character);
+    else if (kbd_mode == 4) // Off mode
         return;
 }
 
@@ -157,10 +173,6 @@ int keyboardInit(uint8_t mode){
     outb(KEYBOARD_STATUS_PORT, 0xA7);                           // Disable Second PS/2 Port
 
     inb(KEYBOARD_DATA_PORT);                                    // Flush the input buffer
-
-    // Get config byte
-    outb(KEYBOARD_COMMAND_PORT, 0x20);
-    printf("%x\n", inb(KEYBOARD_DATA_PORT));
 
     // Send Keyboard Command to do a self-test(0xAA command)
     outb(KEYBOARD_STATUS_PORT, 0xAA);
@@ -181,4 +193,33 @@ int keyboardInit(uint8_t mode){
     outb(KEYBOARD_COMMAND_PORT, 0xAE);                          // Enable 1st PS/2 port
 
     return 0;  
+}
+
+// Reads from the keyboard into the buffer, if there is an error returns -1
+int keyboardBufRead(uint8_t* data, int amount){
+    int i;
+    int tmpVar;
+    for (i = 0; i < amount; i++)
+        if((tmpVar = readBuf(&charRingBufferStruct)) == -1){
+            if (i == 0)
+                return -1;
+            else
+                return i;
+        }
+        else 
+            data[i] = tmpVar;
+            
+
+    return i;
+}
+
+// Changes the keyboard mode or gives the current mode - c - current mode, integer - switches the mode
+uint8_t keyboardMode(uint8_t command){
+    // Current mode
+    if (command == 'c')
+        return kbd_mode;
+
+    // Change mode
+    kbd_mode = command;
+    return 0;
 }

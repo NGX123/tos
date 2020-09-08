@@ -24,4 +24,7 @@ extern int keyboardInit(uint8_t mode);
 
 // Reads from the keyboard buffer into buf*
 extern int keyboardBufRead(uint8_t* data, int amount);
+
+// Changes or returns current mode
+extern uint8_t keyboardMode(uint8_t command);
 #endif
