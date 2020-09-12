@@ -15,9 +15,6 @@
 
 
 #define BUFSIZE 255
-// static keypacket_t packetBuffer[BUFSIZE];
-// static ring_buffer_t packetRingBufferStruct;
-
 static uint8_t charBuffer[BUFSIZE];
 static ring_buffer_t charRingBufferStruct;
 
@@ -30,9 +27,11 @@ static void keyboardStdMode(uint32_t scancode, uint8_t character){
     // Write normal characters to the buffer
     if (character >= 32 && character <= 127)
         writeBuf(&charRingBufferStruct, character);
-    // Backspace
-    else if (character == '\b')
+
+    // Escape sequences
+    else if (character == '\b' || character == '\t' || character == '\n') 
         writeBuf(&charRingBufferStruct, character);
+
     // Arrows
     else if (scancode == LARROW_SCAN)
         writeBuf(&charRingBufferStruct, scancode);
@@ -47,33 +46,15 @@ static void keyboardDisplayMode(uint32_t scancode, uint8_t character){
     if (character >= 32 && character <= 127)
         printScreen(character);
 
-    // Print the backspace
-    if (character == '\b')
-        printScreen('\b');
+    // Escape sequences
+    if (character == '\b' || character == '\t' || character == '\n')
+        printScreen(character);
 
     // Handle the arrows
     if (scancode == LARROW_SCAN)
         printScreen(LARROW);
     else if (scancode == RARROW_SCAN)
         printScreen(RARROW);
-}
-
-// TO BE IMPLEMENTED LATER //
-// Keyboard key packet mode interpretation function
-// Packet mode - all keys(including shortcuts) are sent in a special keypress packet to a extra buffer
-// static void keyboardPacketMode(uint32_t scancode, uint8_t capslock){
-    // keypacket_t scancodeStruct;
-
-    // scancodeStruct.scancode = scancode;
-    // scancodeStruct.capslockStatus = capslock;
-    // //specalReadBuffer[0] = scancodeStruct;   // change to appropriote circle buffer function
-// }
-
-// Keyboard tty(hybrid) mode interpretation function
-// TTY mode - prints the text on the screen and put's it into the buffer
-static void keyboardTtyMode(uint32_t scancode, uint8_t character){
-    keyboardDisplayMode(scancode, character);
-    keyboardStdMode(scancode, character);
 }
 
 /// INTERRUPT HANDLER ///
@@ -154,11 +135,7 @@ void keyboard_handler(){
         keyboardStdMode(scancode, character);
     else if (kbd_mode == 1)
         keyboardDisplayMode(scancode, character);
-    // else if (kbd_mode == 2)
-    //     keyboardPacketMode(scancode, caps);
-    else if (kbd_mode == 3)
-        keyboardTtyMode(scancode, character);
-    else if (kbd_mode == 4) // Off mode
+    else if (kbd_mode == 2) // Off mode
         return;
 }
 
@@ -222,4 +199,6 @@ uint8_t keyboardMode(uint8_t command){
     // Change mode
     kbd_mode = command;
     return 0;
+
+    // Set keyboard custom mode - function pointer to the handler for it
 }
