@@ -27,16 +27,23 @@ enum VGA_COLOR {
     white = 0xF
 };
 
+#define BUFFER_ON 0
+#define BUFFER_OFF 1
+#define BUFFER_CHECK 2
+#define BUFFER_STATUS 3
+
+#define CHANGE_COLOR_NEXT 0
+#define CHANGE_COLOR_ALL 1
 
 // Initialises the screen
 extern void initScreen(char cursorStatus);
 
-// Changes the color of everything currently on the screen
-extern void changeScreenColor(enum VGA_COLOR fg, enum VGA_COLOR bg);
-
 // Changes the color of all the characters that will be printed next
-extern void changeColor(enum VGA_COLOR fg, enum VGA_COLOR bg);
+extern void changeColor(enum VGA_COLOR fg, enum VGA_COLOR bg, int command);
 
 // Prints one character to the screen
 extern void printScreen(const uint8_t character);
+
+// Controls VGA Video Buffer
+extern int videoBuffer(int command, int size);
 #endif
