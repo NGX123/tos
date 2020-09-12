@@ -45,6 +45,9 @@ void kernel_main(){
 
     // Initialise Keyboard
     if (keyboardInit(1) != -1)
-        printsys("Initialised: Keyboard\n");   
+        printsys("Initialised: Keyboard\n");
+
+    // After initialization functions
+    videoBuffer(BUFFER_ON, BUFFER_SIZE_SCREEN_END);  // Stops user from removing kernel messages by setting a video buffer
 }
 
