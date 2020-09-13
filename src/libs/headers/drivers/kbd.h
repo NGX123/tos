@@ -5,6 +5,12 @@
 
 #ifndef KBD_H
 #define KBD_H
+
+#define KEYBOARD_MODE_CURRENTMODE -1
+#define KEYBOARD_MODE_STANDARD 0
+#define KEYBOARD_MODE_DISPLAY 1
+#define KEYBOARD_MODE_OFF 2
+
 #include <stdint.h>
 
 // Structure of a keyboard packet 
@@ -26,5 +32,5 @@ extern int keyboardInit(uint8_t mode);
 extern int keyboardBufRead(uint8_t* data, int amount);
 
 // Changes or returns current mode
-extern uint8_t keyboardMode(uint8_t command);
+extern uint8_t keyboardMode(int command);
 #endif

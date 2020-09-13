@@ -191,9 +191,9 @@ int keyboardBufRead(uint8_t* data, int amount){
 }
 
 // Changes the keyboard mode or gives the current mode - c - current mode, integer - switches the mode
-uint8_t keyboardMode(uint8_t command){
+uint8_t keyboardMode(int command){
     // Current mode
-    if (command == 'c')
+    if (command == KEYBOARD_MODE_CURRENTMODE)
         return kbd_mode;
 
     // Change mode
