@@ -27,7 +27,7 @@ void kernel_main(){
     printsys("Initialised: Screen\n");
 
     // Writes data to set the ACPI mode
-    if ((FADTstruct = (struct FADT*)ACPIcontrol(1)) != NULL){
+    if ((FADTstruct = (struct FADT*)ACPIcontrol(ACPI_CONTROL_FIND_FADT)) != NULL){
         outb(FADTstruct->SMI_CommandPort, FADTstruct->AcpiEnable);  // Initialise the ACPI mode
         printsys("Initialised: ACPI\n");
     }

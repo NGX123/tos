@@ -6,6 +6,7 @@
 #include <stdint.h>
 #include "stdio.h"
 #include "string.h"
+#include "headers/acpi-defines.h"
 
 #include "drivers/acpi.h"
 
@@ -47,7 +48,7 @@ int checksumHeaderACPI(unsigned int *ptr)
 // One function to control the ACPI and the only one to be exposed
 // 1 - find the fadt, 
 void* ACPIcontrol(int action){
-    if (action == 1){
+    if (action == ACPI_CONTROL_FIND_FADT){
         // Find the RSDP
         struct RSDP* RSDPstruct;
         struct FADT* FADTstruct;

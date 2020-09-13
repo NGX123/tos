@@ -5,24 +5,7 @@
 #define ACPI_H
 #include <stdint.h>
 
-// ACPIv1 RSPD structure
-struct RSDP {
-    char Signature[8];
-    uint8_t Checksum;
-    char OEMID[6];
-    uint8_t Revision;
-    uint32_t RsdtAddress;
-} __attribute__ ((packed));
-
-// ACPIv2 RSPD structure
-struct RSDP2 {
- struct RSDP firstPart;
- 
- uint32_t Length;
- uint64_t XsdtAddress;
- uint8_t ExtendedChecksum;
- uint8_t reserved[3];
-} __attribute__ ((packed));
+#define ACPI_CONTROL_FIND_FADT 1
 
 // Contains header for ACPI structures
 struct ACPISDT {
@@ -37,18 +20,6 @@ struct ACPISDT {
     uint32_t CreatorRevision;
 };
 
-// RSDT structure
-struct RSDT {
-    struct ACPISDT h;
-    uint32_t sdtptr;
-};
-
-// XSDT structure(for ACPIv2)
-struct XSDT {
-    struct ACPISDT h;
-    uint32_t stdptr;
-};
-
 // GAS strucutre used to identify registers position
 struct GenericAddressStructure{
   uint8_t AddressSpace;
@@ -57,15 +28,6 @@ struct GenericAddressStructure{
   uint8_t AccessSize;
   uint64_t Address;
 };
-
-// Finds pointer to RSDP in EBDA
-extern struct RSDP* findRSDPinEBDA();
-
-// Finds pointer to RSDP in Extra Memory
-extern struct RSDP* findRSDPinEXTMEM();
-
-// Find the different SDTs using RSDT
-extern void* findSDT(struct RSDP* RSDPstruct, char* signature);
 
 // The main function to control the ACPI
 extern void* ACPIcontrol(int action);
