@@ -23,7 +23,7 @@ void kernel_main(){
     struct FADT* FADTstruct;
 
     // Turns the cursor on and sets it size
-    initScreen(1);
+    initScreen(CURSOR_ON);
     printsys("Initialised: Screen\n");
 
     // Writes data to set the ACPI mode

@@ -36,6 +36,9 @@ enum VGA_COLOR {
 #define CHANGE_COLOR_NEXT 0
 #define CHANGE_COLOR_ALL 1
 
+#define CURSOR_OFF 0
+#define CURSOR_ON 1
+
 // Initialises the screen
 extern void initScreen(char cursorStatus);
 
