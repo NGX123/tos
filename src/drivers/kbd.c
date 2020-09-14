@@ -60,7 +60,7 @@ static void keyboardDisplayMode(uint32_t scancode, uint8_t character){
 /// INTERRUPT HANDLER ///
 void keyboard_handler(){
     static uint8_t ctrlStatus = 0, altStatus = 0, shiftStatus = 0;              // Hold key statuses
-    static uint8_t capslockStatus = 0, insertStatus = 0;                        // Press key statuses
+    static uint8_t capslockStatus = 0;                                          // Press key statuses
     static uint8_t caps = 0;                                                    // Status of keys being lower case or higher case
     uint32_t keyboardStatus, scancode;                                          // Data from ports
     uint8_t character, scancode_byte2;                                           
@@ -103,12 +103,6 @@ void keyboard_handler(){
         capslockStatus = 1;
     else if (capslockStatus && scancode == 0x3A)
         capslockStatus = 0;
-
-    // Check Insert
-    if (!insertStatus && scancode == 0xE52)
-        insertStatus = 1;
-    else if (insertStatus && scancode == 0xE52)
-        insertStatus = 0;
 
     // Combine to get either low or high
     caps = shiftStatus ^ capslockStatus;

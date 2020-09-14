@@ -24,8 +24,6 @@
 #define RARROW_SCAN 0xE4D
 
 #define C(x) (x - '@')
-#define LARROW 0x80
-#define RARROW 0x81
 
 // Scanset 1 keymap
 static uint8_t scanset1[] =

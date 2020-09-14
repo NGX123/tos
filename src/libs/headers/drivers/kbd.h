@@ -11,6 +11,9 @@
 #define KEYBOARD_MODE_DISPLAY 1
 #define KEYBOARD_MODE_OFF 2
 
+#define LARROW 0x80
+#define RARROW 0x81
+
 #include <stdint.h>
 
 // Structure of a keyboard packet 
