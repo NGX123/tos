@@ -44,7 +44,7 @@ void kernel_main(){
     printsys("Initialised: Serial\n");
 
     // Initialise Keyboard
-    if (keyboardInit(1) != -1)
+    if (keyboardInit(KEYBOARD_MODE_DISPLAY) != -1)
         printsys("Initialised: Keyboard\n");
 
     // After initialization functions
