@@ -25,7 +25,7 @@ static uint8_t kbd_mode = 0;
 // Standard mode - arrows keys are straight passed to the display, all shortcuts are passed to system as interrupts(not made yet), normal keys are passed to the read buffer
 static void keyboardStdMode(uint32_t scancode, uint8_t character){
     // Write normal characters to the buffer
-    if (character >= 32 && character <= 127)
+    if (character >= 32 && character <= 127 && scancode <= 80)
         writeBuf(&charRingBufferStruct, character);
 
     // Escape sequences
@@ -43,7 +43,7 @@ static void keyboardStdMode(uint32_t scancode, uint8_t character){
 // Display mode - nothing is sent to the buffer and everything gets automatically displayed on the screen, shortcuts are as interrupts
 static void keyboardDisplayMode(uint32_t scancode, uint8_t character){
     // Print normal characters
-    if (character >= 32 && character <= 127)
+    if (character >= 32 && character <= 127 && scancode <= 80)
         printScreen(character);
 
     // Escape sequences
