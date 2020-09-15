@@ -15,7 +15,7 @@ struct RSDP {
     uint8_t Checksum;
     char OEMID[6];
     uint8_t Revision;
-    uint32_t RsdtAddress;
+    void* RsdtAddress;
 } __attribute__ ((packed));
 
 // ACPIv2 RSPD structure
@@ -23,7 +23,7 @@ struct RSDP2 {
  struct RSDP firstPart;
  
  uint32_t Length;
- uint64_t XsdtAddress;
+ void* XsdtAddress;
  uint8_t ExtendedChecksum;
  uint8_t reserved[3];
 } __attribute__ ((packed));
@@ -31,24 +31,24 @@ struct RSDP2 {
 // RSDT structure
 struct RSDT {
     struct ACPISDT h;
-    uint32_t sdtptr;
+    void* sdtptr;
 };
 
 // XSDT structure(for ACPIv2)
 struct XSDT {
     struct ACPISDT h;
-    uint32_t stdptr;
+    void* stdptr;
 };
 
 
 // Finds pointer to RSDP in EBDA
-extern struct RSDP* findRSDPinEBDA();
+static void* findRSDPinEBDA();
 
 // Finds pointer to RSDP in Extra Memory
-extern struct RSDP* findRSDPinEXTMEM();
+static void* findRSDPinEXTMEM();
 
 // Find the different SDTs using RSDT
-extern void* findSDT(struct RSDP* RSDPstruct, char* signature);
+static void* findSDT(void* RSDPstruct, char* signature);
 
 
 #endif
