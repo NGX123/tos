@@ -6,26 +6,25 @@
 /// Includes ///
 #include "drivers/x86.h"
 #include "drivers/vga.h"
+#include "drivers/kbd.h"
 
 /// Defines ///
-#define VGA 0xb8000
+#define VGA_ADDRESS 0xb8000
 #define VGA_END 0xB8F9F
-#define VGA_WIDTH 80
 #define COLUMNS 80
 #define ROWS 25  
 #define BLANK 0
 
-#define LARROW 0x80
-#define RARROW 0x81
+#define FORMULA_XY_CELL(x_pos, y_pos) (y_pos * COLUMNS + x_pos)
+#define FORMULA_CELL_CHARBYTE(currentCell) (currentCell * 2)
+#define FORMULA_CELL_COLORBYTE(currentCell) (currentCell * 2 + 1)
 
 /// Declarations ///
-// Colors for fore and background of text in vga text mode
-static volatile char* text_buffer = (volatile char*)VGA;
+static volatile char* text_buffer = (volatile char*)VGA_ADDRESS;
 static enum VGA_COLOR terminal_fg;
 static enum VGA_COLOR terminal_bg;
 static uint8_t color;
 static int cell;                                            // Counts cells(2 bytes - char + color)(last cell - 1999)
-static int byte;                                            // Counts each byte in video memory(last byte - 3999)
 static int x;
 static int y;
 
@@ -53,7 +52,7 @@ static void disable_cursor()
 // Update the position of the cursor 
 static void update_cursor(int x, int y)
 {
-	uint16_t pos = y * VGA_WIDTH + x;
+	uint16_t pos = FORMULA_XY_CELL(x, y);
  
 	outb(0x3D4, 0x0F);
 	outb(0x3D5, (uint8_t) (pos & 0xFF));
@@ -73,44 +72,30 @@ static void updatexy(){
 //// SPECIAL SYMBOLS ///
 // Removes last printed letter
 static void backspace(){
-    uint8_t color = terminal_fg | terminal_bg << 4;
-    
-    text_buffer[byte] = BLANK;
-
     --cell;
-    byte = cell * 2;
 
-    text_buffer[byte] = BLANK;
-
-    text_buffer[cell * 2 + 1] = color; 
+    text_buffer[FORMULA_CELL_CHARBYTE(cell)] = BLANK;
     updatexy();
 }
 
 // Moves onto the next line
 static void enter(){
-    uint8_t color = terminal_fg | terminal_bg << 4;
+    color = terminal_fg | terminal_bg << 4;
 
     ++y;
     x = 0;
-    cell = y * 80 + x;
-    byte = cell * 2;
+    cell = FORMULA_XY_CELL(x, y);
 
-    text_buffer[cell * 2 + 1] = color;
+    text_buffer[FORMULA_CELL_COLORBYTE(cell)] = color;
     updatexy();
 }
 
 // Moves cursor accrording to keyboard arrows 
 static void arrows(const char direction){
-    if (direction == '<'){
-        --byte;
-        --byte;
+    if (direction == '<')
         --cell;
-    }
-    else if (direction == '>'){
-        ++byte;
-        ++byte;
+    else if (direction == '>')
         ++cell;
-    }
     updatexy();
 }
 
@@ -128,18 +113,26 @@ static void cleanScreen(char cleanOption){
     // Clean characters
     if (cleanOption == 1){
         for (tmpCell = 0; tmpCell < 2000; tmpCell++)
-            text_buffer[tmpCell * 2] = BLANK;
+            text_buffer[FORMULA_CELL_CHARBYTE(tmpCell)] = BLANK;
     }
 
     // Clean color
     if (cleanOption == 2){
         for (tmpCell = 0; tmpCell < 2000; tmpCell++)
-            text_buffer[tmpCell * 2 + 1] = BLANK;
+            text_buffer[FORMULA_CELL_COLORBYTE(tmpCell)] = BLANK;
     }
 }
 
+// Scrolls the screen 
+void scrollScreen(){
+    int currentCell;
+    
+    for (currentCell = 80; currentCell < 2000; currentCell++)
+        text_buffer[(currentCell-80) * 2] = text_buffer[currentCell * 2];
 
-
+    cell -= 80;
+    updatexy();
+}
 
 /// DRIVER INTERFACE ///
 // Initialises the screen
@@ -152,64 +145,163 @@ void initScreen(char cursor_status){
     cleanScreen(0);
 
     // Change the screen color
-    changeScreenColor(green, black);
+    changeColor(green, black, CHANGE_COLOR_ALL);
 
     // Change cursor status
-    if (cursor_status == 1)
+    if (cursor_status == CURSOR_ON)
         enable_cursor(0, 15);
-    else 
+    else if (cursor_status == CURSOR_OFF)
         disable_cursor();
 }
 
 // Changes color of all of the new text printed
-void changeColor(enum VGA_COLOR fg, enum VGA_COLOR bg) {
-    terminal_fg = fg;
-    terminal_bg = bg;
-    color = terminal_fg | terminal_bg << 4;
+void changeColor(enum VGA_COLOR fg, enum VGA_COLOR bg, int command) {
+    int tmpcell = 0;
+
+    // Change color of all text printed next
+    if (command == CHANGE_COLOR_NEXT){
+        terminal_fg = fg;
+        terminal_bg = bg;
+        color = terminal_fg | terminal_bg << 4;
+    }
+
+    // Change color of all of next and current text on the screen
+    else if (command == CHANGE_COLOR_ALL) {
+        terminal_fg = fg;
+        terminal_bg = bg;
+        color = terminal_fg | terminal_bg << 4;
+
+        while (tmpcell < 2000)
+            text_buffer[tmpcell++ * 2 + 1] = color; 
+    }
+    
 }
 
-// Changes the color of all text
-void changeScreenColor(enum VGA_COLOR fg, enum VGA_COLOR bg){
-    terminal_fg = fg;
-    terminal_bg = bg;
-    color = terminal_fg | terminal_bg << 4;
+// Sets a marker which is the start and end of current write space; size is the size of buffer
+int videoBuffer(int command, int size){
+    static int bufferStatus = 0;
+    static int videoBufferStart = 0;
+    static int videoBufferEnd = 0;
 
-    int tmpcell = 0;
-    while (tmpcell < 2000)
-        text_buffer[tmpcell++ * 2 + 1] = color; 
+    // Turn on the buffering of everything written - and any input, arrows... can't go beyond the buffer
+    if (command == BUFFER_ON){
+        videoBufferStart = cell;
+        videoBufferEnd = cell + size;
+
+        if (size == BUFFER_SIZE_SCREEN_END)
+            videoBufferEnd = 2000;
+        
+        // Buffer can't be more then available space
+        if (videoBufferEnd > 2000){
+            videoBufferStart = 0;
+            videoBufferStart = 0;
+            videoBufferEnd = 0;
+
+            return -1;
+        }
+
+        bufferStatus = 1;
+
+        return bufferStatus;
+    }
+
+    // Turn off the buffer
+    else if (command == BUFFER_OFF){
+        bufferStatus = 0;
+        videoBufferStart = 0;
+        videoBufferEnd = 0;
+
+        return bufferStatus;
+    }
+
+    // Check if we came to the end of the buffer
+    else if (command == BUFFER_CHECK) {
+        if (cell >= videoBufferEnd)
+            return -1;
+        else if (cell <= videoBufferStart)
+            return -2;
+        else if (bufferStatus == 0)
+            return -3;
+
+    }
+
+    // Check the buffer status
+    else if (command == BUFFER_STATUS){
+        return bufferStatus;
+    }
+        
+    return -4;
 }
 
 // Outputs a character to the screen
 void printScreen(const uint8_t character){
-    if (character == '\n')
-        enter();
-    else if (character == '\t')
-        for (int i = 0; i <= 4; i++){
-            text_buffer[byte++] = ' ';
-            text_buffer[byte++] = color;
+    // Check the text on bound
+    int boundsCheckStatus = 0;
+    if (videoBuffer(BUFFER_STATUS, 0) == 0)
+        boundsCheckStatus = 0;
+    else if (videoBuffer(BUFFER_STATUS, 0) == 1)
+        boundsCheckStatus = videoBuffer(BUFFER_CHECK, 0);
+    
+    // Make the text mode buffer bounds check
+    if (cell >= 2000)
+        boundsCheckStatus = -1;
+    else if (cell <= 0)
+        boundsCheckStatus = -2;
 
-            ++cell;
-        
-            // Change the color of the cursor by changing next cell color
-            text_buffer[cell * 2 + 1] = color; 
+
+    // HANDLE ASCII //
+    // Handle next line character
+    if (character == '\n'){
+        if (boundsCheckStatus == -1)
+            return;
+        enter();
+    }
+
+    // Handle tab 
+    else if (character == '\t'){
+        if (boundsCheckStatus == -1)
+            return;
+
+        for (int i = 0; i <= 4; i++){
+            text_buffer[FORMULA_CELL_CHARBYTE(cell)] = ' ';
+            text_buffer[FORMULA_CELL_COLORBYTE(cell)] = color;
+
+            ++cell; 
             updatexy();
         }  
-    else if (character == LARROW)
-        arrows('<');
-    else if (character == RARROW){
-        if (text_buffer[cell*2] != BLANK)
-            arrows('>');
     }
-    else if (character == '\b')
+        
+    // Handle arrows
+    else if (character == LARROW){
+        if (boundsCheckStatus == -2)
+            return;
+        arrows('<');
+    }
+    else if (character == RARROW){
+        if (boundsCheckStatus == -1)
+            return;
+        arrows('>');
+    }
+
+    // Handle backspace
+    else if (character == '\b'){
+        if (boundsCheckStatus == -2)
+            return;
         backspace();
-    else{
-        text_buffer[byte++] = character;
-        text_buffer[byte++] = color;
+    }
+
+    // Handle letter and symbol ASCII
+    else {
+        if (boundsCheckStatus == -1)
+            return;
+
+        text_buffer[FORMULA_CELL_CHARBYTE(cell)] = character;
+        text_buffer[FORMULA_CELL_COLORBYTE(cell)] = color;
 
         ++cell;
         
         // Change the color of the cursor by changing next cell color
-        text_buffer[cell * 2 + 1] = color; 
+        text_buffer[FORMULA_CELL_COLORBYTE(cell)] = color; 
         updatexy();
     } 
 }
