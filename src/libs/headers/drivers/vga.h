@@ -46,7 +46,7 @@ extern void initScreen(char cursorStatus);
 extern void changeColor(enum VGA_COLOR fg, enum VGA_COLOR bg, int command);
 
 // Prints one character to the screen
-extern void printScreen(const uint8_t character);
+extern int printScreen(const uint8_t character);
 
 // Controls VGA Video Buffer
 extern int videoBuffer(int command, int size);
