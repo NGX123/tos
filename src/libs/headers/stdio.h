@@ -7,10 +7,10 @@
 #define STDIO_H
 
 // Prints a character to the screen
-extern void putchar(int chara);
+extern int putchar(int chara);
 
 // Prints a string to the screen
-extern void puts(char* str);
+extern int puts(char* str);
 
 // Prints formatted output to the screen - only understands %d, %x, %p, %s, %c
 extern void printf(const char *fmt, ...);

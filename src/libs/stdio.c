@@ -5,14 +5,18 @@
 #include "stdio.h"
 
 // Prints a character to the screen
-void putchar(int chara){
-    printScreen(chara);
+int putchar(int chara){
+    int status = printScreen(chara);
+    return status;
 }
 
 // Prints a string to the screen
-void puts(char* str){   
+int puts(char* str){   
     for (int i = 0; str[i] != 0; i++)
-        putchar(str[i]);
+        if (putchar(str[i]) == -1)
+            return -1;
+
+    return 0;
 }
 
 
