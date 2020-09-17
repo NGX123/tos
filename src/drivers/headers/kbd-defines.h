@@ -17,11 +17,15 @@
 
 #define NO 0x0
 #define ESC 0x01
-#define CONTROL 0x1D
-#define ALT 0x38
-#define CAPSLOCK 0x3A
 #define LARROW_SCAN 0xE4B
 #define RARROW_SCAN 0xE4D
+
+#define LARROW    0x80
+#define RARROW    0x81
+#define CTRL      0x82
+#define SHIFT     0x83
+#define ALT       0x84
+#define CAPS      0x85
 
 #define C(x) (x - '@')
 
@@ -31,16 +35,16 @@ static uint8_t scanset1[] =
   NO,   0x1B, '1',  '2',  '3',  '4',  '5',  '6',  // 0x00
   '7',  '8',  '9',  '0',  '-',  '=',  '\b', '\t',
   'q',  'w',  'e',  'r',  't',  'y',  'u',  'i',  // 0x10
-  'o',  'p',  '[',  ']',  '\n', NO,   'a',  's',
+  'o',  'p',  '[',  ']',  '\n', CTRL, 'a',  's',
   'd',  'f',  'g',  'h',  'j',  'k',  'l',  ';',  // 0x20
-  '\'', '`',  NO,   '\\', 'z',  'x',  'c',  'v',
-  'b',  'n',  'm',  ',',  '.',  '/',  NO,   '*',  // 0x30
-  NO,   ' ',  NO,   NO,   NO,   NO,   NO,   NO,
+  '\'', '`',  SHIFT,'\\', 'z',  'x',  'c',  'v',
+  'b',  'n',  'm',  ',',  '.',  '/',  SHIFT,'*',  // 0x30
+  ALT,   ' ',  CAPS,NO,   NO,   NO,   NO,   NO,
   NO,   NO,   NO,   NO,   NO,   NO,   NO,   '7',  // 0x40
   '8',  '9',  '-',  '4',  '5',  '6',  '+',  '1',
   '2',  '3',  '0',  '.',  NO,   NO,   NO,   NO,   // 0x50
   [0x9C] '\n',      // KP_Enter
-  [0xB5] '/'       // KP_Div
+  [0xB5] '/'        // KP_Div
 };
 
 // Character map when shift is pressed 
@@ -49,11 +53,11 @@ static uint8_t shiftmap[256] =
   NO,   033,  '!',  '@',  '#',  '$',  '%',  '^',  // 0x00
   '&',  '*',  '(',  ')',  '_',  '+',  '\b', '\t',
   'Q',  'W',  'E',  'R',  'T',  'Y',  'U',  'I',  // 0x10
-  'O',  'P',  '{',  '}',  '\n', NO,   'A',  'S',
+  'O',  'P',  '{',  '}',  '\n', CTRL,   'A','S',
   'D',  'F',  'G',  'H',  'J',  'K',  'L',  ':',  // 0x20
-  '"',  '~',  NO,   '|',  'Z',  'X',  'C',  'V',
-  'B',  'N',  'M',  '<',  '>',  '?',  NO,   '*',  // 0x30
-  NO,   ' ',  NO,   NO,   NO,   NO,   NO,   NO,
+  '"',  '~',  SHIFT,'|',  'Z',  'X',  'C',  'V',
+  'B',  'N',  'M',  '<',  '>',  '?',  SHIFT,'*',  // 0x30
+  ALT,   ' ',  CAPS, NO,   NO,   NO,   NO,   NO,
   NO,   NO,   NO,   NO,   NO,   NO,   NO,   '7',  // 0x40
   '8',  '9',  '-',  '4',  '5',  '6',  '+',  '1',
   '2',  '3',  '0',  '.',  NO,   NO,   NO,   NO,   // 0x50
