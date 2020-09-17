@@ -34,9 +34,9 @@ static void keyboardStdMode(uint32_t scancode, uint8_t character){
 
     // Arrows
     else if (scancode == LARROW_SCAN)
-        writeBuf(&charRingBufferStruct, scancode);
+        writeBuf(&charRingBufferStruct, LARROW);
     else if (scancode == RARROW_SCAN)
-        writeBuf(&charRingBufferStruct, scancode);
+        writeBuf(&charRingBufferStruct, RARROW);
 }
 
 // Keyboard display mode interpretation function
@@ -62,13 +62,17 @@ void keyboard_handler(){
     static uint8_t ctrlStatus = 0, altStatus = 0, shiftStatus = 0;              // Hold key statuses
     static uint8_t capslockStatus = 0;                                          // Press key statuses
     static uint8_t caps = 0;                                                    // Status of keys being lower case or higher case
+    // static uint8_t* scanset = scanset1;
     uint32_t keyboardStatus, scancode;                                          // Data from ports
     uint8_t character, scancode_byte2;                                           
-    
+
     if ((keyboardStatus = inb(KEYBOARD_STATUS_PORT)) & KBS_DIB)
         scancode = inb(KEYBOARD_DATA_PORT);
     else 
         return;
+
+    // Set the variable with scanset value
+    //scancodeTranslation = scanset[scancode];
 
     // Handle E0
     if (scancode == 0xE0){
