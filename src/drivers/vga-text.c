@@ -130,6 +130,9 @@ void scrollScreen(){
     for (currentCell = 80; currentCell < 2000; currentCell++)
         text_buffer[(currentCell-80) * 2] = text_buffer[currentCell * 2];
 
+    for (currentCell = 1920; currentCell < 2000; currentCell++)
+        text_buffer[currentCell * 2] = BLANK;
+
     cell -= 80;
     updatexy();
 }
@@ -234,7 +237,7 @@ int videoBuffer(int command, int size){
 }
 
 // Outputs a character to the screen
-void printScreen(const uint8_t character){
+int printScreen(const uint8_t character){
     // Check the text on bound
     int boundsCheckStatus = 0;
     if (videoBuffer(BUFFER_STATUS, 0) == 0)
@@ -253,47 +256,70 @@ void printScreen(const uint8_t character){
     // Handle next line character
     if (character == '\n'){
         if (boundsCheckStatus == -1)
-            return;
+            return -1;
+
+        // Scrolls if enter is pressed on last line
+        if (cell >= 1920)
+            scrollScreen();
+
         enter();
+
+        return 0;
     }
 
     // Handle tab 
     else if (character == '\t'){
         if (boundsCheckStatus == -1)
-            return;
+            return -1;
 
-        for (int i = 0; i <= 4; i++){
-            text_buffer[FORMULA_CELL_CHARBYTE(cell)] = ' ';
-            text_buffer[FORMULA_CELL_COLORBYTE(cell)] = color;
+        // Scrolls if not enough space for tab on current line
+        if (cell > (1999 - 4))
+            scrollScreen();
 
-            ++cell; 
-            updatexy();
-        }  
-    }
+        cell += 4;
+        updatexy();
+
+        return 0;
+    }  
         
     // Handle arrows
     else if (character == LARROW){
         if (boundsCheckStatus == -2)
-            return;
+            return -1;
         arrows('<');
+
+        return 0;
     }
     else if (character == RARROW){
         if (boundsCheckStatus == -1)
-            return;
+            return -1;
+
+        // Does not move if on the last cell
+        if (cell == 1999)
+            return -1;
+
         arrows('>');
+
+        return 0;
     }
 
     // Handle backspace
     else if (character == '\b'){
         if (boundsCheckStatus == -2)
-            return;
+            return -1;
         backspace();
+
+        return 0;
     }
 
     // Handle letter and symbol ASCII
     else {
         if (boundsCheckStatus == -1)
-            return;
+            return -1;
+        
+        // Scrolls if on the last cell
+        if (cell == 1999)
+            scrollScreen();
 
         text_buffer[FORMULA_CELL_CHARBYTE(cell)] = character;
         text_buffer[FORMULA_CELL_COLORBYTE(cell)] = color;
@@ -303,5 +329,9 @@ void printScreen(const uint8_t character){
         // Change the color of the cursor by changing next cell color
         text_buffer[FORMULA_CELL_COLORBYTE(cell)] = color; 
         updatexy();
+        
+        return 0;
     } 
+
+    return -1;
 }
