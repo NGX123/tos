@@ -180,70 +180,10 @@ void changeColor(enum VGA_COLOR fg, enum VGA_COLOR bg, int command) {
     
 }
 
-// Sets a marker which is the start and end of current write space; size is the size of buffer
-int videoBuffer(int command, int size){
-    static int bufferStatus = 0;
-    static int videoBufferStart = 0;
-    static int videoBufferEnd = 0;
-
-    // Turn on the buffering of everything written - and any input, arrows... can't go beyond the buffer
-    if (command == BUFFER_ON){
-        videoBufferStart = cell;
-        videoBufferEnd = cell + size;
-
-        if (size == BUFFER_SIZE_SCREEN_END)
-            videoBufferEnd = 2000;
-        
-        // Buffer can't be more then available space
-        if (videoBufferEnd > 2000){
-            videoBufferStart = 0;
-            videoBufferStart = 0;
-            videoBufferEnd = 0;
-
-            return -1;
-        }
-
-        bufferStatus = 1;
-
-        return bufferStatus;
-    }
-
-    // Turn off the buffer
-    else if (command == BUFFER_OFF){
-        bufferStatus = 0;
-        videoBufferStart = 0;
-        videoBufferEnd = 0;
-
-        return bufferStatus;
-    }
-
-    // Check if we came to the end of the buffer
-    else if (command == BUFFER_CHECK) {
-        if (cell >= videoBufferEnd)
-            return -1;
-        else if (cell <= videoBufferStart)
-            return -2;
-        else if (bufferStatus == 0)
-            return -3;
-
-    }
-
-    // Check the buffer status
-    else if (command == BUFFER_STATUS){
-        return bufferStatus;
-    }
-        
-    return -4;
-}
-
 // Outputs a character to the screen
 int printScreen(const uint8_t character){
     // Check the text on bound
     int boundsCheckStatus = 0;
-    if (videoBuffer(BUFFER_STATUS, 0) == 0)
-        boundsCheckStatus = 0;
-    else if (videoBuffer(BUFFER_STATUS, 0) == 1)
-        boundsCheckStatus = videoBuffer(BUFFER_CHECK, 0);
     
     // Make the text mode buffer bounds check
     if (cell >= 2000)

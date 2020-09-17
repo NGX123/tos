@@ -27,12 +27,6 @@ enum VGA_COLOR {
     white = 0xF
 };
 
-#define BUFFER_ON 0
-#define BUFFER_OFF 1
-#define BUFFER_CHECK 2
-#define BUFFER_STATUS 3
-#define BUFFER_SIZE_SCREEN_END 2000
-
 #define CHANGE_COLOR_NEXT 0
 #define CHANGE_COLOR_ALL 1
 
