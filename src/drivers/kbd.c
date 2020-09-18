@@ -100,7 +100,7 @@ void keyboard_handler(){
         shiftStatus = 1;
     else if (scancode == 0xAA || scancode == 0xB6)
         shiftStatus = 0;
-    
+
     // Toggle Key Statuses //
     // Check capslock
     if (!capslockStatus && scancode == 0x3A)
