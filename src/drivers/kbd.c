@@ -25,7 +25,7 @@ static uint8_t kbd_mode = 0;
 // Standard mode - arrows keys are straight passed to the display, all shortcuts are passed to system as interrupts(not made yet), normal keys are passed to the read buffer
 static void keyboardStdMode(uint32_t scancode, uint8_t character){
     // Write normal characters to the buffer
-    if (character >= 32 && character <= 127 && scancode <= 80)
+    if (character >= 32 && character <= 127 && scancode < 0x80)
         writeBuf(&charRingBufferStruct, character);
 
     // Escape sequences
@@ -43,7 +43,7 @@ static void keyboardStdMode(uint32_t scancode, uint8_t character){
 // Display mode - nothing is sent to the buffer and everything gets automatically displayed on the screen, shortcuts are as interrupts
 static void keyboardDisplayMode(uint32_t scancode, uint8_t character){
     // Print normal characters
-    if (character >= 32 && character <= 127 && scancode <= 80)
+    if (character >= 32 && character <= 127 && scancode < 0x80)
         printScreen(character);
 
     // Escape sequences
@@ -66,6 +66,7 @@ void keyboard_handler(){
     uint32_t keyboardStatus, scancode;                                          // Data from ports
     uint8_t character, scancode_byte2;                                           
 
+    // Get the keyboard input
     if ((keyboardStatus = inb(KEYBOARD_STATUS_PORT)) & KBS_DIB)
         scancode = inb(KEYBOARD_DATA_PORT);
     else 
@@ -99,7 +100,6 @@ void keyboard_handler(){
         shiftStatus = 1;
     else if (scancode == 0xAA || scancode == 0xB6)
         shiftStatus = 0;
-
     
     // Toggle Key Statuses //
     // Check capslock
@@ -110,7 +110,6 @@ void keyboard_handler(){
 
     // Combine to get either low or high
     caps = shiftStatus ^ capslockStatus;
-
 
     // Initialize the character variable // 
     character = 0;
@@ -126,7 +125,6 @@ void keyboard_handler(){
     // Control shortcut
     else if (ctrlStatus && !altStatus)
         character = ctlmap[scancode];
-
 
     // Keyboard mode handling //
     if (kbd_mode == 0)

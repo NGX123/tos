@@ -48,7 +48,7 @@ static uint8_t scanset1[] =
 };
 
 // Character map when shift is pressed 
-static uint8_t shiftmap[256] =
+static uint8_t shiftmap[] =
 {
   NO,   033,  '!',  '@',  '#',  '$',  '%',  '^',  // 0x00
   '&',  '*',  '(',  ')',  '_',  '+',  '\b', '\t',
@@ -66,7 +66,7 @@ static uint8_t shiftmap[256] =
 };
 
 // Character map when control is pressed
-static uint8_t ctlmap[256] =
+static uint8_t ctlmap[] =
 {
   NO,      NO,      NO,      NO,      NO,      NO,      NO,      NO,
   NO,      NO,      NO,      NO,      NO,      NO,      NO,      NO,
