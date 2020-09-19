@@ -13,8 +13,6 @@
 #include "drivers/vga.h"
 #include "drivers/kbd.h"
 
-
-#define BUFSIZE 255
 static uint8_t charBuffer[BUFSIZE];
 static ring_buffer_t charRingBufferStruct;
 
@@ -59,11 +57,8 @@ static void keyboardDisplayMode(uint32_t scancode, uint8_t character){
 
 /// INTERRUPT HANDLER ///
 void keyboard_handler(){
-    static uint8_t ctrlStatus = 0, altStatus = 0, shiftStatus = 0;              // Hold key statuses
-    static uint8_t capslockStatus = 0;                                          // Press key statuses
-    static uint8_t caps = 0;                                                    // Status of keys being lower case or higher case
-    // static uint8_t* scanset = scanset1;
-    uint32_t keyboardStatus, scancode;                                          // Data from ports
+    static uint8_t buttonStatuses = 0;                                                           // Toggle/Hold button statuses
+    uint32_t keyboardStatus, scancode;                                                           // Data from ports
     uint8_t character, scancode_byte2;                                           
 
     // Get the keyboard input
@@ -72,58 +67,50 @@ void keyboard_handler(){
     else 
         return;
 
-    // Set the variable with scanset value
-    //scancodeTranslation = scanset[scancode];
-
     // Handle E0
     if (scancode == 0xE0){
         scancode_byte2 = inb(KEYBOARD_DATA_PORT);
-        scancode = scancode << 4 | scancode_byte2;
-        // MAYBE WRONG BECUASE OUTPUT IS NOT 0xE0xx, but 0xExx
+        scancode = scancode | (scancode_byte2 << 8);
     }
 
     // Hold Key Statuses //
-    // Check alt 
-    if (scancode == 0x38 || scancode == 0xE38)
-        altStatus = 1;
-    else if (scancode == 0xB8 && altStatus == 1)
-        altStatus = 0;
-
     // Check ctrl 
-    if (scancode == 0x1D)
-        ctrlStatus = 1;
-    else if (scancode == 0x9D && ctrlStatus == 1)
-        ctrlStatus = 0;
+    if ((scancode == 0x1D      || scancode == 0x1DE0) && !(buttonStatuses & SHORTCUT_CTRL))
+        buttonStatuses ^= SHORTCUT_CTRL;
+    else if ((scancode == 0x9D || scancode == 0x9DE0) &&  (buttonStatuses & SHORTCUT_CTRL))
+        buttonStatuses ^= SHORTCUT_CTRL;
+
+    // Check alt 
+    if ((scancode == 0x38      || scancode == 0x38E0) && !(buttonStatuses & SHORTCUT_ALT))
+        buttonStatuses ^= SHORTCUT_ALT;
+    else if ((scancode == 0xB8 || scancode == 0xB8E0) &&  (buttonStatuses & SHORTCUT_ALT))
+        buttonStatuses ^= SHORTCUT_ALT;
 
     // Check shift
-    if ((scancode == 0x2A || scancode == 0x36) && !shiftStatus)
-        shiftStatus = 1;
-    else if (scancode == 0xAA || scancode == 0xB6)
-        shiftStatus = 0;
+    if ((scancode == 0x2A      || scancode == 0x36)  && !(buttonStatuses & SHORTCUT_SHIFT))
+        buttonStatuses ^= (SHORTCUT_SHIFT | KEYBYTE_CAPS);
+    else if ((scancode == 0xAA || scancode == 0xB6)  &&  (buttonStatuses & SHORTCUT_SHIFT))
+        buttonStatuses ^= (SHORTCUT_SHIFT | KEYBYTE_CAPS);
 
-    // Toggle Key Statuses //
     // Check capslock
-    if (!capslockStatus && scancode == 0x3A)
-        capslockStatus = 1;
-    else if (capslockStatus && scancode == 0x3A)
-        capslockStatus = 0;
-
-    // Combine to get either low or high
-    caps = shiftStatus ^ capslockStatus;
+    if (scancode == 0x3A      && !(buttonStatuses & SHORTCUT_CAPSLOCK))
+        buttonStatuses ^= (SHORTCUT_CAPSLOCK | KEYBYTE_CAPS);
+    else if (scancode == 0x3A &&  (buttonStatuses & SHORTCUT_CAPSLOCK))
+        buttonStatuses ^= (SHORTCUT_CAPSLOCK | KEYBYTE_CAPS);
 
     // Initialize the character variable // 
     character = 0;
 
     // Lowercase normal character
-    if (!caps && !ctrlStatus && !altStatus && !(scancode & 0x80))
+    if (!(buttonStatuses & (SHORTCUT_CTRL | SHORTCUT_ALT | KEYBYTE_CAPS)) && !(scancode & 0x80))
         character = scanset1[scancode];
     
     // Uppercase normal character
-    else if (caps && !ctrlStatus && !altStatus && !(scancode & 0x80))
+    else if ((buttonStatuses & (KEYBYTE_CAPS)) && !(buttonStatuses & (SHORTCUT_CTRL | SHORTCUT_ALT)) && !(scancode & 0x80))
         character = shiftmap[scancode];
     
     // Control shortcut
-    else if (ctrlStatus && !altStatus)
+    else if ((buttonStatuses & SHORTCUT_CTRL) && !(buttonStatuses & SHORTCUT_ALT))
         character = ctlmap[scancode];
 
     // Keyboard mode handling //
