@@ -27,6 +27,14 @@
 #define ALT       0x84
 #define CAPS      0x85
 
+#define SHORTCUT_CTRL      0x1
+#define SHORTCUT_ALT       0x2
+#define SHORTCUT_SHIFT     0x4
+#define SHORTCUT_CAPSLOCK  0x8
+#define KEYBYTE_CAPS       0x10
+
+#define BUFSIZE 255
+
 #define C(x) (x - '@')
 
 // Scanset 1 keymap
