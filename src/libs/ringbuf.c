@@ -33,7 +33,7 @@ int readBuf(ring_buffer_t* ringBuffer){
     if (ringBuffer->size == 0)
         return -1;
     else {
-        int readValue = ringBuffer->buffer[ringBuffer->readIndex];
+        uint8_t readValue = ringBuffer->buffer[ringBuffer->readIndex];
         
         ringBuffer->readIndex = (ringBuffer->readIndex + 1) % ringBuffer->capacity;
         ringBuffer->size--;
