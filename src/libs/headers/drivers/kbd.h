@@ -15,6 +15,7 @@
 #define RARROW 0x81
 
 #include <stdint.h>
+#include <stddef.h>
 
 // Structure of a keyboard packet 
 struct keyPacket {
@@ -31,8 +32,11 @@ typedef struct keyPacket keypacket_t;
 // Initialises the keyboard
 extern int keyboardInit(uint8_t mode);
 
-// Reads from the keyboard buffer into buf*
-extern int keyboardBufRead(uint8_t* data, int amount);
+// Reads amount from keyboard to buf
+extern int keyboardRead(void* buf, size_t amount);
+
+// Writes amount from buf to keyboard(always fails)
+extern int keyboardWrite(void* buf, size_t amount);
 
 // Changes or returns current mode
 extern uint8_t keyboardMode(int command);

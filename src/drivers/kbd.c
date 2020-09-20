@@ -5,6 +5,7 @@
 
 // Includes
 #include <stdint.h>
+#include <stddef.h>
 #include "stdio.h"
 #include "ringbuf.h"
 #include "headers/kbd-defines.h"
@@ -139,7 +140,7 @@ void keyboard_handler(){
 }
 
 
-/// DRIVER INTERFACE ///
+/// IOCTL FUNCTIONS ///
 // Initializes the PS/2 keyboard
 int keyboardInit(uint8_t mode){
     kbd_mode = mode;
@@ -168,33 +169,42 @@ int keyboardInit(uint8_t mode){
     return 0;  
 }
 
-// Reads from the keyboard into the buffer, if there is an error returns -1
-int keyboardBufRead(uint8_t* data, int amount){
-    int i;
-    int tmpVar;
-    for (i = 0; i < amount; i++)
-        if((tmpVar = readBuf(&charRingBufferStruct)) == -1){
-            if (i == 0)
-                return -1;
-            else
-                return i;
-        }
-        else 
-            data[i] = tmpVar;
-            
-
-    return i;
-}
-
-// Changes the keyboard mode or gives the current mode - c - current mode, integer - switches the mode
+// Changes or tells the current keyboard mode
 uint8_t keyboardMode(int command){
     // Current mode
     if (command == KEYBOARD_MODE_CURRENTMODE)
         return kbd_mode;
 
     // Change mode
-    kbd_mode = command;
-    return 0;
+    if (command < 3){
+        kbd_mode = command;
+        return 0;
+    }
+    
+    return -1;
+}
 
-    // Set keyboard custom mode - function pointer to the handler for it
+
+/// FILE OPERATIONS ///
+// Reads from the keyboard into the buffer, if there is an error returns -1
+int keyboardRead(void* data, size_t count){
+    size_t i;
+    int tmpVar;
+
+    for (i = 0; i < count; i++)
+        if((tmpVar = readBuf(&charRingBufferStruct)) == -1){
+            if (i == 0)
+                return -1;
+        }
+        else 
+            ((uint8_t*)data)[i] = (uint8_t)tmpVar;
+
+    return i;
+}
+
+int keyboardWrite(void* data, size_t count){
+    int tempvar;
+    tempvar = ((uint8_t*)data)[count-1];
+    
+    return (tempvar * 0 - 1);
 }
