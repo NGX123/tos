@@ -137,48 +137,6 @@ void scrollScreen(){
     updatexy();
 }
 
-/// DRIVER INTERFACE ///
-// Initialises the screen
-void initScreen(char cursor_status){
-    terminal_fg = green;
-    terminal_bg = black;
-    color = terminal_fg | terminal_bg << 4;
-    
-    // Clear screen
-    cleanScreen(0);
-
-    // Change the screen color
-    changeColor(green, black, CHANGE_COLOR_ALL);
-
-    // Change cursor status
-    if (cursor_status == CURSOR_ON)
-        enable_cursor(0, 15);
-    else if (cursor_status == CURSOR_OFF)
-        disable_cursor();
-}
-
-// Changes color of all of the new text printed
-void changeColor(enum VGA_COLOR fg, enum VGA_COLOR bg, int command) {
-    int tmpcell = 0;
-
-    // Change color of all text printed next
-    if (command == CHANGE_COLOR_NEXT){
-        terminal_fg = fg;
-        terminal_bg = bg;
-        color = terminal_fg | terminal_bg << 4;
-    }
-
-    // Change color of all of next and current text on the screen
-    else if (command == CHANGE_COLOR_ALL) {
-        terminal_fg = fg;
-        terminal_bg = bg;
-        color = terminal_fg | terminal_bg << 4;
-
-        while (tmpcell < 2000)
-            text_buffer[tmpcell++ * 2 + 1] = color; 
-    }
-    
-}
 
 // Outputs a character to the screen
 int printScreen(const uint8_t character){
@@ -274,6 +232,50 @@ int printScreen(const uint8_t character){
     } 
 
     return -1;
+}
+
+
+/// IOCTL FUNCTIONS ///
+// Initialises the screen
+void initScreen(char cursor_status){
+    terminal_fg = green;
+    terminal_bg = black;
+    color = terminal_fg | terminal_bg << 4;
+    
+    // Clear screen
+    cleanScreen(0);
+
+    // Change the screen color
+    changeColor(green, black, CHANGE_COLOR_ALL);
+
+    // Change cursor status
+    if (cursor_status == CURSOR_ON)
+        enable_cursor(0, 15);
+    else if (cursor_status == CURSOR_OFF)
+        disable_cursor();
+}
+
+// Changes color of all of the new text printed
+void changeColor(enum VGA_COLOR fg, enum VGA_COLOR bg, int command) {
+    int tmpcell = 0;
+
+    // Change color of all text printed next
+    if (command == CHANGE_COLOR_NEXT){
+        terminal_fg = fg;
+        terminal_bg = bg;
+        color = terminal_fg | terminal_bg << 4;
+    }
+
+    // Change color of all of next and current text on the screen
+    else if (command == CHANGE_COLOR_ALL) {
+        terminal_fg = fg;
+        terminal_bg = bg;
+        color = terminal_fg | terminal_bg << 4;
+
+        while (tmpcell < 2000)
+            text_buffer[tmpcell++ * 2 + 1] = color; 
+    }
+    
 }
 
 
