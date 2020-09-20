@@ -6,6 +6,7 @@
 #ifndef VGA_H
 #define VGA_H
 #include <stdint.h>
+#include <stddef.h>
 
 // Colors for the VGA 16-bit text mode
 enum VGA_COLOR {
@@ -42,6 +43,9 @@ extern void changeColor(enum VGA_COLOR fg, enum VGA_COLOR bg, int command);
 // Prints one character to the screen
 extern int printScreen(const uint8_t character);
 
-// Controls VGA Video Buffer
-extern int videoBuffer(int command, int size);
+// Writes count from buf to screen
+extern int vgatextWrite(void* buf, size_t count);
+
+// Reads count from screen to buf
+extern int vgatextRead(void* buf, size_t count);
 #endif

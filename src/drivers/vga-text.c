@@ -275,3 +275,23 @@ int printScreen(const uint8_t character){
 
     return -1;
 }
+
+
+/// FILE OPERATIONS ///
+// Writes from buf to display
+int vgatextWrite(void* buf, size_t count){
+    size_t i;
+    for (i = 0; i < count; i++)
+        if (printScreen(((uint8_t*)buf)[i]) == -1)
+            return -1;
+
+    return 0;
+}
+
+// Reads from display to buf
+int vgatextRead(void* buf, size_t count){
+    int tempvar;
+    tempvar = ((uint8_t*)buf)[count-1];
+    
+    return (tempvar * 0 - 1);
+}
