@@ -32,12 +32,12 @@ typedef struct keyPacket keypacket_t;
 // Initialises the keyboard
 extern int keyboardInit(uint8_t mode);
 
+// Changes or returns current mode
+extern uint8_t keyboardMode(int command);
+
 // Reads amount from keyboard to buf
 extern int keyboardRead(void* buf, size_t amount);
 
 // Writes amount from buf to keyboard(always fails)
 extern int keyboardWrite(void* buf, size_t amount);
-
-// Changes or returns current mode
-extern uint8_t keyboardMode(int command);
 #endif

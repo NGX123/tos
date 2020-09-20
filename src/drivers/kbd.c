@@ -187,7 +187,7 @@ uint8_t keyboardMode(int command){
 
 /// FILE OPERATIONS ///
 // Reads from the keyboard into the buffer, if there is an error returns -1
-int keyboardRead(void* data, size_t count){
+int keyboardRead(void* buf, size_t count){
     size_t i;
     int tmpVar;
 
@@ -197,14 +197,14 @@ int keyboardRead(void* data, size_t count){
                 return -1;
         }
         else 
-            ((uint8_t*)data)[i] = (uint8_t)tmpVar;
+            ((uint8_t*)buf)[i] = (uint8_t)tmpVar;
 
     return i;
 }
 
-int keyboardWrite(void* data, size_t count){
+int keyboardWrite(void* buf, size_t count){
     int tempvar;
-    tempvar = ((uint8_t*)data)[count-1];
+    tempvar = ((uint8_t*)buf)[count-1];
     
     return (tempvar * 0 - 1);
 }
