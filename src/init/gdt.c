@@ -4,7 +4,7 @@
 
 #include <stdint.h>
 #include "drivers/x86.h"
-extern void load_gdt(uint64_t);
+extern void load_gdt(void*);
 
 // Our GDT, with 3 entries, and finally our special GDT pointer
 struct gdt_entry gdt[3];
@@ -34,7 +34,7 @@ void setFlat(){
     }
 
     gp.limit = (sizeof(struct gdt_entry) * 3) - 1;
-    gp.base = (uint32_t)gdt;
-    load_gdt((uint32_t)&gp);
+    gp.base = (void*)gdt;
+    load_gdt((void*)&gp);
 }
 

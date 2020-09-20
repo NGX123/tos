@@ -43,9 +43,9 @@ void idt_init(){
 	IDT[33].offset_higherbits = ((uint32_t)irq1 & 0xffff0000) >> 16;
 
     ip.size = (sizeof(struct idt_entry) * IDT_COUNT) - 1;
-    ip.address = (uint32_t)IDT;
+    ip.address = (void*)IDT;
 
-    load_idt((uint32_t)&ip);
+    load_idt((void*)&ip);
 }
 
 

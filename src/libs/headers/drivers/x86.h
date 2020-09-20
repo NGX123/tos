@@ -22,7 +22,7 @@ struct gdt_entry{
 // Pointer to the GDT, The max bytes taken up by the GDT, minus 1
 struct gdt_ptr{
     uint16_t limit;
-    uint64_t base;
+    void* base;
 } __attribute__((packed));
 
 
@@ -41,7 +41,7 @@ struct idt_entry{
 // Defines a pointer to the IDT data structure
 struct idt_pointer{
     uint16_t size;
-    uint64_t address;
+    void* address;
 } __attribute__((packed));
 
 
