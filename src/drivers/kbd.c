@@ -138,7 +138,7 @@ void keyboard_handler(){
         keyboardDisplayMode(scancode, character);
     else if (kbd_mode == 2) // Off mode
         return;
-    else if (callroutine != 0){
+    if (callroutine != 0){
         if (scancode != RARROW_SCAN || scancode != LARROW_SCAN)
             callroutine(character, buttonStatuses);
         else 
