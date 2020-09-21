@@ -18,7 +18,7 @@ static uint8_t charBuffer[BUFSIZE];
 static ring_buffer_t charRingBufferStruct;
 
 static uint8_t kbd_mode = 0;
-callroutine_t callroutine = 0;
+static callroutine_t callroutine = 0;
 
 /// INTERRUPT HANDLER FUNCTIONS ///
 // Returns a status byte for all toggle and hold keys
