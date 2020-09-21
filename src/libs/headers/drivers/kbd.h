@@ -28,7 +28,7 @@ struct keyPacket {
   uint8_t specialkeyStatus; // Tells if the key is spacial and is not used in the typical keyboard function(e.g. home)
 };
 typedef struct keyPacket keypacket_t;
-typedef void (*callroutine_t)(uint8_t, uint8_t);
+typedef void (*callroutine_t)(uint8_t, uint8_t, uint32_t);
 
 // Initialises the keyboard
 extern int keyboardInit(uint8_t mode);

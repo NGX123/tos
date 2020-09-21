@@ -140,9 +140,9 @@ void keyboard_handler(){
         return;
     if (callroutine != 0){
         if (scancode != RARROW_SCAN || scancode != LARROW_SCAN)
-            callroutine(character, buttonStatuses);
+            callroutine(character, buttonStatuses, scancode);
         else 
-            callroutine(scancode == RARROW_SCAN ? RARROW : LARROW, buttonStatuses);
+            callroutine(scancode == RARROW_SCAN ? RARROW : LARROW, buttonStatuses, scancode);
     }
 }
 
