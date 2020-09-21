@@ -18,6 +18,7 @@ static uint8_t charBuffer[BUFSIZE];
 static ring_buffer_t charRingBufferStruct;
 
 static uint8_t kbd_mode = 0;
+callroutine_t callroutine = 0;
 
 /// INTERRUPT HANDLER FUNCTIONS ///
 // Returns a status byte for all toggle and hold keys
@@ -137,6 +138,12 @@ void keyboard_handler(){
         keyboardDisplayMode(scancode, character);
     else if (kbd_mode == 2) // Off mode
         return;
+    else if (callroutine != 0){
+        if (scancode != RARROW_SCAN || scancode != LARROW_SCAN)
+            callroutine(character, buttonStatuses);
+        else 
+            callroutine(scancode == RARROW_SCAN ? RARROW : LARROW, buttonStatuses);
+    }
 }
 
 
@@ -182,6 +189,12 @@ uint8_t keyboardMode(int command){
     }
     
     return -1;
+}
+
+// Sets a function pointer to be called when keyboard interrupt is sent
+int keyboardCallFunc(callroutine_t callroutine_func){
+    callroutine = callroutine_func;
+    return 0;
 }
 
 

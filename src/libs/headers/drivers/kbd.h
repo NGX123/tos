@@ -28,12 +28,16 @@ struct keyPacket {
   uint8_t specialkeyStatus; // Tells if the key is spacial and is not used in the typical keyboard function(e.g. home)
 };
 typedef struct keyPacket keypacket_t;
+typedef void (*callroutine_t)(uint8_t, uint8_t);
 
 // Initialises the keyboard
 extern int keyboardInit(uint8_t mode);
 
 // Changes or returns current mode
 extern uint8_t keyboardMode(int command);
+
+// Sets a function pointer to be called when keyboard interrupt is sent
+extern int keyboardCallFunc(callroutine_t callroutine_func);
 
 // Reads amount from keyboard to buf
 extern int keyboardRead(void* buf, size_t amount);
