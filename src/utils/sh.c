@@ -11,7 +11,99 @@
 #include <unistd.h>
 #include <sys/wait.h>
 
-char **exec_input;
+#include "./headers/sh.h"
+
+char** exec_input;
+
+// Lists for calling shell functions
+char* shell_commands_names[] = {
+    "exit",
+    "cd",
+    "exit",
+    NULL
+};
+int (*shell_commands[]) (char **args) = {
+    &shell_exit,
+    &shell_cd,
+    &shell_exec,
+    NULL
+};
+
+// Shell built-ins
+// Exits the shell
+int shell_exit(char **args){
+    return 0;
+}
+
+// Changes current directory
+int shell_cd(char **args){
+    if (args[1] == NULL) 
+        printf("Error: Not enough arguments for cd\n");
+    else 
+        if (chdir(args[1]) != 0)
+            error_handler(0);
+    
+    return 1;
+}
+
+// Decides how to execute(no command, built-in, binary)
+int shell_exec(char **args){
+    int i = 0;
+
+    // Empty command
+    if (args[0] == NULL)
+        return 1;
+
+    // Built-in command
+    else {
+        for (i = 0; shell_commands_names[i] != NULL; i++)
+            if (strcmp(args[0], shell_commands_names[i]) == 0)
+                return (*shell_commands[i]) (args);
+    }
+
+    return shell_launch(args);
+}
+
+// Launches binaries
+int shell_launch(char **args){
+    char delimeter[2] = ":";
+    char* full_path;
+    char include_paths[] = "/usr/bin/:/usr/sbin/";
+
+    int i;
+    int pid2, pid2_wait;
+    char* token;
+
+    pid2 = fork();
+    if (pid2 < 0)
+        error_handler(2);
+
+    // Execute the program
+    else if (pid2 == 0){
+        if (access(exec_input[0], X_OK) == -1){
+            token = strtok(include_paths, delimeter);
+            for (i = 0; token != NULL; i++){
+                full_path = concat(token, exec_input[0]);
+
+                // Try to execute binary in the using include dirs
+                if (access(full_path, X_OK) == 0)
+                    execv(full_path, exec_input);
+
+                free(full_path);
+                token = strtok(NULL, delimeter);
+            }      
+            error_handler(0);
+            exit(0);        
+        }
+
+        // Execute the user specified binary without include dirs
+        execv(exec_input[0], exec_input);
+    }
+    else
+        pid2_wait = wait(NULL);
+
+    return 1;
+}
 
 // Help functions
 // Prints error messages based on supplied number
@@ -38,9 +130,8 @@ char* concat(const char *s1, const char *s2)
     return result;
 }
 
-
 // Removes unneeded stuff from the input and puts it into tokens
-static void format_input(char* input){
+void format_input(char* input){
     char delimeter[2] = " ";
     char* token;
     int i, j, len, buff_size = 1;
@@ -80,106 +171,41 @@ static void format_input(char* input){
     }
     exec_input[i] = NULL;
     i = 0;
-    
-    // DEBUG PRINT STATEMENTS
-    // printf("\n\n\n");
-    // for (i = 0; exec_input[i] != NULL; i++)
-    //     printf("%s\n", exec_input[i]);
 }
 
-// Shell built-ins
-int cd(char **args){
-    if (args[1] == NULL) 
-        printf("Error: Not enough arguments for cd\n");
-    else 
-        if (chdir(args[1]) != 0) {
-            error_handler(0);
-    return 1;
-}
 
-int execute(){
-    for (int i = 0; i < )
-}
+
 
 // The main loop of the shell
 void shell_loop(void){
+    int i;
+    int status = 1;
     char* input_buffer = NULL;
     size_t size = 0;
 
-    while (1){
+    while (status){
         printf("\n> ");
         getline(&input_buffer, &size, stdin);
         format_input(input_buffer);
-        execute();
-    }
-}
+        status = shell_exec(exec_input);
 
-int main(){
-    int i;               
-    int pid2, pid2_wait;
-    
-    char* input_buffer = NULL;
-    size_t size = 0;
-
-    char* token;
-    char delimeter[2] = ":";
-    char* full_path;
-    char include_paths[] = "/usr/bin/:/usr/sbin/";
-
-    while(1){
-        // Get input
-        printf("\n> ");
-        getline(&input_buffer, &size, stdin);
-        format_input(input_buffer);
-        
-        // Exit
-        if (strcmp(exec_input[0], "exit") == 0){
-            for (i = 0; exec_input[i] != NULL; i++)
-                free(exec_input[i]);
-            free(exec_input);
-            free(input_buffer);
-            exit(0);
-        }    
-
-        // CD
-        if (strcmp(exec_input[0], "cd") == 0)
-            chdir(exec_input[1]);
-
-        // Create a new procces for the binary executable
-        pid2 = fork();
-        if (pid2 < 0)
-            error_handler(2);
-        // Execute the program
-        else if (pid2 == 0){
-            if (access(exec_input[0], X_OK) == -1){
-                token = strtok(include_paths, delimeter);
-                for (i = 0; token != NULL; i++){
-                    full_path = concat(token, exec_input[0]);
-
-                    // Try to execute binary in the using include dirs
-                    if (access(full_path, X_OK) == 0)
-                        execv(full_path, exec_input);
-
-                    free(full_path);
-                    token = strtok(NULL, delimeter);
-                }      
-                error_handler(0);
-                exit(0);        
-            }
-
-            // Execute the user specified binary without include dirs
-            execv(exec_input[0], exec_input);
-        }
-        else
-            pid2_wait = wait(NULL);
-            
-        // Free buffers
+         // Free buffers
         for (i = 0; exec_input[i] != NULL; i++)
                 free(exec_input[i]);
         free(exec_input);
     }
-    
+
     free(input_buffer);
+}
+
+int main(){
+    // Load configs(if implemented)
+
+    // Run the shell
+    shell_loop();   
+
+    // Make cleanup(if implemented) 
+    
     return 0;
 }
 
