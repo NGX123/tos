@@ -1,5 +1,5 @@
 CC = gcc
-CFLAGS = -Wall -Wextra -c 
+CFLAGS = -Wall -Wextra
 CCFLAGS_WARNINGS_EXTRA = -pedantic -Wcast-align -Wcast-qual -Wdisabled-optimization -Wformat=2 -Winit-self -Wlogical-op -Wmissing-declarations -Wmissing-include-dirs -Wredundant-decls -Wshadow -Wstrict-overflow=5 -Wswitch-default -Wundef -Wno-unused #Wsign-conversion
 
 # Cross-compiler
@@ -13,12 +13,17 @@ all:
 
 # Compile shell
 sh:
-	$(CC) $(CCFLAGS_WARNINGS_EXTRA) $(CFLAGS) sh.c
+	$(CC) $(CCFLAGS_WARNINGS_EXTRA) $(CFLAGS) sh.c -o nsh.bin
 
 # Compiler cat
 cat:
-	$(CC) $(CCFLAGS_WARNINGS_EXTRA) $(CFLAGS) cat.c
+	$(CC) $(CCFLAGS_WARNINGS_EXTRA) $(CFLAGS) cat.c -o ncat.bin
 
 # Cleans objects after the 
 clean:
-	rm -rf *.o *.out
+	rm -rf *.o *.out *.bin
+
+# Debug(do not run by make, only by terminal)
+debug:
+	# Check for memory leaks(compile with gcc "-g" flag)
+	valgrind -s --leak-check=full -track-origins=yes ./exe
