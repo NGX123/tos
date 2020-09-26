@@ -25,3 +25,6 @@ int shell_exec(char **args);
 
 // Main loop of the shell
 void shell_loop(void);
+
+// Launches external programs
+int shell_launch(char **args);
