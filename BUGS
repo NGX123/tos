@@ -1,23 +1,17 @@
 List of known bugs 
 
-vga-driver.c
- + Backspace can clean memory out of the text buffer
- + Print can print outside the text buffer
- + Arrow buttons will not move forward if the cursor gets on the tab or similar which is 4 spaces and cursor will not move forward if space is in front of it
-
-kbd.c
- + CAPS won't turn off
- + In shift mode symbols print with extra random unreleated symbols (e.g. shift + q outputs Qb)
- 
 cat.c
  + find a better way to implement flags(e.g. -t)
  + add flags - b, e, s, t
  + -n flag does not print line numbers normally
  + there are problems with input of the same flags like -A and -v
 
-sh.c 
- + leaks may be possible in full_path variable and concat function
- + cd does not tell if too much arguments were given(but still uses only the first
 
-acpi.c
- + does not have a handler for XSDT
+List of possible bugs
+
+stdio.c
+ + printf, puts, putc now return integers which may cause some problems
+
+vga.c
+ + Formula defines
+ + Removing byte var and moving to cell only
