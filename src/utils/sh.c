@@ -199,6 +199,9 @@ void shell_loop(void){
 }
 
 int main(){
+    // Startup
+    printf("Welcome to nSH\n");
+
     // Load configs(if implemented)
 
     // Run the shell
