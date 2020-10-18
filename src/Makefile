@@ -1,5 +1,5 @@
 # Cross-compiler 
-CC = $(HOME)/opt/cross-compiler/bin/i686-elf-gcc
+CC = i686-elf-gcc
 AS = nasm
 
 ASFLAGS = -felf32
