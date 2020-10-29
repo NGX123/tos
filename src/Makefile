@@ -1,4 +1,4 @@
-# Cross-compiler 
+# Cross-compiler
 CC = i686-elf-gcc
 AS = nasm
 
@@ -9,12 +9,12 @@ LDFLAGS = -T make/linker.ld -ffreestanding -nostdlib -O2  -lgcc
 
 
 # No Cross-compiler(Look in little osdev book for flags)
-CC_NOCROSS = gcc 		
+CC_NOCROSS = gcc
 AS_NOCROSS = nasm
 
 ASFLAGS_NOCROSS = -felf32
 CFLAGS_NOCROSS = -I libs/headers -ffreestanding -nostdlib -nodefaultlibs -nostartfiles -fno-builtin -fno-stack-protector -Wall -Wextra -m32 -c		# -nostdinc
-LDFLAGS_NOCROSS = -T make/linker.ld -ffreestanding -nostdlib -m elf_i386																								
+LDFLAGS_NOCROSS = -T make/linker.ld -ffreestanding -nostdlib -m elf_i386
 
 
 SOURCES = drivers/*.c kernel/*.c init/*.c libs/*.c #playground/*.c
@@ -54,15 +54,25 @@ all-extrawarning:
 	cp make/grub.cfg iso/boot/grub/
 	grub2-mkrescue -o os.iso iso
 
+# MacOS
+all-macos:
+	$(AS) $(ASFLAGS) init/boot.s -o boot.o
+	$(CC) $(CFLAGS) $(SOURCES)
+	$(CC) $(LDFLAGS) $(OBJECTS) -o os.o
 
-# Qemu start options 
+	mkdir -p iso/boot/grub
+	mv os.o iso/boot/
+	cp make/grub.cfg iso/boot/grub/
+grub-macos:
+	grub-mkrescue -o os.iso iso
+
+# Qemu start options
 qemu:
 	qemu-system-i386 -cdrom os.iso
 qemu-serial:
 	qemu-system-i386 -cdrom os.iso -serial file:serial.log
 
 
-# Cleans objects after the 
+# Cleans objects after the
 clean:
-	rm -rf *.o *.out *iso 
-
+	rm -rf *.o *.out *iso
