@@ -1,1 +1,19 @@
 ## TTY
+	* Print every character to the screen when key pressed and put it into the read() buffer, if arrow... occurs put it's special code on to the screen and in the buffer, if a delete occurs remove one character from buffer and from the screen. When end of the buffer comes stop printing
+	
+	* read() buffer
+		* In Line mode: When calling read() copy chosen amount of characters from read buffer into the user supplied buffer when an '\n' is sent to tty(check not buffer, but have it as a separate check when the keypress is sent)
+		* In raw mode: just copy set amount of characters from the read() buffer into the user supplied buffer, if there is enough, otherwise stop and and bind it using signal() to next keypress and then try again and check if there is enough characters, else do it again
+		* When a delecte occurs remove character from the buffer and screen, if arrows.. occur put their special scancode instead of ASCII
+
+	* Implement controling the tty through the ioctl() syscall
+	* Have canonical(raw) and line mode
+
+## TODO
+	* Implement an interrupt hadnler - when a keypress occurs
+		* In line mode
+			* Write it to the screen using vga write functions
+			* If it is a character or tab or next line write it to the read() buffer, if backspace remove one character from read() buffer
+			* If arrow occurs put it's escape sequence into the read() buffer 
+		* RAW mode
+			* No matter what it is, write it to the read() buffer 
