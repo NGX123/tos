@@ -18,61 +18,66 @@ LDFLAGS_NOCROSS = -T make/linker.ld -ffreestanding -nostdlib -m elf_i386
 
 
 SOURCES = drivers/*.c kernel/*.c init/*.c libs/*.c #playground/*.c
-OBJECTS = *.o #boot.o kernel.o
+OBJECTS = build/*.o
 
 
 # Main compilation command with cross-compiler
 all:
-	$(AS) $(ASFLAGS) init/boot.s -o boot.o
+	mkdir build
+	$(AS) $(ASFLAGS) init/boot.s -o build/boot.o
 	$(CC) $(CFLAGS) $(SOURCES)
-	$(CC) $(LDFLAGS) $(OBJECTS) -o os.o
+	mv *.o ./build
+	$(CC) $(LDFLAGS) $(OBJECTS) -o build/os.o
 
 	mkdir -p iso/boot/grub
-	mv os.o iso/boot/
+	mv build/os.o iso/boot/
 	cp make/grub.cfg iso/boot/grub/
-	grub2-mkrescue -o os.iso iso
+	grub2-mkrescue -o build/os.iso iso
 
 # Main compilation command with system compiler
 all-nocross:
-	$(AS_NOCROSS) $(ASFLAGS_NOCROSS) init/boot.s -o boot.o
+	$(AS_NOCROSS) $(ASFLAGS_NOCROSS) init/boot.s -o build/boot.o
 	$(CC_NOCROSS) $(CFLAGS_NOCROSS) $(SOURCES)
-	ld $(LDFLAGS_NOCROSS) $(OBJECTS) -o os.o
+	mv *.o ./build
+	ld $(LDFLAGS_NOCROSS) $(OBJECTS) -o build/os.o
 
 	mkdir -p iso/boot/grub
-	mv os.o iso/boot/
+	mv build/os.o iso/boot/
 	cp make/grub.cfg iso/boot/grub/
-	grub2-mkrescue -o os.iso iso
+	grub2-mkrescue -o build/os.iso iso
 
 # Compiler with a ton of extra warnings
 all-extrawarning:
-	$(AS) $(ASFLAGS) init/boot.s -o boot.o
+	$(AS) $(ASFLAGS) init/boot.s -o build/boot.o
 	$(CC) $(CEXTRAWARNINGS) $(CFLAGS) $(SOURCES)
-	$(CC) $(LDFLAGS) $(OBJECTS) -o os.o
+	mv *.o ./build
+	$(CC) $(LDFLAGS) $(OBJECTS) -o build/os.o
 
 	mkdir -p iso/boot/grub
-	mv os.o iso/boot/
+	mv build/os.o iso/boot/
 	cp make/grub.cfg iso/boot/grub/
-	grub2-mkrescue -o os.iso iso
+	grub2-mkrescue -o build/os.iso iso
 
 # MacOS
 all-macos:
-	$(AS) $(ASFLAGS) init/boot.s -o boot.o
+	$(AS) $(ASFLAGS) init/boot.s -o build/boot.o
 	$(CC) $(CFLAGS) $(SOURCES)
-	$(CC) $(LDFLAGS) $(OBJECTS) -o os.o
+	mv *.o ./build
+	$(CC) $(LDFLAGS) $(OBJECTS) -o build/os.o
 
 	mkdir -p iso/boot/grub
-	mv os.o iso/boot/
+	mv build/os.o iso/boot/
 	cp make/grub.cfg iso/boot/grub/
 grub-macos:
-	grub-mkrescue -o os.iso iso
+	grub-mkrescue -o build/os.iso iso
 
 # Qemu start options
 qemu:
-	qemu-system-i386 -cdrom os.iso
+	qemu-system-i386 -cdrom build/os.iso
 qemu-serial:
-	qemu-system-i386 -cdrom os.iso -serial file:serial.log
+	qemu-system-i386 -cdrom build/os.iso -serial file:serial.log
 
 
 # Cleans objects after the
 clean:
-	rm -rf *.o *.out *iso
+	rm -rf *.o *.out *iso build
