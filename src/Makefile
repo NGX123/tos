@@ -36,6 +36,7 @@ all:
 
 # Main compilation command with system compiler
 all-nocross:
+	mkdir build
 	$(AS_NOCROSS) $(ASFLAGS_NOCROSS) init/boot.s -o build/boot.o
 	$(CC_NOCROSS) $(CFLAGS_NOCROSS) $(SOURCES)
 	mv *.o ./build
@@ -48,6 +49,7 @@ all-nocross:
 
 # Compiler with a ton of extra warnings
 all-extrawarning:
+	mkdir build
 	$(AS) $(ASFLAGS) init/boot.s -o build/boot.o
 	$(CC) $(CEXTRAWARNINGS) $(CFLAGS) $(SOURCES)
 	mv *.o ./build
@@ -60,6 +62,7 @@ all-extrawarning:
 
 # MacOS
 all-macos:
+	mkdir build
 	$(AS) $(ASFLAGS) init/boot.s -o build/boot.o
 	$(CC) $(CFLAGS) $(SOURCES)
 	mv *.o ./build
