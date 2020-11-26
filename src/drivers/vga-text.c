@@ -1,23 +1,7 @@
 // File: vga_print.h
 // Description: includes functions to print strings and numbers to the VGA text buffer at 0xb8000
 
-
-
-/// Includes ///
-#include "drivers/x86.h"
-#include "drivers/vga.h"
-#include "drivers/kbd.h"
-
-/// Defines ///
-#define VGA_ADDRESS 0xb8000
-#define VGA_END 0xB8F9F
-#define COLUMNS 80
-#define ROWS 25  
-#define BLANK 0
-
-#define FORMULA_XY_CELL(x_pos, y_pos) (y_pos * COLUMNS + x_pos)
-#define FORMULA_CELL_CHARBYTE(currentCell) (currentCell * 2)
-#define FORMULA_CELL_COLORBYTE(currentCell) (currentCell * 2 + 1)
+#include "headers/vga.h"
 
 /// Declarations ///
 static volatile char* text_buffer = (volatile char*)VGA_ADDRESS;
@@ -30,38 +14,38 @@ static int y;
 
 
 
-
 /// CURSOR ///
 // Enable the cursor
 static void enable_cursor(uint8_t cursor_start, uint8_t cursor_end)
 {
 	outb(0x3D4, 0x0A);
 	outb(0x3D5, (inb(0x3D5) & 0xC0) | cursor_start);
- 
+
 	outb(0x3D4, 0x0B);
 	outb(0x3D5, (inb(0x3D5) & 0xE0) | cursor_end);
 }
 
-// Disable the cursor 
+// Disable the cursor
 static void disable_cursor()
 {
 	outb(0x3D4, 0x0A);
 	outb(0x3D5, 0x20);
 }
 
-// Update the position of the cursor 
+// Update the position of the cursor
 static void update_cursor(int x, int y)
 {
 	uint16_t pos = FORMULA_XY_CELL(x, y);
- 
+
 	outb(0x3D4, 0x0F);
 	outb(0x3D5, (uint8_t) (pos & 0xFF));
 	outb(0x3D4, 0x0E);
 	outb(0x3D5, (uint8_t) ((pos >> 8) & 0xFF));
 }
 
+// Updates the cursor location
 static void updatexy(){
-    x = cell % 80; 
+    x = cell % 80;
     y = (int)(cell / 80);
     update_cursor(x, y);
 }
@@ -90,7 +74,7 @@ static void enter(){
     updatexy();
 }
 
-// Moves cursor accrording to keyboard arrows 
+// Moves cursor accrording to keyboard arrows
 static void arrows(const char direction){
     if (direction == '<')
         --cell;
@@ -123,10 +107,10 @@ static void cleanScreen(char cleanOption){
     }
 }
 
-// Scrolls the screen 
+// Scrolls the screen
 void scrollScreen(){
     int currentCell;
-    
+
     for (currentCell = 80; currentCell < 2000; currentCell++)
         text_buffer[(currentCell-80) * 2] = text_buffer[currentCell * 2];
 
@@ -142,7 +126,7 @@ void scrollScreen(){
 int printScreen(const uint8_t character){
     // Check the text on bound
     int boundsCheckStatus = 0;
-    
+
     // Make the text mode buffer bounds check
     if (cell >= 2000)
         boundsCheckStatus = -1;
@@ -165,7 +149,7 @@ int printScreen(const uint8_t character){
         return 0;
     }
 
-    // Handle tab 
+    // Handle tab
     else if (character == '\t'){
         if (boundsCheckStatus == -1)
             return -1;
@@ -178,8 +162,8 @@ int printScreen(const uint8_t character){
         updatexy();
 
         return 0;
-    }  
-        
+    }
+
     // Handle arrows
     else if (character == LARROW){
         if (boundsCheckStatus == -2)
@@ -214,7 +198,7 @@ int printScreen(const uint8_t character){
     else {
         if (boundsCheckStatus == -1)
             return -1;
-        
+
         // Scrolls if on the last cell
         if (cell == 1999)
             scrollScreen();
@@ -223,13 +207,13 @@ int printScreen(const uint8_t character){
         text_buffer[FORMULA_CELL_COLORBYTE(cell)] = color;
 
         ++cell;
-        
+
         // Change the color of the cursor by changing next cell color
-        text_buffer[FORMULA_CELL_COLORBYTE(cell)] = color; 
+        text_buffer[FORMULA_CELL_COLORBYTE(cell)] = color;
         updatexy();
-        
+
         return 0;
-    } 
+    }
 
     return -1;
 }
@@ -241,7 +225,7 @@ void initScreen(char cursor_status){
     terminal_fg = green;
     terminal_bg = black;
     color = terminal_fg | terminal_bg << 4;
-    
+
     // Clear screen
     cleanScreen(0);
 
@@ -273,9 +257,9 @@ void changeColor(enum VGA_COLOR fg, enum VGA_COLOR bg, int command) {
         color = terminal_fg | terminal_bg << 4;
 
         while (tmpcell < 2000)
-            text_buffer[tmpcell++ * 2 + 1] = color; 
+            text_buffer[tmpcell++ * 2 + 1] = color;
     }
-    
+
 }
 
 
@@ -294,6 +278,6 @@ int vgatextWrite(void* buf, size_t count){
 int vgatextRead(void* buf, size_t count){
     int tempvar;
     tempvar = ((uint8_t*)buf)[count-1];
-    
+
     return (tempvar * 0 - 1);
 }
