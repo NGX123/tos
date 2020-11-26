@@ -2,15 +2,13 @@
 // Description: includes defenitions for loading the global descriptor table
 // WHEN CHANGING TO LONG MODE CHANGE THE "uint32_t" in the adresses to "uint64_t"
 
-#include <stdint.h>
-#include "drivers/x86.h"
-extern void load_gdt(void*);
+#include "headers/gdt.h"
 
 // Our GDT, with 3 entries, and finally our special GDT pointer
 struct gdt_entry gdt[3];
 struct gdt_ptr gp;
 
-
+// Initializes the flat memory model
 void setFlat(){
     for (int i = 0; i < 3; i++){
         gdt[i].limit_low = 0xffff;
@@ -37,4 +35,3 @@ void setFlat(){
     gp.base = (void*)gdt;
     load_gdt((void*)&gp);
 }
-
