@@ -9,8 +9,11 @@ cat.c
 
 List of possible bugs
 
+In all files where an extra header was added it might cause problems
+
 stdio.c
  + printf, puts, putc now return integers which may cause some problems
+ + const in declarations were removed in some functions which might casue problems(then just return to state from previous commit)
 
 vga.c
  + Formula defines
