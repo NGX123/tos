@@ -1,18 +1,7 @@
 // File: kbd.c
 // Descriptions: keyboard driver
 
-
-
-// Includes
-#include <stdint.h>
-#include <stddef.h>
-#include "stdio.h"
-#include "ringbuf.h"
 #include "headers/kbd-defines.h"
-
-#include "drivers/x86.h"
-#include "drivers/vga.h"
-#include "drivers/kbd.h"
 
 static uint8_t charBuffer[BUFSIZE];
 static ring_buffer_t charRingBufferStruct;
@@ -24,13 +13,13 @@ static callroutine_t callroutine = 0;
 // Returns a status byte for all toggle and hold keys
 static uint8_t getButtonStatuses(uint32_t scancode, uint8_t buttonStatuses){
     // Hold Key Statuses //
-    // Check ctrl 
+    // Check ctrl
     if ((scancode == 0x1D      || scancode == 0x1DE0) && !(buttonStatuses & SHORTCUT_CTRL))
         buttonStatuses ^= SHORTCUT_CTRL;
     else if ((scancode == 0x9D || scancode == 0x9DE0) &&  (buttonStatuses & SHORTCUT_CTRL))
         buttonStatuses ^= SHORTCUT_CTRL;
 
-    // Check alt 
+    // Check alt
     if ((scancode == 0x38      || scancode == 0x38E0) && !(buttonStatuses & SHORTCUT_ALT))
         buttonStatuses ^= SHORTCUT_ALT;
     else if ((scancode == 0xB8 || scancode == 0xB8E0) &&  (buttonStatuses & SHORTCUT_ALT))
@@ -59,11 +48,11 @@ static uint8_t getCharacter(uint32_t scancode, uint8_t buttonStatuses){
     // Lowercase normal character
     if (!(buttonStatuses & (SHORTCUT_CTRL | SHORTCUT_ALT | KEYBYTE_CAPS)) && !(scancode & 0x80))
         character = scanset1[scancode];
-    
+
     // Uppercase normal character
     else if ((buttonStatuses & (KEYBYTE_CAPS)) && !(buttonStatuses & (SHORTCUT_CTRL | SHORTCUT_ALT)) && !(scancode & 0x80))
         character = shiftmap[scancode];
-    
+
     // Control shortcut
     else if ((buttonStatuses & SHORTCUT_CTRL) && !(buttonStatuses & SHORTCUT_ALT))
         character = ctlmap[scancode];
@@ -80,7 +69,7 @@ static void keyboardStdMode(uint32_t scancode, uint8_t character){
         writeBuf(&charRingBufferStruct, character);
 
     // Escape sequences
-    else if (character == '\b' || character == '\t' || character == '\n') 
+    else if (character == '\b' || character == '\t' || character == '\n')
         writeBuf(&charRingBufferStruct, character);
 
     // Arrows
@@ -112,12 +101,12 @@ static void keyboardDisplayMode(uint32_t scancode, uint8_t character){
 void keyboard_handler(){
     static uint8_t buttonStatuses = 0;                                                           // Toggle/Hold button statuses
     uint32_t keyboardStatus, scancode;                                                           // Data from ports
-    uint8_t character, scancode_byte2;                                           
+    uint8_t character, scancode_byte2;
 
     // Get the keyboard input
     if ((keyboardStatus = inb(KEYBOARD_STATUS_PORT)) & KBS_DIB)
         scancode = inb(KEYBOARD_DATA_PORT);
-    else 
+    else
         return;
 
     // Handle E0
@@ -141,7 +130,7 @@ void keyboard_handler(){
     if (callroutine != 0){
         if (scancode != RARROW_SCAN || scancode != LARROW_SCAN)
             callroutine(character, buttonStatuses, scancode);
-        else 
+        else
             callroutine(scancode == RARROW_SCAN ? RARROW : LARROW, buttonStatuses, scancode);
     }
 }
@@ -168,12 +157,12 @@ int keyboardInit(uint8_t mode){
     outb(KEYBOARD_STATUS_PORT, 0xA7);                           // Disable second PS/2 port
 
     // Intialises the character buffer
-    RingBufferInit(&charRingBufferStruct, BUFSIZE, charBuffer); 
+    RingBufferInit(&charRingBufferStruct, BUFSIZE, charBuffer);
 
     // Enable first PS/2 port
     outb(KEYBOARD_COMMAND_PORT, 0xAE);                          // Enable 1st PS/2 port
 
-    return 0;  
+    return 0;
 }
 
 // Changes or tells the current keyboard mode
@@ -187,7 +176,7 @@ uint8_t keyboardMode(int command){
         kbd_mode = command;
         return 0;
     }
-    
+
     return -1;
 }
 
@@ -209,7 +198,7 @@ int keyboardRead(void* buf, size_t count){
             if (i == 0)
                 return -1;
         }
-        else 
+        else
             ((uint8_t*)buf)[i] = (uint8_t)tmpVar;
 
     return i;
@@ -218,6 +207,6 @@ int keyboardRead(void* buf, size_t count){
 int keyboardWrite(void* buf, size_t count){
     int tempvar;
     tempvar = ((uint8_t*)buf)[count-1];
-    
+
     return (tempvar * 0 - 1);
 }

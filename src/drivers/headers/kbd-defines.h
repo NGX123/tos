@@ -1,15 +1,22 @@
 // File: kbd-defines.h
 // Description: internal to the keyboard driver header
 
-
-
-
-
 #ifndef KBD_DEFINES_H
 #define KBD_DEFINES_H
-#include <stdint.h>
 
-// Defines
+/// Includes
+#include <stdint.h>
+#include <stddef.h>
+#include "stdio.h"
+#include "ringbuf.h"
+
+#include "drivers/x86.h"
+#include "drivers/vga.h"
+#include "drivers/kbd.h"
+
+
+
+/// Defines
 #define KEYBOARD_STATUS_PORT  0x64
 #define KEYBOARD_COMMAND_PORT 0x64
 #define KEYBOARD_DATA_PORT    0x60
@@ -37,6 +44,8 @@
 
 #define C(x) (x - '@')
 
+
+
 // Scanset 1 keymap
 static uint8_t scanset1[] =
 {
@@ -55,7 +64,7 @@ static uint8_t scanset1[] =
   [0xB5] '/'        // KP_Div
 };
 
-// Character map when shift is pressed 
+// Character map when shift is pressed
 static uint8_t shiftmap[] =
 {
   NO,   033,  '!',  '@',  '#',  '$',  '%',  '^',  // 0x00
@@ -86,4 +95,37 @@ static uint8_t ctlmap[] =
   [0x9C] '\r',      // KP_Enter
   [0xB5] C('/')     // KP_Div
 };
+
+
+/// Declarations
+// Returns a status byte for all toggle and hold keys
+static uint8_t getButtonStatuses(uint32_t scancode, uint8_t buttonStatuses);
+
+// Gets the character from the scancode
+static uint8_t getCharacter(uint32_t scancode, uint8_t buttonStatuses);
+
+// Standard mode - arrows keys are straight passed to the display, all shortcuts are passed to system as interrupts(not made yet), normal keys are passed to the read buffer
+static void keyboardStdMode(uint32_t scancode, uint8_t character);
+
+// Display mode - nothing is sent to the buffer and everything gets automatically displayed on the screen, shortcuts are as interrupts
+static void keyboardDisplayMode(uint32_t scancode, uint8_t character);
+
+// Function that is called when keyboard interrupt occurs
+void keyboard_handler();
+
+// Initializes the PS/2 keyboard
+int keyboardInit(uint8_t mode);
+
+// Changes or tells the current keyboard mode
+uint8_t keyboardMode(int command);
+
+// Sets a function pointer to be called when keyboard interrupt is sent
+int keyboardCallFunc(callroutine_t callroutine_func);
+
+// Reads from the keyboard into the buffer, if there is an error returns -1
+int keyboardRead(void* buf, size_t count);
+
+// Just fails
+int keyboardWrite(void* buf, size_t count);
+
 #endif
