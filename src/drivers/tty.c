@@ -1,15 +1,7 @@
 // File: tty.c
 // Description: code for the tty device combining keyboard and display
 
-
-#include <stdint.h>
-#include <stddef.h>
-#include <stdarg.h>
-
-#include "drivers/vga.h"
-#include "drivers/kbd.h"
-#include "drivers/tty.h"
-#include "ringbuf.h"
+#include "headers/tty.h"
 
 static struct tty_config termios;
 static ring_buffer_t ttyInputBufferStruct;
@@ -23,25 +15,25 @@ void ttyHandleKeyboardInterrupt(uint8_t character, uint8_t keyStatuses, uint32_t
             vgatextWrite(&character, 1);
             writeBuf(&ttyInputBufferStruct, character);
         }
-            
+
         // Escape codes
         else if (character == '\b' || character == '\t' || character == '\n'){
             vgatextWrite(&character, 1);
         }
-        
+
         // Arrows
         else if (scancode == LARROW)
             vgatextWrite(&character, 1);
         else if (scancode == RARROW)
             vgatextWrite(&character, 1);
     }
-        
+
     else if (termios.mode == MODE_RAW){
         // Characters
         if (character >= 32 && character <= 127 && scancode < 0x80){
             writeBuf(&ttyInputBufferStruct, character);
         }
-        
+
         // Escape codes
         else if (character == '\b' || character == '\t' || character == '\n'){
             writeBuf(&ttyInputBufferStruct, character);
@@ -77,7 +69,7 @@ int ttyWrite(void* buf, size_t count){
             if (i == 0)
                 return -1;
         }
-        
+
     return i;
 }
 
@@ -91,7 +83,7 @@ int ttyRead(void* buf, size_t count){
             if (i == 0)
                 return -1;
         }
-        else 
+        else
             ((uint8_t*)buf)[i] = (uint8_t)tmpVar;
 
     return i;
@@ -101,5 +93,5 @@ int ttyRead(void* buf, size_t count){
 int ttyIoctl(size_t request, ...){
     va_list args;
 
-
+    return 0;
 }
