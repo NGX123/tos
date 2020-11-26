@@ -1,6 +1,9 @@
 // File: idt.h
 // Description: idt handler code header
 
+#ifndef IDT_DEFINES_H
+#define IDT_DEFINES_H
+
 /// Includes
 #include <stdint.h>
 #include "drivers/x86.h"
@@ -44,3 +47,4 @@ void idt_init();
 // C functions that handle interrupts
 void irq0_handler(void);
 void irq1_handler(void);
+#endif
