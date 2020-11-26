@@ -14,4 +14,9 @@ extern int puts(char* str);
 
 // Prints formatted output to the screen - only understands %d, %x, %p, %s, %c
 extern void printf(const char *fmt, ...);
+
+// Transfer to appropriate library later
+// Converts string to integer
+int atoi(const char *s);
+
 #endif
