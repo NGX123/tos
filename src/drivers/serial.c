@@ -1,9 +1,7 @@
 // File: serial.c
-// Description: this file includes functions for interacting with serial port 
+// Description: this file includes functions for interacting with serial port
 
-
-#include "drivers/x86.h"
-#define PORT 0x3f8
+#include "headers/serial.h"
 
 // Initialize the serial port configuration
 void initSerial() {
@@ -20,7 +18,7 @@ void initSerial() {
 int is_transmit_empty() {
    return inb(PORT + 5) & 0x20;
 }
- 
+
 // Send the data through serial port
 void writeSerial(char* a) {
     while (is_transmit_empty() == 0);
