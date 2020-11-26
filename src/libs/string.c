@@ -79,7 +79,7 @@ int strncmp(const char * cs,const char * ct,size_t count)
 	return __res;
 }
 
-char * strchr(const char * s, int c)
+char * strchr(char * s, int c)
 {
 	for(; *s != (char) c; ++s)
 		if (*s == '\0')
@@ -87,9 +87,9 @@ char * strchr(const char * s, int c)
 	return (char *) s;
 }
 
-char * strrchr(const char * s, int c)
+char * strrchr(char * s, int c)
 {
-       const char *p = s + strlen(s);
+       char *p = s + strlen(s);
        do {
            if (*p == (char)c)
                return (char *)p;
@@ -134,9 +134,9 @@ size_t strspn(const char *s, const char *accept)
 	return count;
 }
 
-char * strpbrk(const char * cs,const char * ct)
+char * strpbrk(char * cs,char * ct)
 {
-	const char *sc1,*sc2;
+	char *sc1,*sc2;
 
 	for( sc1 = cs; *sc1 != '\0'; ++sc1) {
 		for( sc2 = ct; *sc2 != '\0'; ++sc2) {
@@ -147,7 +147,7 @@ char * strpbrk(const char * cs,const char * ct)
 	return NULL;
 }
 
-char * strtok(char * s,const char * ct)
+char * strtok(char * s,char * ct)
 {
 	char *sbegin, *send;
 
@@ -188,7 +188,7 @@ char * bcopy(const char * src, char * dest, int count)
 	return dest;
 }
 
-void * memcpy(void * dest,const void *src,size_t count)
+void * memcpy(void * dest,void *src,size_t count)
 {
 	char *tmp = (char *) dest, *s = (char *) src;
 
@@ -198,7 +198,7 @@ void * memcpy(void * dest,const void *src,size_t count)
 	return dest;
 }
 
-void * memmove(void * dest,const void *src,size_t count)
+void * memmove(void * dest, void *src,size_t count)
 {
 	char *tmp, *s;
 
@@ -243,18 +243,18 @@ int memcmp(const void * cs,const void * ct,size_t count)
 //   	return (void *) p;
 // }
 
-char * strstr(const char * s1,const char * s2)
+const char * strstr(const char * s1,const char * s2)
 {
 	int l1, l2;
 
 	l2 = strlen(s2);
 	if (!l2)
-		return (char *) s1;
+		return (const char *) s1;
 	l1 = strlen(s1);
 	while (l1 >= l2) {
 		l1--;
 		if (!memcmp(s1,s2,l2))
-			return (char *) s1;
+			return (const char *) s1;
 		s1++;
 	}
 	return NULL;
