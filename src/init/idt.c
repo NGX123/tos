@@ -2,30 +2,24 @@
 // Description: c setup of interrupt descriptor table, the names of irqs must also be added here for usage. outb(0xA0, 0x20); needs to be added before out(0x20, 0x20); on interrupts 8+
 // WHEN CHANGING TO LONG MODE CHANGE THE "uint32_t" in the adresses to "uint64_t"
 
-#define IDT_COUNT 256
-#include "drivers/x86.h"
-
-extern void keyboard_handler();
-extern void load_idt();
-extern int irq0();
-extern int irq1();
+#include "headers/idt.h"
 
 // Initializations
 struct idt_entry IDT[IDT_COUNT];
 struct idt_pointer ip;
 
-// Initializes the interrupt descriptor table entries 
+// Initializes the interrupt descriptor table entries
 void idt_init(){
     // Remap the PIC
     outb(0x20, 0x11);
-    outb(0xA0, 0x11); 
-    outb(0x21, 0x20); 
-    outb(0xA1, 40); 
-    outb(0x21, 0x04); 
-    outb(0xA1, 0x02); 
-    outb(0x21, 0x01);     
-    outb(0xA1, 0x01); 
-    outb(0x21, 0x0); 
+    outb(0xA0, 0x11);
+    outb(0x21, 0x20);
+    outb(0xA1, 40);
+    outb(0x21, 0x04);
+    outb(0xA1, 0x02);
+    outb(0x21, 0x01);
+    outb(0xA1, 0x01);
+    outb(0x21, 0x0);
     outb(0xA1, 0x0);
 
 
@@ -50,7 +44,7 @@ void idt_init(){
 
 
 // C functions that handle interrupts
-void irq0_handler(void) {
+void irq0_handler(void){
     outb(0x20, 0x20); //EOI
 }
 
