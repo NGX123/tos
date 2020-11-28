@@ -17,5 +17,5 @@ void initSerial();
 int is_transmit_empty();
 
 // Send the data through serial port
-void writeSerial(char* a);
+void writeSerial(uint8_t* a);
 #endif
