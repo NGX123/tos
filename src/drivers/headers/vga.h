@@ -30,7 +30,7 @@ static void enable_cursor(uint8_t cursor_start, uint8_t cursor_end);
 static void disable_cursor();
 
 // Update the position of the cursor
-static void update_cursor(int x, int y);
+static void update_cursor(int x_axis, int y_axis);
 
 // Updates the cursor location
 static void updatexy();

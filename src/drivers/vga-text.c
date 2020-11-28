@@ -33,9 +33,9 @@ static void disable_cursor()
 }
 
 // Update the position of the cursor
-static void update_cursor(int x, int y)
+static void update_cursor(int x_axis, int y_axis)
 {
-	uint16_t pos = FORMULA_XY_CELL(x, y);
+	uint16_t pos = FORMULA_XY_CELL(x_axis, y_axis);
 
 	outb(0x3D4, 0x0F);
 	outb(0x3D5, (uint8_t) (pos & 0xFF));
@@ -70,7 +70,7 @@ static void enter(){
     x = 0;
     cell = FORMULA_XY_CELL(x, y);
 
-    text_buffer[FORMULA_CELL_COLORBYTE(cell)] = color;
+    text_buffer[FORMULA_CELL_COLORBYTE(cell)] = (char)color;
     updatexy();
 }
 
@@ -203,13 +203,13 @@ int printScreen(const uint8_t character){
         if (cell == 1999)
             scrollScreen();
 
-        text_buffer[FORMULA_CELL_CHARBYTE(cell)] = character;
-        text_buffer[FORMULA_CELL_COLORBYTE(cell)] = color;
+        text_buffer[FORMULA_CELL_CHARBYTE(cell)] = (char)character;
+        text_buffer[FORMULA_CELL_COLORBYTE(cell)] = (char)color;
 
         ++cell;
 
         // Change the color of the cursor by changing next cell color
-        text_buffer[FORMULA_CELL_COLORBYTE(cell)] = color;
+        text_buffer[FORMULA_CELL_COLORBYTE(cell)] = (char)color;
         updatexy();
 
         return 0;
@@ -257,7 +257,7 @@ void changeColor(enum VGA_COLOR fg, enum VGA_COLOR bg, int command) {
         color = terminal_fg | terminal_bg << 4;
 
         while (tmpcell < 2000)
-            text_buffer[tmpcell++ * 2 + 1] = color;
+            text_buffer[tmpcell++ * 2 + 1] = (char)color;
     }
 
 }
