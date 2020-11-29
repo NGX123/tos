@@ -61,7 +61,7 @@ int ttyInit(uint8_t mode){
 
 /// FILE OPERATIONS ///
 // Writes count from buf to screen
-int ttyWrite(void* buf, size_t count){
+ssize_t ttyWrite(void* buf, size_t count){
     size_t i;
 
     for (i = 0; i < count; i++)
@@ -70,11 +70,11 @@ int ttyWrite(void* buf, size_t count){
                 return -1;
         }
 
-    return i;
+    return (ssize_t)i;
 }
 
 // Reads count from keyboard to buf
-int ttyRead(void* buf, size_t count){
+ssize_t ttyRead(void* buf, size_t count){
     size_t i;
     int tmpVar;
 
@@ -86,7 +86,7 @@ int ttyRead(void* buf, size_t count){
         else
             ((uint8_t*)buf)[i] = (uint8_t)tmpVar;
 
-    return i;
+    return (ssize_t)i;
 }
 
 // Calls device specific functions
