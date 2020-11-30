@@ -17,3 +17,5 @@
 			* If arrow occurs put it's escape sequence into the read() buffer 
 		* RAW mode
 			* No matter what it is, write it to the read() buffer 
+	* Other
+		* Fix all warnings that are given when compiled with 'make all-extrawarnings"
