@@ -1,20 +1,15 @@
-List of known bugs 
-
-cat.c
- + find a better way to implement flags(e.g. -t)
- + add flags - b, e, s, t
- + -n flag does not print line numbers normally
- + there are problems with input of the same flags like -A and -v
-
-
-List of possible bugs
-
-In all files where an extra header was added it might cause problems
-
+-- List of known bugs --
+-- List of possible bugs --
 stdio.c
- + printf, puts, putc now return integers which may cause some problems
- + const in declarations were removed in some functions which might casue problems(then just return to state from previous commit)
+    + const in declarations were removed in some functions which might casue problems(then just return to state from previous commit)
+
+string.c
+    + strstr() -> size of length variables was changed from int to size_t
+    multiple functions -> removed the const qualiefier to mute the warning, unlikely but may cause some problems if there is a bug in code and const var gets changed
+
+tty.c
+    + tty.c -> ttyWrite() and ttyRead() -> because the functions return types are ssize_t which includes negative numbers the variable that counts the bytes(i) is typecasted from size_t(no negative num bers) to ssize_t which might cause it to return negative numbers of read bytes when more bytes are read then the largest positive number in ssize_t(it is possible becuase the amount of bytes to read is a size_t variable)
 
 vga.c
- + Formula defines
- + Removing byte var and moving to cell only
+    + The text buffer is of uint8_t type while the color variable whos value is transfered to color the text is of type char, which might casue same problems
+        + The warnings were fixed by just converting the color to char before assignment
