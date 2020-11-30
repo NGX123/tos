@@ -22,7 +22,7 @@ extern char * strrchr(char *,int);
 extern char * strpbrk(char *,char *);
 extern char * strtok(char *,char *);
 extern const char * strstr(const char *,const char *);
-extern size_t strlen(const char *);
+extern uint32_t strlen(const char *);
 extern size_t strnlen(const char *,size_t);
 extern size_t strspn(const char *,const char *);
 extern int strcmp(const char *,const char *);

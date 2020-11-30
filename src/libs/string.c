@@ -2,6 +2,7 @@
 // Description: string library, some or most implementation taken from Linux-1.3(Copyright Linus Torvalds)
 
 #include "string.h"
+#include <stdint.h>
 
 char * ___strtok = NULL;
 
@@ -97,22 +98,25 @@ char * strrchr(char * s, int c)
        return NULL;
 }
 
-size_t strlen(const char * s)
+uint32_t strlen(const char * s)
 {
-	const char *sc;
+	int n;
 
-	for (sc = s; *sc != '\0'; ++sc)
-		/* nothing */;
-	return sc - s;
+	for(n = 0; s[n]; n++)
+    ;
+
+	return n;
 }
 
-size_t strnlen(const char * s, size_t count)
+size_t strnlen(const char * s, size_t maxlen)
 {
-	const char *sc;
+	size_t len;
 
-	for (sc = s; count-- && *sc != '\0'; ++sc)
-		/* nothing */;
-	return sc - s;
+	for (len = 0; len < maxlen; len++, s++) {
+		if (!*s)
+			break;
+	}
+	return (len);
 }
 
 size_t strspn(const char *s, const char *accept)
@@ -245,7 +249,7 @@ int memcmp(const void * cs,const void * ct,size_t count)
 
 const char * strstr(const char * s1,const char * s2)
 {
-	int l1, l2;
+	size_t l1, l2;
 
 	l2 = strlen(s2);
 	if (!l2)
