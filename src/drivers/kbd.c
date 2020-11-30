@@ -128,7 +128,7 @@ void keyboard_handler(){
     else if (kbd_mode == 2) // Off mode
         return;
     if (callroutine != 0){
-        if (scancode != RARROW_SCAN || scancode != LARROW_SCAN)
+        if (scancode != RARROW_SCAN && scancode != LARROW_SCAN)
             callroutine(character, buttonStatuses, scancode);
         else
             callroutine(scancode == RARROW_SCAN ? RARROW : LARROW, buttonStatuses, scancode);
@@ -166,7 +166,7 @@ int keyboardInit(uint8_t mode){
 }
 
 // Changes or tells the current keyboard mode
-uint8_t keyboardMode(int command){
+int keyboardMode(int command){
     // Current mode
     if (command == KEYBOARD_MODE_CURRENTMODE)
         return kbd_mode;
@@ -189,7 +189,7 @@ int keyboardCallFunc(callroutine_t callroutine_func){
 
 /// FILE OPERATIONS ///
 // Reads from the keyboard into the buffer, if there is an error returns -1
-int keyboardRead(void* buf, size_t count){
+ssize_t keyboardRead(void* buf, size_t count){
     size_t i;
     int tmpVar;
 
@@ -201,10 +201,10 @@ int keyboardRead(void* buf, size_t count){
         else
             ((uint8_t*)buf)[i] = (uint8_t)tmpVar;
 
-    return i;
+    return (ssize_t)i;
 }
 
-int keyboardWrite(void* buf, size_t count){
+ssize_t keyboardWrite(void* buf, size_t count){
     int tempvar;
     tempvar = ((uint8_t*)buf)[count-1];
 

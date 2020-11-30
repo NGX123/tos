@@ -9,6 +9,7 @@
 #include <stddef.h>
 #include "stdio.h"
 #include "ringbuf.h"
+#include "types.h"
 
 #include "drivers/x86.h"
 #include "drivers/vga.h"
@@ -117,15 +118,15 @@ void keyboard_handler();
 int keyboardInit(uint8_t mode);
 
 // Changes or tells the current keyboard mode
-uint8_t keyboardMode(int command);
+int keyboardMode(int command);
 
 // Sets a function pointer to be called when keyboard interrupt is sent
 int keyboardCallFunc(callroutine_t callroutine_func);
 
 // Reads from the keyboard into the buffer, if there is an error returns -1
-int keyboardRead(void* buf, size_t count);
+ssize_t keyboardRead(void* buf, size_t count);
 
 // Just fails
-int keyboardWrite(void* buf, size_t count);
+ssize_t keyboardWrite(void* buf, size_t count);
 
 #endif
