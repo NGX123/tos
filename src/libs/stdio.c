@@ -11,7 +11,7 @@ int putchar(int chara){
 }
 
 // Prints a string to the screen
-int puts(char* str){   
+int puts(char* str){
     for (int i = 0; str[i] != 0; i++)
         if (putchar(str[i]) == -1)
             return -1;
@@ -32,7 +32,7 @@ static void printint(int xx, int base, int sgn)
     if(sgn && xx < 0){
         neg = 1;
         x = -xx;
-    } 
+    }
     else
         x = xx;
 
@@ -40,7 +40,7 @@ static void printint(int xx, int base, int sgn)
     do {
         buf[i++] = digits[x % base];
     } while((x /= base) != 0);
-    
+
     if (neg)
         buf[i++] = '-';
 
@@ -61,19 +61,19 @@ void printf(const char *fmt, ...)
     c = fmt[i] & 0xff;
     if(state == 0){
         if(c == '%')
-            state = '%'; 
-        else 
+            state = '%';
+        else
             putchar(c);
-    } 
+    }
     else if(state == '%'){
         if(c == 'd'){
-        printint(*ap, 10, 1);
+        printint((int)*ap, 10, 1);
         ap++;
-    } 
+    }
     else if(c == 'x' || c == 'p'){
-        printint(*ap, 16, 0);
+        printint((int)*ap, 16, 0);
         ap++;
-    } 
+    }
     else if(c == 's'){
         s = (char*)*ap;
         ap++;
@@ -83,14 +83,14 @@ void printf(const char *fmt, ...)
             putchar(*s);
             s++;
         }
-    }     
+    }
     else if(c == 'c'){
-        putchar(*ap);
+        putchar((int)*ap);
         ap++;
-    }     
+    }
     else if(c == '%'){
         putchar(c);
-    } 
+    }
     else {
         // Unknown % sequence.  Print it to draw attention.
         putchar('%');
