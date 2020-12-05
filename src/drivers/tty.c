@@ -9,41 +9,47 @@ static uint8_t* ttyInputBuffer;
 typedef int (*ioctlOps_t)(size_t, int*);
 
 void ttyHandleKeyboardInterrupt(uint8_t character, uint8_t keyStatuses, uint32_t scancode){
+    // Canonical/line mode
     if (termios.mode == MODE_CANON){
-        // Characters
-        if (character >= 32 && character <= 127 && scancode < 0x80){
+        // Skip the release events and the extra buttons events
+        if (scancode < 0x80)
+            return;
+
+        // Printable ASCII Codes - Print to the screen
+        if (character >= 32 && character <= 127){
             vgatextWrite(&character, 1);
             writeBuf(&ttyInputBufferStruct, character);
         }
 
-        // Escape codes
-        else if (character == '\b' || character == '\t' || character == '\n'){
+        // Escape sequences - Print to the screen
+        else if (character == '\b')
             vgatextWrite(&character, 1);
+
+        // Handle the next line escape sequence as special case
+        else if (character == '\n'){
+            vgatextWrite(&character, 1);
+            writeBuf(&ttyInputBufferStruct, character);
         }
 
-        // Arrows
-        else if (scancode == LARROW)
-            vgatextWrite(&character, 1);
-        else if (scancode == RARROW)
-            vgatextWrite(&character, 1);
+        // Unimplemented
+        else if (scancode == LARROW || scancode == RARROW || scancode == '\t')
+            return;
     }
 
     else if (termios.mode == MODE_RAW){
+        if (scancode < 0x80)
+            return;
+
         // Characters
-        if (character >= 32 && character <= 127 && scancode < 0x80){
+        if (character >= 32 && character <= 127)
             writeBuf(&ttyInputBufferStruct, character);
-        }
 
         // Escape codes
-        else if (character == '\b' || character == '\t' || character == '\n'){
+        else if (character == '\b' || character == '\t' || character == '\n')
             writeBuf(&ttyInputBufferStruct, character);
-        }
 
-        // Arrows
-        else if (scancode == LARROW)
-            writeBuf(&ttyInputBufferStruct, character);
-        else if (scancode == RARROW)
-            writeBuf(&ttyInputBufferStruct, character);
+        // Arrows - implement escape sequences (e.g. ^[[C)
+        else if (scancode == LARROW || scancode == RARROW){}
     }
 }
 static callroutine_t ttyKeyboardCallFunc = &ttyHandleKeyboardInterrupt;
@@ -87,11 +93,4 @@ ssize_t ttyRead(void* buf, size_t count){
             ((uint8_t*)buf)[i] = (uint8_t)tmpVar;
 
     return (ssize_t)i;
-}
-
-// Calls device specific functions
-int ttyIoctl(size_t request, ...){
-    va_list args;
-
-    return 0;
 }
