@@ -34,19 +34,6 @@ all:
 	cp make/grub.cfg iso/boot/grub/
 	grub2-mkrescue -o build/os.iso iso
 
-# Main compilation command with system compiler
-all-nocross:
-	mkdir -p build
-	$(AS_NOCROSS) $(ASFLAGS_NOCROSS) init/boot.s -o build/boot.o
-	$(CC_NOCROSS) $(CFLAGS_NOCROSS) $(SOURCES)
-	mv *.o ./build
-	ld $(LDFLAGS_NOCROSS) $(OBJECTS) -o build/os.o
-
-	mkdir -p iso/boot/grub
-	mv build/os.o iso/boot/
-	cp make/grub.cfg iso/boot/grub/
-	grub2-mkrescue -o build/os.iso iso
-
 # Compiler with a ton of extra warnings
 all-extrawarning:
 	mkdir -p build
