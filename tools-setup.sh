@@ -1,34 +1,47 @@
-# Installs programms for the osdev
+install_list_var="nasm binutils diffutils valgrind clang gcc"
+
+## INSTALLATION CONFIGURATION ##
 read -p "Package Manager(dnf, apt, macos): " pm_var
-read -p "Should the x86_32 cross-compiler be compiled(y/n): " x86_build_var
-read -p "Should the x86_64 cross-compiler be compiled(y/n): " x86_64_build_var
-read -p "Should the UEFI compiled or downloaded(no/download/install): " uefi_build_var
+read -p "Should the x86_32/x86_64 cross-compiler be compiled(no/64/32): " x86_build_var
+read -p "Should the UEFI compiled or downloaded(no/download/compile): " uefi_build_var
 
 ## PACKAGE INSTALLATIONS ##
 # DNF Installations
 if [ $pm_var == dnf ]
   then
-    # Kernel headers(for linux device drivers)
-    sudo dnf install kernel-headers kernel-devel
+    # Install developer tools and headers
+    sudo dnf -y install $install_list_var @development-tools kernel-headers kernel-devel
 
-    # Packages
-    sudo dnf -y install binutils diffutils @development-tools nasm valgrind
+    # Install x86/x86_64 Cross-compiler build dependencies
+    if [ $x86_build_var != no]
+      then
+        sudo dnf -y install gcc gcc-c++ make bison flex gmp-devel libmpc-devel mpfr-devel texinfo automake autoconf xorriso
+    fi
 
-    # Install the dependencies for cross-compiler
-    sudo dnf -y install gcc gcc-c++ make bison flex gmp-devel libmpc-devel mpfr-devel texinfo automake autoconf xorriso
+    # Install OVMF UEFI Dependencies
+    if [ $uefi_build_var == compile ]
+      then
+        sudo dnf -y install @development-tools gcc-c++ iasl libuuid-devel nasm edk2-tools-python
+    fi
 fi
 
 # APT Installations
 if [ $pm_var == apt ]
   then
-    # Kernel headers
-    sudo apt -y install linux-headers-$(uname -r) # If does not work check "ls -l /usr/src/linux-headers-$(uname -r)"(if does not exist then there are no headers), insetad try to find the latest version if not installed
+    # Install developer tools and headers
+    sudo apt -y install $install_list_var build-essential linux-headers-$(uname -r)
 
-    # Packages
-    sudo apt -y install build-essential nasm binutils diffutils valgrind
+    # Install x86/x86_64 Cross-compiler build dependencies
+    if [ $x86_build_var != no ]
+      then
+        sudo apt -y install build-essential bison flex libgmp3-dev libmpc-dev libmpfr-dev texinfo
+    fi
 
-    # Dependencies
-    sudo apt -y install build-essential bison flex libgmp3-dev libmpc-dev libmpfr-dev texinfo
+    # Install OVMF UEFI build dependencies
+    if [ $uefi_build_var == compile ]
+      then
+        sudo apt -y install build-essential uuid-dev iasl gcc-5 nasm python3-distutils
+    fi
 fi
 
 if [ $pm_var == macos ]
@@ -45,60 +58,145 @@ fi
 
 
 
-## i386 CROSS COMPILER ##
-# Create directories to store source and build directory
-mkdir -p ~/src/cross-compiler/binutils2.30/build
-mkdir -p ~/src/cross-compiler/gcc9.3.0/build
+## COMPILATION SETUP ##
+# Setup for compiling the x86_32 compiler
+if [ $x86_build_var == 32 ]
+  then
+    # Create the nesecerry direcotries
+    mkdir -p $HOME/src/cross-compiler/binutils2.30_i686/build/
+    mkdir -p $HOME/src/cross-compiler/gcc9.3.0_i686/build/
+    mkdir -p $HOME/opt/
 
-# Download and unpack source code
-cd ~/src/cross-compiler/binutils2.30/
-wget https://ftp.gnu.org/gnu/binutils/binutils-2.30.tar.gz
-tar -xzf binutils-2.30.tar.gz
-rm binutils-2.30.tar.gz
+    # Download and unpack source code
+    cd $HOME/src/cross-compiler/binutils2.30_i686/
+    wget https://ftp.gnu.org/gnu/binutils/binutils-2.30.tar.gz
+    tar -xzf binutils-2.30.tar.gz
+    rm binutils-2.30.tar.gz
 
-cd ~/src/cross-compiler/gcc9.3.0
-wget https://ftp.gnu.org/gnu/gcc/gcc-9.3.0/gcc-9.3.0.tar.gz
-tar -xzf gcc-9.3.0.tar.gz
-rm gcc-9.3.0.tar.gz
+    cd $HOME/src/cross-compiler/gcc9.3.0_i686/
+    wget https://ftp.gnu.org/gnu/gcc/gcc-9.3.0/gcc-9.3.0.tar.gz
+    tar -xzf gcc-9.3.0.tar.gz
+    rm gcc-9.3.0.tar.gz
 
-# Get ready for the build
-mkdir -p ~/opt/
-export PREFIX="$HOME/opt/"
-export TARGET=i686-elf
-export PATH="$PREFIX/bin:$PATH"
+    # Declare the variables
+    export PREFIX="$HOME/opt/"
+    export TARGET=i686-elf
+    export PATH="$PREFIX/bin:$PATH"
+fi
 
-# Compilation instructions
-if [ $pm_var != macos ]
+# Setup for compiling the x86_64 compiler
+if [ $x86_build_var == 64 ]
+  then
+    # Create the nesecerry direcotries
+    mkdir -p $HOME/src/cross-compiler/binutils2.30_amd64/build/
+    mkdir -p $HOME/src/cross-compiler/gcc9.3.0_amd64/build/
+    mkdir -p $HOME/opt/
+
+    # Download and unpack source code
+    cd $HOME/src/cross-compiler/binutils2.30_amd64/
+    wget https://ftp.gnu.org/gnu/binutils/binutils-2.30.tar.gz
+    tar -xzf binutils-2.30.tar.gz
+    rm binutils-2.30.tar.gz
+
+    cd $HOME/src/cross-compiler/gcc9.3.0_amd64/
+    wget https://ftp.gnu.org/gnu/gcc/gcc-9.3.0/gcc-9.3.0.tar.gz
+    tar -xzf gcc-9.3.0.tar.gz
+    rm gcc-9.3.0.tar.gz
+
+    # Declare the variables
+    export PREFIX="$HOME/opt/"
+    export TARGET=x86_64-elf
+    export PATH="$PREFIX/bin:$PATH"
+fi
+
+# Setup for compiling the OVMF UEFI
+if [ $uefi_build_var == compile ]
+  then
+    # Create the necessery directories
+    mkdir -p $HOME/src/ovmf/
+
+    # Download the source code
+    git clone https://github.com/tianocore/edk2 $HOME/src/ovmf/
+    cd $HOME/src/ovmf/
+    git submodule update --init
+fi
+
+
+
+## BUILD PROCCESS ##
+# Compile the x86_32 cross-compiler
+if [ $x86_build_var == 32 ]
   then
     # Building binutils
-    cd $HOME/src/cross-compiler/binutils2.30/build
+    cd $HOME/src/cross-compiler/binutils2.30_i686/build/
     ../binutils-2.30/configure --target=$TARGET --prefix="$PREFIX" --with-sysroot --disable-nls --disable-werror
     make
     make install
 
     # Building GCC
-    cd $HOME/src/cross-compiler/gcc9.3.0/build
+    cd $HOME/src/cross-compiler/gcc9.3.0_i686/build/
     which -- $TARGET-as || echo $TARGET-as is not in the PATH
     ../gcc-9.3.0/configure --target=$TARGET --prefix="$PREFIX" --disable-nls --enable-language=c,c++ --without-headers
     make all-gcc
     make all-target-libgcc
     make install-gcc
     make install-target-libgcc
-  else
+fi
+
+if [ $x86_build_var == 64 ]
+  then
     # Building binutils
-    cd $HOME/src/cross-compiler/binutils2.30/build
-    ../binutils-2.30/configure --target=$TARGET --prefix="$PREFIX" --with-sysroot --disable-nls --disable-werror --enable-multilib --with-libiconv-prefix=/usr/local/opt/libiconv/
+    cd $HOME/src/cross-compiler/binutils2.30_amd64/build/
+    ../binutils-2.30/configure --target=$TARGET --prefix="$PREFIX" --with-sysroot --disable-nls --disable-werror
     make
     make install
 
     # Building GCC
-    cd $HOME/src/cross-compiler/gcc9.3.0/build
+    cd $HOME/src/cross-compiler/gcc9.3.0_amd64/build/
     which -- $TARGET-as || echo $TARGET-as is not in the PATH
-    ../gcc-9.3.0/configure --target=$TARGET --prefix="$PREFIX" --disable-nls --enable-language=c,c++ --without-headers --enable-multilib --with-libiconv-prefix=/usr/local/opt/libiconv/
+    ../gcc-9.3.0/configure --target=$TARGET --prefix="$PREFIX" --disable-nls --enable-language=c,c++ --without-headers
     make all-gcc
     make all-target-libgcc
     make install-gcc
     make install-target-libgcc
+fi
+
+# Compile the OVMF UEFI
+if [ $uefi_build_var == compile ]
+  then
+    cd $HOME/src/ovmf/
+    make -C BaseTools
+    . edksetup.sh
+    echo "
+    ACTIVE_PLATFORM=OvmfPkg/OvmfPkgX64.dsc
+    TARGET = DEBUG
+    TARGET_ARCH = X64
+    TOOL_CHAIN_CONF = Conf/tools_def.txt
+    TOOL_CHAIN_TAG = GCC5
+    BUILD_RULE_CONF = Conf/build_rule.txt" > Conf/target.txt
+    build
+    cd Build/OvmfPkgX64/DEBUG_GCC5/FV
+fi
+
+# Seperate build instructions if the MacOS is used
+if [ $pm_var == macos]
+  if [ $x86_build_var == 32 ]
+    then
+      # Building binutils
+      cd $HOME/src/cross-compiler/binutils2.30/build
+      ../binutils-2.30/configure --target=$TARGET --prefix="$PREFIX" --with-sysroot --disable-nls --disable-werror --enable-multilib --with-libiconv-prefix=/usr/local/opt/libiconv/
+      make
+      make install
+
+      # Building GCC
+      cd $HOME/src/cross-compiler/gcc9.3.0/build
+      which -- $TARGET-as || echo $TARGET-as is not in the PATH
+      ../gcc-9.3.0/configure --target=$TARGET --prefix="$PREFIX" --disable-nls --enable-language=c,c++ --without-headers --enable-multilib --with-libiconv-prefix=/usr/local/opt/libiconv/
+      make all-gcc
+      make all-target-libgcc
+      make install-gcc
+      make install-target-libgcc
+  fi
 fi
 
 
@@ -108,3 +206,4 @@ fi
 qemu-system-i386 --version
 $TARGET-gcc --version
 grub2-mkrescue --version
+# If kernel headers installation on debian not work check "ls -l /usr/src/linux-headers-$(uname -r)"(if does not exist then there are no headers), insetad try to find the latest version if not installed
