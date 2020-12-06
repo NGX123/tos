@@ -1,25 +1,25 @@
-install_list_var="nasm binutils diffutils valgrind clang gcc"
+install_list_var="nasm binutils diffutils valgrind clang gcc qemu-system-x86"
 
 ## INSTALLATION CONFIGURATION ##
 read -p "Package Manager(dnf, apt, macos): " pm_var
 read -p "Should the x86_32/x86_64 cross-compiler be compiled(no/64/32): " x86_build_var
-read -p "Should the UEFI compiled or downloaded(no/download/compile): " uefi_build_var
+read -p "Should the UEFI be compiled(y/n): " uefi_build_var
 
 ## PACKAGE INSTALLATIONS ##
 # DNF Installations
 if [ $pm_var == dnf ]
   then
     # Install developer tools and headers
-    sudo dnf -y install $install_list_var @development-tools kernel-headers kernel-devel
+    sudo dnf -y install $install_list_var @development-tools kernel-headers kernel-devel edk2-ovmf
 
     # Install x86/x86_64 Cross-compiler build dependencies
     if [ $x86_build_var != no]
       then
-        sudo dnf -y install gcc gcc-c++ make bison flex gmp-devel libmpc-devel mpfr-devel texinfo automake autoconf xorriso
+        sudo dnf -y install gcc gcc-c++ make bison flex gmp-devel libmpc-devel mpfr-devel texinfo automake autoconf xorriso @development-tools
     fi
 
     # Install OVMF UEFI Dependencies
-    if [ $uefi_build_var == compile ]
+    if [ $uefi_build_var == y ]
       then
         sudo dnf -y install @development-tools gcc-c++ iasl libuuid-devel nasm edk2-tools-python
     fi
@@ -29,7 +29,7 @@ fi
 if [ $pm_var == apt ]
   then
     # Install developer tools and headers
-    sudo apt -y install $install_list_var build-essential linux-headers-$(uname -r)
+    sudo apt -y install $install_list_var build-essential linux-headers-$(uname -r) ovmf
 
     # Install x86/x86_64 Cross-compiler build dependencies
     if [ $x86_build_var != no ]
@@ -38,7 +38,7 @@ if [ $pm_var == apt ]
     fi
 
     # Install OVMF UEFI build dependencies
-    if [ $uefi_build_var == compile ]
+    if [ $uefi_build_var == y ]
       then
         sudo apt -y install build-essential uuid-dev iasl gcc-5 nasm python3-distutils
     fi
@@ -103,6 +103,20 @@ if [ $x86_build_var == 64 ]
     tar -xzf gcc-9.3.0.tar.gz
     rm gcc-9.3.0.tar.gz
 
+    echo "MULTILIB_OPTIONS += mno-red-zone
+MULTILIB_DIRNAMES += no-red-zone" > gcc/config/i386/t-x86_64-elf
+    echo '
+    Replace:
+    x86_64-*-elf*)
+ 	    tm_file="${tm_file} i386/unix.h i386/att.h dbxelf.h elfos.h newlib-stdint.h i386/i386elf.h i386/x86-64.h"
+ 	    ;;
+    with the following:
+      x86_64-*-elf*)
+	    tmake_file="${tmake_file} i386/t-x86_64-elf" # include the new multilib configuration
+ 	    tm_file="${tm_file} i386/unix.h i386/att.h dbxelf.h elfos.h newlib-stdint.h i386/i386elf.h i386/x86-64.h"
+ 	    ;;'
+    read -p "Continue: " continue_var
+
     # Declare the variables
     export PREFIX="$HOME/opt/"
     export TARGET=x86_64-elf
@@ -110,7 +124,7 @@ if [ $x86_build_var == 64 ]
 fi
 
 # Setup for compiling the OVMF UEFI
-if [ $uefi_build_var == compile ]
+if [ $uefi_build_var == y ]
   then
     # Create the necessery directories
     mkdir -p $HOME/src/ovmf/
@@ -162,7 +176,7 @@ if [ $x86_build_var == 64 ]
 fi
 
 # Compile the OVMF UEFI
-if [ $uefi_build_var == compile ]
+if [ $uefi_build_var == y ]
   then
     cd $HOME/src/ovmf/
     make -C BaseTools
@@ -205,6 +219,16 @@ fi
 # CHECK OF INSTALLTION
 qemu-system-i386 --version
 qemu-system-x86_64 --version
-$TARGET-gcc --version
+if [ x86_build_var != no]
+  then
+    $TARGET-gcc --version
+    if [ x86_build_var == 64 ]
+      then
+        find $PREFIX/lib -name 'libgcc.a'
+    fi
+fi
+if [ uefi_build_var == y ]
+  then
+    ls $HOME/src/ovmf/Build
 grub2-mkrescue --version
 # If kernel headers installation on debian not work check "ls -l /usr/src/linux-headers-$(uname -r)"(if does not exist then there are no headers), insetad try to find the latest version if not installed
