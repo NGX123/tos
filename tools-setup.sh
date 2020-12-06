@@ -204,6 +204,7 @@ fi
 
 # CHECK OF INSTALLTION
 qemu-system-i386 --version
+qemu-system-x86_64 --version
 $TARGET-gcc --version
 grub2-mkrescue --version
 # If kernel headers installation on debian not work check "ls -l /usr/src/linux-headers-$(uname -r)"(if does not exist then there are no headers), insetad try to find the latest version if not installed
