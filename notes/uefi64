@@ -38,7 +38,7 @@
 
 		- Use Precompiled OVMF binaries -
 			1. sudo dnf install rpm2cpio
-			2. Go to the https://www.kraxel.org/repos/(The binaries FTP)
+			2. Go to the https://www.kraxel.org/repos (The binaries FTP)
 			3. Go to jenkins/edk2
 			4. Download newest *-ovmf-x64-*
 			5. Extract the contents - rpm2cpio file.rpm | cpio -idmv
@@ -60,3 +60,6 @@
 	-- x86_64 GCC --
 		+ https://roscopeco.com/2018/11/25/using-gcc-as-cross-compiler-with-x86_64-target/
 		+ https://wiki.osdev.org/GCC_Cross-Compiler
+
+		- Build the x86_64 from source -
+		1. 
