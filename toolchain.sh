@@ -40,7 +40,7 @@ if [ $pm_var == apt ]
     # Install OVMF UEFI build dependencies
     if [ $uefi_build_var == y ]
       then
-        sudo apt -y install build-essential uuid-dev iasl gcc-5 nasm python3-distutils
+        sudo apt -y install build-essential uuid-dev iasl nasm python3-distutils
     fi
 fi
 
@@ -192,29 +192,29 @@ if [ $uefi_build_var == y ]
     TOOL_CHAIN_TAG = GCC5
     BUILD_RULE_CONF = Conf/build_rule.txt" > Conf/target.txt
     build
-    cd Build/OvmfPkgX64/DEBUG_GCC5/FV
+    cd Build/OvmfX64/DEBUG_GCC5/FV
 fi
 
 # Seperate build instructions if the MacOS is used
 if [ $pm_var == macos]
   then
-  if [ $x86_build_var == 32 ]
-    then
-      # Building binutils
-      cd $HOME/src/cross-compiler/binutils2.30/build
-      ../binutils-2.30/configure --target=$TARGET --prefix="$PREFIX" --with-sysroot --disable-nls --disable-werror --enable-multilib --with-libiconv-prefix=/usr/local/opt/libiconv/
-      make
-      make install
+    if [ $x86_build_var == 32 ]
+      then
+        # Building binutils
+        cd $HOME/src/cross-compiler/binutils2.30/build
+        ../binutils-2.30/configure --target=$TARGET --prefix="$PREFIX" --with-sysroot --disable-nls --disable-werror --enable-multilib --with-libiconv-prefix=/usr/local/opt/libiconv/
+        make
+        make install
 
-      # Building GCC
-      cd $HOME/src/cross-compiler/gcc9.3.0/build
-      which -- $TARGET-as || echo $TARGET-as is not in the PATH
-      ../gcc-9.3.0/configure --target=$TARGET --prefix="$PREFIX" --disable-nls --enable-language=c,c++ --without-headers --enable-multilib --with-libiconv-prefix=/usr/local/opt/libiconv/
-      make all-gcc
-      make all-target-libgcc
-      make install-gcc
-      make install-target-libgcc
-  fi
+        # Building GCC
+        cd $HOME/src/cross-compiler/gcc9.3.0/build
+        which -- $TARGET-as || echo $TARGET-as is not in the PATH
+        ../gcc-9.3.0/configure --target=$TARGET --prefix="$PREFIX" --disable-nls --enable-language=c,c++ --without-headers --enable-multilib --with-libiconv-prefix=/usr/local/opt/libiconv/
+        make all-gcc
+        make all-target-libgcc
+        make install-gcc
+        make install-target-libgcc
+    fi
 fi
 
 
