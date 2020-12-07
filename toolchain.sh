@@ -106,11 +106,13 @@ if [ $x86_build_var == 64 ]
     echo "MULTILIB_OPTIONS += mno-red-zone
 MULTILIB_DIRNAMES += no-red-zone" > gcc/config/i386/t-x86_64-elf
     echo '
-    Replace:
+    Add this:
+      tmake_file="${tmake_file} i386/t-x86_64-elf" # include the new multilib configuration
+    To make this:
     x86_64-*-elf*)
  	    tm_file="${tm_file} i386/unix.h i386/att.h dbxelf.h elfos.h newlib-stdint.h i386/i386elf.h i386/x86-64.h"
  	    ;;
-    with the following:
+    Look like this:
       x86_64-*-elf*)
 	    tmake_file="${tmake_file} i386/t-x86_64-elf" # include the new multilib configuration
  	    tm_file="${tm_file} i386/unix.h i386/att.h dbxelf.h elfos.h newlib-stdint.h i386/i386elf.h i386/x86-64.h"
