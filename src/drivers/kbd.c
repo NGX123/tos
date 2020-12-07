@@ -11,33 +11,33 @@ static callroutine_t callroutine = 0;
 
 /// INTERRUPT HANDLER FUNCTIONS ///
 // Returns a status byte for all toggle and hold keys
-static uint8_t getButtonStatuses(uint32_t scancode, uint8_t buttonStatuses){
+static int getButtonStatuses(uint32_t scancode, uint8_t* buttonStatuses){
     // Hold Key Statuses //
     // Check ctrl
-    if ((scancode == 0x1D      || scancode == 0x1DE0) && !(buttonStatuses & SHORTCUT_CTRL))
-        buttonStatuses ^= SHORTCUT_CTRL;
-    else if ((scancode == 0x9D || scancode == 0x9DE0) &&  (buttonStatuses & SHORTCUT_CTRL))
-        buttonStatuses ^= SHORTCUT_CTRL;
+    if ((scancode == 0x1D      || scancode == 0x1DE0) && !(*buttonStatuses & SHORTCUT_CTRL))
+        *buttonStatuses ^= SHORTCUT_CTRL;
+    else if ((scancode == 0x9D || scancode == 0x9DE0) &&  (*buttonStatuses & SHORTCUT_CTRL))
+        *buttonStatuses ^= SHORTCUT_CTRL;
 
     // Check alt
-    if ((scancode == 0x38      || scancode == 0x38E0) && !(buttonStatuses & SHORTCUT_ALT))
-        buttonStatuses ^= SHORTCUT_ALT;
-    else if ((scancode == 0xB8 || scancode == 0xB8E0) &&  (buttonStatuses & SHORTCUT_ALT))
-        buttonStatuses ^= SHORTCUT_ALT;
+    if ((scancode == 0x38      || scancode == 0x38E0) && !(*buttonStatuses & SHORTCUT_ALT))
+        *buttonStatuses ^= SHORTCUT_ALT;
+    else if ((scancode == 0xB8 || scancode == 0xB8E0) &&  (*buttonStatuses & SHORTCUT_ALT))
+        *buttonStatuses ^= SHORTCUT_ALT;
 
     // Check shift
-    if ((scancode == 0x2A      || scancode == 0x36)  && !(buttonStatuses & SHORTCUT_SHIFT))
-        buttonStatuses ^= (SHORTCUT_SHIFT | KEYBYTE_CAPS);
-    else if ((scancode == 0xAA || scancode == 0xB6)  &&  (buttonStatuses & SHORTCUT_SHIFT))
-        buttonStatuses ^= (SHORTCUT_SHIFT | KEYBYTE_CAPS);
+    if ((scancode == 0x2A      || scancode == 0x36)  && !(*buttonStatuses & SHORTCUT_SHIFT))
+        *buttonStatuses ^= (SHORTCUT_SHIFT | KEYBYTE_CAPS);
+    else if ((scancode == 0xAA || scancode == 0xB6)  &&  (*buttonStatuses & SHORTCUT_SHIFT))
+        *buttonStatuses ^= (SHORTCUT_SHIFT | KEYBYTE_CAPS);
 
     // Check capslock
-    if (scancode == 0x3A      && !(buttonStatuses & SHORTCUT_CAPSLOCK))
-        buttonStatuses ^= (SHORTCUT_CAPSLOCK | KEYBYTE_CAPS);
-    else if (scancode == 0x3A &&  (buttonStatuses & SHORTCUT_CAPSLOCK))
-        buttonStatuses ^= (SHORTCUT_CAPSLOCK | KEYBYTE_CAPS);
+    if (scancode == 0x3A      && !(*buttonStatuses & SHORTCUT_CAPSLOCK))
+        *buttonStatuses ^= (SHORTCUT_CAPSLOCK | KEYBYTE_CAPS);
+    else if (scancode == 0x3A &&  (*buttonStatuses & SHORTCUT_CAPSLOCK))
+        *buttonStatuses ^= (SHORTCUT_CAPSLOCK | KEYBYTE_CAPS);
 
-    return buttonStatuses;
+    return 0;
 }
 
 // Gets the character from the scancode
@@ -54,8 +54,8 @@ static uint8_t getCharacter(uint32_t scancode, uint8_t buttonStatuses){
         character = shiftmap[scancode];
 
     // Control shortcut
-    else if ((buttonStatuses & SHORTCUT_CTRL) && !(buttonStatuses & SHORTCUT_ALT))
-        character = ctlmap[scancode];
+    // else if ((buttonStatuses & SHORTCUT_CTRL) && !(buttonStatuses & SHORTCUT_ALT))
+    //     character = ctlmap[scancode];
 
     return character;
 }
@@ -116,7 +116,7 @@ void keyboard_handler(){
     }
 
     // Initialize the variables
-    buttonStatuses = getButtonStatuses(scancode, buttonStatuses);
+    getButtonStatuses(scancode, &buttonStatuses);
     character = getCharacter(scancode, buttonStatuses);
 
 
@@ -127,7 +127,7 @@ void keyboard_handler(){
         keyboardDisplayMode(scancode, character);
     else if (kbd_mode == 2) // Off mode
         return;
-    if (callroutine != 0){
+    if (callroutine != NULL){
         if (scancode != RARROW_SCAN && scancode != LARROW_SCAN)
             callroutine(character, buttonStatuses, scancode);
         else
