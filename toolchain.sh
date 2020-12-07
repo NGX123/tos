@@ -197,6 +197,7 @@ fi
 
 # Seperate build instructions if the MacOS is used
 if [ $pm_var == macos]
+  then
   if [ $x86_build_var == 32 ]
     then
       # Building binutils
