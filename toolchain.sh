@@ -196,7 +196,7 @@ if [ $uefi_build_var == y ]
 fi
 
 # Seperate build instructions if the MacOS is used
-if [ $pm_var == macos]
+if [ $pm_var == macos ]
   then
     if [ $x86_build_var == 32 ]
       then
@@ -223,7 +223,7 @@ fi
 # CHECK OF INSTALLTION
 qemu-system-i386 --version
 qemu-system-x86_64 --version
-if [ x86_build_var != no]
+if [ x86_build_var != no ]
   then
     $TARGET-gcc --version
     if [ x86_build_var == 64 ]
