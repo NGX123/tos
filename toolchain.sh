@@ -118,7 +118,7 @@ MULTILIB_DIRNAMES += no-red-zone" > gcc/config/i386/t-x86_64-elf
  	    tm_file="${tm_file} i386/unix.h i386/att.h dbxelf.h elfos.h newlib-stdint.h i386/i386elf.h i386/x86-64.h"
  	    ;;'
     read -p "Continue: " continue_var
-    nano gcc9.3.0/gcc/config.gcc
+    nano gcc-9.3.0/gcc/config.gcc
 
     # Declare the variables
     export PREFIX="$HOME/opt/"
