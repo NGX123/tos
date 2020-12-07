@@ -223,12 +223,14 @@ fi
 # CHECK OF INSTALLTION
 qemu-system-i386 --version
 qemu-system-x86_64 --version
-if [ x86_build_var != no ]
+if [ x86_build_var == 64 ]
   then
-    $TARGET-gcc --version
-    if [ x86_build_var == 64 ]
+    x86_64-elf-gcc --version
+    find $PREFIX/lib -name 'libgcc.a'
+  else
+    if [ x86_build_var == 32 ]
       then
-        find $PREFIX/lib -name 'libgcc.a'
+        i686-elf-gcc --version
     fi
 fi
 if [ uefi_build_var == y ]
