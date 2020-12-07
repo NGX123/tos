@@ -37,8 +37,17 @@ Later will be integrated with NUXOS
 	* Add support for ACPICA
 
 ### Other
+	* Device manager - initialises all the drivers based on devices found
 	* Memory allocator
 	* Terminal
 		* Make a copy of sh for linux, but for the tos
 	* Make shortcuts(e.g. CTRL+C) interrupt that should be tied to a function with signal() syscall
 	* Implement ioctl() syscall for all devices
+
+
+## Resources
+	* The Design of the UNIX OS - Maurice Bach
+	* Modern OSs - Andrew Tanenbaum
+	* OSs: 3 Easy Pieces - Remzi Arpaci-Dusseau
+	* OSs: Design and Implementation - Andrew Tanenbaum
+	* Lion's Commentary on UNIX v6 - John Lions
