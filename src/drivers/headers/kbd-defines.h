@@ -100,7 +100,7 @@ static uint8_t ctlmap[] =
 
 /// Declarations
 // Returns a status byte for all toggle and hold keys
-static uint8_t getButtonStatuses(uint32_t scancode, uint8_t buttonStatuses);
+static int getButtonStatuses(uint32_t scancode, uint8_t* buttonStatuses);
 
 // Gets the character from the scancode
 static uint8_t getCharacter(uint32_t scancode, uint8_t buttonStatuses);
