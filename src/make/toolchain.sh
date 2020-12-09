@@ -4,6 +4,28 @@ install_list_var="nasm binutils diffutils valgrind clang gcc qemu-system-x86"
 read -p "Package Manager(dnf, apt, macos): " pm_var
 read -p "Should the x86_32/x86_64 cross-compiler be compiled(no/64/32): " x86_build_var
 read -p "Should the UEFI be compiled(y/n): " uefi_build_var
+read -p "Do you want to configure other options(y/n): " extra_config_var
+
+# Extra configuration of the build
+if [ $extra_config_var == y ]
+  then
+    # Add the prefix to the path
+    read -p "Should the prefix be added to the PATH(y/n): " prefix_to_path_option_var
+    if [ $prefix_to_path_option_var == y ]
+      then
+        read -p "Will prefix be selected manually(y/n): " autopath_location_option_var
+        if [ $autopath_location_option_var == y ]
+          then
+            read -p "Input the path of the file where auto path adding should be added to: " autopath_location_var
+          else
+            if [ $autopath_location_option_var == n ]
+              then
+                autopath_location_var="$HOME/.bashrc"
+            fi
+        fi
+        echo "PATH=\$PATH:$compile_prefix_var/bin" >> $autopath_location_var
+    fi
+fi
 
 ## PACKAGE INSTALLATIONS ##
 # DNF Installations
