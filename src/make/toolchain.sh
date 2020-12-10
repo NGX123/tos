@@ -35,7 +35,7 @@ if [ $pm_var == dnf ]
     sudo dnf -y install $install_list_var @development-tools kernel-headers kernel-devel edk2-ovmf
 
     # Install x86/x86_64 Cross-compiler build dependencies
-    if [ $x86_build_var != no]
+    if [ $x86_build_var != no ]
       then
         sudo dnf -y install gcc gcc-c++ make bison flex gmp-devel libmpc-devel mpfr-devel texinfo automake autoconf xorriso @development-tools
     fi
@@ -126,7 +126,7 @@ if [ $x86_build_var == 64 ]
     rm gcc-9.3.0.tar.gz
 
     echo "MULTILIB_OPTIONS += mno-red-zone
-MULTILIB_DIRNAMES += no-red-zone" > gcc/config/i386/t-x86_64-elf
+MULTILIB_DIRNAMES += no-red-zone" > gcc-9.3.0/gcc/config/i386/t-x86_64-elf
     echo '
     Add this:
       tmake_file="${tmake_file} i386/t-x86_64-elf" # include the new multilib configuration
