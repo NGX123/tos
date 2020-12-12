@@ -1,0 +1,18 @@
+++ BOOT ++
+    - UEFI requires an efi application to be located on an FAT/16/32 formated drive
+        - First the drive should be made and then PE executable should be put on it
+    - The application needs to be in the windows PE executable format. Compilers on linux mostly produce ELF which should be converted to PE
+        - The conversion from ELF to be PE is done by copying only certain entries from the ELF file using objcopy
+
+++ DEVELOPMENT ++
+    - To call the UEFI functions the app should have headers included and be linked with shared libs where they are defined
+        - TianoCore EDK2(https://github.com/tianocore/tianocore.github.io/wiki/Getting-Started-with-EDK-II). Large complex environment that should be compiled and configured
+        - GNU-EFI(https://sourceforge.net/projects/gnu-efi/). Libraries and headers that can be installed as packages and don't require configuration
+    - When EFI App is compiled several command line attributes should be passed
+        - -fno-stack-protector  - Disable variable app at the end of stack that indicates overflow when overwritten
+        - -fpic                 - Position independent code(can be loaded anywhere in memory)
+        - -fshort-wchar         - Makes wchar_t short(2 byte)
+        - -mno-red-zone         - Disables red zone feature according to amd64 ABI
+        - CALLING ATTRIBUTE     - this attribute is specific to the compiler used and changes calling convention to windows one(used by UEFI)
+            - clang - -DHAVE_USE_MS_ABI
+            - gcc   - -DEFI_FUNCTION_WRAPPER
