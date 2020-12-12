@@ -10,8 +10,8 @@ CC_uefi64 = x86_64-elf-gcc
 AS_uefi64 = nasm
 
 ASFLAGS_uefi64 = none
-CFLAGS_uefi64 = -I libs/headers -std=gnu99 -ffreestanding -nostdlib -O2 -Wall -Wextra -c
-LDFLAGS_uefi64 = -T make/linker.ld -ffreestanding -nostdlib -O2 -lgcc
+CFLAGS_uefi64 = -ffreestanding -mcmodel=large -mno-red-zone -mno-mmx -mno-sse -mno-sse2 -Wall -Wextra -c
+LDFLAGS_uefi64 = -T uefi/linker.ld -ffreestanding -nostdlib -lgcc
 
 SOURCES = drivers/*.c kernel/*.c init/*.c libs/*.c #playground/*.c
 OBJECTS = build/*.o
