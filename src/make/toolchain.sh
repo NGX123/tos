@@ -1,4 +1,4 @@
-install_list_var="nasm binutils diffutils valgrind clang gcc qemu-system-x86"
+install_list_var="nasm binutils diffutils valgrind clang gcc qemu-system-x86 gnu-efi"
 
 ## INSTALLATION CONFIGURATION ##
 read -p "Package Manager(dnf, apt, macos): " pm_var
