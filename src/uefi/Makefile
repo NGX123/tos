@@ -17,15 +17,19 @@ EFI_OBJS			= -T $(EFI_LINK_SCRIPT) -L /usr/lib $(EFI_LINK_OBJ)								# Adds obj
 # Clang #
 CC_CLANG = clang
 LD_CLANG = ld
-# Flags - (-fno-stack-protector)Disable monitoring variable at stack end to indicate overflow if overwritten; (-fpic)Position independent code(can be loaded anywhere in memory); (-fshort-wchar)Makes wchar_t short(2 byte), (-mno-red-zone)Disables feature according to ABI; (-DHAVE_USE_MS_ABI)Use windows function calling convention(it is used by UEFI)
+#Flags - (-fno-stack-protector)Disable monitoring variable at stack end to indicate overflow if overwritten; (-fpic)Position independent code(can be loaded anywhere in memory); (-fshort-wchar)Makes wchar_t short(2 byte), (-mno-red-zone)Disables feature according to ABI; (-DHAVE_USE_MS_ABI)Use windows function calling convention(it is used by UEFI)
 CFLAGS_CLANG 		= $(EFI_INCS) -fno-stack-protector -fpic -fshort-wchar -mno-red-zone -DHAVE_USE_MS_ABI -Wall -Wextra -c
-# Flags - (-nostdlib)Do not link against any libs except specified; (-shared)Create a shared lib; (-Bsymbolic)Bind global function references locally, (-lefi, -lgnuefi)Link with GNU EFI libraries
+#Flags - (-nostdlib)Do not link against any libs except specified; (-shared)Create a shared lib; (-Bsymbolic)Bind global function references locally, (-lefi, -lgnuefi)Link with GNU EFI libraries
 LDFLAGS_CLANG 		= $(EFI_OBJS) -nostdlib -znocombreloc -shared -Bsymbolic #-lefi -lgnuefi
 
+# Objcpy #
+OBJ_CREATOR = objcopy
+#Flags - (-j)Only copy the specified section to output; (--target=efi-app-x86_64)Select the platform
+OBJCPYFLAGS = -j .text -j .sdata -j .data -j .dynamic -j .dynsym -j .rel -j .rela -j .reloc --target=efi-app-x86_64
 
 
 ### COMPILATION ###
-# Clang build proccess#
+# Clang build proccess #
 clang:
 	mkdir -p $(BUILDDIR)
 	$(CC_CLANG) 			$(CFLAGS_CLANG) 		$(SOURCES)
