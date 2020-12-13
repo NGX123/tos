@@ -1,0 +1,52 @@
+SOURCES = uefi-app.c
+OBJECTS = uefi-app.o
+ARCH = x86_64
+OVMF = /usr/share/OVMF
+
+EFI_INCLUDE_PATH 	= /usr/include/efi 																# Contains all of the headers necessery to compiler EFI apps
+EFI_LINK_OBJ 		= /usr/lib/crt0-efi-$(ARCH).o													# Shared library to link the UEFI header functions
+EFI_LINK_SCRIPT 	= /usr/lib/elf_$(ARCH)_efi.lds													# GNU-EFI custom linker script for linking with it's shared libraries
+EFI_INCS 			= -I /usr/include/efi -I /usr/include/efi/$(ARCH) -I /usr/include/efi/protocol	# Includes general UEFI headers, platform specific UEFI headers and UEFI protocol headers
+EFI_OBJS			= -T $(EFI_LINK_SCRIPT) -L /usr/lib $(EFI_LINK_OBJ)								# Adds objects and libs for linker to link the UEFI app with
+
+
+CC = clang
+LD = clang
+
+CFLAGS = $(EFI_INCS) \
+		-target x86_64-unknown-windows -ffreestanding -fno-builtin -fshort-wchar -fwrapv -mno-red-zone -fno-delete-null-pointer-checks \
+		-Wall -Wextra
+LDFLAGS = -target x86_64-unknown-windows -nostdlib -fuse-ld=lld-link \
+			-Wl,-entry:efi_main -Wl,-subsystem:efi_application
+
+
+all: uefi-app
+
+uefi-app:
+	$(CC) $(CFLAGS) 	-c 	$(SOURCES)	-o $(OBJECTS)
+	$(LD) $(LDFLAGS)		$(OBJECTS)	-o uefi-app.efi
+
+
+clean:
+	rm -rf *.o *.so *.efi *.img *iso
+
+
+## EXTRA ##
+## GCC ##
+CC_GCC = gcc
+LD_GCC = ld
+
+CFLAGS_GCC 	= $(EFI_INCS) -fno-stack-protector -fpic -fshort-wchar -mno-red-zone -DEFI_FUNCTION_WRAPPER -Wall -Wextra -c
+LDFLAGS_GCC = $(EFI_OBJS) -nostdlib -znocombreloc -Bsymbolic -shared
+
+OBJ_CREATOR = objcopy
+# Flags - (-j)Only copy the specified section to output; (--target=efi-app-x86_64)Select the platform
+OBJCPYFLAGS	= -j .text -j .sdata -j .data -j .dynamic -j .dynsym -j .rel -j .rela -j .reloc --target=efi-app-x86_64
+
+# Compile with gcc
+gcc:
+	mkdir -p build
+	$(CC_GCC) 			$(CFLAGS_GCC) 		$(SOURCES)
+	mv *.o $(BUILDDIR)
+	$(LD_GCC) 			$(LDFLAGS_GCC) 		$(OBJECTS) 				-o $(BUILDDIR)/uefi-app.so
+	$(OBJ_CREATOR) 		$(OBJCPYFLAGS) 		$(BUILDDIR)/uefi-app.so $(BUILDDIR)/uefi-app.efi
