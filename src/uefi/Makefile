@@ -28,6 +28,7 @@ OBJ_CREATOR = objcopy
 OBJCPYFLAGS = -j .text -j .sdata -j .data -j .dynamic -j .dynsym -j .rel -j .rela -j .reloc --target=efi-app-x86_64
 
 
+
 ### COMPILATION ###
 # Clang build proccess #
 clang:
