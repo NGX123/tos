@@ -16,3 +16,5 @@
         - CALLING ATTRIBUTE     - this attribute is specific to the compiler used and changes calling convention to windows one(used by UEFI)
             - clang - -DHAVE_USE_MS_ABI
             - gcc   - -DEFI_FUNCTION_WRAPPER
+    - When EFI App is linked, several command line attributes should be passed
+        - -znocombreloc -
