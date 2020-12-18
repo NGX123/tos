@@ -17,7 +17,7 @@
 
 /// Declarations
 // Handles keyboard interrupts
-void ttyHandleKeyboardInterrupt(uint8_t character, uint8_t keyStatuses, uint32_t scancode);
+void ttyHandleKeyboardInterrupt(uint8_t character, uint32_t scancode);
 
 // Initializes the tty0
 int ttyInit(uint8_t mode);

@@ -8,7 +8,7 @@ static ring_buffer_t ttyInputBufferStruct;
 static uint8_t* ttyInputBuffer;
 typedef int (*ioctlOps_t)(size_t, int*);
 
-void ttyHandleKeyboardInterrupt(uint8_t character, uint8_t keyStatuses, uint32_t scancode){
+void ttyHandleKeyboardInterrupt(uint8_t character, uint32_t scancode){
     // Canonical/line mode
     if (termios.mode == MODE_CANON){
         // Skip the release events and the extra buttons events
