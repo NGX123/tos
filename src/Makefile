@@ -29,12 +29,19 @@ LD_CLANG = ld
 OBJCPY = objcopy
 UEFI_TARGET = uefi
 #Flags - (-fno-stack-protector)Disable monitoring variable at stack end to indicate overflow if overwritten; (-fpic)Position independent code(can be loaded anywhere in memory); (-fshort-wchar)Makes wchar_t short(2 byte), (-mno-red-zone)Disables feature according to ABI; (-DHAVE_USE_MS_ABI)Use windows function calling convention(it is used by UEFI)
-CFLAGS_CLANG 		= $(EFI_INCS) -fno-stack-protector -fpic -fshort-wchar -mno-red-zone -DHAVE_USE_MS_ABI -Wall -Wextra -c
+CFLAGS_UEFI_CLANG 		= $(EFI_INCS) -fno-stack-protector -fpic -fshort-wchar -mno-red-zone -DHAVE_USE_MS_ABI -Wall -Wextra -c
 #Flags - (-nostdlib)Do not link against any libs except specified; (-shared)Create a shared lib; (-Bsymbolic)Bind global function references locally, (-l efi, -l gnuefi)Link with GNU EFI libraries
-LDFLAGS_CLANG 		= $(EFI_OBJS) -nostdlib -znocombreloc -shared -Bsymbolic -l efi -l gnuefi
+LDFLAGS_UEFI_CLANG 		= $(EFI_OBJS) -nostdlib -znocombreloc -shared -Bsymbolic -l efi -l gnuefi
 #Flags - (-j)Only copy the specified section to output; (--target=efi-app-x86_64)Select the platform
-OBJCPYFLAGS = -j .text -j .sdata -j .data -j .dynamic -j .dynsym -j .rel -j .rela -j .reloc --target=efi-app-x86_64
+OBJCPYFLAGS 			= -j .text -j .sdata -j .data -j .dynamic -j .dynsym -j .rel -j .rela -j .reloc --target=efi-app-x86_64
 
+# x86-32_clang toolchain variables #
+CC_x86-32_CLANG 		= clang
+AS_x86-32_CLANG 		= nasm
+LD_x86-32_CLANG			= clang
+CFLAGS_x86-32_CLANG 	= -I libs/headers -std=gnu99 -ffreestanding $(CFLAGS_GLOBAL) -target i386-elf
+LDFLAGS_x86-32_CLANG 	= -T make/linker.ld -ffreestanding -nostdlib -l gcc -target i386-elf
+ASFLAGS_x86-32_CLANG 	= -felf32
 
 ## EFI ##
 EFI_INCLUDE_PATH 	= /usr/include/efi 																		# Contains all of the headers necessery to compiler EFI apps
@@ -46,26 +53,18 @@ EFI_OBJS			= -T $(EFI_LINK_SCRIPT) -L /usr/lib64/gnuefi -L /usr/lib -L /usr/lib6
 
 
 ### START ###
-all: x86-64
+all: x86-64_gcc
 
 
 
 ### BUILD ###
+## GCC ##
 # Compile code for x86-64 #
-x86-64:
-	mkdir -p $(BUILDDIR)
-
-# Compile code for x86-64-uefi #
-x86-64-uefi:
-	mkdir 					-p 														$(BUILDDIR)
-
-	$(CC_CLANG) 			$(CFLAGS_CLANG) 		uefi/*.c
-	mv 												*.o								$(BUILDDIR)
-	$(LD_CLANG) 			$(LDFLAGS_CLANG) 		$(BUILDDIR)/*.o 				-o $(BUILDDIR)/$(UEFI_TARGET).so
-	$(OBJCPY) 				$(OBJCPYFLAGS) 			$(BUILDDIR)/$(UEFI_TARGET).so 	$(BUILDDIR)/$(UEFI_TARGET).efi
+x86-64_gcc:
+	echo "No source to compile yet"
 
 # Compile code for x86-32 #
-x86-32:
+x86-32_gcc:
 	mkdir 			-p 									$(BUILDDIR)
 
 	$(AS_x86-32) 	$(ASFLAGS_x86-32) 	init/boot.s 	-o 	$(BUILDDIR)/boot.o
@@ -77,6 +76,32 @@ x86-32:
 	mv $(BUILDDIR)/os.o iso/boot/
 	cp make/grub.cfg iso/boot/grub/
 	grub2-mkrescue -o $(BUILDDIR)/os.iso iso
+
+
+## CLANG/LLVM ##
+x86-64_clang:
+
+x86-32_clang:
+	mkdir 				-p 										$(BUILDDIR)
+
+	$(AS_x86-32_CLANG) 	$(ASFLAGS_x86-32_CLANG) 	init/boot.s	-o $(BUILDDIR)/boot.o
+	$(CC_x86-32_CLANG) 	$(CFLAGS_x86-32_CLANG)  	$(SOURCES)
+	mv												*.o			$(BUILDDIR)
+	$(CC_x86-32_CLANG)	$(LDFLAGS_x86-32_CLANG)		$(OBJECTS)	-o $(BUILDDIR)/os.o
+
+	mkdir -p iso/boot/grub
+	mv $(BUILDDIR)/os.o iso/boot/
+	cp make/grub.cfg iso/boot/grub/
+	grub2-mkrescue -o $(BUILDDIR)/os.iso iso
+
+# Compile code for x86-64-uefi #
+x86-64-uefi_clang:
+	mkdir 								-p 								$(BUILDDIR)
+
+	$(CC_CLANG)	$(CFLAGS_UEFI_CLANG)	uefi/*.c
+	mv									*.o								$(BUILDDIR)
+	$(LD_CLANG)	$(LDFLAGS_UEFI_CLANG)	$(BUILDDIR)/*.o 				-o $(BUILDDIR)/$(UEFI_TARGET).so
+	$(OBJCPY) 	$(OBJCPYFLAGS)			$(BUILDDIR)/$(UEFI_TARGET).so 	$(BUILDDIR)/$(UEFI_TARGET).efi
 
 
 
@@ -92,6 +117,7 @@ qemu_x86-64-uefi:
 	-net none \
 	-cdrom $(BUILDDIR)/os.iso
 
+# Start qemu on 64-bit UEFI-only mode CPU with UEFI app inserted #
 qemu_x86-64-uefiapp:
 	# Copy over the code and variable vars for OVMF
 	cp $(OVMF)/OVMF_CODE.fd $(OVMF)/OVMF_VARS.fd $(BUILDDIR)
