@@ -9,5 +9,4 @@
 #include <stdbool.h>
 
 typedef long ssize_t;
-#define NULL ((void *)0)
 #endif
