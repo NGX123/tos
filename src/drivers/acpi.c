@@ -144,6 +144,8 @@ static void* findSDT(void* RSDPstruct, char* signature){
 
         entries_amount = (((struct XSDT*)RSDTstruct)->h.Length - sizeof(struct ACPISDT)) / 8;
     }
+    else
+        return NULL;
 
     for (i = 0; i < entries_amount; i++){
         if (((struct RSDP*)RSDPstruct)->Revision == 0)
