@@ -42,6 +42,7 @@ LDFLAGS_x86-64-uefiapp_CLANG 	= $(EFI_OBJS) -nostdlib -znocombreloc -shared -Bsy
 #Flags - (-j)Only copy the specified section to output; (--target=efi-app-x86_64)Select the platform
 OBJCPYFLAGS 					= -j .text -j .sdata -j .data -j .dynamic -j .dynsym -j .rel -j .rela -j .reloc --target=efi-app-x86_64
 
+
 ## EFI ##
 ARCH 							= x86_64
 EFI_INCLUDE_PATH 				= /usr/include/efi 																		# Contains all of the headers necessery to compiler EFI apps
@@ -103,7 +104,7 @@ build_x86-64-uefiapp_clang:
 
 
 ### DISK IMAGES ###
-# UEFI Disk Image Build
+# UEFI Disk Image Build #
 disk_x86-64-uefiapp:
 	mkdir -p $(BUILDDIR)
 
