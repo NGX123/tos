@@ -123,10 +123,10 @@ disk_x86-64-uefiapp:
 
 # 32 bit OS Image Build #
 disk_x86-32-bios:
-	mkdir -p iso/boot/grub
-	mv $(BUILDDIR)/os.o iso/boot/
-	cp make/grub.cfg iso/boot/grub/
-	grub2-mkrescue -o $(BUILDDIR)/os.iso iso
+	mkdir -p $(BUILDDIR)/iso/boot/grub
+	mv $(BUILDDIR)/os.o $(BUILDDIR)/iso/boot
+	cp make/grub.cfg $(BUILDDIR)/iso/boot/grub
+	grub2-mkrescue -o $(BUILDDIR)/os.iso $(BUILDDIR)/iso
 
 
 
