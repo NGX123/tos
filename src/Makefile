@@ -72,11 +72,6 @@ x86-32_gcc:
 	mv 											*.o 			$(BUILDDIR)
 	$(CC_x86-32_GCC) 	$(LDFLAGS_x86-32_GCC) 	$(OBJECTS)		-o $(BUILDDIR)/os.o
 
-	mkdir -p iso/boot/grub
-	mv $(BUILDDIR)/os.o iso/boot/
-	cp make/grub.cfg iso/boot/grub/
-	grub2-mkrescue -o $(BUILDDIR)/os.iso iso
-
 
 ## CLANG/LLVM ##
 x86-64_clang:
@@ -88,11 +83,6 @@ x86-32_clang:
 	$(CC_x86-32_CLANG) 	$(CFLAGS_x86-32_CLANG)  	$(SOURCES)
 	mv												*.o			$(BUILDDIR)
 	$(CC_x86-32_CLANG)	$(LDFLAGS_x86-32_CLANG)		$(OBJECTS)	-o $(BUILDDIR)/os.o
-
-	mkdir -p iso/boot/grub
-	mv $(BUILDDIR)/os.o iso/boot/
-	cp make/grub.cfg iso/boot/grub/
-	grub2-mkrescue -o $(BUILDDIR)/os.iso iso
 
 # Compile code for x86-64-uefi #
 x86-64-uefi_clang:
@@ -135,7 +125,7 @@ qemu_x86-32-bios:
 
 ### SPECIAL ###
 # UEFI Disk Image Build
-uefi-disk:
+disk_x86-64-uefiapp:
 	mkdir -p $(BUILDDIR)
 
 	# Create an empty disk image with size of 94 KB
@@ -150,6 +140,13 @@ uefi-disk:
 
 	# Copy the efi executable to the EFI/BOOT folder on the drive
 	mcopy -i $(BUILDDIR)/$(x86-64-uefiapp_TARGET).img $(BUILDDIR)/$(x86-64-uefiapp_TARGET).efi ::/EFI/BOOT
+
+# 32 bit OS Image Build #
+disk_x86-32-bios:
+	mkdir -p iso/boot/grub
+	mv $(BUILDDIR)/os.o iso/boot/
+	cp make/grub.cfg iso/boot/grub/
+	grub2-mkrescue -o $(BUILDDIR)/os.iso iso
 
 # Toolchain Build #
 toolchain:
