@@ -53,18 +53,23 @@ EFI_OBJS				= -T $(EFI_LINK_SCRIPT) -L /usr/lib64/gnuefi -L /usr/lib -L /usr/lib
 
 
 ### START ###
-all: x86-64_gcc
+all: 						clean x86-64_gcc
+all_x86-64_gcc: 			clean build_x86-64_gcc
+all_x86-32_gcc: 			clean build_x86-32_gcc disk_x86-32-bios qemu_x86-32-bios
+all_x86-64_clang:			clean build_x86-64_clang
+all_x86-32_clang:			clean build_x86-32_clang disk_x86-32-bios qemu_x86-32-bios
+all_x86-64-uefiapp_clang:	clean build_x86-64-uefiapp_clang disk_x86-64-uefiapp qemu_x86-64-uefiapp
 
 
 
 ### BUILD ###
 ## GCC ##
 # Compile code for x86-64 #
-x86-64_gcc:
+build_x86-64_gcc:
 	echo "No source to compile yet"
 
 # Compile code for x86-32 #
-x86-32_gcc:
+build_x86-32_gcc:
 	mkdir 				-p 										$(BUILDDIR)
 
 	$(AS_x86-32_GCC) 	$(ASFLAGS_x86-32_GCC) 	init/boot.s 	-o 	$(BUILDDIR)/boot.o
@@ -74,9 +79,9 @@ x86-32_gcc:
 
 
 ## CLANG/LLVM ##
-x86-64_clang:
+build_x86-64_clang:
 
-x86-32_clang:
+build_x86-32_clang:
 	mkdir 				-p 										$(BUILDDIR)
 
 	$(AS_x86-32_CLANG) 	$(ASFLAGS_x86-32_CLANG) 	init/boot.s	-o $(BUILDDIR)/boot.o
@@ -85,7 +90,7 @@ x86-32_clang:
 	$(CC_x86-32_CLANG)	$(LDFLAGS_x86-32_CLANG)		$(OBJECTS)	-o $(BUILDDIR)/os.o
 
 # Compile code for x86-64-uefi #
-x86-64-uefi_clang:
+build_x86-64-uefiapp_clang:
 	mkdir 						-p 																			$(BUILDDIR)
 
 	$(CC_x86-64-uefiapp_CLANG)	$(CFLAGS_x86-64-uefiapp_CLANG)	$(x86-64-uefiapp_TARGET)/*.c
