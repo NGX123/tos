@@ -1,39 +1,19 @@
-++ BOOT ++
-    - UEFI requires an efi application to be located on an FAT/16/32 formated drive
-        - First the drive should be made and then PE executable should be put on it
+--- UEFI - https://github.com/tianocore/tianocore.github.io/wiki/Getting-Started-with-EDK-II ---
+	-- Get and Run OVMF Firmware --
+		- Build OVMF from source - https://github.com/tianocore/tianocore.github.io/wiki/OVMF -
+			1. Download dependencies using instructions					-	https://github.com/tianocore/tianocore.github.io/wiki/Using-EDK-II-with-Native-GCC
+			2. Follow common build instructions									-	https://github.com/tianocore/tianocore.github.io/wiki/Common-instructions
+			3. Build the UEFI firmware itself with instructions	- https://github.com/tianocore/tianocore.github.io/wiki/How-to-build-OVMF
+			*	 OVMF main wiki Page															- https://github.com/tianocore/tianocore.github.io/wiki/OVMF
 
-    - The application needs to be in the windows PE executable format. Compilers on linux mostly produce ELF which should be converted to PE
-        - The conversion from ELF to be PE is done by copying only certain entries from the ELF file using objcopy
+		- Get OVMF from precompiled binaries -
+			* Use package unpacker to extract .fd and .iso files from jenkins/edk2/*-ovmf-x64-*(on https://www.kraxel.org/repos) 
+
+		- Run the OVMF -
+			* Follow insturctions and get binaries in OVMF/Build direcotry - https://github.com/tianocore/tianocore.github.io/wiki/How-to-run-OVMF
+
+	-- Get and Compile with EDK2 Toolkit --
 
 
-
-++ DEVELOPMENT ++
-    - To call the UEFI functions the app should have headers included and be linked with shared libs where they are defined
-        - TianoCore EDK2(https://github.com/tianocore/tianocore.github.io/wiki/Getting-Started-with-EDK-II). Large complex environment that should be compiled and configured
-        - GNU-EFI(https://sourceforge.net/projects/gnu-efi/). Libraries and headers that can be installed as packages and don't require configuration
-
-    - UEFI Apps can be compiled with the system gcc or clang compiler with several attributes passed. gcc/clang is used with:
-        - -fno-stack-protector  - Disable variable app at the end of stack that indicates overflow when overwritten
-        - -fpic                 - Position independent code(can be loaded anywhere in memory)
-        - -fshort-wchar         - Makes wchar_t short(2 byte)
-        - -mno-red-zone         - Disables red zone feature according to amd64 ABI
-        - -I path/to/headers    - The paths to include the efi headers(e.g. GNU EFI headers)
-        - -c                    - So files are not linked before needed
-        - CALLING ATTRIBUTE     - this attribute is specific to the compiler used and changes calling convention to windows one(used by UEFI)
-            - clang - -DHAVE_USE_MS_ABI
-            - gcc   - -DEFI_FUNCTION_WRAPPER
-
-    - When EFI App is linked, several command line attributes should be passed. ld is used with:
-        - -L path/to/libs   - add paths to libraries(should be the first thing done)
-        - -nostdlib         - only search the for libs in specified dirs
-        - -shared           - create a shareable library object
-        - -Bsymbolic        - bind references to global symbols within the shared lib
-        - -l libs           - choose which libs to include
-
-    - In standard approaches without using a cross compiler, elf should be made into a PE executable which is done by copying only certain sections to the new executable from original. objcopy is used with:
-        - -j .section               - choose the right sections and copy them
-        - --target=efi-app-x86_64   - select the right target architecture
-
-    - Lastly the app should be put on a disk image with size of 93750 bytes and sector size of 1440 bytes
-
-    - QEMU should be run with the OVMF
+--- BOOT Kernel - https://gitlab.com/bztsrc/bootboot ---
+			
