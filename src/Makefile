@@ -1,54 +1,54 @@
 ### VARIABLES ###
 ## Global ##
-BUILDDIR 				= ./build
-SOURCES 				= drivers/*.c kernel/*.c init/*.c libs/*.c
-OBJECTS 				= $(BUILDDIR)/*.o
-CFLAGS_GLOBAL 			= -Wall -Wextra -c
-CEXTRAWARNINGS 			= -pedantic -Wcast-align -Wcast-qual -Wdisabled-optimization -Wformat=2 -Winit-self -Wlogical-op -Wmissing-declarations -Wmissing-include-dirs -Wshadow -Wsign-conversion -Wstrict-overflow=5 -Wswitch-default -Wundef -Wno-unused # -Wredundant-decls(warns when something was redefined several times)
-OVMF 					= /usr/share/OVMF
+BUILDDIR 						= ./build
+SOURCES 						= drivers/*.c kernel/*.c init/*.c libs/*.c
+OBJECTS 						= $(BUILDDIR)/*.o
+CFLAGS_GLOBAL 					= -Wall -Wextra -c
+CEXTRAWARNINGS 					= -pedantic -Wcast-align -Wcast-qual -Wdisabled-optimization -Wformat=2 -Winit-self -Wlogical-op -Wmissing-declarations -Wmissing-include-dirs -Wshadow -Wsign-conversion -Wstrict-overflow=5 -Wswitch-default -Wundef -Wno-unused # -Wredundant-decls(warns when something was redefined several times)
+OVMF 							= /usr/share/OVMF
 
 
 ## Compilation ##
 # x86-32_gcc toolchain #
-CC_x86-32_GCC 				= i686-elf-gcc
-AS_x86-32_GCC 				= nasm
-ASFLAGS_x86-32_GCC 			= -felf32													# (-felf32) Set the target architecture to x86_32-elf
-CFLAGS_x86-32_GCC 			= -I libs/headers -std=gnu99 -ffreestanding $(CFLAGS_GLOBAL)	# (-I libs) Include the custo c library; (-std=gnu99) Becuase of code specifics should be older standard; (-ffreestanding) Startup not at main() and no standard lib
-LDFLAGS_x86-32_GCC 			= -T make/linker.ld -ffreestanding -nostdlib -l gcc			# (-T script.ld) Use custom linker script; (-ffreestanding)Startup not at main() and no standard lib; (-nostdlib) Do not link with standard library; (-l gcc) Link with gcc library
+CC_x86-32_GCC 					= i686-elf-gcc
+AS_x86-32_GCC 					= nasm
+ASFLAGS_x86-32_GCC 				= -felf32													# (-felf32) Set the target architecture to x86_32-elf
+CFLAGS_x86-32_GCC 				= -I libs/headers -std=gnu99 -ffreestanding $(CFLAGS_GLOBAL)	# (-I libs) Include the custo c library; (-std=gnu99) Becuase of code specifics should be older standard; (-ffreestanding) Startup not at main() and no standard lib
+LDFLAGS_x86-32_GCC 				= -T make/linker.ld -ffreestanding -nostdlib -l gcc			# (-T script.ld) Use custom linker script; (-ffreestanding)Startup not at main() and no standard lib; (-nostdlib) Do not link with standard library; (-l gcc) Link with gcc library
 
 # x86-64_gcc #
-CC_x86-64_GCC 				= x86_64-elf-gcc
-AS_x86-64_GCC 				= nasm
-CFLAGS_x86-64_GCC 			= -ffreestanding -mcmodel=large -mno-red-zone -mno-mmx -mno-sse -mno-sse2 $(CFLAGS_GLOBAL)	# (-ffreestanding) Startup not at main() and no standard lib; (-mcmodel=large) No assumptions about addresses; (-mno-red-zone -mno-mmx -mno-sse -mno-sse2) Disable CPU specific features that could generate runtime errors
-LDFLAGS_x86-64_GCC 			= -T uefi/linker.ld -ffreestanding -nostdlib -l gcc											# (-T script.ld) Use custom linker script; (-ffreestanding)Startup not at main() and no standard lib; (-nostdlib) Do not link with standard library; (-l gcc) Link with gcc library
+CC_x86-64_GCC 					= x86_64-elf-gcc
+AS_x86-64_GCC 					= nasm
+CFLAGS_x86-64_GCC 				= -ffreestanding -mcmodel=large -mno-red-zone -mno-mmx -mno-sse -mno-sse2 $(CFLAGS_GLOBAL)	# (-ffreestanding) Startup not at main() and no standard lib; (-mcmodel=large) No assumptions about addresses; (-mno-red-zone -mno-mmx -mno-sse -mno-sse2) Disable CPU specific features that could generate runtime errors
+LDFLAGS_x86-64_GCC 				= -T uefi/linker.ld -ffreestanding -nostdlib -l gcc											# (-T script.ld) Use custom linker script; (-ffreestanding)Startup not at main() and no standard lib; (-nostdlib) Do not link with standard library; (-l gcc) Link with gcc library
 
 # x86-64-uefiapp_clang #
-CC_x86-64-uefiapp_CLANG 				= clang # Can be changed to gcc, then change -DHAVE_USE_MS_ABI to -DEFI_FUNCTION_WRAPPER
-LD_x86-64-uefiapp_CLANG 				= ld
-OBJCPY 									= objcopy
-x86-64-uefiapp_TARGET 					= uefi
+CC_x86-64-uefiapp_CLANG 		= clang # Can be changed to gcc, then change -DHAVE_USE_MS_ABI to -DEFI_FUNCTION_WRAPPER
+LD_x86-64-uefiapp_CLANG 		= ld
+OBJCPY 							= objcopy
+x86-64-uefiapp_TARGET 			= uefi
 #Flags - (-fno-stack-protector)Disable monitoring variable at stack end to indicate overflow if overwritten; (-fpic)Position independent code(can be loaded anywhere in memory); (-fshort-wchar)Makes wchar_t short(2 byte), (-mno-red-zone)Disables feature according to ABI; (-DHAVE_USE_MS_ABI)Use windows function calling convention(it is used by UEFI)
-CFLAGS_x86-64-uefiapp_CLANG 			= $(EFI_INCS) -fno-stack-protector -fpic -fshort-wchar -mno-red-zone -DHAVE_USE_MS_ABI -Wall -Wextra -c
+CFLAGS_x86-64-uefiapp_CLANG		= $(EFI_INCS) -fno-stack-protector -fpic -fshort-wchar -mno-red-zone -DHAVE_USE_MS_ABI -Wall -Wextra -c
 #Flags - (-nostdlib)Do not link against any libs except specified; (-shared)Create a shared lib; (-Bsymbolic)Bind global function references locally, (-l efi, -l gnuefi)Link with GNU EFI libraries
-LDFLAGS_x86-64-uefiapp_CLANG 			= $(EFI_OBJS) -nostdlib -znocombreloc -shared -Bsymbolic -l efi -l gnuefi
+LDFLAGS_x86-64-uefiapp_CLANG 	= $(EFI_OBJS) -nostdlib -znocombreloc -shared -Bsymbolic -l efi -l gnuefi
 #Flags - (-j)Only copy the specified section to output; (--target=efi-app-x86_64)Select the platform
-OBJCPYFLAGS 							= -j .text -j .sdata -j .data -j .dynamic -j .dynsym -j .rel -j .rela -j .reloc --target=efi-app-x86_64
+OBJCPYFLAGS 					= -j .text -j .sdata -j .data -j .dynamic -j .dynsym -j .rel -j .rela -j .reloc --target=efi-app-x86_64
 
 # x86-32_clang #
-CC_x86-32_CLANG 		= clang
-AS_x86-32_CLANG 		= nasm
-LD_x86-32_CLANG			= clang
-CFLAGS_x86-32_CLANG 	= -I libs/headers -std=gnu99 -ffreestanding $(CFLAGS_GLOBAL) -target i386-elf
-LDFLAGS_x86-32_CLANG 	= -T make/linker.ld -ffreestanding -nostdlib -l gcc -target i386-elf
-ASFLAGS_x86-32_CLANG 	= -felf32
+CC_x86-32_CLANG 				= clang
+AS_x86-32_CLANG 				= nasm
+LD_x86-32_CLANG					= clang
+CFLAGS_x86-32_CLANG 			= -I libs/headers -std=gnu99 -ffreestanding $(CFLAGS_GLOBAL) -target i386-elf
+LDFLAGS_x86-32_CLANG 			= -T make/linker.ld -ffreestanding -nostdlib -l gcc -target i386-elf
+ASFLAGS_x86-32_CLANG 			= -felf32
 
 ## EFI ##
-ARCH 					= x86_64
-EFI_INCLUDE_PATH 		= /usr/include/efi 																		# Contains all of the headers necessery to compiler EFI apps
-EFI_LINK_OBJ 			= /usr/lib/crt0-efi-$(ARCH).o															# Shared library to link the UEFI header functions
-EFI_LINK_SCRIPT 		= /usr/lib/elf_$(ARCH)_efi.lds															# GNU-EFI custom linker script for linking with it's shared libraries
-EFI_INCS 				= -I /usr/include/efi -I /usr/include/efi/$(ARCH) -I /usr/include/efi/protocol			# Includes general UEFI headers, platform specific UEFI headers and UEFI protocol headers
-EFI_OBJS				= -T $(EFI_LINK_SCRIPT) -L /usr/lib64/gnuefi -L /usr/lib -L /usr/lib64 $(EFI_LINK_OBJ)	# Adds objects and libs for linker to link the UEFI app with
+ARCH 							= x86_64
+EFI_INCLUDE_PATH 				= /usr/include/efi 																		# Contains all of the headers necessery to compiler EFI apps
+EFI_LINK_OBJ 					= /usr/lib/crt0-efi-$(ARCH).o															# Shared library to link the UEFI header functions
+EFI_LINK_SCRIPT 				= /usr/lib/elf_$(ARCH)_efi.lds															# GNU-EFI custom linker script for linking with it's shared libraries
+EFI_INCS 						= -I /usr/include/efi -I /usr/include/efi/$(ARCH) -I /usr/include/efi/protocol			# Includes general UEFI headers, platform specific UEFI headers and UEFI protocol headers
+EFI_OBJS						= -T $(EFI_LINK_SCRIPT) -L /usr/lib64/gnuefi -L /usr/lib -L /usr/lib64 $(EFI_LINK_OBJ)	# Adds objects and libs for linker to link the UEFI app with
 
 
 
