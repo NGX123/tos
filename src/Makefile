@@ -6,24 +6,23 @@ OBJECTS 				= $(BUILDDIR)/*.o
 CFLAGS_GLOBAL 			= -Wall -Wextra -c
 CEXTRAWARNINGS 			= -pedantic -Wcast-align -Wcast-qual -Wdisabled-optimization -Wformat=2 -Winit-self -Wlogical-op -Wmissing-declarations -Wmissing-include-dirs -Wshadow -Wsign-conversion -Wstrict-overflow=5 -Wswitch-default -Wundef -Wno-unused # -Wredundant-decls(warns when something was redefined several times)
 OVMF 					= /usr/share/OVMF
-ARCH 					= x86_64
 
 
 ## Compilation ##
-# x86-32 toolchain variables #
+# x86-32_gcc toolchain #
 CC_x86-32 				= i686-elf-gcc
 AS_x86-32 				= nasm
 ASFLAGS_x86-32 			= -felf32													# (-felf32) Set the target architecture to x86_32-elf
 CFLAGS_x86-32 			= -I libs/headers -std=gnu99 -ffreestanding $(CFLAGS_GLOBAL)	# (-I libs) Include the custo c library; (-std=gnu99) Becuase of code specifics should be older standard; (-ffreestanding) Startup not at main() and no standard lib
 LDFLAGS_x86-32 			= -T make/linker.ld -ffreestanding -nostdlib -l gcc			# (-T script.ld) Use custom linker script; (-ffreestanding)Startup not at main() and no standard lib; (-nostdlib) Do not link with standard library; (-l gcc) Link with gcc library
 
-# x86-64 toolchain variables #
+# x86-64_gcc#
 CC_x86-64 				= x86_64-elf-gcc
 AS_x86-64 				= nasm
 CFLAGS_x86-64 			= -ffreestanding -mcmodel=large -mno-red-zone -mno-mmx -mno-sse -mno-sse2 $(CFLAGS_GLOBAL)	# (-ffreestanding) Startup not at main() and no standard lib; (-mcmodel=large) No assumptions about addresses; (-mno-red-zone -mno-mmx -mno-sse -mno-sse2) Disable CPU specific features that could generate runtime errors
 LDFLAGS_x86-64 			= -T uefi/linker.ld -ffreestanding -nostdlib -l gcc											# (-T script.ld) Use custom linker script; (-ffreestanding)Startup not at main() and no standard lib; (-nostdlib) Do not link with standard library; (-l gcc) Link with gcc library
 
-# x86-64-uefi toolchain variables #
+# x86-64-uefi_clang #
 CC_CLANG 				= clang # Can be changed to gcc, then change -DHAVE_USE_MS_ABI to -DEFI_FUNCTION_WRAPPER
 LD_CLANG 				= ld
 OBJCPY 					= objcopy
@@ -35,7 +34,7 @@ LDFLAGS_UEFI_CLANG 		= $(EFI_OBJS) -nostdlib -znocombreloc -shared -Bsymbolic -l
 #Flags - (-j)Only copy the specified section to output; (--target=efi-app-x86_64)Select the platform
 OBJCPYFLAGS 			= -j .text -j .sdata -j .data -j .dynamic -j .dynsym -j .rel -j .rela -j .reloc --target=efi-app-x86_64
 
-# x86-32_clang toolchain variables #
+# x86-32_clang #
 CC_x86-32_CLANG 		= clang
 AS_x86-32_CLANG 		= nasm
 LD_x86-32_CLANG			= clang
@@ -44,6 +43,7 @@ LDFLAGS_x86-32_CLANG 	= -T make/linker.ld -ffreestanding -nostdlib -l gcc -targe
 ASFLAGS_x86-32_CLANG 	= -felf32
 
 ## EFI ##
+ARCH 					= x86_64
 EFI_INCLUDE_PATH 		= /usr/include/efi 																		# Contains all of the headers necessery to compiler EFI apps
 EFI_LINK_OBJ 			= /usr/lib/crt0-efi-$(ARCH).o															# Shared library to link the UEFI header functions
 EFI_LINK_SCRIPT 		= /usr/lib/elf_$(ARCH)_efi.lds															# GNU-EFI custom linker script for linking with it's shared libraries
