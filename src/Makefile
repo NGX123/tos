@@ -10,11 +10,11 @@ OVMF 					= /usr/share/OVMF
 
 ## Compilation ##
 # x86-32_gcc toolchain #
-CC_x86-32 				= i686-elf-gcc
-AS_x86-32 				= nasm
-ASFLAGS_x86-32 			= -felf32													# (-felf32) Set the target architecture to x86_32-elf
-CFLAGS_x86-32 			= -I libs/headers -std=gnu99 -ffreestanding $(CFLAGS_GLOBAL)	# (-I libs) Include the custo c library; (-std=gnu99) Becuase of code specifics should be older standard; (-ffreestanding) Startup not at main() and no standard lib
-LDFLAGS_x86-32 			= -T make/linker.ld -ffreestanding -nostdlib -l gcc			# (-T script.ld) Use custom linker script; (-ffreestanding)Startup not at main() and no standard lib; (-nostdlib) Do not link with standard library; (-l gcc) Link with gcc library
+CC_x86-32_GCC 				= i686-elf-gcc
+AS_x86-32_GCC 				= nasm
+ASFLAGS_x86-32_GCC 			= -felf32													# (-felf32) Set the target architecture to x86_32-elf
+CFLAGS_x86-32_GCC 			= -I libs/headers -std=gnu99 -ffreestanding $(CFLAGS_GLOBAL)	# (-I libs) Include the custo c library; (-std=gnu99) Becuase of code specifics should be older standard; (-ffreestanding) Startup not at main() and no standard lib
+LDFLAGS_x86-32_GCC 			= -T make/linker.ld -ffreestanding -nostdlib -l gcc			# (-T script.ld) Use custom linker script; (-ffreestanding)Startup not at main() and no standard lib; (-nostdlib) Do not link with standard library; (-l gcc) Link with gcc library
 
 # x86-64_gcc #
 CC_x86-64_GCC 				= x86_64-elf-gcc
@@ -65,12 +65,12 @@ x86-64_gcc:
 
 # Compile code for x86-32 #
 x86-32_gcc:
-	mkdir 			-p 									$(BUILDDIR)
+	mkdir 				-p 										$(BUILDDIR)
 
-	$(AS_x86-32) 	$(ASFLAGS_x86-32) 	init/boot.s 	-o 	$(BUILDDIR)/boot.o
-	$(CC_x86-32) 	$(CFLAGS_x86-32) 	$(SOURCES)
-	mv 									*.o 			$(BUILDDIR)
-	$(CC_x86-32) 	$(LDFLAGS_x86-32) 	$(OBJECTS)		-o $(BUILDDIR)/os.o
+	$(AS_x86-32_GCC) 	$(ASFLAGS_x86-32_GCC) 	init/boot.s 	-o 	$(BUILDDIR)/boot.o
+	$(CC_x86-32_GCC) 	$(CFLAGS_x86-32_GCC) 	$(SOURCES)
+	mv 											*.o 			$(BUILDDIR)
+	$(CC_x86-32_GCC) 	$(LDFLAGS_x86-32_GCC) 	$(OBJECTS)		-o $(BUILDDIR)/os.o
 
 	mkdir -p iso/boot/grub
 	mv $(BUILDDIR)/os.o iso/boot/
