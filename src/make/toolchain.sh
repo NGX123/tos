@@ -27,6 +27,9 @@ if [ $extra_config_var == y ]
     fi
 fi
 
+
+
+
 ## PACKAGE INSTALLATIONS ##
 # DNF Installations
 if [ $pm_var == dnf ]
@@ -162,6 +165,7 @@ fi
 
 
 
+
 ## BUILD PROCCESS ##
 # Compile the x86_32 cross-compiler
 if [ $x86_build_var == 32 ]
@@ -242,7 +246,7 @@ fi
 
 
 
-# CHECK OF INSTALLTION
+## CHECK OF INSTALLTION ##
 qemu-system-i386 --version
 qemu-system-x86_64 --version
 if [ x86_build_var == 64 ]
