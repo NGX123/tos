@@ -16,11 +16,11 @@ ASFLAGS_x86-32 			= -felf32													# (-felf32) Set the target architecture 
 CFLAGS_x86-32 			= -I libs/headers -std=gnu99 -ffreestanding $(CFLAGS_GLOBAL)	# (-I libs) Include the custo c library; (-std=gnu99) Becuase of code specifics should be older standard; (-ffreestanding) Startup not at main() and no standard lib
 LDFLAGS_x86-32 			= -T make/linker.ld -ffreestanding -nostdlib -l gcc			# (-T script.ld) Use custom linker script; (-ffreestanding)Startup not at main() and no standard lib; (-nostdlib) Do not link with standard library; (-l gcc) Link with gcc library
 
-# x86-64_gcc#
-CC_x86-64 				= x86_64-elf-gcc
-AS_x86-64 				= nasm
-CFLAGS_x86-64 			= -ffreestanding -mcmodel=large -mno-red-zone -mno-mmx -mno-sse -mno-sse2 $(CFLAGS_GLOBAL)	# (-ffreestanding) Startup not at main() and no standard lib; (-mcmodel=large) No assumptions about addresses; (-mno-red-zone -mno-mmx -mno-sse -mno-sse2) Disable CPU specific features that could generate runtime errors
-LDFLAGS_x86-64 			= -T uefi/linker.ld -ffreestanding -nostdlib -l gcc											# (-T script.ld) Use custom linker script; (-ffreestanding)Startup not at main() and no standard lib; (-nostdlib) Do not link with standard library; (-l gcc) Link with gcc library
+# x86-64_gcc #
+CC_x86-64_GCC 				= x86_64-elf-gcc
+AS_x86-64_GCC 				= nasm
+CFLAGS_x86-64_GCC 			= -ffreestanding -mcmodel=large -mno-red-zone -mno-mmx -mno-sse -mno-sse2 $(CFLAGS_GLOBAL)	# (-ffreestanding) Startup not at main() and no standard lib; (-mcmodel=large) No assumptions about addresses; (-mno-red-zone -mno-mmx -mno-sse -mno-sse2) Disable CPU specific features that could generate runtime errors
+LDFLAGS_x86-64_GCC 			= -T uefi/linker.ld -ffreestanding -nostdlib -l gcc											# (-T script.ld) Use custom linker script; (-ffreestanding)Startup not at main() and no standard lib; (-nostdlib) Do not link with standard library; (-l gcc) Link with gcc library
 
 # x86-64-uefiapp_clang #
 CC_x86-64-uefiapp_CLANG 				= clang # Can be changed to gcc, then change -DHAVE_USE_MS_ABI to -DEFI_FUNCTION_WRAPPER
