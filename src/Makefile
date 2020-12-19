@@ -100,6 +100,33 @@ build_x86-64-uefiapp_clang:
 
 
 
+### DISK IMAGES ###
+# UEFI Disk Image Build
+disk_x86-64-uefiapp:
+	mkdir -p $(BUILDDIR)
+
+	# Create an empty disk image with size of 94 KB
+	dd if=/dev/zero of=$(BUILDDIR)/$(x86-64-uefiapp_TARGET).img bs=512 count=93750
+
+	# Format the disk image with 1440 byte sectors
+	mformat -i $(BUILDDIR)/$(x86-64-uefiapp_TARGET).img -f 1440 ::
+
+	# Create EFI and then EFI/BOOT directory on the disk image
+	mmd -i $(BUILDDIR)/$(x86-64-uefiapp_TARGET).img ::/EFI
+	mmd -i $(BUILDDIR)/$(x86-64-uefiapp_TARGET).img ::/EFI/BOOT
+
+	# Copy the efi executable to the EFI/BOOT folder on the drive
+	mcopy -i $(BUILDDIR)/$(x86-64-uefiapp_TARGET).img $(BUILDDIR)/$(x86-64-uefiapp_TARGET).efi ::/EFI/BOOT
+
+# 32 bit OS Image Build #
+disk_x86-32-bios:
+	mkdir -p iso/boot/grub
+	mv $(BUILDDIR)/os.o iso/boot/
+	cp make/grub.cfg iso/boot/grub/
+	grub2-mkrescue -o $(BUILDDIR)/os.iso iso
+
+
+
 ### QEMU ###
 # Start qemu on 64-bit UEFI-only mode CPU #
 qemu_x86-64-uefi:
@@ -129,30 +156,6 @@ qemu_x86-32-bios:
 
 
 ### SPECIAL ###
-# UEFI Disk Image Build
-disk_x86-64-uefiapp:
-	mkdir -p $(BUILDDIR)
-
-	# Create an empty disk image with size of 94 KB
-	dd if=/dev/zero of=$(BUILDDIR)/$(x86-64-uefiapp_TARGET).img bs=512 count=93750
-
-	# Format the disk image with 1440 byte sectors
-	mformat -i $(BUILDDIR)/$(x86-64-uefiapp_TARGET).img -f 1440 ::
-
-	# Create EFI and then EFI/BOOT directory on the disk image
-	mmd -i $(BUILDDIR)/$(x86-64-uefiapp_TARGET).img ::/EFI
-	mmd -i $(BUILDDIR)/$(x86-64-uefiapp_TARGET).img ::/EFI/BOOT
-
-	# Copy the efi executable to the EFI/BOOT folder on the drive
-	mcopy -i $(BUILDDIR)/$(x86-64-uefiapp_TARGET).img $(BUILDDIR)/$(x86-64-uefiapp_TARGET).efi ::/EFI/BOOT
-
-# 32 bit OS Image Build #
-disk_x86-32-bios:
-	mkdir -p iso/boot/grub
-	mv $(BUILDDIR)/os.o iso/boot/
-	cp make/grub.cfg iso/boot/grub/
-	grub2-mkrescue -o $(BUILDDIR)/os.iso iso
-
 # Toolchain Build #
 toolchain:
 	read -p "Are you sure you want to compile the toolchain: " toolchain_compile
