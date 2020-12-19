@@ -96,11 +96,11 @@ x86-32_clang:
 
 # Compile code for x86-64-uefi #
 x86-64-uefi_clang:
-	mkdir 						-p 																$(BUILDDIR)
+	mkdir 						-p 																			$(BUILDDIR)
 
 	$(CC_x86-64-uefiapp_CLANG)	$(CFLAGS_x86-64-uefiapp_CLANG)	$(x86-64-uefiapp_TARGET)/*.c
-	mv															*.o								$(BUILDDIR)
-	$(LD_x86-64-uefiapp_CLANG)	$(LDFLAGS_x86-64-uefiapp_CLANG)	$(BUILDDIR)/*.o 				-o $(BUILDDIR)/$(x86-64-uefiapp_TARGET).so
+	mv															*.o											$(BUILDDIR)
+	$(LD_x86-64-uefiapp_CLANG)	$(LDFLAGS_x86-64-uefiapp_CLANG)	$(BUILDDIR)/*.o 							-o $(BUILDDIR)/$(x86-64-uefiapp_TARGET).so
 	$(OBJCPY) 					$(OBJCPYFLAGS)					$(BUILDDIR)/$(x86-64-uefiapp_TARGET).so 	$(BUILDDIR)/$(x86-64-uefiapp_TARGET).efi
 
 
