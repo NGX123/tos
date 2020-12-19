@@ -157,21 +157,3 @@ toolchain:
 # Build clean up #
 clean:
 	rm -rf *.o *.so *.out *.img *.fd *.efi *iso $(BUILDDIR)
-
-
-
-### EXTRA ###
-# MacOS #
-x86-32-macos:
-	mkdir -p $(BUILDDIR)
-
-	$(AS) $(ASFLAGS) init/boot.s -o $(BUILDDIR)/boot.o
-	$(CC) $(CFLAGS) $(SOURCES)
-	mv *.o $(BUILDDIR)
-	$(CC) $(LDFLAGS) $(OBJECTS) -o $(BUILDDIR)/os.o
-
-	mkdir -p iso/boot/grub
-	mv $(BUILDDIR)/os.o iso/boot/
-	cp make/grub.cfg iso/boot/grub/
-grub-macos:
-	grub-mkrescue -o $(BUILDDIR)/os.iso iso
