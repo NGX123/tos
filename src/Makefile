@@ -9,6 +9,12 @@ OVMF 							= /usr/share/OVMF
 
 
 ## Compilation ##
+# x86-64_gcc #
+CC_x86-64_GCC 					= x86_64-elf-gcc
+AS_x86-64_GCC 					= nasm
+CFLAGS_x86-64_GCC 				= -ffreestanding -mcmodel=large -mno-red-zone -mno-mmx -mno-sse -mno-sse2 $(CFLAGS_GLOBAL)	# (-ffreestanding) Startup not at main() and no standard lib; (-mcmodel=large) No assumptions about addresses; (-mno-red-zone -mno-mmx -mno-sse -mno-sse2) Disable CPU specific features that could generate runtime errors
+LDFLAGS_x86-64_GCC 				= -T uefi/linker.ld -ffreestanding -nostdlib -l gcc											# (-T script.ld) Use custom linker script; (-ffreestanding)Startup not at main() and no standard lib; (-nostdlib) Do not link with standard library; (-l gcc) Link with gcc library
+
 # x86-32_gcc toolchain #
 CC_x86-32_GCC 					= i686-elf-gcc
 AS_x86-32_GCC 					= nasm
@@ -16,11 +22,13 @@ ASFLAGS_x86-32_GCC 				= -felf32													# (-felf32) Set the target architec
 CFLAGS_x86-32_GCC 				= -I libs/headers -std=gnu99 -ffreestanding $(CFLAGS_GLOBAL)	# (-I libs) Include the custo c library; (-std=gnu99) Becuase of code specifics should be older standard; (-ffreestanding) Startup not at main() and no standard lib
 LDFLAGS_x86-32_GCC 				= -T make/linker.ld -ffreestanding -nostdlib -l gcc			# (-T script.ld) Use custom linker script; (-ffreestanding)Startup not at main() and no standard lib; (-nostdlib) Do not link with standard library; (-l gcc) Link with gcc library
 
-# x86-64_gcc #
-CC_x86-64_GCC 					= x86_64-elf-gcc
-AS_x86-64_GCC 					= nasm
-CFLAGS_x86-64_GCC 				= -ffreestanding -mcmodel=large -mno-red-zone -mno-mmx -mno-sse -mno-sse2 $(CFLAGS_GLOBAL)	# (-ffreestanding) Startup not at main() and no standard lib; (-mcmodel=large) No assumptions about addresses; (-mno-red-zone -mno-mmx -mno-sse -mno-sse2) Disable CPU specific features that could generate runtime errors
-LDFLAGS_x86-64_GCC 				= -T uefi/linker.ld -ffreestanding -nostdlib -l gcc											# (-T script.ld) Use custom linker script; (-ffreestanding)Startup not at main() and no standard lib; (-nostdlib) Do not link with standard library; (-l gcc) Link with gcc library
+# x86-32_clang #
+CC_x86-32_CLANG 				= clang
+AS_x86-32_CLANG 				= nasm
+LD_x86-32_CLANG					= clang
+CFLAGS_x86-32_CLANG 			= -I libs/headers -std=gnu99 -ffreestanding $(CFLAGS_GLOBAL) -target i386-elf
+LDFLAGS_x86-32_CLANG 			= -T make/linker.ld -ffreestanding -nostdlib -l gcc -target i386-elf
+ASFLAGS_x86-32_CLANG 			= -felf32
 
 # x86-64-uefiapp_clang #
 CC_x86-64-uefiapp_CLANG 		= clang # Can be changed to gcc, then change -DHAVE_USE_MS_ABI to -DEFI_FUNCTION_WRAPPER
@@ -33,14 +41,6 @@ CFLAGS_x86-64-uefiapp_CLANG		= $(EFI_INCS) -fno-stack-protector -fpic -fshort-wc
 LDFLAGS_x86-64-uefiapp_CLANG 	= $(EFI_OBJS) -nostdlib -znocombreloc -shared -Bsymbolic -l efi -l gnuefi
 #Flags - (-j)Only copy the specified section to output; (--target=efi-app-x86_64)Select the platform
 OBJCPYFLAGS 					= -j .text -j .sdata -j .data -j .dynamic -j .dynsym -j .rel -j .rela -j .reloc --target=efi-app-x86_64
-
-# x86-32_clang #
-CC_x86-32_CLANG 				= clang
-AS_x86-32_CLANG 				= nasm
-LD_x86-32_CLANG					= clang
-CFLAGS_x86-32_CLANG 			= -I libs/headers -std=gnu99 -ffreestanding $(CFLAGS_GLOBAL) -target i386-elf
-LDFLAGS_x86-32_CLANG 			= -T make/linker.ld -ffreestanding -nostdlib -l gcc -target i386-elf
-ASFLAGS_x86-32_CLANG 			= -felf32
 
 ## EFI ##
 ARCH 							= x86_64
@@ -64,11 +64,11 @@ all_x86-64-uefiapp_clang:	clean build_x86-64-uefiapp_clang disk_x86-64-uefiapp q
 
 ### BUILD ###
 ## GCC ##
-# Compile code for x86-64 #
+# Compile code for x86-64 with gcc #
 build_x86-64_gcc:
 	echo "No source to compile yet"
 
-# Compile code for x86-32 #
+# Compile code for x86-32 with gcc #
 build_x86-32_gcc:
 	mkdir 				-p 										$(BUILDDIR)
 
@@ -79,8 +79,10 @@ build_x86-32_gcc:
 
 
 ## CLANG/LLVM ##
+# Compile code for x86-64 with clang
 build_x86-64_clang:
 
+# Compile code for x86-32 with clang #
 build_x86-32_clang:
 	mkdir 				-p 										$(BUILDDIR)
 
@@ -89,7 +91,7 @@ build_x86-32_clang:
 	mv												*.o			$(BUILDDIR)
 	$(CC_x86-32_CLANG)	$(LDFLAGS_x86-32_CLANG)		$(OBJECTS)	-o $(BUILDDIR)/os.o
 
-# Compile code for x86-64-uefi #
+# Compile code for x86-64-uefi with clang #
 build_x86-64-uefiapp_clang:
 	mkdir 						-p 																			$(BUILDDIR)
 
@@ -139,6 +141,10 @@ qemu_x86-64-uefi:
 	-net none \
 	-cdrom $(BUILDDIR)/os.iso
 
+# Start qemu on 32-bit BIOS-mode CPU #
+qemu_x86-32-bios:
+	qemu-system-i386 -cdrom $(BUILDDIR)/os.iso
+
 # Start qemu on 64-bit UEFI-only mode CPU with UEFI app inserted #
 qemu_x86-64-uefiapp:
 	# Copy over the code and variable vars for OVMF
@@ -148,10 +154,6 @@ qemu_x86-64-uefiapp:
 	qemu-system-x86_64 -drive format=raw,file=$(BUILDDIR)/$(x86-64-uefiapp_TARGET).img \
 	-cpu qemu64 -net none \
 	-drive if=pflash,format=raw,unit=0,file=$(BUILDDIR)/OVMF_CODE.fd -drive if=pflash,format=raw,unit=1,file=$(BUILDDIR)/OVMF_VARS.fd
-
-# Start qemu on 32-bit BIOS-mode CPU #
-qemu_x86-32-bios:
-	qemu-system-i386 -cdrom $(BUILDDIR)/os.iso
 
 
 
