@@ -22,17 +22,17 @@ AS_x86-64 				= nasm
 CFLAGS_x86-64 			= -ffreestanding -mcmodel=large -mno-red-zone -mno-mmx -mno-sse -mno-sse2 $(CFLAGS_GLOBAL)	# (-ffreestanding) Startup not at main() and no standard lib; (-mcmodel=large) No assumptions about addresses; (-mno-red-zone -mno-mmx -mno-sse -mno-sse2) Disable CPU specific features that could generate runtime errors
 LDFLAGS_x86-64 			= -T uefi/linker.ld -ffreestanding -nostdlib -l gcc											# (-T script.ld) Use custom linker script; (-ffreestanding)Startup not at main() and no standard lib; (-nostdlib) Do not link with standard library; (-l gcc) Link with gcc library
 
-# x86-64-uefi_clang #
-CC_CLANG 				= clang # Can be changed to gcc, then change -DHAVE_USE_MS_ABI to -DEFI_FUNCTION_WRAPPER
-LD_CLANG 				= ld
-OBJCPY 					= objcopy
-UEFI_TARGET 			= uefi
+# x86-64-uefiapp_clang #
+CC_x86-64-uefiapp_CLANG 				= clang # Can be changed to gcc, then change -DHAVE_USE_MS_ABI to -DEFI_FUNCTION_WRAPPER
+LD_x86-64-uefiapp_CLANG 				= ld
+OBJCPY 									= objcopy
+x86-64-uefiapp_TARGET 					= uefi
 #Flags - (-fno-stack-protector)Disable monitoring variable at stack end to indicate overflow if overwritten; (-fpic)Position independent code(can be loaded anywhere in memory); (-fshort-wchar)Makes wchar_t short(2 byte), (-mno-red-zone)Disables feature according to ABI; (-DHAVE_USE_MS_ABI)Use windows function calling convention(it is used by UEFI)
-CFLAGS_UEFI_CLANG 		= $(EFI_INCS) -fno-stack-protector -fpic -fshort-wchar -mno-red-zone -DHAVE_USE_MS_ABI -Wall -Wextra -c
+CFLAGS_x86-64-uefiapp_CLANG 			= $(EFI_INCS) -fno-stack-protector -fpic -fshort-wchar -mno-red-zone -DHAVE_USE_MS_ABI -Wall -Wextra -c
 #Flags - (-nostdlib)Do not link against any libs except specified; (-shared)Create a shared lib; (-Bsymbolic)Bind global function references locally, (-l efi, -l gnuefi)Link with GNU EFI libraries
-LDFLAGS_UEFI_CLANG 		= $(EFI_OBJS) -nostdlib -znocombreloc -shared -Bsymbolic -l efi -l gnuefi
+LDFLAGS_x86-64-uefiapp_CLANG 			= $(EFI_OBJS) -nostdlib -znocombreloc -shared -Bsymbolic -l efi -l gnuefi
 #Flags - (-j)Only copy the specified section to output; (--target=efi-app-x86_64)Select the platform
-OBJCPYFLAGS 			= -j .text -j .sdata -j .data -j .dynamic -j .dynsym -j .rel -j .rela -j .reloc --target=efi-app-x86_64
+OBJCPYFLAGS 							= -j .text -j .sdata -j .data -j .dynamic -j .dynsym -j .rel -j .rela -j .reloc --target=efi-app-x86_64
 
 # x86-32_clang #
 CC_x86-32_CLANG 		= clang
@@ -96,12 +96,12 @@ x86-32_clang:
 
 # Compile code for x86-64-uefi #
 x86-64-uefi_clang:
-	mkdir 								-p 								$(BUILDDIR)
+	mkdir 						-p 																$(BUILDDIR)
 
-	$(CC_CLANG)	$(CFLAGS_UEFI_CLANG)	uefi/*.c
-	mv									*.o								$(BUILDDIR)
-	$(LD_CLANG)	$(LDFLAGS_UEFI_CLANG)	$(BUILDDIR)/*.o 				-o $(BUILDDIR)/$(UEFI_TARGET).so
-	$(OBJCPY) 	$(OBJCPYFLAGS)			$(BUILDDIR)/$(UEFI_TARGET).so 	$(BUILDDIR)/$(UEFI_TARGET).efi
+	$(CC_x86-64-uefiapp_CLANG)	$(CFLAGS_x86-64-uefiapp_CLANG)	$(x86-64-uefiapp_TARGET)/*.c
+	mv															*.o								$(BUILDDIR)
+	$(LD_x86-64-uefiapp_CLANG)	$(LDFLAGS_x86-64-uefiapp_CLANG)	$(BUILDDIR)/*.o 				-o $(BUILDDIR)/$(x86-64-uefiapp_TARGET).so
+	$(OBJCPY) 					$(OBJCPYFLAGS)					$(BUILDDIR)/$(x86-64-uefiapp_TARGET).so 	$(BUILDDIR)/$(x86-64-uefiapp_TARGET).efi
 
 
 
@@ -123,7 +123,7 @@ qemu_x86-64-uefiapp:
 	cp $(OVMF)/OVMF_CODE.fd $(OVMF)/OVMF_VARS.fd $(BUILDDIR)
 
 	# Run qemu - (-drive ...img) Boot our created disk image; (-net none) No network boot; (-cpu qemu64) Run with 64bit CPU; (-drive ...fd) Insert our compiled UEFI code and variable space
-	qemu-system-x86_64 -drive format=raw,file=$(BUILDDIR)/$(UEFI_TARGET).img \
+	qemu-system-x86_64 -drive format=raw,file=$(BUILDDIR)/$(x86-64-uefiapp_TARGET).img \
 	-cpu qemu64 -net none \
 	-drive if=pflash,format=raw,unit=0,file=$(BUILDDIR)/OVMF_CODE.fd -drive if=pflash,format=raw,unit=1,file=$(BUILDDIR)/OVMF_VARS.fd
 
@@ -139,17 +139,17 @@ uefi-disk:
 	mkdir -p $(BUILDDIR)
 
 	# Create an empty disk image with size of 94 KB
-	dd if=/dev/zero of=$(BUILDDIR)/$(UEFI_TARGET).img bs=512 count=93750
+	dd if=/dev/zero of=$(BUILDDIR)/$(x86-64-uefiapp_TARGET).img bs=512 count=93750
 
 	# Format the disk image with 1440 byte sectors
-	mformat -i $(BUILDDIR)/$(UEFI_TARGET).img -f 1440 ::
+	mformat -i $(BUILDDIR)/$(x86-64-uefiapp_TARGET).img -f 1440 ::
 
 	# Create EFI and then EFI/BOOT directory on the disk image
-	mmd -i $(BUILDDIR)/$(UEFI_TARGET).img ::/EFI
-	mmd -i $(BUILDDIR)/$(UEFI_TARGET).img ::/EFI/BOOT
+	mmd -i $(BUILDDIR)/$(x86-64-uefiapp_TARGET).img ::/EFI
+	mmd -i $(BUILDDIR)/$(x86-64-uefiapp_TARGET).img ::/EFI/BOOT
 
 	# Copy the efi executable to the EFI/BOOT folder on the drive
-	mcopy -i $(BUILDDIR)/$(UEFI_TARGET).img $(BUILDDIR)/$(UEFI_TARGET).efi ::/EFI/BOOT
+	mcopy -i $(BUILDDIR)/$(x86-64-uefiapp_TARGET).img $(BUILDDIR)/$(x86-64-uefiapp_TARGET).efi ::/EFI/BOOT
 
 # Toolchain Build #
 toolchain:
