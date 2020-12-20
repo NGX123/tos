@@ -18,16 +18,16 @@ LDFLAGS_x86-64_GCC 				= -T uefi/linker.ld -ffreestanding -nostdlib -l gcc						
 # x86-32_gcc toolchain #
 CC_x86-32_GCC 					= i686-elf-gcc
 AS_x86-32_GCC 					= nasm
-ASFLAGS_x86-32_GCC 				= -felf32													# (-felf32) Set the target architecture to x86_32-elf
+ASFLAGS_x86-32_GCC 				= -felf32														# (-felf32) Set the target architecture to x86_32-elf
 CFLAGS_x86-32_GCC 				= -I libs/headers -std=gnu99 -ffreestanding $(CFLAGS_GLOBAL)	# (-I libs) Include the custo c library; (-std=gnu99) Becuase of code specifics should be older standard; (-ffreestanding) Startup not at main() and no standard lib
-LDFLAGS_x86-32_GCC 				= -T make/linker.ld -ffreestanding -nostdlib -l gcc			# (-T script.ld) Use custom linker script; (-ffreestanding)Startup not at main() and no standard lib; (-nostdlib) Do not link with standard library; (-l gcc) Link with gcc library
+LDFLAGS_x86-32_GCC 				= -T make/linker.ld -ffreestanding -nostdlib -l gcc				# (-T script.ld) Use custom linker script; (-ffreestanding)Startup not at main() and no standard lib; (-nostdlib) Do not link with standard library; (-l gcc) Link with gcc library
 
 # x86-32_clang #
 CC_x86-32_CLANG 				= clang
 AS_x86-32_CLANG 				= nasm
 LD_x86-32_CLANG					= clang
-CFLAGS_x86-32_CLANG 			= -I libs/headers -std=gnu99 -ffreestanding $(CFLAGS_GLOBAL) -target i386-elf
-LDFLAGS_x86-32_CLANG 			= -T make/linker.ld -ffreestanding -nostdlib -l gcc -target i386-elf
+CFLAGS_x86-32_CLANG 			= -I libs/headers -std=gnu99 -ffreestanding $(CFLAGS_GLOBAL) -target i686-elf
+LDFLAGS_x86-32_CLANG 			= -T make/linker.ld -ffreestanding -nostdlib -l gcc -target i686-elf
 ASFLAGS_x86-32_CLANG 			= -felf32
 
 # x86-64-uefiapp_clang #
@@ -90,7 +90,7 @@ build_x86-32_clang:
 	$(AS_x86-32_CLANG) 	$(ASFLAGS_x86-32_CLANG) 	init/boot.s	-o $(BUILDDIR)/boot.o
 	$(CC_x86-32_CLANG) 	$(CFLAGS_x86-32_CLANG)  	$(SOURCES)
 	mv												*.o			$(BUILDDIR)
-	$(CC_x86-32_CLANG)	$(LDFLAGS_x86-32_CLANG)		$(OBJECTS)	-o $(BUILDDIR)/os.o
+	$(LD_x86-32_CLANG)	$(LDFLAGS_x86-32_CLANG)		$(OBJECTS)	-o $(BUILDDIR)/os.o
 
 # Compile code for x86-64-uefi with clang #
 build_x86-64-uefiapp_clang:
