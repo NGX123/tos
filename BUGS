@@ -1,4 +1,3 @@
--- List of known bugs --
 -- List of possible bugs --
 stdio.c
     + const in declarations were removed in some functions which might casue problems(then just return to state from previous commit)
@@ -9,8 +8,4 @@ string.c
 		+ strlen() and strnlen() -> changed implementations and variable types
 		
 tty.c
-    + tty.c -> ttyWrite() and ttyRead() -> because the functions return types are ssize_t which includes negative numbers the variable that counts the bytes(i) is typecasted from size_t(no negative num bers) to ssize_t which might cause it to return negative numbers of read bytes when more bytes are read then the largest positive number in ssize_t(it is possible becuase the amount of bytes to read is a size_t variable)
-
-vga.c
-    + The text buffer is of uint8_t type while the color variable whos value is transfered to color the text is of type char, which might casue same problems
-        + The warnings were fixed by just converting the color to char before assignment
+    + tty.c -> ttyWrite() and ttyRead() -> because the functions return types are ssize_t which includes negative numbers the variable that counts the bytes(i) is typecasted from size_t(no negative numbers) to ssize_t which might cause it to return negative numbers of read bytes when more bytes are read then the largest positive number in ssize_t(it is possible becuase the amount of bytes to read is a size_t variable)
