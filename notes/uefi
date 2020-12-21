@@ -57,7 +57,9 @@
 				* MdeModulePkg - module only defenitions from industry standard specs
 
 	-- Documentation --
-		+ Official Specs Collection - https://github.com/tianocore/tianocore.github.io/wiki/EDK-II-Documents
+		+ Official Specs Collection
+			* https://github.com/tianocore/tianocore.github.io/wiki/EDK-II-Documents
+			* https://github.com/tianocore/tianocore.github.io/wiki/EDK-II-Documentation
 		+ Official Guides Collection - https://github.com/tianocore-training/Tianocore_Training_Contents/wiki
 			* https://github.com/tianocore/tianocore.github.io/wiki/Getting-Started-with-EDK-II
 
@@ -69,6 +71,8 @@
 				* https://github.com/tianocore-training/Presentation_FW/blob/master/FW/Presentations/_B_03_EDK_II_Modules_Libs_Drivers_Pres_gp.pdf
 
 		- UEFI Applications Writing -
+			* Official Specs - https://github.com/tianocore/tianocore.github.io/wiki/EDK-II-User-Documentation
+				* User and Module Writer manuals are needed
 
 		- UEFI Applications Running -
 			* Firmware specs
