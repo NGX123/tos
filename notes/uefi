@@ -1,10 +1,10 @@
 --- BUILD TOOLCHAIN ---
 	-- GNU-EFI - https://sourceforge.net/projects/gnu-efi/ --
-		-- Build GNU-EFI from source -
+		- Build GNU-EFI from source -
 			1. Download https://sourceforge.net/projects/gnu-efi/
 			2. Run - make
 
-		-- Get GNU-EFI binaries --
+		- Get GNU-EFI binaries -
 			* sudo package-manager install gnu-efi
 				* Includes and libs will be on their normal places /usr/lib and /usr/include
 
@@ -27,8 +27,6 @@
 			* sudo package-manager install edk2-ovmf
 				* Firmware will be located in /usr/share/OVMF
 			* Use package unpacker to extract .fd and .iso files from jenkins/edk2/*-ovmf-x64-*(on https://www.kraxel.org/repos)
-
-	-- Bootloader --
 
 
 
