@@ -28,7 +28,6 @@
 				* Firmware will be located in /usr/share/OVMF
 			* Use package unpacker to extract .fd and .iso files from jenkins/edk2/*-ovmf-x64-*(on https://www.kraxel.org/repos)
 
-
 	-- Bootloader --
 
 
@@ -60,21 +59,30 @@
 				* MdeModulePkg - module only defenitions from industry standard specs
 
 	-- Documentation --
-		+ Official Specs - https://github.com/tianocore/tianocore.github.io/wiki/EDK-II-Documents
-		+ Official Guides - https://github.com/tianocore-training/Tianocore_Training_Contents/wiki
+		+ Official Specs Collection - https://github.com/tianocore/tianocore.github.io/wiki/EDK-II-Documents
+		+ Official Guides Collection - https://github.com/tianocore-training/Tianocore_Training_Contents/wiki
+			* https://github.com/tianocore/tianocore.github.io/wiki/Getting-Started-with-EDK-II
 
 		- UEFI Applications Building -
-			* Official Full Specs - Build describes build proccess and other Documents describe configurations
-				https://github.com/tianocore/tianocore.github.io/wiki/EDK-II-Documentation#specifications
+			* Official Specs - "Build" document describes build proccess, other - configuration
+				* https://github.com/tianocore/tianocore.github.io/wiki/EDK-II-Documentation#specifications
 			* Official Guide
 				* https://github.com/tianocore-training/Presentation_FW/blob/master/FW/Presentations/_B_02_EDK_II_Build_Spec_Files_Pres_gp.pdf
 				* https://github.com/tianocore-training/Presentation_FW/blob/master/FW/Presentations/_B_03_EDK_II_Modules_Libs_Drivers_Pres_gp.pdf
+
+		- UEFI Applications Writing -
+
+		- UEFI Applications Running -
+			* Firmware specs
+				* https://github.com/tianocore/tianocore.github.io/wiki/OVMF
+			* Shell functions specs
+				* https://github.com/tianocore/tianocore.github.io/wiki/ShellPkg
 
 
 
 --- RUNNING ---
 	-- Run the OVMF --
-			* Follow insturctions and get binaries in OVMF/Build direcotry - https://github.com/tianocore/tianocore.github.io/wiki/How-to-run-OVMF
+		* Follow insturctions and get binaries in OVMF/Build direcotry - https://github.com/tianocore/tianocore.github.io/wiki/How-to-run-OVMF
 
 
 
