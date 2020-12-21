@@ -73,6 +73,9 @@
 		- UEFI Applications Writing -
 			* Official Specs - https://github.com/tianocore/tianocore.github.io/wiki/EDK-II-User-Documentation
 				* User and Module Writer manuals are needed
+			* Official Guides
+				* App writing - https://github.com/tianocore-training/Presentation_FW/blob/master/FW/Presentations/_L_10_Writing_UEFI_App_Linux_Lab_gp.pdf
+				* Module writing - https://github.com/tianocore-training/Presentation_FW/blob/master/FW/Presentations/_B_03_EDK_II_Modules_Libs_Drivers_Pres_gp.pdf
 
 		- UEFI Applications Running -
 			* Firmware specs
