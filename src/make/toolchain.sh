@@ -1,5 +1,6 @@
 install_list_var="nasm binutils diffutils valgrind clang gcc qemu-system-x86 gnu-efi"
 CROSS_GCC_VERSION="9.3.0"
+CROSS_BINUTILS_VERSION="2.30"
 
 ## INSTALLATION CONFIGURATION ##
 read -p "Package Manager(dnf, apt, macos): " pm_var
@@ -89,15 +90,15 @@ fi
 if [ $x86_build_var == 32 ]
   then
     # Create the nesecerry direcotries
-    mkdir -p $HOME/src/cross-compiler/binutils2.30_i686/build/
+    mkdir -p $HOME/src/cross-compiler/binutils"$CROSS_BINUTILS_VERSION"_i686/build/
     mkdir -p $HOME/src/cross-compiler/gcc"$CROSS_GCC_VERSION"_i686/build/
     mkdir -p $HOME/opt/
 
     # Download and unpack source code
-    cd $HOME/src/cross-compiler/binutils2.30_i686/
-    wget https://ftp.gnu.org/gnu/binutils/binutils-2.30.tar.gz
-    tar -xzf binutils-2.30.tar.gz
-    rm binutils-2.30.tar.gz
+    cd $HOME/src/cross-compiler/binutils"$CROSS_BINUTILS_VERSION"_i686/
+    wget https://ftp.gnu.org/gnu/binutils/binutils-"$CROSS_BINUTILS_VERSION".tar.gz
+    tar -xzf binutils-"$CROSS_BINUTILS_VERSION".tar.gz
+    rm binutils-"$CROSS_BINUTILS_VERSION".tar.gz
 
     cd $HOME/src/cross-compiler/gcc"$CROSS_GCC_VERSION"_i686/
     wget https://ftp.gnu.org/gnu/gcc/gcc-"$CROSS_GCC_VERSION"/gcc-"$CROSS_GCC_VERSION".tar.gz
@@ -114,15 +115,15 @@ fi
 if [ $x86_build_var == 64 ]
   then
     # Create the nesecerry direcotries
-    mkdir -p $HOME/src/cross-compiler/binutils2.30_amd64/build/
+    mkdir -p $HOME/src/cross-compiler/binutils"$CROSS_BINUTILS_VERSION"_amd64/build/
     mkdir -p $HOME/src/cross-compiler/gcc"$CROSS_GCC_VERSION"_amd64/build/
     mkdir -p $HOME/opt/
 
     # Download and unpack source code
-    cd $HOME/src/cross-compiler/binutils2.30_amd64/
-    wget https://ftp.gnu.org/gnu/binutils/binutils-2.30.tar.gz
-    tar -xzf binutils-2.30.tar.gz
-    rm binutils-2.30.tar.gz
+    cd $HOME/src/cross-compiler/binutils"$CROSS_BINUTILS_VERSION"_amd64/
+    wget https://ftp.gnu.org/gnu/binutils/binutils-"$CROSS_BINUTILS_VERSION".tar.gz
+    tar -xzf binutils-"$CROSS_BINUTILS_VERSION".tar.gz
+    rm binutils-"$CROSS_BINUTILS_VERSION".tar.gz
 
     cd $HOME/src/cross-compiler/gcc"$CROSS_GCC_VERSION"_amd64/
     wget https://ftp.gnu.org/gnu/gcc/gcc-"$CROSS_GCC_VERSION"/gcc-"$CROSS_GCC_VERSION".tar.gz
@@ -172,8 +173,8 @@ fi
 if [ $x86_build_var == 32 ]
   then
     # Building binutils
-    cd $HOME/src/cross-compiler/binutils2.30_i686/build/
-    ../binutils-2.30/configure --target=$TARGET --prefix="$PREFIX" --with-sysroot --disable-nls --disable-werror
+    cd $HOME/src/cross-compiler/binutils"$CROSS_BINUTILS_VERSION"_i686/build/
+    ../binutils-"$CROSS_BINUTILS_VERSION"/configure --target=$TARGET --prefix="$PREFIX" --with-sysroot --disable-nls --disable-werror
     make
     make install
 
@@ -190,8 +191,8 @@ fi
 if [ $x86_build_var == 64 ]
   then
     # Building binutils
-    cd $HOME/src/cross-compiler/binutils2.30_amd64/build/
-    ../binutils-2.30/configure --target=$TARGET --prefix="$PREFIX" --with-sysroot --disable-nls --disable-werror
+    cd $HOME/src/cross-compiler/binutils"$CROSS_BINUTILS_VERSION"_amd64/build/
+    ../binutils-"$CROSS_BINUTILS_VERSION"/configure --target=$TARGET --prefix="$PREFIX" --with-sysroot --disable-nls --disable-werror
     make
     make install
 
@@ -228,8 +229,8 @@ if [ $pm_var == macos ]
     if [ $x86_build_var == 32 ]
       then
         # Building binutils
-        cd $HOME/src/cross-compiler/binutils2.30/build
-        ../binutils-2.30/configure --target=$TARGET --prefix="$PREFIX" --with-sysroot --disable-nls --disable-werror --enable-multilib --with-libiconv-prefix=/usr/local/opt/libiconv/
+        cd $HOME/src/cross-compiler/binutils"$CROSS_BINUTILS_VERSION"/build
+        ../binutils-"$CROSS_BINUTILS_VERSION"/configure --target=$TARGET --prefix="$PREFIX" --with-sysroot --disable-nls --disable-werror --enable-multilib --with-libiconv-prefix=/usr/local/opt/libiconv/
         make
         make install
 
