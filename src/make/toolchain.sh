@@ -12,7 +12,7 @@ read -p "Do you want to configure other options(y/n): " extra_config_var
 # Extra configuration of the build
 if [ $extra_config_var == y ]
   then
-    read -p "Should the x86_32/x86_64 cross-compiler be compiled(no/64/32): " x86_build_var
+    read -p "Should the x86_32/x86_64 cross-compiler be compiled(no/64/32): " CROSS_GNU_TOOLS_OPTION
 
     # Configure the build directory
     read -p "Do you want to customize the build path(y/n): " PREFIX_OPTION
@@ -33,7 +33,7 @@ if [ $pm_var == dnf ]
     sudo dnf -y install $install_list_var @development-tools kernel-headers kernel-devel edk2-ovmf
 
     # Install x86/x86_64 Cross-compiler build dependencies
-    if [ $x86_build_var != no ]
+    if [ $CROSS_GNU_TOOLS_OPTION != no ]
       then
         sudo dnf -y install gcc gcc-c++ make bison flex gmp-devel libmpc-devel mpfr-devel texinfo automake autoconf xorriso @development-tools
     fi
@@ -52,7 +52,7 @@ if [ $pm_var == apt ]
     sudo apt -y install $install_list_var build-essential linux-headers-$(uname -r) ovmf
 
     # Install x86/x86_64 Cross-compiler build dependencies
-    if [ $x86_build_var != no ]
+    if [ $CROSS_GNU_TOOLS_OPTION != no ]
       then
         sudo apt -y install build-essential bison flex libgmp3-dev libmpc-dev libmpfr-dev texinfo
     fi
@@ -83,7 +83,7 @@ if [ $pm_var == other ]
     echo $install_list_var
 
     # GCC cross-compiler dependencies
-    if [ $x86_build_var != no ]
+    if [ $CROSS_GNU_TOOLS_OPTION != no ]
       then
         echo "build-essentail(platform specific package), linux-headers, ovmf, bison, flex, gmp, libmpc, libmpfr, texinfo, xorriso, autoconf, automake"
     fi
@@ -140,7 +140,7 @@ fi
 ## EXTRA ##
 # If kernel headers installation on debian not work check "ls -l /usr/src/linux-headers-$(uname -r)"(if does not exist then there are no headers), insetad try to find the latest version if not installed
 # Setup for compiling the x86_32 compiler
-if [ $x86_build_var == 32 ]
+if [ $CROSS_GNU_TOOLS_OPTION == 32 ]
   then
     # Create the nesecerry direcotries
     mkdir -p "$TOOLCHAIN_SRC"/binutils"$CROSS_BINUTILS_VERSION"_i686/build/
@@ -165,7 +165,7 @@ if [ $x86_build_var == 32 ]
 fi
 
 # Setup for compiling the x86_64 compiler
-if [ $x86_build_var == 64 ]
+if [ $CROSS_GNU_TOOLS_OPTION == 64 ]
   then
     # Create the nesecerry direcotries
     mkdir -p "$TOOLCHAIN_SRC"/binutils"$CROSS_BINUTILS_VERSION"_amd64/build/
@@ -207,7 +207,7 @@ MULTILIB_DIRNAMES += no-red-zone" > gcc-"$CROSS_GCC_VERSION"/gcc/config/i386/t-x
 fi
 
 # Compile the x86_32 cross-compiler
-if [ $x86_build_var == 32 ]
+if [ $CROSS_GNU_TOOLS_OPTION == 32 ]
   then
     # Building binutils
     cd "$TOOLCHAIN_SRC"/binutils"$CROSS_BINUTILS_VERSION"_i686/build/
@@ -226,7 +226,7 @@ if [ $x86_build_var == 32 ]
 fi
 
 # Compile the x86_64 cross-compiler
-if [ $x86_build_var == 64 ]
+if [ $CROSS_GNU_TOOLS_OPTION == 64 ]
   then
     # Building binutils
     cd "$TOOLCHAIN_SRC"/binutils"$CROSS_BINUTILS_VERSION"_amd64/build/
@@ -247,7 +247,7 @@ fi
 # Seperate build instructions if the MacOS is used
 if [ $pm_var == macos ]
   then
-    if [ $x86_build_var == 32 ]
+    if [ $CROSS_GNU_TOOLS_OPTION == 32 ]
       then
         # Building binutils
         cd "$TOOLCHAIN_SRC"/binutils"$CROSS_BINUTILS_VERSION"/build
@@ -284,12 +284,12 @@ if [ $pm_var == dnf ]
 fi
 
 # Extra
-if [ x86_build_var == 64 ]
+if [ CROSS_GNU_TOOLS_OPTION == 64 ]
   then
     x86_64-elf-gcc --version
     find $PREFIX/lib -name 'libgcc.a'
   else
-    if [ x86_build_var == 32 ]
+    if [ CROSS_GNU_TOOLS_OPTION == 32 ]
       then
         i686-elf-gcc --version
     fi
