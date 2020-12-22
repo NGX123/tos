@@ -4,29 +4,13 @@ CROSS_BINUTILS_VERSION="2.30"
 
 ## INSTALLATION CONFIGURATION ##
 read -p "Package Manager(dnf, apt, macos): " pm_var
-read -p "Should the x86_32/x86_64 cross-compiler be compiled(no/64/32): " x86_build_var
 read -p "Should the UEFI be compiled(y/n): " uefi_build_var
 read -p "Do you want to configure other options(y/n): " extra_config_var
 
 # Extra configuration of the build
 if [ $extra_config_var == y ]
   then
-    # Add the prefix to the path
-    read -p "Should the prefix be added to the PATH(y/n): " prefix_to_path_option_var
-    if [ $prefix_to_path_option_var == y ]
-      then
-        read -p "Will prefix be selected manually(y/n): " autopath_location_option_var
-        if [ $autopath_location_option_var == y ]
-          then
-            read -p "Input the path of the file where auto path adding should be added to: " autopath_location_var
-          else
-            if [ $autopath_location_option_var == n ]
-              then
-                autopath_location_var="$HOME/.bashrc"
-            fi
-        fi
-        echo "PATH=\$PATH:$compile_prefix_var/bin" >> $autopath_location_var
-    fi
+    read -p "Should the x86_32/x86_64 cross-compiler be compiled(no/64/32): " x86_build_var
 fi
 
 
@@ -86,6 +70,44 @@ fi
 
 
 ## COMPILATION SETUP ##
+# Setup for compiling the OVMF UEFI
+if [ $uefi_build_var == y ]
+  then
+    # Create the necessery directories
+    mkdir -p $HOME/src/ovmf/
+
+    # Download the source code
+    git clone https://github.com/tianocore/edk2 $HOME/src/ovmf/
+    cd $HOME/src/ovmf/
+    git submodule update --init
+fi
+
+
+
+
+## BUILD PROCCESS ##
+# Compile the OVMF UEFI
+if [ $uefi_build_var == y ]
+  then
+    cd $HOME/src/ovmf/
+    make -C BaseTools
+    . edksetup.sh
+    echo "
+    ACTIVE_PLATFORM=OvmfPkg/OvmfPkgX64.dsc
+    TARGET = DEBUG
+    TARGET_ARCH = X64
+    TOOL_CHAIN_CONF = Conf/tools_def.txt
+    TOOL_CHAIN_TAG = GCC5
+    BUILD_RULE_CONF = Conf/build_rule.txt" > Conf/target.txt
+    build
+    cd Build/OvmfX64/DEBUG_GCC5/FV
+fi
+
+
+
+
+## EXTRA ##
+# If kernel headers installation on debian not work check "ls -l /usr/src/linux-headers-$(uname -r)"(if does not exist then there are no headers), insetad try to find the latest version if not installed
 # Setup for compiling the x86_32 compiler
 if [ $x86_build_var == 32 ]
   then
@@ -153,22 +175,6 @@ MULTILIB_DIRNAMES += no-red-zone" > gcc-"$CROSS_GCC_VERSION"/gcc/config/i386/t-x
     export PATH="$PREFIX/bin:$PATH"
 fi
 
-# Setup for compiling the OVMF UEFI
-if [ $uefi_build_var == y ]
-  then
-    # Create the necessery directories
-    mkdir -p $HOME/src/ovmf/
-
-    # Download the source code
-    git clone https://github.com/tianocore/edk2 $HOME/src/ovmf/
-    cd $HOME/src/ovmf/
-    git submodule update --init
-fi
-
-
-
-
-## BUILD PROCCESS ##
 # Compile the x86_32 cross-compiler
 if [ $x86_build_var == 32 ]
   then
@@ -188,6 +194,7 @@ if [ $x86_build_var == 32 ]
     make install-target-libgcc
 fi
 
+# Compile the x86_64 cross-compiler
 if [ $x86_build_var == 64 ]
   then
     # Building binutils
@@ -204,23 +211,6 @@ if [ $x86_build_var == 64 ]
     make all-target-libgcc
     make install-gcc
     make install-target-libgcc
-fi
-
-# Compile the OVMF UEFI
-if [ $uefi_build_var == y ]
-  then
-    cd $HOME/src/ovmf/
-    make -C BaseTools
-    . edksetup.sh
-    echo "
-    ACTIVE_PLATFORM=OvmfPkg/OvmfPkgX64.dsc
-    TARGET = DEBUG
-    TARGET_ARCH = X64
-    TOOL_CHAIN_CONF = Conf/tools_def.txt
-    TOOL_CHAIN_TAG = GCC5
-    BUILD_RULE_CONF = Conf/build_rule.txt" > Conf/target.txt
-    build
-    cd Build/OvmfX64/DEBUG_GCC5/FV
 fi
 
 # Seperate build instructions if the MacOS is used
@@ -251,16 +241,6 @@ fi
 ## CHECK OF INSTALLTION ##
 qemu-system-i386 --version
 qemu-system-x86_64 --version
-if [ x86_build_var == 64 ]
-  then
-    x86_64-elf-gcc --version
-    find $PREFIX/lib -name 'libgcc.a'
-  else
-    if [ x86_build_var == 32 ]
-      then
-        i686-elf-gcc --version
-    fi
-fi
 if [ uefi_build_var == y ]
   then
     ls $HOME/src/ovmf/Build
@@ -272,4 +252,14 @@ if [ $pm_var == dnf ]
     grub-mkrescue --version
 fi
 
-# If kernel headers installation on debian not work check "ls -l /usr/src/linux-headers-$(uname -r)"(if does not exist then there are no headers), insetad try to find the latest version if not installed
+# Extra
+if [ x86_build_var == 64 ]
+  then
+    x86_64-elf-gcc --version
+    find $PREFIX/lib -name 'libgcc.a'
+  else
+    if [ x86_build_var == 32 ]
+      then
+        i686-elf-gcc --version
+    fi
+fi
