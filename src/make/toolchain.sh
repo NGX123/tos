@@ -1,4 +1,5 @@
 install_list_var="nasm binutils diffutils valgrind clang gcc qemu-system-x86 gnu-efi"
+CROSS_GCC_VERSION="9.3.0"
 
 ## INSTALLATION CONFIGURATION ##
 read -p "Package Manager(dnf, apt, macos): " pm_var
@@ -89,7 +90,7 @@ if [ $x86_build_var == 32 ]
   then
     # Create the nesecerry direcotries
     mkdir -p $HOME/src/cross-compiler/binutils2.30_i686/build/
-    mkdir -p $HOME/src/cross-compiler/gcc9.3.0_i686/build/
+    mkdir -p $HOME/src/cross-compiler/gcc"$CROSS_GCC_VERSION"_i686/build/
     mkdir -p $HOME/opt/
 
     # Download and unpack source code
@@ -98,10 +99,10 @@ if [ $x86_build_var == 32 ]
     tar -xzf binutils-2.30.tar.gz
     rm binutils-2.30.tar.gz
 
-    cd $HOME/src/cross-compiler/gcc9.3.0_i686/
-    wget https://ftp.gnu.org/gnu/gcc/gcc-9.3.0/gcc-9.3.0.tar.gz
-    tar -xzf gcc-9.3.0.tar.gz
-    rm gcc-9.3.0.tar.gz
+    cd $HOME/src/cross-compiler/gcc"$CROSS_GCC_VERSION"_i686/
+    wget https://ftp.gnu.org/gnu/gcc/gcc-"$CROSS_GCC_VERSION"/gcc-"$CROSS_GCC_VERSION".tar.gz
+    tar -xzf gcc-"$CROSS_GCC_VERSION".tar.gz
+    rm gcc-"$CROSS_GCC_VERSION".tar.gz
 
     # Declare the variables
     export PREFIX="$HOME/opt/"
@@ -114,7 +115,7 @@ if [ $x86_build_var == 64 ]
   then
     # Create the nesecerry direcotries
     mkdir -p $HOME/src/cross-compiler/binutils2.30_amd64/build/
-    mkdir -p $HOME/src/cross-compiler/gcc9.3.0_amd64/build/
+    mkdir -p $HOME/src/cross-compiler/gcc"$CROSS_GCC_VERSION"_amd64/build/
     mkdir -p $HOME/opt/
 
     # Download and unpack source code
@@ -123,13 +124,13 @@ if [ $x86_build_var == 64 ]
     tar -xzf binutils-2.30.tar.gz
     rm binutils-2.30.tar.gz
 
-    cd $HOME/src/cross-compiler/gcc9.3.0_amd64/
-    wget https://ftp.gnu.org/gnu/gcc/gcc-9.3.0/gcc-9.3.0.tar.gz
-    tar -xzf gcc-9.3.0.tar.gz
-    rm gcc-9.3.0.tar.gz
+    cd $HOME/src/cross-compiler/gcc"$CROSS_GCC_VERSION"_amd64/
+    wget https://ftp.gnu.org/gnu/gcc/gcc-"$CROSS_GCC_VERSION"/gcc-"$CROSS_GCC_VERSION".tar.gz
+    tar -xzf gcc-"$CROSS_GCC_VERSION".tar.gz
+    rm gcc-"$CROSS_GCC_VERSION".tar.gz
 
     echo "MULTILIB_OPTIONS += mno-red-zone
-MULTILIB_DIRNAMES += no-red-zone" > gcc-9.3.0/gcc/config/i386/t-x86_64-elf
+MULTILIB_DIRNAMES += no-red-zone" > gcc-"$CROSS_GCC_VERSION"/gcc/config/i386/t-x86_64-elf
     echo '
     Add this:
       tmake_file="${tmake_file} i386/t-x86_64-elf" # include the new multilib configuration
@@ -143,7 +144,7 @@ MULTILIB_DIRNAMES += no-red-zone" > gcc-9.3.0/gcc/config/i386/t-x86_64-elf
  	    tm_file="${tm_file} i386/unix.h i386/att.h dbxelf.h elfos.h newlib-stdint.h i386/i386elf.h i386/x86-64.h"
  	    ;;'
     read -p "Continue: " continue_var
-    nano gcc-9.3.0/gcc/config.gcc
+    nano gcc-"$CROSS_GCC_VERSION"/gcc/config.gcc
 
     # Declare the variables
     export PREFIX="$HOME/opt/"
@@ -177,9 +178,9 @@ if [ $x86_build_var == 32 ]
     make install
 
     # Building GCC
-    cd $HOME/src/cross-compiler/gcc9.3.0_i686/build/
+    cd $HOME/src/cross-compiler/gcc"$CROSS_GCC_VERSION"_i686/build/
     which -- $TARGET-as || echo $TARGET-as is not in the PATH
-    ../gcc-9.3.0/configure --target=$TARGET --prefix="$PREFIX" --disable-nls --enable-language=c,c++ --without-headers
+    ../gcc-"$CROSS_GCC_VERSION"/configure --target=$TARGET --prefix="$PREFIX" --disable-nls --enable-language=c,c++ --without-headers
     make all-gcc
     make all-target-libgcc
     make install-gcc
@@ -195,9 +196,9 @@ if [ $x86_build_var == 64 ]
     make install
 
     # Building GCC
-    cd $HOME/src/cross-compiler/gcc9.3.0_amd64/build/
+    cd $HOME/src/cross-compiler/gcc"$CROSS_GCC_VERSION"_amd64/build/
     which -- $TARGET-as || echo $TARGET-as is not in the PATH
-    ../gcc-9.3.0/configure --target=$TARGET --prefix="$PREFIX" --disable-nls --enable-language=c,c++ --without-headers
+    ../gcc-"$CROSS_GCC_VERSION"/configure --target=$TARGET --prefix="$PREFIX" --disable-nls --enable-language=c,c++ --without-headers
     make all-gcc
     make all-target-libgcc
     make install-gcc
@@ -233,9 +234,9 @@ if [ $pm_var == macos ]
         make install
 
         # Building GCC
-        cd $HOME/src/cross-compiler/gcc9.3.0/build
+        cd $HOME/src/cross-compiler/gcc"$CROSS_GCC_VERSION"/build
         which -- $TARGET-as || echo $TARGET-as is not in the PATH
-        ../gcc-9.3.0/configure --target=$TARGET --prefix="$PREFIX" --disable-nls --enable-language=c,c++ --without-headers --enable-multilib --with-libiconv-prefix=/usr/local/opt/libiconv/
+        ../gcc-"$CROSS_GCC_VERSION"/configure --target=$TARGET --prefix="$PREFIX" --disable-nls --enable-language=c,c++ --without-headers --enable-multilib --with-libiconv-prefix=/usr/local/opt/libiconv/
         make all-gcc
         make all-target-libgcc
         make install-gcc
