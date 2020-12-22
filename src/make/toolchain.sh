@@ -6,11 +6,11 @@ TOOLCHAIN_PREFIX="./make/tools"
 
 ## INSTALLATION CONFIGURATION ##
 read -p "Package Manager(dnf, apt, macos, other): " pm_var
-read -p "Should the UEFI be compiled(y/n): " uefi_build_var
-read -p "Do you want to configure other options(y/n): " extra_config_var
+read -p "Should the UEFI be compiled(y/n): " OVMF_BUILD_OPTION
+read -p "Do you want to configure other options(y/n): " EXTRA_CONFIG_OPTION
 
 # Extra configuration of the build
-if [ $extra_config_var == y ]
+if [ $EXTRA_CONFIG_OPTION == y ]
   then
     read -p "Should the x86_32/x86_64 cross-compiler be compiled(no/64/32): " CROSS_GNU_TOOLS_OPTION
 
@@ -39,7 +39,7 @@ if [ $pm_var == dnf ]
     fi
 
     # Install OVMF UEFI Dependencies
-    if [ $uefi_build_var == y ]
+    if [ $OVMF_BUILD_OPTION == y ]
       then
         sudo dnf -y install @development-tools gcc-c++ iasl libuuid-devel nasm edk2-tools-python
     fi
@@ -58,7 +58,7 @@ if [ $pm_var == apt ]
     fi
 
     # Install OVMF UEFI build dependencies
-    if [ $uefi_build_var == y ]
+    if [ $OVMF_BUILD_OPTION == y ]
       then
         sudo apt -y install build-essential uuid-dev iasl nasm python3-distutils
     fi
@@ -89,7 +89,7 @@ if [ $pm_var == other ]
     fi
 
     # OVMF dependencies
-    if [ $uefi_build_var == y ]
+    if [ $OVMF_BUILD_OPTION == y ]
       then
         echo "build-essential uuid-dev iasl nasm python3-distutils"
     fi
@@ -102,7 +102,7 @@ fi
 
 ## COMPILATION SETUP ##
 # Setup for compiling the OVMF UEFI
-if [ $uefi_build_var == y ]
+if [ $OVMF_BUILD_OPTION == y ]
   then
     # Create the necessery directories
     mkdir -p "$TOOLCHAIN_SRC"/ovmf/
@@ -118,7 +118,7 @@ fi
 
 ## BUILD PROCCESS ##
 # Compile the OVMF UEFI
-if [ $uefi_build_var == y ]
+if [ $OVMF_BUILD_OPTION == y ]
   then
     cd "$TOOLCHAIN_SRC"/ovmf/
     make -C BaseTools
@@ -272,7 +272,7 @@ fi
 ## CHECK OF INSTALLTION ##
 qemu-system-i386 --version
 qemu-system-x86_64 --version
-if [ uefi_build_var == y ]
+if [ $OVMF_BUILD_OPTION == y ]
   then
     ls "$TOOLCHAIN_SRC"/ovmf/Build
 fi
@@ -284,12 +284,12 @@ if [ $pm_var == dnf ]
 fi
 
 # Extra
-if [ CROSS_GNU_TOOLS_OPTION == 64 ]
+if [ $CROSS_GNU_TOOLS_OPTION == 64 ]
   then
     x86_64-elf-gcc --version
     find $PREFIX/lib -name 'libgcc.a'
   else
-    if [ CROSS_GNU_TOOLS_OPTION == 32 ]
+    if [ $CROSS_GNU_TOOLS_OPTION == 32 ]
       then
         i686-elf-gcc --version
     fi
