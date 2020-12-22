@@ -1,11 +1,11 @@
-install_list_var="nasm binutils diffutils valgrind clang gcc qemu-system-x86 gnu-efi"
+CROSSPLATFORM_DEPENDENCIES="nasm binutils diffutils valgrind clang gcc qemu-system-x86 gnu-efi"
 CROSS_GCC_VERSION="9.3.0"
 CROSS_BINUTILS_VERSION="2.30"
 TOOLCHAIN_SRC="./make/src"
 TOOLCHAIN_PREFIX="./make/tools"
 
 ## INSTALLATION CONFIGURATION ##
-read -p "Package Manager(dnf, apt, macos, other): " pm_var
+read -p "Package Manager(dnf, apt, macos, other): " TOOLCHAIN_PM
 read -p "Should the UEFI be compiled(y/n): " OVMF_BUILD_OPTION
 read -p "Do you want to configure other options(y/n): " EXTRA_CONFIG_OPTION
 
@@ -27,10 +27,10 @@ fi
 
 ## PACKAGE INSTALLATIONS ##
 # DNF Installations
-if [ $pm_var == dnf ]
+if [ $TOOLCHAIN_PM == dnf ]
   then
     # Install developer tools and headers
-    sudo dnf -y install $install_list_var @development-tools kernel-headers kernel-devel edk2-ovmf
+    sudo dnf -y install $CROSSPLATFORM_DEPENDENCIES @development-tools kernel-headers kernel-devel edk2-ovmf
 
     # Install x86/x86_64 Cross-compiler build dependencies
     if [ $CROSS_GNU_TOOLS_BUILD_OPTION != no ]
@@ -46,10 +46,10 @@ if [ $pm_var == dnf ]
 fi
 
 # APT Installations
-if [ $pm_var == apt ]
+if [ $TOOLCHAIN_PM == apt ]
   then
     # Install developer tools and headers
-    sudo apt -y install $install_list_var build-essential linux-headers-$(uname -r) ovmf
+    sudo apt -y install $CROSSPLATFORM_DEPENDENCIES build-essential linux-headers-$(uname -r) ovmf
 
     # Install x86/x86_64 Cross-compiler build dependencies
     if [ $CROSS_GNU_TOOLS_BUILD_OPTION != no ]
@@ -65,7 +65,7 @@ if [ $pm_var == apt ]
 fi
 
 # MacOS
-if [ $pm_var == macos ]
+if [ $TOOLCHAIN_PM == macos ]
   then
     # Packages
     brew install gdb nasm binutils diffutils
@@ -77,10 +77,10 @@ if [ $pm_var == macos ]
 fi
 
 # Other package managers
-if [ $pm_var == other ]
+if [ $TOOLCHAIN_PM == other ]
   then
     echo "If you are here, your package manager is probably not in the list, so you need to make sure all of the libs are installed before preceding, here is the list: "
-    echo $install_list_var
+    echo $CROSSPLATFORM_DEPENDENCIES
 
     # GCC cross-compiler dependencies
     if [ $CROSS_GNU_TOOLS_BUILD_OPTION != no ]
@@ -245,7 +245,7 @@ if [ $CROSS_GNU_TOOLS_BUILD_OPTION == 64 ]
 fi
 
 # Seperate build instructions if the MacOS is used
-if [ $pm_var == macos ]
+if [ $TOOLCHAIN_PM == macos ]
   then
     if [ $CROSS_GNU_TOOLS_BUILD_OPTION == 32 ]
       then
@@ -276,7 +276,7 @@ if [ $OVMF_BUILD_OPTION == y ]
   then
     ls "$TOOLCHAIN_SRC"/ovmf/Build
 fi
-if [ $pm_var == dnf ]
+if [ $TOOLCHAIN_PM == dnf ]
   then
     grub2-mkrescue --version
   else
