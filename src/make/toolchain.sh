@@ -6,13 +6,16 @@ TOOLCHAIN_PREFIX="./make/tools"
 
 ## INSTALLATION CONFIGURATION ##
 read -p "Package Manager(dnf, apt, macos, other): " TOOLCHAIN_PM
-read -p "Should the UEFI be compiled(y/n): " OVMF_BUILD_OPTION
 read -p "Do you want to configure other options(y/n): " EXTRA_CONFIG_OPTION
 
 # Extra configuration of the build
 if [ $EXTRA_CONFIG_OPTION == y ]
   then
+    # GCC Toolchain Build option
     read -p "Should the x86_32/x86_64 cross-compiler be compiled(no/64/32): " CROSS_GNU_TOOLS_BUILD_OPTION
+
+    # OVMF Build option
+    read -p "Should the UEFI be compiled(y/n): " OVMF_BUILD_OPTION
 
     # Configure the build directory
     read -p "Do you want to customize the build path(y/n): " PREFIX_OPTION
@@ -185,20 +188,7 @@ if [ $CROSS_GNU_TOOLS_BUILD_OPTION == 64 ]
 
     echo "MULTILIB_OPTIONS += mno-red-zone
 MULTILIB_DIRNAMES += no-red-zone" > gcc-"$CROSS_GCC_VERSION"/gcc/config/i386/t-x86_64-elf
-    echo '
-    Add this:
-      tmake_file="${tmake_file} i386/t-x86_64-elf" # include the new multilib configuration
-    To make this:
-    x86_64-*-elf*)
- 	    tm_file="${tm_file} i386/unix.h i386/att.h dbxelf.h elfos.h newlib-stdint.h i386/i386elf.h i386/x86-64.h"
- 	    ;;
-    Look like this:
-      x86_64-*-elf*)
-	    tmake_file="${tmake_file} i386/t-x86_64-elf" # include the new multilib configuration
- 	    tm_file="${tm_file} i386/unix.h i386/att.h dbxelf.h elfos.h newlib-stdint.h i386/i386elf.h i386/x86-64.h"
- 	    ;;'
-    read -p "Continue: " continue_var
-    nano gcc-"$CROSS_GCC_VERSION"/gcc/config.gcc
+    cat ../../config.gcc > gcc-"$CROSS_GCC_VERSION"/gcc/config.gcc
 
     # Declare the variables
     export PREFIX="$TOOLCHAIN_PREFIX"
