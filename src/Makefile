@@ -1,6 +1,7 @@
 ### VARIABLES ###
 ## Global ##
 BUILDDIR 						= ./build
+TOOLCHAIN_PREFIX				= ./make/tools/bin
 SOURCES 						= drivers/*.c kernel/*.c init/*.c libs/*.c
 OBJECTS 						= $(BUILDDIR)/*.o
 CFLAGS_GLOBAL 					= -Wall -Wextra -c
@@ -10,13 +11,13 @@ OVMF 							= /usr/share/OVMF
 
 ## Compilation ##
 # x86-64_gcc #
-CC_x86-64_GCC 					= x86_64-elf-gcc
+CC_x86-64_GCC 					= $(TOOLCHAIN_PREFIX)/x86_64-elf-gcc
 AS_x86-64_GCC 					= nasm
 CFLAGS_x86-64_GCC 				= -ffreestanding -mcmodel=large -mno-red-zone -mno-mmx -mno-sse -mno-sse2 $(CFLAGS_GLOBAL)	# (-ffreestanding) Startup not at main() and no standard lib; (-mcmodel=large) No assumptions about addresses; (-mno-red-zone -mno-mmx -mno-sse -mno-sse2) Disable CPU specific features that could generate runtime errors
 LDFLAGS_x86-64_GCC 				= -T uefi/linker.ld -ffreestanding -nostdlib -l gcc											# (-T script.ld) Use custom linker script; (-ffreestanding)Startup not at main() and no standard lib; (-nostdlib) Do not link with standard library; (-l gcc) Link with gcc library
 
 # x86-32_gcc toolchain #
-CC_x86-32_GCC 					= i686-elf-gcc
+CC_x86-32_GCC 					= $(TOOLCHAIN_PREFIX)/i686-elf-gcc
 AS_x86-32_GCC 					= nasm
 ASFLAGS_x86-32_GCC 				= -felf32														# (-felf32) Set the target architecture to x86_32-elf
 CFLAGS_x86-32_GCC 				= -I libs/headers -std=gnu99 -ffreestanding $(CFLAGS_GLOBAL)	# (-I libs) Include the custo c library; (-std=gnu99) Becuase of code specifics should be older standard; (-ffreestanding) Startup not at main() and no standard lib
