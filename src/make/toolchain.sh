@@ -5,7 +5,7 @@ TOOLCHAIN_SRC="./make/src"
 TOOLCHAIN_PREFIX="./make/tools"
 
 ## INSTALLATION CONFIGURATION ##
-read -p "Package Manager(dnf, apt, macos): " pm_var
+read -p "Package Manager(dnf, apt, macos, other): " pm_var
 read -p "Should the UEFI be compiled(y/n): " uefi_build_var
 read -p "Do you want to configure other options(y/n): " extra_config_var
 
@@ -64,6 +64,7 @@ if [ $pm_var == apt ]
     fi
 fi
 
+# MacOS
 if [ $pm_var == macos ]
   then
     # Packages
@@ -73,6 +74,27 @@ if [ $pm_var == macos ]
     brew install gmp mpfr libmpc libiconv
     brew install libiconv
     echo "There maybe problems during the compilation proccess due to wrong attributes, then remove -with-sysroot and add --enable-interwork to both gcc and binutils"
+fi
+
+# Other package managers
+if [ $pm_var == other ]
+  then
+    echo "If you are here, your package manager is probably not in the list, so you need to make sure all of the libs are installed before preceding, here is the list: "
+    echo $install_list_var
+
+    # GCC cross-compiler dependencies
+    if [ $x86_build_var != no ]
+      then
+        echo "build-essentail(platform specific package), linux-headers, ovmf, bison, flex, gmp, libmpc, libmpfr, texinfo, xorriso, autoconf, automake"
+    fi
+
+    # OVMF dependencies
+    if [ $uefi_build_var == y ]
+      then
+        echo "build-essential uuid-dev iasl nasm python3-distutils"
+    fi
+
+    read -p "Press any button to continue, if all libs are installed"
 fi
 
 
