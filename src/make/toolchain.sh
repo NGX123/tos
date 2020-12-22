@@ -1,6 +1,8 @@
 install_list_var="nasm binutils diffutils valgrind clang gcc qemu-system-x86 gnu-efi"
 CROSS_GCC_VERSION="9.3.0"
 CROSS_BINUTILS_VERSION="2.30"
+TOOLCHAIN_SRC="./make/src"
+TOOLCHAIN_PREFIX="./make/tools"
 
 ## INSTALLATION CONFIGURATION ##
 read -p "Package Manager(dnf, apt, macos): " pm_var
@@ -11,6 +13,13 @@ read -p "Do you want to configure other options(y/n): " extra_config_var
 if [ $extra_config_var == y ]
   then
     read -p "Should the x86_32/x86_64 cross-compiler be compiled(no/64/32): " x86_build_var
+
+    # Configure the build directory
+    read -p "Do you want to customize the build path(y/n): " PREFIX_OPTION
+    if [ $PREFIX_OPTION == y ]
+      then
+        read -p "Enter a new build directory path: " TOOLCHAIN_PREFIX
+    fi
 fi
 
 
@@ -74,11 +83,11 @@ fi
 if [ $uefi_build_var == y ]
   then
     # Create the necessery directories
-    mkdir -p $HOME/src/ovmf/
+    mkdir -p "$TOOLCHAIN_SRC"/ovmf/
 
     # Download the source code
-    git clone https://github.com/tianocore/edk2 $HOME/src/ovmf/
-    cd $HOME/src/ovmf/
+    git clone https://github.com/tianocore/edk2 "$TOOLCHAIN_SRC"/ovmf/
+    cd "$TOOLCHAIN_SRC"/ovmf/
     git submodule update --init
 fi
 
@@ -89,7 +98,7 @@ fi
 # Compile the OVMF UEFI
 if [ $uefi_build_var == y ]
   then
-    cd $HOME/src/ovmf/
+    cd "$TOOLCHAIN_SRC"/ovmf/
     make -C BaseTools
     . edksetup.sh
     echo "
@@ -112,23 +121,23 @@ fi
 if [ $x86_build_var == 32 ]
   then
     # Create the nesecerry direcotries
-    mkdir -p $HOME/src/cross-compiler/binutils"$CROSS_BINUTILS_VERSION"_i686/build/
-    mkdir -p $HOME/src/cross-compiler/gcc"$CROSS_GCC_VERSION"_i686/build/
-    mkdir -p $HOME/opt/
+    mkdir -p "$TOOLCHAIN_SRC"/binutils"$CROSS_BINUTILS_VERSION"_i686/build/
+    mkdir -p "$TOOLCHAIN_SRC"/gcc"$CROSS_GCC_VERSION"_i686/build/
+    mkdir -p "$TOOLCHAIN_PREFIX"
 
     # Download and unpack source code
-    cd $HOME/src/cross-compiler/binutils"$CROSS_BINUTILS_VERSION"_i686/
+    cd "$TOOLCHAIN_SRC"/binutils"$CROSS_BINUTILS_VERSION"_i686/
     wget https://ftp.gnu.org/gnu/binutils/binutils-"$CROSS_BINUTILS_VERSION".tar.gz
     tar -xzf binutils-"$CROSS_BINUTILS_VERSION".tar.gz
     rm binutils-"$CROSS_BINUTILS_VERSION".tar.gz
 
-    cd $HOME/src/cross-compiler/gcc"$CROSS_GCC_VERSION"_i686/
+    cd "$TOOLCHAIN_SRC"/gcc"$CROSS_GCC_VERSION"_i686/
     wget https://ftp.gnu.org/gnu/gcc/gcc-"$CROSS_GCC_VERSION"/gcc-"$CROSS_GCC_VERSION".tar.gz
     tar -xzf gcc-"$CROSS_GCC_VERSION".tar.gz
     rm gcc-"$CROSS_GCC_VERSION".tar.gz
 
     # Declare the variables
-    export PREFIX="$HOME/opt/"
+    export PREFIX="$TOOLCHAIN_PREFIX"
     export TARGET=i686-elf
     export PATH="$PREFIX/bin:$PATH"
 fi
@@ -137,17 +146,17 @@ fi
 if [ $x86_build_var == 64 ]
   then
     # Create the nesecerry direcotries
-    mkdir -p $HOME/src/cross-compiler/binutils"$CROSS_BINUTILS_VERSION"_amd64/build/
-    mkdir -p $HOME/src/cross-compiler/gcc"$CROSS_GCC_VERSION"_amd64/build/
-    mkdir -p $HOME/opt/
+    mkdir -p "$TOOLCHAIN_SRC"/binutils"$CROSS_BINUTILS_VERSION"_amd64/build/
+    mkdir -p "$TOOLCHAIN_SRC"/gcc"$CROSS_GCC_VERSION"_amd64/build/
+    mkdir -p "$TOOLCHAIN_PREFIX"
 
     # Download and unpack source code
-    cd $HOME/src/cross-compiler/binutils"$CROSS_BINUTILS_VERSION"_amd64/
+    cd "$TOOLCHAIN_SRC"/binutils"$CROSS_BINUTILS_VERSION"_amd64/
     wget https://ftp.gnu.org/gnu/binutils/binutils-"$CROSS_BINUTILS_VERSION".tar.gz
     tar -xzf binutils-"$CROSS_BINUTILS_VERSION".tar.gz
     rm binutils-"$CROSS_BINUTILS_VERSION".tar.gz
 
-    cd $HOME/src/cross-compiler/gcc"$CROSS_GCC_VERSION"_amd64/
+    cd "$TOOLCHAIN_SRC"/gcc"$CROSS_GCC_VERSION"_amd64/
     wget https://ftp.gnu.org/gnu/gcc/gcc-"$CROSS_GCC_VERSION"/gcc-"$CROSS_GCC_VERSION".tar.gz
     tar -xzf gcc-"$CROSS_GCC_VERSION".tar.gz
     rm gcc-"$CROSS_GCC_VERSION".tar.gz
@@ -170,7 +179,7 @@ MULTILIB_DIRNAMES += no-red-zone" > gcc-"$CROSS_GCC_VERSION"/gcc/config/i386/t-x
     nano gcc-"$CROSS_GCC_VERSION"/gcc/config.gcc
 
     # Declare the variables
-    export PREFIX="$HOME/opt/"
+    export PREFIX="$TOOLCHAIN_PREFIX"
     export TARGET=x86_64-elf
     export PATH="$PREFIX/bin:$PATH"
 fi
@@ -179,13 +188,13 @@ fi
 if [ $x86_build_var == 32 ]
   then
     # Building binutils
-    cd $HOME/src/cross-compiler/binutils"$CROSS_BINUTILS_VERSION"_i686/build/
+    cd "$TOOLCHAIN_SRC"/binutils"$CROSS_BINUTILS_VERSION"_i686/build/
     ../binutils-"$CROSS_BINUTILS_VERSION"/configure --target=$TARGET --prefix="$PREFIX" --with-sysroot --disable-nls --disable-werror
     make
     make install
 
     # Building GCC
-    cd $HOME/src/cross-compiler/gcc"$CROSS_GCC_VERSION"_i686/build/
+    cd "$TOOLCHAIN_SRC"/gcc"$CROSS_GCC_VERSION"_i686/build/
     which -- $TARGET-as || echo $TARGET-as is not in the PATH
     ../gcc-"$CROSS_GCC_VERSION"/configure --target=$TARGET --prefix="$PREFIX" --disable-nls --enable-language=c,c++ --without-headers
     make all-gcc
@@ -198,13 +207,13 @@ fi
 if [ $x86_build_var == 64 ]
   then
     # Building binutils
-    cd $HOME/src/cross-compiler/binutils"$CROSS_BINUTILS_VERSION"_amd64/build/
+    cd "$TOOLCHAIN_SRC"/binutils"$CROSS_BINUTILS_VERSION"_amd64/build/
     ../binutils-"$CROSS_BINUTILS_VERSION"/configure --target=$TARGET --prefix="$PREFIX" --with-sysroot --disable-nls --disable-werror
     make
     make install
 
     # Building GCC
-    cd $HOME/src/cross-compiler/gcc"$CROSS_GCC_VERSION"_amd64/build/
+    cd "$TOOLCHAIN_SRC"/gcc"$CROSS_GCC_VERSION"_amd64/build/
     which -- $TARGET-as || echo $TARGET-as is not in the PATH
     ../gcc-"$CROSS_GCC_VERSION"/configure --target=$TARGET --prefix="$PREFIX" --disable-nls --enable-language=c,c++ --without-headers
     make all-gcc
@@ -219,13 +228,13 @@ if [ $pm_var == macos ]
     if [ $x86_build_var == 32 ]
       then
         # Building binutils
-        cd $HOME/src/cross-compiler/binutils"$CROSS_BINUTILS_VERSION"/build
+        cd "$TOOLCHAIN_SRC"/binutils"$CROSS_BINUTILS_VERSION"/build
         ../binutils-"$CROSS_BINUTILS_VERSION"/configure --target=$TARGET --prefix="$PREFIX" --with-sysroot --disable-nls --disable-werror --enable-multilib --with-libiconv-prefix=/usr/local/opt/libiconv/
         make
         make install
 
         # Building GCC
-        cd $HOME/src/cross-compiler/gcc"$CROSS_GCC_VERSION"/build
+        cd "$TOOLCHAIN_SRC"/gcc"$CROSS_GCC_VERSION"/build
         which -- $TARGET-as || echo $TARGET-as is not in the PATH
         ../gcc-"$CROSS_GCC_VERSION"/configure --target=$TARGET --prefix="$PREFIX" --disable-nls --enable-language=c,c++ --without-headers --enable-multilib --with-libiconv-prefix=/usr/local/opt/libiconv/
         make all-gcc
@@ -243,7 +252,7 @@ qemu-system-i386 --version
 qemu-system-x86_64 --version
 if [ uefi_build_var == y ]
   then
-    ls $HOME/src/ovmf/Build
+    ls "$TOOLCHAIN_SRC"/ovmf/Build
 fi
 if [ $pm_var == dnf ]
   then
