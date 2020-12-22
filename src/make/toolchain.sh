@@ -3,8 +3,8 @@
 CROSSPLATFORM_DEPENDENCIES="nasm binutils diffutils valgrind clang gcc qemu-system-x86 gnu-efi"
 CROSS_GCC_VERSION="9.3.0"
 CROSS_BINUTILS_VERSION="2.30"
-TOOLCHAIN_SRC="./make/src"
-TOOLCHAIN_PREFIX="./make/tools"
+TOOLCHAIN_SRC="make/src"
+TOOLCHAIN_PREFIX="make/tools"
 
 ## INSTALLATION CONFIGURATION ##
 read -p "Package Manager(dnf, apt, macos, other): " TOOLCHAIN_PM
@@ -167,7 +167,7 @@ if [ $CROSS_GNU_TOOLS_BUILD_OPTION == 32 ]
     cd ../../..
 
     # Declare the variables
-    export PREFIX="$TOOLCHAIN_PREFIX"
+    export PREFIX="$PWD"/"$TOOLCHAIN_PREFIX"
     export TARGET=i686-elf
     export PATH="$PREFIX/bin:$PATH"
 fi
@@ -198,7 +198,7 @@ MULTILIB_DIRNAMES += no-red-zone" > gcc-"$CROSS_GCC_VERSION"/gcc/config/i386/t-x
     cd ../../..
 
     # Declare the variables
-    export PREFIX="$TOOLCHAIN_PREFIX"
+    export PREFIX="$PWD"/"$TOOLCHAIN_PREFIX"
     export TARGET=x86_64-elf
     export PATH="$PREFIX/bin:$PATH"
 fi
