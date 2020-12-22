@@ -116,6 +116,7 @@ if [ $OVMF_BUILD_OPTION == y ]
     git clone https://github.com/tianocore/edk2 "$TOOLCHAIN_SRC"/ovmf/
     cd "$TOOLCHAIN_SRC"/ovmf/
     git submodule update --init
+    cd ../../..
 fi
 
 
