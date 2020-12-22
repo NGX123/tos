@@ -20,14 +20,14 @@ CC_x86-32_GCC 					= i686-elf-gcc
 AS_x86-32_GCC 					= nasm
 ASFLAGS_x86-32_GCC 				= -felf32														# (-felf32) Set the target architecture to x86_32-elf
 CFLAGS_x86-32_GCC 				= -I libs/headers -std=gnu99 -ffreestanding $(CFLAGS_GLOBAL)	# (-I libs) Include the custo c library; (-std=gnu99) Becuase of code specifics should be older standard; (-ffreestanding) Startup not at main() and no standard lib
-LDFLAGS_x86-32_GCC 				= -T make/linker.ld -ffreestanding -nostdlib -l gcc				# (-T script.ld) Use custom linker script; (-ffreestanding)Startup not at main() and no standard lib; (-nostdlib) Do not link with standard library; (-l gcc) Link with gcc library
+LDFLAGS_x86-32_GCC 				= -T init/linker.ld -ffreestanding -nostdlib -l gcc				# (-T script.ld) Use custom linker script; (-ffreestanding)Startup not at main() and no standard lib; (-nostdlib) Do not link with standard library; (-l gcc) Link with gcc library
 
 # x86-32_clang #
 CC_x86-32_CLANG 				= clang
 AS_x86-32_CLANG 				= nasm
 LD_x86-32_CLANG					= clang
 CFLAGS_x86-32_CLANG 			= -I libs/headers -std=gnu99 -ffreestanding $(CFLAGS_GLOBAL) -target i686-elf
-LDFLAGS_x86-32_CLANG 			= -T make/linker.ld -ffreestanding -nostdlib -l gcc -target i686-elf
+LDFLAGS_x86-32_CLANG 			= -T init/linker.ld -ffreestanding -nostdlib -l gcc -target i686-elf
 ASFLAGS_x86-32_CLANG 			= -felf32
 
 # x86-64-uefiapp_clang #
@@ -126,7 +126,7 @@ disk_x86-64-uefiapp:
 disk_x86-32-bios:
 	mkdir -p $(BUILDDIR)/iso/boot/grub
 	mv $(BUILDDIR)/os.o $(BUILDDIR)/iso/boot
-	cp make/grub.cfg $(BUILDDIR)/iso/boot/grub
+	cp init/grub.cfg $(BUILDDIR)/iso/boot/grub
 	grub2-mkrescue -o $(BUILDDIR)/os.iso $(BUILDDIR)/iso
 
 
