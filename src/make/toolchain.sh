@@ -136,7 +136,7 @@ if [ $OVMF_BUILD_OPTION == y ]
     TOOL_CHAIN_TAG = GCC5
     BUILD_RULE_CONF = Conf/build_rule.txt" > Conf/target.txt
     build
-    cd Build/OvmfX64/DEBUG_GCC5/FV
+    cd ../../..
 fi
 
 
@@ -157,11 +157,13 @@ if [ $CROSS_GNU_TOOLS_BUILD_OPTION == 32 ]
     wget https://ftp.gnu.org/gnu/binutils/binutils-"$CROSS_BINUTILS_VERSION".tar.gz
     tar -xzf binutils-"$CROSS_BINUTILS_VERSION".tar.gz
     rm binutils-"$CROSS_BINUTILS_VERSION".tar.gz
+    cd ../../..
 
     cd "$TOOLCHAIN_SRC"/gcc"$CROSS_GCC_VERSION"_i686/
     wget https://ftp.gnu.org/gnu/gcc/gcc-"$CROSS_GCC_VERSION"/gcc-"$CROSS_GCC_VERSION".tar.gz
     tar -xzf gcc-"$CROSS_GCC_VERSION".tar.gz
     rm gcc-"$CROSS_GCC_VERSION".tar.gz
+    cd ../../..
 
     # Declare the variables
     export PREFIX="$TOOLCHAIN_PREFIX"
@@ -182,6 +184,7 @@ if [ $CROSS_GNU_TOOLS_BUILD_OPTION == 64 ]
     wget https://ftp.gnu.org/gnu/binutils/binutils-"$CROSS_BINUTILS_VERSION".tar.gz
     tar -xzf binutils-"$CROSS_BINUTILS_VERSION".tar.gz
     rm binutils-"$CROSS_BINUTILS_VERSION".tar.gz
+    cd ../../..
 
     cd "$TOOLCHAIN_SRC"/gcc"$CROSS_GCC_VERSION"_amd64/
     wget https://ftp.gnu.org/gnu/gcc/gcc-"$CROSS_GCC_VERSION"/gcc-"$CROSS_GCC_VERSION".tar.gz
@@ -191,6 +194,7 @@ if [ $CROSS_GNU_TOOLS_BUILD_OPTION == 64 ]
     echo "MULTILIB_OPTIONS += mno-red-zone
 MULTILIB_DIRNAMES += no-red-zone" > gcc-"$CROSS_GCC_VERSION"/gcc/config/i386/t-x86_64-elf
     cat ../../config.gcc > gcc-"$CROSS_GCC_VERSION"/gcc/config.gcc
+    cd ../../..
 
     # Declare the variables
     export PREFIX="$TOOLCHAIN_PREFIX"
@@ -206,6 +210,7 @@ if [ $CROSS_GNU_TOOLS_BUILD_OPTION == 32 ]
     ../binutils-"$CROSS_BINUTILS_VERSION"/configure --target=$TARGET --prefix="$PREFIX" --with-sysroot --disable-nls --disable-werror
     make
     make install
+    cd ../../../..
 
     # Building GCC
     cd "$TOOLCHAIN_SRC"/gcc"$CROSS_GCC_VERSION"_i686/build/
@@ -215,6 +220,7 @@ if [ $CROSS_GNU_TOOLS_BUILD_OPTION == 32 ]
     make all-target-libgcc
     make install-gcc
     make install-target-libgcc
+    cd ../../../..
 fi
 
 # Compile the x86_64 cross-compiler
@@ -225,6 +231,7 @@ if [ $CROSS_GNU_TOOLS_BUILD_OPTION == 64 ]
     ../binutils-"$CROSS_BINUTILS_VERSION"/configure --target=$TARGET --prefix="$PREFIX" --with-sysroot --disable-nls --disable-werror
     make
     make install
+    cd ../../../..
 
     # Building GCC
     cd "$TOOLCHAIN_SRC"/gcc"$CROSS_GCC_VERSION"_amd64/build/
@@ -234,6 +241,7 @@ if [ $CROSS_GNU_TOOLS_BUILD_OPTION == 64 ]
     make all-target-libgcc
     make install-gcc
     make install-target-libgcc
+    cd ../../../..
 fi
 
 # Seperate build instructions if the MacOS is used
@@ -246,6 +254,7 @@ if [ $TOOLCHAIN_PM == macos ]
         ../binutils-"$CROSS_BINUTILS_VERSION"/configure --target=$TARGET --prefix="$PREFIX" --with-sysroot --disable-nls --disable-werror --enable-multilib --with-libiconv-prefix=/usr/local/opt/libiconv/
         make
         make install
+        cd ../../../..
 
         # Building GCC
         cd "$TOOLCHAIN_SRC"/gcc"$CROSS_GCC_VERSION"/build
@@ -255,6 +264,7 @@ if [ $TOOLCHAIN_PM == macos ]
         make all-target-libgcc
         make install-gcc
         make install-target-libgcc
+        cd ../../../..
     fi
 fi
 
