@@ -276,11 +276,11 @@ fi
 # Extra
 if [ $CROSS_GNU_TOOLS_BUILD_OPTION == 64 ]
   then
-    x86_64-elf-gcc --version
+    TOOLCHAIN_PREFIX/bin/x86_64-elf-gcc --version
     find $PREFIX/lib -name 'libgcc.a'
   else
     if [ $CROSS_GNU_TOOLS_BUILD_OPTION == 32 ]
       then
-        i686-elf-gcc --version
+        TOOLCHAIN_PREFIX/bin/i686-elf-gcc --version
     fi
 fi
