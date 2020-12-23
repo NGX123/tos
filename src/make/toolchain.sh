@@ -110,7 +110,7 @@ fi
 
 ## COMPILATION SETUP ##
 # Setup for compiling the OVMF UEFI
-if [ $OVMF_BUILD_OPTION == y || $EDK2_TOOLS_BUILD_OPTION == y ]
+if [[ $OVMF_BUILD_OPTION == y || $EDK2_TOOLS_BUILD_OPTION == y ]]
   then
     # Create the necessery directories
     mkdir -p "$TOOLCHAIN_SRC"/edk2/
@@ -144,7 +144,7 @@ if [ $OVMF_BUILD_OPTION == y ]
 fi
 
 # Compile EDK2 Tools
-if [ $EDK2_TOOLS_BUILD_OPTION == y && $OVMF_BUILD_OPTION != y ]
+if [[ $EDK2_TOOLS_BUILD_OPTION == y && $OVMF_BUILD_OPTION != y ]]
   then
     cd "$TOOLCHAIN_SRC"/edk2/
     make -C BaseTools
