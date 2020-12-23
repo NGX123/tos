@@ -163,7 +163,7 @@ qemu_x86-64-uefiapp:
 ### SPECIAL ###
 # Toolchain Build #
 toolchain:
-	read -p "Are you sure you want to compile the toolchain: " toolchain_compile
+	read -p "Are you sure you want to compile the toolchain(Press any button to continue): " toolchain_compile
 	chmod +x make/toolchain.sh
 	make/toolchain.sh
 
