@@ -321,6 +321,13 @@ if [ $OVMF_BUILD_OPTION == y ]
 fi
 
 echo "
+----- EDK2 Build Tools -----"
+if [ $EDK2_TOOLS_BUILD_OPTION == y ]
+  then
+    ls "$TOOLCHAIN_SRC"/edk2/
+fi
+
+echo "
 ----- GRUB -----"
 if [ $TOOLCHAIN_PM == dnf ]
   then
