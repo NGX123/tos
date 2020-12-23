@@ -3,8 +3,9 @@
 CROSSPLATFORM_DEPENDENCIES="nasm binutils diffutils valgrind clang gcc qemu-system-x86 gnu-efi"
 CROSS_GCC_VERSION="9.3.0"
 CROSS_BINUTILS_VERSION="2.30"
-TOOLCHAIN_SRC="./make/src"
-TOOLCHAIN_PREFIX="./make/tools"
+TOOLCHAIN_SRC=$(realpath ../toolchain/src)
+TOOLCHAIN_PREFIX=$(realpath ../toolchain/)
+MAKE_FOLDER=$(realpath ./make)
 OVMF_BUILD_OPTION=n
 CROSS_GNU_TOOLS_BUILD_OPTION=n
 
@@ -76,7 +77,7 @@ fi
 if [ $TOOLCHAIN_PM == macos ]
   then
     # Packages
-    brew install gdb nasm binutils diffutils
+    brew install gdb nasm binutils diffutils coreutils
 
     # Dependencies
     brew install gmp mpfr libmpc libiconv
@@ -113,13 +114,12 @@ fi
 if [[ $OVMF_BUILD_OPTION == y || $EDK2_TOOLS_BUILD_OPTION == y ]]
   then
     # Create the necessery directories
-    mkdir -p "$TOOLCHAIN_SRC"/edk2/
+    mkdir -p "$TOOLCHAIN_PREFIX"/edk2/
 
     # Download the source code
-    git clone https://github.com/tianocore/edk2 "$TOOLCHAIN_SRC"/edk2/
-    cd "$TOOLCHAIN_SRC"/edk2/
+    git clone https://github.com/tianocore/edk2 "$TOOLCHAIN_PREFIX"/edk2/
+    cd "$TOOLCHAIN_PREFIX"/edk2/
     git submodule update --init
-    cd ../../..
 fi
 
 
@@ -129,7 +129,7 @@ fi
 # Compile the OVMF UEFI
 if [ $OVMF_BUILD_OPTION == y ]
   then
-    cd "$TOOLCHAIN_SRC"/edk2/
+    cd "$TOOLCHAIN_PREFIX"/edk2/
     make -C BaseTools
     . edksetup.sh
     echo "
@@ -140,16 +140,14 @@ if [ $OVMF_BUILD_OPTION == y ]
     TOOL_CHAIN_TAG = GCC5
     BUILD_RULE_CONF = Conf/build_rule.txt" > Conf/target.txt
     build
-    cd ../../..
 fi
 
 # Compile EDK2 Tools
 if [[ $EDK2_TOOLS_BUILD_OPTION == y && $OVMF_BUILD_OPTION != y ]]
   then
-    cd "$TOOLCHAIN_SRC"/edk2/
+    cd "$TOOLCHAIN_PREFIX"/edk2/
     make -C BaseTools
     . edksetup.sh
-    cd ../../..
 fi
 
 
@@ -170,16 +168,14 @@ if [ $CROSS_GNU_TOOLS_BUILD_OPTION == 32 ]
     wget https://ftp.gnu.org/gnu/binutils/binutils-"$CROSS_BINUTILS_VERSION".tar.gz
     tar -xzf binutils-"$CROSS_BINUTILS_VERSION".tar.gz
     rm binutils-"$CROSS_BINUTILS_VERSION".tar.gz
-    cd ../../..
 
     cd "$TOOLCHAIN_SRC"/gcc"$CROSS_GCC_VERSION"_i686/
     wget https://ftp.gnu.org/gnu/gcc/gcc-"$CROSS_GCC_VERSION"/gcc-"$CROSS_GCC_VERSION".tar.gz
     tar -xzf gcc-"$CROSS_GCC_VERSION".tar.gz
     rm gcc-"$CROSS_GCC_VERSION".tar.gz
-    cd ../../..
 
     # Declare the variables
-    export PREFIX="$PWD"/"$TOOLCHAIN_PREFIX"
+    export PREFIX=$(realpath $TOOLCHAIN_PREFIX)
     export TARGET=i686-elf
     export PATH="$PREFIX/bin:$PATH"
 fi
@@ -197,7 +193,6 @@ if [ $CROSS_GNU_TOOLS_BUILD_OPTION == 64 ]
     wget https://ftp.gnu.org/gnu/binutils/binutils-"$CROSS_BINUTILS_VERSION".tar.gz
     tar -xzf binutils-"$CROSS_BINUTILS_VERSION".tar.gz
     rm binutils-"$CROSS_BINUTILS_VERSION".tar.gz
-    cd ../../..
 
     cd "$TOOLCHAIN_SRC"/gcc"$CROSS_GCC_VERSION"_amd64/
     wget https://ftp.gnu.org/gnu/gcc/gcc-"$CROSS_GCC_VERSION"/gcc-"$CROSS_GCC_VERSION".tar.gz
@@ -206,11 +201,10 @@ if [ $CROSS_GNU_TOOLS_BUILD_OPTION == 64 ]
 
     echo "MULTILIB_OPTIONS += mno-red-zone
 MULTILIB_DIRNAMES += no-red-zone" > gcc-"$CROSS_GCC_VERSION"/gcc/config/i386/t-x86_64-elf
-    cat ../../config.gcc > gcc-"$CROSS_GCC_VERSION"/gcc/config.gcc
-    cd ../../..
+    cat "$MAKE_FOLDER"/config.gcc > gcc-"$CROSS_GCC_VERSION"/gcc/config.gcc
 
     # Declare the variables
-    export PREFIX="$PWD"/"$TOOLCHAIN_PREFIX"
+    export PREFIX=$(realpath $TOOLCHAIN_PREFIX)
     export TARGET=x86_64-elf
     export PATH="$PREFIX/bin:$PATH"
 fi
@@ -225,7 +219,6 @@ if [ $TOOLCHAIN_PM != macos ]
         ../binutils-"$CROSS_BINUTILS_VERSION"/configure --target=$TARGET --prefix="$PREFIX" --with-sysroot --disable-nls --disable-werror
         make
         make install
-        cd ../../../..
 
         # Building GCC
         cd "$TOOLCHAIN_SRC"/gcc"$CROSS_GCC_VERSION"_i686/build/
@@ -235,7 +228,6 @@ if [ $TOOLCHAIN_PM != macos ]
         make all-target-libgcc
         make install-gcc
         make install-target-libgcc
-        cd ../../../..
     fi
 
     # Compile the x86_64 cross-compiler
@@ -246,7 +238,6 @@ if [ $TOOLCHAIN_PM != macos ]
         ../binutils-"$CROSS_BINUTILS_VERSION"/configure --target=$TARGET --prefix="$PREFIX" --with-sysroot --disable-nls --disable-werror
         make
         make install
-        cd ../../../..
 
         # Building GCC
         cd "$TOOLCHAIN_SRC"/gcc"$CROSS_GCC_VERSION"_amd64/build/
@@ -256,7 +247,6 @@ if [ $TOOLCHAIN_PM != macos ]
         make all-target-libgcc
         make install-gcc
         make install-target-libgcc
-        cd ../../../..
     fi
 fi
 
@@ -271,7 +261,6 @@ if [ $TOOLCHAIN_PM == macos ]
         ../binutils-"$CROSS_BINUTILS_VERSION"/configure --target=$TARGET --prefix="$PREFIX" --with-sysroot --disable-nls --disable-werror --enable-multilib --with-libiconv-prefix=/usr/local/opt/libiconv/
         make
         make install
-        cd ../../../..
 
         # Building GCC
         cd "$TOOLCHAIN_SRC"/gcc"$CROSS_GCC_VERSION"_i686/build
@@ -281,7 +270,6 @@ if [ $TOOLCHAIN_PM == macos ]
         make all-target-libgcc
         make install-gcc
         make install-target-libgcc
-        cd ../../../..
     fi
 
     # Compile the x86_64 gcc cross-compiler
@@ -292,7 +280,6 @@ if [ $TOOLCHAIN_PM == macos ]
         ../binutils-"$CROSS_BINUTILS_VERSION"/configure --target=$TARGET --prefix="$PREFIX" --with-sysroot --disable-nls --disable-werror --enable-multilib --with-libiconv-prefix=/usr/local/opt/libiconv/
         make
         make install
-        cd ../../../..
 
         # Building GCC
         cd "$TOOLCHAIN_SRC"/gcc"$CROSS_GCC_VERSION"_amd64/build/
@@ -302,7 +289,6 @@ if [ $TOOLCHAIN_PM == macos ]
         make all-target-libgcc
         make install-gcc
         make install-target-libgcc
-        cd ../../../..
     fi
 fi
 
