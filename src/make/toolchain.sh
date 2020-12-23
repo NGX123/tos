@@ -8,6 +8,7 @@ TOOLCHAIN_PREFIX="make/tools"
 
 ## INSTALLATION CONFIGURATION ##
 read -p "Package Manager(dnf, apt, macos, other): " TOOLCHAIN_PM
+read -p "Do you want to compile the EDK2 tools(y/n): " EDK2_TOOLS_BUILD_OPTION
 read -p "Do you want to configure other options(y/n): " EXTRA_CONFIG_OPTION
 
 # Extra configuration of the build
@@ -107,14 +108,14 @@ fi
 
 ## COMPILATION SETUP ##
 # Setup for compiling the OVMF UEFI
-if [ $OVMF_BUILD_OPTION == y ]
+if [ $OVMF_BUILD_OPTION == y || $EDK2_TOOLS_BUILD_OPTION == y ]
   then
     # Create the necessery directories
-    mkdir -p "$TOOLCHAIN_SRC"/ovmf/
+    mkdir -p "$TOOLCHAIN_SRC"/edk2/
 
     # Download the source code
-    git clone https://github.com/tianocore/edk2 "$TOOLCHAIN_SRC"/ovmf/
-    cd "$TOOLCHAIN_SRC"/ovmf/
+    git clone https://github.com/tianocore/edk2 "$TOOLCHAIN_SRC"/edk2/
+    cd "$TOOLCHAIN_SRC"/edk2/
     git submodule update --init
     cd ../../..
 fi
@@ -126,7 +127,7 @@ fi
 # Compile the OVMF UEFI
 if [ $OVMF_BUILD_OPTION == y ]
   then
-    cd "$TOOLCHAIN_SRC"/ovmf/
+    cd "$TOOLCHAIN_SRC"/edk2/
     make -C BaseTools
     . edksetup.sh
     echo "
@@ -137,6 +138,15 @@ if [ $OVMF_BUILD_OPTION == y ]
     TOOL_CHAIN_TAG = GCC5
     BUILD_RULE_CONF = Conf/build_rule.txt" > Conf/target.txt
     build
+    cd ../../..
+fi
+
+# Compile EDK2 Tools
+if [ $EDK2_TOOLS_BUILD_OPTION == y && $OVMF_BUILD_OPTION != y ]
+  then
+    cd "$TOOLCHAIN_SRC"/edk2/
+    make -C BaseTools
+    . edksetup.sh
     cd ../../..
 fi
 
@@ -277,7 +287,7 @@ qemu-system-i386 --version
 qemu-system-x86_64 --version
 if [ $OVMF_BUILD_OPTION == y ]
   then
-    ls "$TOOLCHAIN_SRC"/ovmf/Build
+    ls "$TOOLCHAIN_SRC"/edk2/Build
 fi
 if [ $TOOLCHAIN_PM == dnf ]
   then
