@@ -308,12 +308,20 @@ fi
 
 
 ## CHECK OF INSTALLTION ##
+echo "
+----- QEMU -----"
 qemu-system-i386 --version
 qemu-system-x86_64 --version
+
+echo "
+----- OVMF -----"
 if [ $OVMF_BUILD_OPTION == y ]
   then
     ls "$TOOLCHAIN_SRC"/edk2/Build
 fi
+
+echo "
+----- GRUB -----"
 if [ $TOOLCHAIN_PM == dnf ]
   then
     grub2-mkrescue --version
@@ -322,13 +330,17 @@ if [ $TOOLCHAIN_PM == dnf ]
 fi
 
 # Extra
+echo "
+----- GCC Toolchain -----"
 if [ $CROSS_GNU_TOOLS_BUILD_OPTION == 64 ]
   then
+    echo "--- 64 bit ---"
     $TOOLCHAIN_PREFIX/bin/x86_64-elf-gcc --version
     find $PREFIX/lib -name 'libgcc.a'
   else
     if [ $CROSS_GNU_TOOLS_BUILD_OPTION == 32 ]
       then
+        echo "--- 32 bit ---"
         $TOOLCHAIN_PREFIX/bin/i686-elf-gcc --version
     fi
 fi
