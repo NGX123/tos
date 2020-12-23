@@ -1,7 +1,7 @@
 ### VARIABLES ###
 ## Global ##
 BUILDDIR 						= ./build
-TOOLCHAIN_PREFIX				= ./make/tools/bin
+TOOLCHAIN_PREFIX				= ../toolchain/bin
 SOURCES 						= drivers/*.c kernel/*.c init/*.c libs/*.c
 OBJECTS 						= $(BUILDDIR)/*.o
 CFLAGS_GLOBAL 					= -Wall -Wextra -c
