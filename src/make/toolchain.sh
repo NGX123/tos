@@ -18,7 +18,7 @@ read -p "Do you want to configure other options(y/n): " EXTRA_CONFIG_OPTION
 if [ $EXTRA_CONFIG_OPTION == y ]
   then
     # GCC Toolchain Build option
-    read -p "Should the x86_32/x86_64 cross-compiler be compiled(no/64/32): " CROSS_GNU_TOOLS_BUILD_OPTION
+    read -p "Should the x86_32/x86_64 cross-compiler be compiled(no/all/64/32): " CROSS_GNU_TOOLS_BUILD_OPTION
 
     # OVMF Build option
     read -p "Should the UEFI be compiled(y/n): " OVMF_BUILD_OPTION
@@ -156,7 +156,7 @@ fi
 ## EXTRA ##
 # If kernel headers installation on debian not work check "ls -l /usr/src/linux-headers-$(uname -r)"(if does not exist then there are no headers), insetad try to find the latest version if not installed
 # Setup for compiling the x86_32 compiler
-if [ $CROSS_GNU_TOOLS_BUILD_OPTION == 32 ]
+if [[ $CROSS_GNU_TOOLS_BUILD_OPTION == 32 || $CROSS_GNU_TOOLS_BUILD_OPTION == all ]]
   then
     # Create the nesecerry direcotries
     mkdir -p "$TOOLCHAIN_SRC"/binutils"$CROSS_BINUTILS_VERSION"_i686/build/
@@ -181,7 +181,7 @@ if [ $CROSS_GNU_TOOLS_BUILD_OPTION == 32 ]
 fi
 
 # Setup for compiling the x86_64 compiler
-if [ $CROSS_GNU_TOOLS_BUILD_OPTION == 64 ]
+if [[ $CROSS_GNU_TOOLS_BUILD_OPTION == 64 || $CROSS_GNU_TOOLS_BUILD_OPTION == all ]]
   then
     # Create the nesecerry direcotries
     mkdir -p "$TOOLCHAIN_SRC"/binutils"$CROSS_BINUTILS_VERSION"_amd64/build/
@@ -212,7 +212,7 @@ fi
 # Compile the x86_32 cross-compiler
 if [ $TOOLCHAIN_PM != macos ]
   then
-    if [ $CROSS_GNU_TOOLS_BUILD_OPTION == 32 ]
+    if [[ $CROSS_GNU_TOOLS_BUILD_OPTION == 32 || $CROSS_GNU_TOOLS_BUILD_OPTION == all ]]
       then
         # Building binutils
         cd "$TOOLCHAIN_SRC"/binutils"$CROSS_BINUTILS_VERSION"_i686/build/
@@ -231,7 +231,7 @@ if [ $TOOLCHAIN_PM != macos ]
     fi
 
     # Compile the x86_64 cross-compiler
-    if [ $CROSS_GNU_TOOLS_BUILD_OPTION == 64 ]
+    if [[ $CROSS_GNU_TOOLS_BUILD_OPTION == 64 || $CROSS_GNU_TOOLS_BUILD_OPTION == all ]]
       then
         # Building binutils
         cd "$TOOLCHAIN_SRC"/binutils"$CROSS_BINUTILS_VERSION"_amd64/build/
@@ -254,7 +254,7 @@ fi
 if [ $TOOLCHAIN_PM == macos ]
   then
     # Compile x86-32 gcc cross-compiler
-    if [ $CROSS_GNU_TOOLS_BUILD_OPTION == 32 ]
+    if [[ $CROSS_GNU_TOOLS_BUILD_OPTION == 32 || $CROSS_GNU_TOOLS_BUILD_OPTION == all ]]
       then
         # Building binutils
         cd "$TOOLCHAIN_SRC"/binutils"$CROSS_BINUTILS_VERSION"_i686/build
@@ -273,7 +273,7 @@ if [ $TOOLCHAIN_PM == macos ]
     fi
 
     # Compile the x86_64 gcc cross-compiler
-    if [ $CROSS_GNU_TOOLS_BUILD_OPTION == 64 ]
+    if [[ $CROSS_GNU_TOOLS_BUILD_OPTION == 64 || $CROSS_GNU_TOOLS_BUILD_OPTION == all ]]
       then
         # Building binutils
         cd "$TOOLCHAIN_SRC"/binutils"$CROSS_BINUTILS_VERSION"_amd64/build/
@@ -316,17 +316,16 @@ if [ $EDK2_TOOLS_BUILD_OPTION == y ]
 fi
 
 # Extra
-if [ $CROSS_GNU_TOOLS_BUILD_OPTION == 64 ]
+if [[ $CROSS_GNU_TOOLS_BUILD_OPTION == 64 || $CROSS_GNU_TOOLS_BUILD_OPTION == all ]]
   then
     echo "
     --- GCC Toolchain 64 bit ---"
     $TOOLCHAIN_PREFIX/bin/x86_64-elf-gcc --version
     find $PREFIX/lib -name 'libgcc.a'
-  else
-    if [ $CROSS_GNU_TOOLS_BUILD_OPTION == 32 ]
-      then
-        echo "
-        --- GCC Toolchain 32 bit ---"
-        $TOOLCHAIN_PREFIX/bin/i686-elf-gcc --version
-    fi
+fi
+if [[ $CROSS_GNU_TOOLS_BUILD_OPTION == 32 || $CROSS_GNU_TOOLS_BUILD_OPTION == all ]]
+  then
+    echo "
+    --- GCC Toolchain 32 bit ---"
+    $TOOLCHAIN_PREFIX/bin/i686-elf-gcc --version
 fi
