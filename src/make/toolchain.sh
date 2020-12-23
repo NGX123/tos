@@ -305,14 +305,14 @@ if [ $OVMF_BUILD_OPTION == y ]
   then
     echo "
     ----- OVMF -----"
-    ls "$TOOLCHAIN_SRC"/edk2/Build
+    ls "$TOOLCHAIN_PREFIX"/edk2/Build
 fi
 
 if [ $EDK2_TOOLS_BUILD_OPTION == y ]
   then
     echo "
     ----- EDK2 Build Tools -----"
-    ls "$TOOLCHAIN_SRC"/edk2/
+    ls "$TOOLCHAIN_PREFIX"/edk2/
 fi
 
 # Extra
