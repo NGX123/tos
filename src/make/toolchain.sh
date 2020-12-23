@@ -3,8 +3,8 @@
 CROSSPLATFORM_DEPENDENCIES="nasm binutils diffutils valgrind clang gcc qemu-system-x86 gnu-efi"
 CROSS_GCC_VERSION="9.3.0"
 CROSS_BINUTILS_VERSION="2.30"
-TOOLCHAIN_SRC="make/src"
-TOOLCHAIN_PREFIX="make/tools"
+TOOLCHAIN_SRC="./make/src"
+TOOLCHAIN_PREFIX="./make/tools"
 
 ## INSTALLATION CONFIGURATION ##
 read -p "Package Manager(dnf, apt, macos, other): " TOOLCHAIN_PM
