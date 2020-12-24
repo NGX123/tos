@@ -3,11 +3,15 @@
 CROSSPLATFORM_DEPENDENCIES="nasm binutils diffutils valgrind clang gcc qemu-system-x86 gnu-efi"
 CROSS_GCC_VERSION="9.3.0"
 CROSS_BINUTILS_VERSION="2.30"
-TOOLCHAIN_SRC=$(realpath ../toolchain/src)
 TOOLCHAIN_PREFIX=$(realpath ../toolchain/)
 MAKE_FOLDER=$(realpath ./make)
 OVMF_BUILD_OPTION=n
 CROSS_GNU_TOOLS_BUILD_OPTION=n
+
+# Can't be decalred without making folder
+mkdir -p ../toolchain/src
+TOOLCHAIN_SRC=$(realpath ../toolchain/src)
+rm -rf ../toolchain/src
 
 ## INSTALLATION CONFIGURATION ##
 read -p "Package Manager(dnf, apt, macos, other): " TOOLCHAIN_PM
