@@ -2,8 +2,6 @@
 ## Global ##
 BUILDDIR 						= ./build
 TOOLCHAIN_PREFIX				= ../toolchain/bin
-SOURCES 						= drivers/*.c kernel/*.c init/*.c libs/*.c
-OBJECTS 						= $(BUILDDIR)/*.o
 CFLAGS_GLOBAL 					= -Wall -Wextra -c
 CEXTRAWARNINGS 					= -pedantic -Wcast-align -Wcast-qual -Wdisabled-optimization -Wformat=2 -Winit-self -Wlogical-op -Wmissing-declarations -Wmissing-include-dirs -Wshadow -Wsign-conversion -Wstrict-overflow=5 -Wswitch-default -Wundef -Wno-unused # -Wredundant-decls(warns when something was redefined several times)
 OVMF 							= /usr/share/OVMF
@@ -22,6 +20,8 @@ AS_x86-32_GCC 					= nasm
 ASFLAGS_x86-32_GCC 				= -felf32														# (-felf32) Set the target architecture to x86_32-elf
 CFLAGS_x86-32_GCC 				= -I libs/headers -std=gnu99 -ffreestanding $(CFLAGS_GLOBAL)	# (-I libs) Include the custo c library; (-std=gnu99) Becuase of code specifics should be older standard; (-ffreestanding) Startup not at main() and no standard lib
 LDFLAGS_x86-32_GCC 				= -T init/linker.ld -ffreestanding -nostdlib -l gcc				# (-T script.ld) Use custom linker script; (-ffreestanding)Startup not at main() and no standard lib; (-nostdlib) Do not link with standard library; (-l gcc) Link with gcc library
+SOURCES_x86-32_GCC				= drivers/*.c kernel/*.c init/*.c libs/*.c
+OBJECTS_x86-32_GCC				= $(BUILDDIR)/*.o
 
 # x86-32_clang #
 CC_x86-32_CLANG 				= clang
@@ -30,18 +30,21 @@ LD_x86-32_CLANG					= clang
 CFLAGS_x86-32_CLANG 			= -I libs/headers -std=gnu99 -ffreestanding $(CFLAGS_GLOBAL) -target i686-elf
 LDFLAGS_x86-32_CLANG 			= -T init/linker.ld -ffreestanding -nostdlib -l gcc -target i686-elf
 ASFLAGS_x86-32_CLANG 			= -felf32
+SOURCES_x86-32_CLANG			= drivers/*.c kernel/*.c init/*.c libs/*.c
+OBJECTS_x86-32_CLANG			= $(BUILDDIR)/*.o
 
 # x86-64-uefiapp_clang #
 CC_x86-64-uefiapp_CLANG 		= clang # Can be changed to gcc, then change -DHAVE_USE_MS_ABI to -DEFI_FUNCTION_WRAPPER
 LD_x86-64-uefiapp_CLANG 		= ld
 OBJCPY 							= objcopy
-x86-64-uefiapp_TARGET 			= uefi
 #Flags - (-fno-stack-protector)Disable monitoring variable at stack end to indicate overflow if overwritten; (-fpic)Position independent code(can be loaded anywhere in memory); (-fshort-wchar)Makes wchar_t short(2 byte), (-mno-red-zone)Disables feature according to ABI; (-DHAVE_USE_MS_ABI)Use windows function calling convention(it is used by UEFI)
 CFLAGS_x86-64-uefiapp_CLANG		= $(EFI_INCS) -fno-stack-protector -fpic -fshort-wchar -mno-red-zone -DHAVE_USE_MS_ABI -Wall -Wextra -c
 #Flags - (-nostdlib)Do not link against any libs except specified; (-znocombreloc)Don't combine relocation sections; (-shared)Create a shared lib, for later conversion to binary; (-Bsymbolic)Bind global function references locally; (-l efi, -l gnuefi)Link with GNU EFI libraries
 LDFLAGS_x86-64-uefiapp_CLANG 	= $(EFI_OBJS) -nostdlib -znocombreloc -shared -Bsymbolic -l efi -l gnuefi
 #Flags - (-j)Only copy the specified section to output; (--target=efi-app-x86_64)Select the platform
 OBJCPYFLAGS 					= -j .text -j .sdata -j .data -j .dynamic -j .dynsym -j .rel -j .rela -j .reloc --target=efi-app-x86_64
+SOURCES_x86-64-uefiapp_CLANG 	= uefi/main.c
+x86-64-uefiapp_TARGET 			= uefi
 
 
 ## EFI ##
@@ -72,26 +75,27 @@ build_x86-64_gcc:
 
 # Compile code for x86-32 with gcc #
 build_x86-32_gcc:
-	mkdir 				-p 										$(BUILDDIR)
+	mkdir 				-p 													$(BUILDDIR)
 
-	$(AS_x86-32_GCC) 	$(ASFLAGS_x86-32_GCC) 	init/boot.s 	-o 	$(BUILDDIR)/boot.o
-	$(CC_x86-32_GCC) 	$(CFLAGS_x86-32_GCC) 	$(SOURCES)
-	mv 											*.o 			$(BUILDDIR)
-	$(CC_x86-32_GCC) 	$(LDFLAGS_x86-32_GCC) 	$(OBJECTS)		-o $(BUILDDIR)/os.o
+	$(AS_x86-32_GCC) 	$(ASFLAGS_x86-32_GCC) 	init/boot.s 				-o 	$(BUILDDIR)/boot.o
+	$(CC_x86-32_GCC) 	$(CFLAGS_x86-32_GCC) 	$(SOURCES_x86-32_GCC)
+	mv 											*.o 						$(BUILDDIR)
+	$(CC_x86-32_GCC) 	$(LDFLAGS_x86-32_GCC) 	$(OBJECTS_x86-32_GCC)		-o $(BUILDDIR)/os.o
 
 
 ## CLANG/LLVM ##
 # Compile code for x86-64 with clang
 build_x86-64_clang:
+	echo "No source to compile yet"
 
 # Compile code for x86-32 with clang #
 build_x86-32_clang:
-	mkdir 				-p 										$(BUILDDIR)
+	mkdir 				-p 													$(BUILDDIR)
 
-	$(AS_x86-32_CLANG) 	$(ASFLAGS_x86-32_CLANG) 	init/boot.s	-o $(BUILDDIR)/boot.o
-	$(CC_x86-32_CLANG) 	$(CFLAGS_x86-32_CLANG)  	$(SOURCES)
-	mv												*.o			$(BUILDDIR)
-	$(LD_x86-32_CLANG)	$(LDFLAGS_x86-32_CLANG)		$(OBJECTS)	-o $(BUILDDIR)/os.o
+	$(AS_x86-32_CLANG) 	$(ASFLAGS_x86-32_CLANG) 	init/boot.s				-o $(BUILDDIR)/boot.o
+	$(CC_x86-32_CLANG) 	$(CFLAGS_x86-32_CLANG)  	$(SOURCES_x86-32_CLANG)
+	mv												*.o						$(BUILDDIR)
+	$(LD_x86-32_CLANG)	$(LDFLAGS_x86-32_CLANG)		$(OBJECTS_x86-32_CLANG)	-o $(BUILDDIR)/os.o
 
 # Compile code for x86-64-uefi with clang #
 build_x86-64-uefiapp_clang:
