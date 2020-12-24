@@ -21,6 +21,7 @@ read -p "Do you want to configure other options(y/n): " EXTRA_CONFIG_OPTION
 if [ $EXTRA_CONFIG_OPTION == y ]
   then
     # GCC Toolchain Build option
+    echo "Note: all option does not currently work and only one gcc could be compiled simoultaneously"
     read -p "Should the x86_32/x86_64 cross-compiler be compiled(no/all/64/32): " CROSS_GNU_TOOLS_BUILD_OPTION
 
     # OVMF Build option
