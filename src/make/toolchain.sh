@@ -11,7 +11,6 @@ CROSS_GNU_TOOLS_BUILD_OPTION=n
 # Can't be decalred without making folder
 mkdir -p ../toolchain/src
 TOOLCHAIN_SRC=$(realpath ../toolchain/src)
-rm -rf ../toolchain/src
 
 ## INSTALLATION CONFIGURATION ##
 read -p "Package Manager(dnf, apt, macos, other): " TOOLCHAIN_PM
@@ -333,3 +332,7 @@ if [[ $CROSS_GNU_TOOLS_BUILD_OPTION == 32 || $CROSS_GNU_TOOLS_BUILD_OPTION == al
     --- GCC Toolchain 32 bit ---"
     $TOOLCHAIN_PREFIX/bin/i686-elf-gcc --version
 fi
+
+# Remove if direcotyr was not populated
+rmdir $TOOLCHAIN_SRC
+rmdir $TOOLCHAIN_PREFIX
