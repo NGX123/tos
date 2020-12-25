@@ -5,14 +5,15 @@ CROSS_GCC_VERSION="9.3.0"
 CROSS_BINUTILS_VERSION="2.30"
 TOOLCHAIN_PREFIX=$(realpath ../toolchain/)
 MAKE_FOLDER=$(realpath ./make)
-OVMF_BUILD_OPTION=n
-CROSS_GNU_TOOLS_BUILD_OPTION=n
 
 # Can't be decalred without making folder
 mkdir -p ../toolchain/src
 TOOLCHAIN_SRC=$(realpath ../toolchain/src)
 
 ## INSTALLATION CONFIGURATION ##
+OVMF_BUILD_OPTION=n
+CROSS_GNU_TOOLS_BUILD_OPTION=n
+GNUEFI_BUILD_OPTION=n
 read -p "Package Manager(dnf, apt, macos, other): " TOOLCHAIN_PM
 read -p "Do you want to compile the EDK2 tools(y/n): " EDK2_TOOLS_BUILD_OPTION
 read -p "Do you want to configure other options(y/n): " EXTRA_CONFIG_OPTION
@@ -26,6 +27,9 @@ if [ $EXTRA_CONFIG_OPTION == y ]
 
     # OVMF Build option
     read -p "Should the UEFI be compiled(y/n): " OVMF_BUILD_OPTION
+
+    # GNU-EFI Build option
+    read -p "Should the GNU-EFI be compiled(y/n): " GNUEFI_BUILD_OPTION
 
     # Configure the build directory
     read -p "Do you want to customize the build path(y/n): " PREFIX_OPTION
@@ -159,6 +163,13 @@ fi
 
 ## EXTRA ##
 # If kernel headers installation on debian not work check "ls -l /usr/src/linux-headers-$(uname -r)"(if does not exist then there are no headers), insetad try to find the latest version if not installed
+# Setup for GNU-EFI toolkit compilation
+if [ $GNUEFI_BUILD_OPTION == y ]
+  then
+    mkdir -p "$TOOLCHAIN_PREFIX"/gnu-efi/
+    git clone https://git.code.sf.net/p/gnu-efi/code "$TOOLCHAIN_PREFIX"/gnu-efi/
+fi
+
 # Setup for compiling the x86_32 compiler
 if [[ $CROSS_GNU_TOOLS_BUILD_OPTION == 32 || $CROSS_GNU_TOOLS_BUILD_OPTION == all ]]
   then
@@ -211,6 +222,13 @@ MULTILIB_DIRNAMES += no-red-zone" > gcc-"$CROSS_GCC_VERSION"/gcc/config/i386/t-x
     export PREFIX=$(realpath $TOOLCHAIN_PREFIX)
     export TARGET=x86_64-elf
     export PATH="$PREFIX/bin:$PATH"
+fi
+
+# Compile the GNU EFI toolkit
+if [ $GNUEFI_BUILD_OPTION == y ]
+  then
+    cd "$TOOLCHAIN_PREFIX"/gnu-efi/
+    make
 fi
 
 # Compile the x86_32 cross-compiler
