@@ -8,20 +8,25 @@ OVMF 							= /usr/share/OVMF
 
 
 ## Compilation ##
+BUILDDIR_x86-64					= $(BUILDDIR)/x86-64
+BUILDDIR_x86-32					= $(BUILDDIR)/x86-32
+
 # x86-64_gcc #
 CC_x86-64_GCC 					= $(TOOLCHAIN_PREFIX)/x86_64-elf-gcc
 AS_x86-64_GCC 					= nasm
 CFLAGS_x86-64_GCC 				= -ffreestanding -mcmodel=large -mno-red-zone -mno-mmx -mno-sse -mno-sse2 $(CFLAGS_GLOBAL)	# (-ffreestanding) Startup not at main() and no standard lib; (-mcmodel=large) No assumptions about addresses; (-mno-red-zone -mno-mmx -mno-sse -mno-sse2) Disable CPU specific features that could generate runtime errors
 LDFLAGS_x86-64_GCC 				= -T uefi/linker.ld -ffreestanding -nostdlib -l gcc											# (-T script.ld) Use custom linker script; (-ffreestanding)Startup not at main() and no standard lib; (-nostdlib) Do not link with standard library; (-l gcc) Link with gcc library
+BUILDDIR_x86-64_GCC 			= $(BUILDDIR_x86-64)
 
 # x86-32_gcc toolchain #
-CC_x86-32_GCC 					= $(TOOLCHAIN_PREFIX)/i686-elf-gcc
+CC_x86-32_GCC 					= i686-elf-gcc
 AS_x86-32_GCC 					= nasm
 ASFLAGS_x86-32_GCC 				= -felf32														# (-felf32) Set the target architecture to x86_32-elf
 CFLAGS_x86-32_GCC 				= -I libs/headers -std=gnu99 -ffreestanding $(CFLAGS_GLOBAL)	# (-I libs) Include the custo c library; (-std=gnu99) Becuase of code specifics should be older standard; (-ffreestanding) Startup not at main() and no standard lib
 LDFLAGS_x86-32_GCC 				= -T init/linker.ld -ffreestanding -nostdlib -l gcc				# (-T script.ld) Use custom linker script; (-ffreestanding)Startup not at main() and no standard lib; (-nostdlib) Do not link with standard library; (-l gcc) Link with gcc library
+BUILDDIR_x86-32_GCC 			= $(BUILDDIR_x86-32)
 SOURCES_x86-32_GCC				= drivers/*.c kernel/*.c init/*.c libs/*.c
-OBJECTS_x86-32_GCC				= $(BUILDDIR)/*.o
+OBJECTS_x86-32_GCC				= $(BUILDDIR_x86-32_GCC)/*.o
 
 # x86-32_clang #
 CC_x86-32_CLANG 				= clang
@@ -30,8 +35,9 @@ LD_x86-32_CLANG					= clang
 CFLAGS_x86-32_CLANG 			= -I libs/headers -std=gnu99 -ffreestanding $(CFLAGS_GLOBAL) -target i686-elf
 LDFLAGS_x86-32_CLANG 			= -T init/linker.ld -ffreestanding -nostdlib -l gcc -target i686-elf
 ASFLAGS_x86-32_CLANG 			= -felf32
+BUILDDIR_x86-32_CLANG			= $(BUILDDIR_x86-32)
 SOURCES_x86-32_CLANG			= drivers/*.c kernel/*.c init/*.c libs/*.c
-OBJECTS_x86-32_CLANG			= $(BUILDDIR)/*.o
+OBJECTS_x86-32_CLANG			= $(BUILDDIR_x86-32_CLANG)/*.o
 
 # x86-64-uefiapp_clang #
 CC_x86-64-uefiapp_CLANG 		= clang # Can be changed to gcc, then change -DHAVE_USE_MS_ABI to -DEFI_FUNCTION_WRAPPER
@@ -43,6 +49,7 @@ CFLAGS_x86-64-uefiapp_CLANG		= $(EFI_INCS) -fno-stack-protector -fpic -fshort-wc
 LDFLAGS_x86-64-uefiapp_CLANG 	= $(EFI_OBJS) -nostdlib -znocombreloc -shared -Bsymbolic -l efi -l gnuefi
 #Flags - (-j)Only copy the specified section to output; (--target=efi-app-x86_64)Select the platform
 OBJCPYFLAGS 					= -j .text -j .sdata -j .data -j .dynamic -j .dynsym -j .rel -j .rela -j .reloc --target=efi-app-x86_64
+BUILDDIR_x86-64-uefiapp_CLANG	= $(BUILDDIR)/x86-64-uefiapp_clang
 SOURCES_x86-64-uefiapp_CLANG 	= uefi/main.c
 x86-64-uefiapp_TARGET 			= uefi
 
@@ -58,12 +65,12 @@ EFI_OBJS						= -T $(EFI_LINK_SCRIPT) -L /usr/lib64/gnuefi -L /usr/lib -L /usr/l
 
 
 ### START ###
-all: 						clean x86-64_gcc
-all_x86-64_gcc: 			clean build_x86-64_gcc
-all_x86-32_gcc: 			clean build_x86-32_gcc disk_x86-32-bios qemu_x86-32-bios
-all_x86-64_clang:			clean build_x86-64_clang
-all_x86-32_clang:			clean build_x86-32_clang disk_x86-32-bios qemu_x86-32-bios
-all_x86-64-uefiapp_clang:	clean build_x86-64-uefiapp_clang disk_x86-64-uefiapp qemu_x86-64-uefiapp
+all: 						x86-64_gcc
+all_x86-64_gcc: 			build_x86-64_gcc
+all_x86-32_gcc: 			build_x86-32_gcc disk_x86-32-bios qemu_x86-32-bios
+all_x86-64_clang:			build_x86-64_clang
+all_x86-32_clang:			build_x86-32_clang disk_x86-32-bios qemu_x86-32-bios
+all_x86-64-uefiapp_clang:	build_x86-64-uefiapp_clang disk_x86-64-uefiapp qemu_x86-64-uefiapp
 
 
 
@@ -71,96 +78,99 @@ all_x86-64-uefiapp_clang:	clean build_x86-64-uefiapp_clang disk_x86-64-uefiapp q
 ## GCC ##
 # Compile code for x86-64 with gcc #
 build_x86-64_gcc:
+	rm -rf $(BUILDDIR_x86-64_GCC)
 	echo "No source to compile yet"
 
 # Compile code for x86-32 with gcc #
 build_x86-32_gcc:
-	mkdir 				-p 													$(BUILDDIR)
+	rm -rf $(BUILDDIR_x86-32_GCC)
+	mkdir 				-p 													$(BUILDDIR_x86-32_GCC)
 
-	$(AS_x86-32_GCC) 	$(ASFLAGS_x86-32_GCC) 	init/boot.s 				-o 	$(BUILDDIR)/boot.o
+	$(AS_x86-32_GCC) 	$(ASFLAGS_x86-32_GCC) 	init/boot.s 				-o 	$(BUILDDIR_x86-32_GCC)/boot.o
 	$(CC_x86-32_GCC) 	$(CFLAGS_x86-32_GCC) 	$(SOURCES_x86-32_GCC)
-	mv 											*.o 						$(BUILDDIR)
-	$(CC_x86-32_GCC) 	$(LDFLAGS_x86-32_GCC) 	$(OBJECTS_x86-32_GCC)		-o $(BUILDDIR)/os.o
+	mv 											*.o 						$(BUILDDIR_x86-32_GCC)
+	$(CC_x86-32_GCC) 	$(LDFLAGS_x86-32_GCC) 	$(OBJECTS_x86-32_GCC)		-o $(BUILDDIR_x86-32_GCC)/os.o
 
 
 ## CLANG/LLVM ##
 # Compile code for x86-64 with clang
 build_x86-64_clang:
+	rm -rf $(BUILDDIR_x86-64_CLANG)
 	echo "No source to compile yet"
 
 # Compile code for x86-32 with clang #
 build_x86-32_clang:
-	mkdir 				-p 													$(BUILDDIR)
+	rm -rf $(BUILDDIR_x86-32_CLANG)
+	mkdir 				-p 													$(BUILDDIR_x86-32_CLANG)
 
-	$(AS_x86-32_CLANG) 	$(ASFLAGS_x86-32_CLANG) 	init/boot.s				-o $(BUILDDIR)/boot.o
+	$(AS_x86-32_CLANG) 	$(ASFLAGS_x86-32_CLANG) 	init/boot.s				-o $(BUILDDIR_x86-32_CLANG)/boot.o
 	$(CC_x86-32_CLANG) 	$(CFLAGS_x86-32_CLANG)  	$(SOURCES_x86-32_CLANG)
-	mv												*.o						$(BUILDDIR)
-	$(LD_x86-32_CLANG)	$(LDFLAGS_x86-32_CLANG)		$(OBJECTS_x86-32_CLANG)	-o $(BUILDDIR)/os.o
+	mv												*.o						$(BUILDDIR_x86-32_CLANG)
+	$(LD_x86-32_CLANG)	$(LDFLAGS_x86-32_CLANG)		$(OBJECTS_x86-32_CLANG)	-o $(BUILDDIR_x86-32_CLANG)/os.o
 
 # Compile code for x86-64-uefi with clang #
 build_x86-64-uefiapp_clang:
-	mkdir 						-p 																			$(BUILDDIR)
+	rm -rf $(BUILDDIR_x86-64-uefiapp_CLANG)
+	mkdir 						-p 																								$(BUILDDIR_x86-64-uefiapp_CLANG)
 
 	$(CC_x86-64-uefiapp_CLANG)	$(CFLAGS_x86-64-uefiapp_CLANG)	$(x86-64-uefiapp_TARGET)/*.c
-	mv															*.o											$(BUILDDIR)
-	$(LD_x86-64-uefiapp_CLANG)	$(LDFLAGS_x86-64-uefiapp_CLANG)	$(BUILDDIR)/*.o 							-o $(BUILDDIR)/$(x86-64-uefiapp_TARGET).so
-	$(OBJCPY) 					$(OBJCPYFLAGS)					$(BUILDDIR)/$(x86-64-uefiapp_TARGET).so 	$(BUILDDIR)/$(x86-64-uefiapp_TARGET).efi
+	mv															*.o																$(BUILDDIR_x86-64-uefiapp_CLANG)
+	$(LD_x86-64-uefiapp_CLANG)	$(LDFLAGS_x86-64-uefiapp_CLANG)	$(BUILDDIR_x86-64-uefiapp_CLANG)/*.o 							-o $(BUILDDIR_x86-64-uefiapp_CLANG)/$(x86-64-uefiapp_TARGET).so
+	$(OBJCPY) 					$(OBJCPYFLAGS)					$(BUILDDIR_x86-64-uefiapp_CLANG)/$(x86-64-uefiapp_TARGET).so 	$(BUILDDIR_x86-64-uefiapp_CLANG)/$(x86-64-uefiapp_TARGET).efi
 
 
 
 ### DISK IMAGES ###
 # UEFI Disk Image Build #
 disk_x86-64-uefiapp:
-	mkdir -p $(BUILDDIR)
+	mkdir -p $(BUILDDIR_x86-64-uefiapp_CLANG)
 
 	# Create an empty disk image with size of 94 KB
-	dd if=/dev/zero of=$(BUILDDIR)/$(x86-64-uefiapp_TARGET).img bs=512 count=93750
+	dd if=/dev/zero of=$(BUILDDIR_x86-64-uefiapp_CLANG)/$(x86-64-uefiapp_TARGET).img bs=512 count=93750
 
 	# Format the disk image with 1440 byte sectors
-	mformat -i $(BUILDDIR)/$(x86-64-uefiapp_TARGET).img -f 1440 ::
+	mformat -i $(BUILDDIR_x86-64-uefiapp_CLANG)/$(x86-64-uefiapp_TARGET).img -f 1440 ::
 
 	# Create EFI and then EFI/BOOT directory on the disk image
-	mmd -i $(BUILDDIR)/$(x86-64-uefiapp_TARGET).img ::/EFI
-	mmd -i $(BUILDDIR)/$(x86-64-uefiapp_TARGET).img ::/EFI/BOOT
+	mmd -i $(BUILDDIR_x86-64-uefiapp_CLANG)/$(x86-64-uefiapp_TARGET).img ::/EFI
+	mmd -i $(BUILDDIR_x86-64-uefiapp_CLANG)/$(x86-64-uefiapp_TARGET).img ::/EFI/BOOT
 
 	# Copy the efi executable to the EFI/BOOT folder on the drive
-	mv $(BUILDDIR)/$(x86-64-uefiapp_TARGET).efi $(BUILDDIR)/BOOTX64.EFI
-	mcopy -i $(BUILDDIR)/$(x86-64-uefiapp_TARGET).img $(BUILDDIR)/BOOTX64.EFI ::/EFI/BOOT
+	mv $(BUILDDIR_x86-64-uefiapp_CLANG)/$(x86-64-uefiapp_TARGET).efi $(BUILDDIR_x86-64-uefiapp_CLANG)/BOOTX64.EFI
+	mcopy -i $(BUILDDIR_x86-64-uefiapp_CLANG)/$(x86-64-uefiapp_TARGET).img $(BUILDDIR_x86-64-uefiapp_CLANG)/BOOTX64.EFI ::/EFI/BOOT
 
 # 32 bit OS Image Build #
 disk_x86-32-bios:
-	mkdir -p $(BUILDDIR)/iso/boot/grub
-	mv $(BUILDDIR)/os.o $(BUILDDIR)/iso/boot
-	cp init/grub.cfg $(BUILDDIR)/iso/boot/grub
-	grub2-mkrescue -o $(BUILDDIR)/os.iso $(BUILDDIR)/iso
+	mkdir -p $(BUILDDIR_x86-32)/iso/boot/grub
+	mv $(BUILDDIR_x86-32)/os.o $(BUILDDIR_x86-32)/iso/boot
+	cp init/grub.cfg $(BUILDDIR_x86-32)/iso/boot/grub
+	grub2-mkrescue -o $(BUILDDIR_x86-32)/os.iso $(BUILDDIR_x86-32)/iso
 
 
 
 ### QEMU ###
 # Start qemu on 64-bit UEFI-only mode CPU #
 qemu_x86-64-uefi:
-	mkdir -p $(BUILDDIR)
-
-	cp /usr/share/OVMF/OVMF_CODE.fd /usr/share/OVMF/OVMF_VARS.fd $(BUILDDIR)
+	cp /usr/share/OVMF/OVMF_CODE.fd /usr/share/OVMF/OVMF_VARS.fd $(BUILDDIR_x86-64)
 	qemu-system-x86_64 -cpu qemu64 \
-	-drive if=pflash,format=raw,unit=0,file=$(BUILDDIR)/OVMF_CODE.fd,readonly=on \
-	-drive if=pflash,format=raw,unit=1,file=$(BUILDDIR)/OVMF_VARS.fd \
+	-drive if=pflash,format=raw,unit=0,file=$(BUILDDIR_x86-64)/OVMF_CODE.fd,readonly=on \
+	-drive if=pflash,format=raw,unit=1,file=$(BUILDDIR_x86-64)/OVMF_VARS.fd \
 	-net none \
-	-cdrom $(BUILDDIR)/os.iso
+	-cdrom $(BUILDDIR_x86-64)/os.iso
 
 # Start qemu on 32-bit BIOS-mode CPU #
 qemu_x86-32-bios:
-	qemu-system-i386 -cdrom $(BUILDDIR)/os.iso
+	qemu-system-i386 -cdrom $(BUILDDIR_x86-32)/os.iso
 
 # Start qemu on 64-bit UEFI-only mode CPU with UEFI app inserted #
 qemu_x86-64-uefiapp:
 	# Copy over the code and variable vars for OVMF
-	cp $(OVMF)/OVMF_CODE.fd $(OVMF)/OVMF_VARS.fd $(BUILDDIR)
+	cp $(OVMF)/OVMF_CODE.fd $(OVMF)/OVMF_VARS.fd $(BUILDDIR_x86-64-uefiapp_CLANG)
 
 	# Run qemu - (-drive ...img) Boot our created disk image; (-net none) No network boot; (-cpu qemu64) Run with 64bit CPU; (-drive ...fd) Insert our compiled UEFI code and variable space
-	qemu-system-x86_64 -drive format=raw,file=$(BUILDDIR)/$(x86-64-uefiapp_TARGET).img \
+	qemu-system-x86_64 -drive format=raw,file=$(BUILDDIR_x86-64-uefiapp_CLANG)/$(x86-64-uefiapp_TARGET).img \
 	-cpu qemu64 -net none \
-	-drive if=pflash,format=raw,unit=0,file=$(BUILDDIR)/OVMF_CODE.fd -drive if=pflash,format=raw,unit=1,file=$(BUILDDIR)/OVMF_VARS.fd
+	-drive if=pflash,format=raw,unit=0,file=$(BUILDDIR_x86-64-uefiapp_CLANG)/OVMF_CODE.fd -drive if=pflash,format=raw,unit=1,file=$(BUILDDIR_x86-64-uefiapp_CLANG)/OVMF_VARS.fd
 
 
 
