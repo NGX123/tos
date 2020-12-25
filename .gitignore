@@ -1,3 +1,2 @@
-src/make/src
-src/make/tools
 src/build
+toolchain
