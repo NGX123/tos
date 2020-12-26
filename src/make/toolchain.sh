@@ -329,11 +329,6 @@ echo "Script took
 Seconds: $script_execution_time
 Minutes: $((script_execution_time / 60))"
 
-echo "
------ QEMU -----"
-qemu-system-i386 --version
-qemu-system-x86_64 --version
-
 if [ "$OVMF_BUILD_OPTION" == y ]
   then
     echo "
