@@ -1,5 +1,7 @@
 #! /bin/bash
 
+script_start_time=$(date +%s)
+
 CROSSPLATFORM_DEPENDENCIES="nasm binutils diffutils valgrind clang gcc qemu-system-x86 gnu-efi"
 CROSS_GCC_VERSION="9.3.0"
 CROSS_BINUTILS_VERSION="2.30"
@@ -318,6 +320,14 @@ fi
 
 
 ## CHECK OF INSTALLTION ##
+echo "
+----- Execution Time -----"
+script_end_time=$(date +%s)
+script_execution_time="$(($script_end_time-$script_start_time))"
+echo "Script took
+Seconds: $script_execution_time
+Minutes: $(($script_execution_time / 60))"
+
 echo "
 ----- QEMU -----"
 qemu-system-i386 --version
