@@ -12,6 +12,14 @@ MAKE_FOLDER=$(realpath ./make)
 mkdir -p ../toolchain/src
 TOOLCHAIN_SRC=$(realpath ../toolchain/src)
 
+# GCC variables
+export TARGET_x86_32=i686-elf
+export TARGET_x86_64=x86_64-elf
+export PREFIX=$(realpath $TOOLCHAIN_PREFIX)
+export PATH="$PREFIX/bin:$PATH"
+
+
+
 ## INSTALLATION CONFIGURATION ##
 OVMF_BUILD_OPTION=n
 CROSS_GNU_TOOLS_BUILD_OPTION=n
@@ -24,7 +32,6 @@ read -p "Do you want to configure other options(y/n): " EXTRA_CONFIG_OPTION
 if [ $EXTRA_CONFIG_OPTION == y ]
   then
     # GCC Toolchain Build option
-    echo "Note: all option does not currently work and only one gcc could be compiled simoultaneously"
     read -p "Should the x86_32/x86_64 cross-compiler be compiled(no/all/64/32): " CROSS_GNU_TOOLS_BUILD_OPTION
 
     # OVMF Build option
@@ -190,11 +197,6 @@ if [[ $CROSS_GNU_TOOLS_BUILD_OPTION == 32 || $CROSS_GNU_TOOLS_BUILD_OPTION == al
     wget https://ftp.gnu.org/gnu/gcc/gcc-"$CROSS_GCC_VERSION"/gcc-"$CROSS_GCC_VERSION".tar.gz
     tar -xzf gcc-"$CROSS_GCC_VERSION".tar.gz
     rm gcc-"$CROSS_GCC_VERSION".tar.gz
-
-    # Declare the variables
-    export PREFIX=$(realpath $TOOLCHAIN_PREFIX)
-    export TARGET=i686-elf
-    export PATH="$PREFIX/bin:$PATH"
 fi
 
 # Setup for compiling the x86_64 compiler
@@ -219,11 +221,6 @@ if [[ $CROSS_GNU_TOOLS_BUILD_OPTION == 64 || $CROSS_GNU_TOOLS_BUILD_OPTION == al
     echo "MULTILIB_OPTIONS += mno-red-zone
 MULTILIB_DIRNAMES += no-red-zone" > gcc-"$CROSS_GCC_VERSION"/gcc/config/i386/t-x86_64-elf
     cat "$MAKE_FOLDER"/config.gcc > gcc-"$CROSS_GCC_VERSION"/gcc/config.gcc
-
-    # Declare the variables
-    export PREFIX=$(realpath $TOOLCHAIN_PREFIX)
-    export TARGET=x86_64-elf
-    export PATH="$PREFIX/bin:$PATH"
 fi
 
 # Compile the GNU EFI toolkit
@@ -240,14 +237,14 @@ if [ $TOOLCHAIN_PM != macos ]
       then
         # Building binutils
         cd "$TOOLCHAIN_SRC"/binutils"$CROSS_BINUTILS_VERSION"_i686/build/
-        ../binutils-"$CROSS_BINUTILS_VERSION"/configure --target=$TARGET --prefix="$PREFIX" --with-sysroot --disable-nls --disable-werror
+        ../binutils-"$CROSS_BINUTILS_VERSION"/configure --target=$TARGET_x86_32 --prefix="$PREFIX" --with-sysroot --disable-nls --disable-werror
         make
         make install
 
         # Building GCC
         cd "$TOOLCHAIN_SRC"/gcc"$CROSS_GCC_VERSION"_i686/build/
-        which -- $TARGET-as || echo $TARGET-as is not in the PATH
-        ../gcc-"$CROSS_GCC_VERSION"/configure --target=$TARGET --prefix="$PREFIX" --disable-nls --enable-language=c,c++ --without-headers
+        which -- $TARGET_x86_32-as || echo $TARGET_x86_32-as is not in the PATH
+        ../gcc-"$CROSS_GCC_VERSION"/configure --target=$TARGET_x86_32 --prefix="$PREFIX" --disable-nls --enable-language=c,c++ --without-headers
         make all-gcc
         make all-target-libgcc
         make install-gcc
@@ -259,14 +256,14 @@ if [ $TOOLCHAIN_PM != macos ]
       then
         # Building binutils
         cd "$TOOLCHAIN_SRC"/binutils"$CROSS_BINUTILS_VERSION"_amd64/build/
-        ../binutils-"$CROSS_BINUTILS_VERSION"/configure --target=$TARGET --prefix="$PREFIX" --with-sysroot --disable-nls --disable-werror
+        ../binutils-"$CROSS_BINUTILS_VERSION"/configure --target=$TARGET_x86_64 --prefix="$PREFIX" --with-sysroot --disable-nls --disable-werror
         make
         make install
 
         # Building GCC
         cd "$TOOLCHAIN_SRC"/gcc"$CROSS_GCC_VERSION"_amd64/build/
-        which -- $TARGET-as || echo $TARGET-as is not in the PATH
-        ../gcc-"$CROSS_GCC_VERSION"/configure --target=$TARGET --prefix="$PREFIX" --disable-nls --enable-language=c,c++ --without-headers
+        which -- $TARGET_x86_64-as || echo $TARGET_x86_64-as is not in the PATH
+        ../gcc-"$CROSS_GCC_VERSION"/configure --target=$TARGET_x86_64 --prefix="$PREFIX" --disable-nls --enable-language=c,c++ --without-headers
         make all-gcc
         make all-target-libgcc
         make install-gcc
@@ -282,14 +279,14 @@ if [ $TOOLCHAIN_PM == macos ]
       then
         # Building binutils
         cd "$TOOLCHAIN_SRC"/binutils"$CROSS_BINUTILS_VERSION"_i686/build
-        ../binutils-"$CROSS_BINUTILS_VERSION"/configure --target=$TARGET --prefix="$PREFIX" --with-sysroot --disable-nls --disable-werror --enable-multilib --with-libiconv-prefix=/usr/local/opt/libiconv/
+        ../binutils-"$CROSS_BINUTILS_VERSION"/configure --target=$TARGET_x86_32 --prefix="$PREFIX" --with-sysroot --disable-nls --disable-werror --enable-multilib --with-libiconv-prefix=/usr/local/opt/libiconv/
         make
         make install
 
         # Building GCC
         cd "$TOOLCHAIN_SRC"/gcc"$CROSS_GCC_VERSION"_i686/build
-        which -- $TARGET-as || echo $TARGET-as is not in the PATH
-        ../gcc-"$CROSS_GCC_VERSION"/configure --target=$TARGET --prefix="$PREFIX" --disable-nls --enable-language=c,c++ --without-headers --enable-multilib --with-libiconv-prefix=/usr/local/opt/libiconv/
+        which -- $TARGET_x86_32-as || echo $TARGET_x86_32-as is not in the PATH
+        ../gcc-"$CROSS_GCC_VERSION"/configure --target=$TARGET_x86_32 --prefix="$PREFIX" --disable-nls --enable-language=c,c++ --without-headers --enable-multilib --with-libiconv-prefix=/usr/local/opt/libiconv/
         make all-gcc
         make all-target-libgcc
         make install-gcc
@@ -301,14 +298,14 @@ if [ $TOOLCHAIN_PM == macos ]
       then
         # Building binutils
         cd "$TOOLCHAIN_SRC"/binutils"$CROSS_BINUTILS_VERSION"_amd64/build/
-        ../binutils-"$CROSS_BINUTILS_VERSION"/configure --target=$TARGET --prefix="$PREFIX" --with-sysroot --disable-nls --disable-werror --enable-multilib --with-libiconv-prefix=/usr/local/opt/libiconv/
+        ../binutils-"$CROSS_BINUTILS_VERSION"/configure --target=$TARGET_x86_64 --prefix="$PREFIX" --with-sysroot --disable-nls --disable-werror --enable-multilib --with-libiconv-prefix=/usr/local/opt/libiconv/
         make
         make install
 
         # Building GCC
         cd "$TOOLCHAIN_SRC"/gcc"$CROSS_GCC_VERSION"_amd64/build/
-        which -- $TARGET-as || echo $TARGET-as is not in the PATH
-        ../gcc-"$CROSS_GCC_VERSION"/configure --target=$TARGET --prefix="$PREFIX" --disable-nls --enable-language=c,c++ --without-headers --enable-multilib --with-libiconv-prefix=/usr/local/opt/libiconv/
+        which -- $TARGET_x86_64-as || echo $TARGET_x86_64-as is not in the PATH
+        ../gcc-"$CROSS_GCC_VERSION"/configure --target=$TARGET_x86_64 --prefix="$PREFIX" --disable-nls --enable-language=c,c++ --without-headers --enable-multilib --with-libiconv-prefix=/usr/local/opt/libiconv/
         make all-gcc
         make all-target-libgcc
         make install-gcc
