@@ -336,6 +336,13 @@ if [ "$OVMF_BUILD_OPTION" == y ]
     ls "$TOOLCHAIN_PREFIX"/edk2/Build
 fi
 
+if [ "$GNUEFI_BUILD_OPTION" == y ]
+  then
+    echo "
+----- GNU-EFI Toolkit -----"
+  ls "$TOOLCHAIN_PREFIX"/gnu-efi/x86_64
+fi
+
 if [ "$EDK2_TOOLS_BUILD_OPTION" == y ]
   then
     echo "
