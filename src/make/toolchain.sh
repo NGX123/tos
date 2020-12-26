@@ -13,10 +13,14 @@ mkdir -p ../toolchain/src
 TOOLCHAIN_SRC=$(realpath ../toolchain/src)
 
 # GCC variables
-export TARGET_x86_32=i686-elf
-export TARGET_x86_64=x86_64-elf
-export PREFIX=$(realpath $TOOLCHAIN_PREFIX)
-export PATH="$PREFIX/bin:$PATH"
+export TARGET_x86_32
+export TARGET_x86_64
+export PREFIX
+export PATH
+TARGET_x86_32=i686-elf
+TARGET_x86_64=x86_64-elf
+PREFIX=$(realpath "$TOOLCHAIN_PREFIX")
+PATH="$PREFIX/bin:$PATH"
 
 
 
@@ -24,27 +28,27 @@ export PATH="$PREFIX/bin:$PATH"
 OVMF_BUILD_OPTION=n
 CROSS_GNU_TOOLS_BUILD_OPTION=n
 GNUEFI_BUILD_OPTION=n
-read -p "Package Manager(dnf, apt, macos, other): " TOOLCHAIN_PM
-read -p "Do you want to compile the EDK2 tools(y/n): " EDK2_TOOLS_BUILD_OPTION
-read -p "Do you want to configure other options(y/n): " EXTRA_CONFIG_OPTION
+read -r -p "Package Manager(dnf, apt, macos, other): " TOOLCHAIN_PM
+read -r -p "Do you want to compile the EDK2 tools(y/n): " EDK2_TOOLS_BUILD_OPTION
+read -r -p "Do you want to configure other options(y/n): " EXTRA_CONFIG_OPTION
 
 # Extra configuration of the build
-if [ $EXTRA_CONFIG_OPTION == y ]
+if [ "$EXTRA_CONFIG_OPTION" == y ]
   then
     # GCC Toolchain Build option
-    read -p "Should the x86_32/x86_64 cross-compiler be compiled(no/all/64/32): " CROSS_GNU_TOOLS_BUILD_OPTION
+    read -r -p "Should the x86_32/x86_64 cross-compiler be compiled(no/all/64/32): " CROSS_GNU_TOOLS_BUILD_OPTION
 
     # OVMF Build option
-    read -p "Should the UEFI be compiled(y/n): " OVMF_BUILD_OPTION
+    read -r -p "Should the UEFI be compiled(y/n): " OVMF_BUILD_OPTION
 
     # GNU-EFI Build option
-    read -p "Should the GNU-EFI be compiled(y/n): " GNUEFI_BUILD_OPTION
+    read -r -p "Should the GNU-EFI be compiled(y/n): " GNUEFI_BUILD_OPTION
 
     # Configure the build directory
-    read -p "Do you want to customize the build path(y/n): " PREFIX_OPTION
-    if [ $PREFIX_OPTION == y ]
+    read -r -p "Do you want to customize the build path(y/n): " PREFIX_OPTION
+    if [ "$PREFIX_OPTION" == y ]
       then
-        read -p "Enter a new build directory path: " TOOLCHAIN_PREFIX
+        read -r -p "Enter a new build directory path: " TOOLCHAIN_PREFIX
     fi
 fi
 
@@ -53,45 +57,45 @@ fi
 
 ## PACKAGE INSTALLATIONS ##
 # DNF Installations
-if [ $TOOLCHAIN_PM == dnf ]
+if [ "$TOOLCHAIN_PM" == dnf ]
   then
     # Install developer tools and headers
     sudo dnf -y install $CROSSPLATFORM_DEPENDENCIES @development-tools kernel-headers kernel-devel edk2-ovmf
 
     # Install x86/x86_64 Cross-compiler build dependencies
-    if [ $CROSS_GNU_TOOLS_BUILD_OPTION != no ]
+    if [ "$CROSS_GNU_TOOLS_BUILD_OPTION" != no ]
       then
         sudo dnf -y install gcc gcc-c++ make bison flex gmp-devel libmpc-devel mpfr-devel texinfo automake autoconf xorriso @development-tools
     fi
 
     # Install OVMF UEFI Dependencies
-    if [ $OVMF_BUILD_OPTION == y ]
+    if [ "$OVMF_BUILD_OPTION" == y ]
       then
         sudo dnf -y install @development-tools gcc-c++ iasl libuuid-devel nasm edk2-tools-python
     fi
 fi
 
 # APT Installations
-if [ $TOOLCHAIN_PM == apt ]
+if [ "$TOOLCHAIN_PM" == apt ]
   then
     # Install developer tools and headers
     sudo apt -y install $CROSSPLATFORM_DEPENDENCIES build-essential linux-headers-$(uname -r) ovmf
 
     # Install x86/x86_64 Cross-compiler build dependencies
-    if [ $CROSS_GNU_TOOLS_BUILD_OPTION != no ]
+    if [ "$CROSS_GNU_TOOLS_BUILD_OPTION" != no ]
       then
         sudo apt -y install build-essential bison flex libgmp3-dev libmpc-dev libmpfr-dev texinfo
     fi
 
     # Install OVMF UEFI build dependencies
-    if [ $OVMF_BUILD_OPTION == y ]
+    if [ "$OVMF_BUILD_OPTION" == y ]
       then
         sudo apt -y install build-essential uuid-dev iasl nasm python3-distutils
     fi
 fi
 
 # MacOS
-if [ $TOOLCHAIN_PM == macos ]
+if [ "$TOOLCHAIN_PM" == macos ]
   then
     # Packages
     brew install gdb nasm binutils diffutils coreutils
@@ -103,24 +107,24 @@ if [ $TOOLCHAIN_PM == macos ]
 fi
 
 # Other package managers
-if [ $TOOLCHAIN_PM == other ]
+if [ "$TOOLCHAIN_PM" == other ]
   then
     echo "If you are here, your package manager is probably not in the list, so you need to make sure all of the libs are installed before preceding, here is the list: "
-    echo $CROSSPLATFORM_DEPENDENCIES
+    echo "$CROSSPLATFORM_DEPENDENCIES"
 
     # GCC cross-compiler dependencies
-    if [ $CROSS_GNU_TOOLS_BUILD_OPTION != no ]
+    if [ "$CROSS_GNU_TOOLS_BUILD_OPTION" != no ]
       then
         echo "build-essentail(platform specific package), linux-headers, ovmf, bison, flex, gmp, libmpc, libmpfr, texinfo, xorriso, autoconf, automake"
     fi
 
     # OVMF dependencies
-    if [ $OVMF_BUILD_OPTION == y ]
+    if [ "$OVMF_BUILD_OPTION" == y ]
       then
         echo "build-essential uuid-dev iasl nasm python3-distutils"
     fi
 
-    read -p "Press any button to continue, if all libs are installed"
+    read -r -p "Press any button to continue, if all libs are installed"
 fi
 
 
@@ -135,7 +139,7 @@ if [[ $OVMF_BUILD_OPTION == y || $EDK2_TOOLS_BUILD_OPTION == y ]]
 
     # Download the source code
     git clone https://github.com/tianocore/edk2 "$TOOLCHAIN_PREFIX"/edk2/
-    cd "$TOOLCHAIN_PREFIX"/edk2/
+    cd "$TOOLCHAIN_PREFIX"/edk2/ || exit
     git submodule update --init
 fi
 
@@ -144,9 +148,9 @@ fi
 
 ## BUILD PROCCESS ##
 # Compile the OVMF UEFI
-if [ $OVMF_BUILD_OPTION == y ]
+if [ "$OVMF_BUILD_OPTION" == y ]
   then
-    cd "$TOOLCHAIN_PREFIX"/edk2/
+    cd "$TOOLCHAIN_PREFIX"/edk2/ || exit
     make -C BaseTools
     . edksetup.sh
     echo "
@@ -162,7 +166,7 @@ fi
 # Compile EDK2 Tools
 if [[ $EDK2_TOOLS_BUILD_OPTION == y && $OVMF_BUILD_OPTION != y ]]
   then
-    cd "$TOOLCHAIN_PREFIX"/edk2/
+    cd "$TOOLCHAIN_PREFIX"/edk2/ || exit
     make -C BaseTools
     . edksetup.sh
 fi
@@ -173,7 +177,7 @@ fi
 ## EXTRA ##
 # If kernel headers installation on debian not work check "ls -l /usr/src/linux-headers-$(uname -r)"(if does not exist then there are no headers), insetad try to find the latest version if not installed
 # Setup for GNU-EFI toolkit compilation
-if [ $GNUEFI_BUILD_OPTION == y ]
+if [ "$GNUEFI_BUILD_OPTION" == y ]
   then
     mkdir -p "$TOOLCHAIN_PREFIX"/gnu-efi/
     git clone https://git.code.sf.net/p/gnu-efi/code "$TOOLCHAIN_PREFIX"/gnu-efi/
@@ -188,12 +192,12 @@ if [[ $CROSS_GNU_TOOLS_BUILD_OPTION == 32 || $CROSS_GNU_TOOLS_BUILD_OPTION == al
     mkdir -p "$TOOLCHAIN_PREFIX"
 
     # Download and unpack source code
-    cd "$TOOLCHAIN_SRC"/binutils"$CROSS_BINUTILS_VERSION"_i686/
+    cd "$TOOLCHAIN_SRC"/binutils"$CROSS_BINUTILS_VERSION"_i686/ || exit
     wget https://ftp.gnu.org/gnu/binutils/binutils-"$CROSS_BINUTILS_VERSION".tar.gz
     tar -xzf binutils-"$CROSS_BINUTILS_VERSION".tar.gz
     rm binutils-"$CROSS_BINUTILS_VERSION".tar.gz
 
-    cd "$TOOLCHAIN_SRC"/gcc"$CROSS_GCC_VERSION"_i686/
+    cd "$TOOLCHAIN_SRC"/gcc"$CROSS_GCC_VERSION"_i686/ || exit
     wget https://ftp.gnu.org/gnu/gcc/gcc-"$CROSS_GCC_VERSION"/gcc-"$CROSS_GCC_VERSION".tar.gz
     tar -xzf gcc-"$CROSS_GCC_VERSION".tar.gz
     rm gcc-"$CROSS_GCC_VERSION".tar.gz
@@ -208,12 +212,12 @@ if [[ $CROSS_GNU_TOOLS_BUILD_OPTION == 64 || $CROSS_GNU_TOOLS_BUILD_OPTION == al
     mkdir -p "$TOOLCHAIN_PREFIX"
 
     # Download and unpack source code
-    cd "$TOOLCHAIN_SRC"/binutils"$CROSS_BINUTILS_VERSION"_amd64/
+    cd "$TOOLCHAIN_SRC"/binutils"$CROSS_BINUTILS_VERSION"_amd64/ || exit
     wget https://ftp.gnu.org/gnu/binutils/binutils-"$CROSS_BINUTILS_VERSION".tar.gz
     tar -xzf binutils-"$CROSS_BINUTILS_VERSION".tar.gz
     rm binutils-"$CROSS_BINUTILS_VERSION".tar.gz
 
-    cd "$TOOLCHAIN_SRC"/gcc"$CROSS_GCC_VERSION"_amd64/
+    cd "$TOOLCHAIN_SRC"/gcc"$CROSS_GCC_VERSION"_amd64/ || exit
     wget https://ftp.gnu.org/gnu/gcc/gcc-"$CROSS_GCC_VERSION"/gcc-"$CROSS_GCC_VERSION".tar.gz
     tar -xzf gcc-"$CROSS_GCC_VERSION".tar.gz
     rm gcc-"$CROSS_GCC_VERSION".tar.gz
@@ -224,25 +228,25 @@ MULTILIB_DIRNAMES += no-red-zone" > gcc-"$CROSS_GCC_VERSION"/gcc/config/i386/t-x
 fi
 
 # Compile the GNU EFI toolkit
-if [ $GNUEFI_BUILD_OPTION == y ]
+if [ "$GNUEFI_BUILD_OPTION" == y ]
   then
-    cd "$TOOLCHAIN_PREFIX"/gnu-efi/
+    cd "$TOOLCHAIN_PREFIX"/gnu-efi/ || exit
     make
 fi
 
 # Compile the x86_32 cross-compiler
-if [ $TOOLCHAIN_PM != macos ]
+if [ "$TOOLCHAIN_PM" != macos ]
   then
     if [[ $CROSS_GNU_TOOLS_BUILD_OPTION == 32 || $CROSS_GNU_TOOLS_BUILD_OPTION == all ]]
       then
         # Building binutils
-        cd "$TOOLCHAIN_SRC"/binutils"$CROSS_BINUTILS_VERSION"_i686/build/
+        cd "$TOOLCHAIN_SRC"/binutils"$CROSS_BINUTILS_VERSION"_i686/build/ || exit
         ../binutils-"$CROSS_BINUTILS_VERSION"/configure --target=$TARGET_x86_32 --prefix="$PREFIX" --with-sysroot --disable-nls --disable-werror
         make
         make install
 
         # Building GCC
-        cd "$TOOLCHAIN_SRC"/gcc"$CROSS_GCC_VERSION"_i686/build/
+        cd "$TOOLCHAIN_SRC"/gcc"$CROSS_GCC_VERSION"_i686/build/ || exit
         which -- $TARGET_x86_32-as || echo $TARGET_x86_32-as is not in the PATH
         ../gcc-"$CROSS_GCC_VERSION"/configure --target=$TARGET_x86_32 --prefix="$PREFIX" --disable-nls --enable-language=c,c++ --without-headers
         make all-gcc
@@ -255,13 +259,13 @@ if [ $TOOLCHAIN_PM != macos ]
     if [[ $CROSS_GNU_TOOLS_BUILD_OPTION == 64 || $CROSS_GNU_TOOLS_BUILD_OPTION == all ]]
       then
         # Building binutils
-        cd "$TOOLCHAIN_SRC"/binutils"$CROSS_BINUTILS_VERSION"_amd64/build/
+        cd "$TOOLCHAIN_SRC"/binutils"$CROSS_BINUTILS_VERSION"_amd64/build/ || exit
         ../binutils-"$CROSS_BINUTILS_VERSION"/configure --target=$TARGET_x86_64 --prefix="$PREFIX" --with-sysroot --disable-nls --disable-werror
         make
         make install
 
         # Building GCC
-        cd "$TOOLCHAIN_SRC"/gcc"$CROSS_GCC_VERSION"_amd64/build/
+        cd "$TOOLCHAIN_SRC"/gcc"$CROSS_GCC_VERSION"_amd64/build/ || exit
         which -- $TARGET_x86_64-as || echo $TARGET_x86_64-as is not in the PATH
         ../gcc-"$CROSS_GCC_VERSION"/configure --target=$TARGET_x86_64 --prefix="$PREFIX" --disable-nls --enable-language=c,c++ --without-headers
         make all-gcc
@@ -272,19 +276,19 @@ if [ $TOOLCHAIN_PM != macos ]
 fi
 
 # Seperate build instructions if the MacOS is used
-if [ $TOOLCHAIN_PM == macos ]
+if [ "$TOOLCHAIN_PM" == macos ]
   then
     # Compile x86-32 gcc cross-compiler
     if [[ $CROSS_GNU_TOOLS_BUILD_OPTION == 32 || $CROSS_GNU_TOOLS_BUILD_OPTION == all ]]
       then
         # Building binutils
-        cd "$TOOLCHAIN_SRC"/binutils"$CROSS_BINUTILS_VERSION"_i686/build
+        cd "$TOOLCHAIN_SRC"/binutils"$CROSS_BINUTILS_VERSION"_i686/build || exit
         ../binutils-"$CROSS_BINUTILS_VERSION"/configure --target=$TARGET_x86_32 --prefix="$PREFIX" --with-sysroot --disable-nls --disable-werror --enable-multilib --with-libiconv-prefix=/usr/local/opt/libiconv/
         make
         make install
 
         # Building GCC
-        cd "$TOOLCHAIN_SRC"/gcc"$CROSS_GCC_VERSION"_i686/build
+        cd "$TOOLCHAIN_SRC"/gcc"$CROSS_GCC_VERSION"_i686/build || exit
         which -- $TARGET_x86_32-as || echo $TARGET_x86_32-as is not in the PATH
         ../gcc-"$CROSS_GCC_VERSION"/configure --target=$TARGET_x86_32 --prefix="$PREFIX" --disable-nls --enable-language=c,c++ --without-headers --enable-multilib --with-libiconv-prefix=/usr/local/opt/libiconv/
         make all-gcc
@@ -297,13 +301,13 @@ if [ $TOOLCHAIN_PM == macos ]
     if [[ $CROSS_GNU_TOOLS_BUILD_OPTION == 64 || $CROSS_GNU_TOOLS_BUILD_OPTION == all ]]
       then
         # Building binutils
-        cd "$TOOLCHAIN_SRC"/binutils"$CROSS_BINUTILS_VERSION"_amd64/build/
+        cd "$TOOLCHAIN_SRC"/binutils"$CROSS_BINUTILS_VERSION"_amd64/build/ || exit
         ../binutils-"$CROSS_BINUTILS_VERSION"/configure --target=$TARGET_x86_64 --prefix="$PREFIX" --with-sysroot --disable-nls --disable-werror --enable-multilib --with-libiconv-prefix=/usr/local/opt/libiconv/
         make
         make install
 
         # Building GCC
-        cd "$TOOLCHAIN_SRC"/gcc"$CROSS_GCC_VERSION"_amd64/build/
+        cd "$TOOLCHAIN_SRC"/gcc"$CROSS_GCC_VERSION"_amd64/build/ || exit
         which -- $TARGET_x86_64-as || echo $TARGET_x86_64-as is not in the PATH
         ../gcc-"$CROSS_GCC_VERSION"/configure --target=$TARGET_x86_64 --prefix="$PREFIX" --disable-nls --enable-language=c,c++ --without-headers --enable-multilib --with-libiconv-prefix=/usr/local/opt/libiconv/
         make all-gcc
@@ -320,27 +324,27 @@ fi
 echo "
 ----- Execution Time -----"
 script_end_time=$(date +%s)
-script_execution_time="$(($script_end_time-$script_start_time))"
+script_execution_time="$((script_end_time-script_start_time))"
 echo "Script took
 Seconds: $script_execution_time
-Minutes: $(($script_execution_time / 60))"
+Minutes: $((script_execution_time / 60))"
 
 echo "
 ----- QEMU -----"
 qemu-system-i386 --version
 qemu-system-x86_64 --version
 
-if [ $OVMF_BUILD_OPTION == y ]
+if [ "$OVMF_BUILD_OPTION" == y ]
   then
     echo "
-    ----- OVMF -----"
+----- OVMF -----"
     ls "$TOOLCHAIN_PREFIX"/edk2/Build
 fi
 
-if [ $EDK2_TOOLS_BUILD_OPTION == y ]
+if [ "$EDK2_TOOLS_BUILD_OPTION" == y ]
   then
     echo "
-    ----- EDK2 Build Tools -----"
+----- EDK2 Build Tools -----"
     ls "$TOOLCHAIN_PREFIX"/edk2/
 fi
 
@@ -348,17 +352,13 @@ fi
 if [[ $CROSS_GNU_TOOLS_BUILD_OPTION == 64 || $CROSS_GNU_TOOLS_BUILD_OPTION == all ]]
   then
     echo "
-    --- GCC Toolchain 64 bit ---"
-    $TOOLCHAIN_PREFIX/bin/x86_64-elf-gcc --version
-    find $PREFIX/lib -name 'libgcc.a'
+--- GCC Toolchain 64 bit ---"
+    "$TOOLCHAIN_PREFIX"/bin/x86_64-elf-gcc --version
+    find "$PREFIX"/lib -name 'libgcc.a'
 fi
 if [[ $CROSS_GNU_TOOLS_BUILD_OPTION == 32 || $CROSS_GNU_TOOLS_BUILD_OPTION == all ]]
   then
     echo "
-    --- GCC Toolchain 32 bit ---"
-    $TOOLCHAIN_PREFIX/bin/i686-elf-gcc --version
+--- GCC Toolchain 32 bit ---"
+    "$TOOLCHAIN_PREFIX"/bin/i686-elf-gcc --version
 fi
-
-# Remove if direcotyr was not populated
-rmdir $TOOLCHAIN_SRC
-rmdir $TOOLCHAIN_PREFIX
