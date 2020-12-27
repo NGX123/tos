@@ -24,7 +24,10 @@
 	* Make it a character device
 		* Changing modes would be done with ioctl() syscall
 		* Add support for the graphics mode
-* Other: RTC, USB, PCI, ATA
+* Other
+	* RTC
+	* PCI
+	* ATA
 
 
 ### Modern Hardware
@@ -37,6 +40,7 @@
 * HPET(RTC & PIT alternative)
 * AHCI hard drive access(IDE alternative)
 * ACPICA support
+* USB support(PS/2, Serial, Parallel... alternative)
 
 
 
