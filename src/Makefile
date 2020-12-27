@@ -49,11 +49,11 @@ LDFLAGS_x86-64-uefiapp_CLANG 	= $(EFI_OBJS) -nostdlib -znocombreloc -shared -Bsy
 #Flags - (-j)Only copy the specified section to output; (--target=efi-app-x86_64)Select the platform
 OBJCPYFLAGS 					= -j .text -j .sdata -j .data -j .dynamic -j .dynsym -j .rel -j .rela -j .reloc --target=efi-app-x86_64
 BUILDDIR_x86-64-uefiapp_CLANG	= $(BUILDDIR_x86-64-uefiapp)
-SOURCES_x86-64-uefiapp_CLANG 	= uefi/*.c
+SOURCES_x86-64-uefiapp_CLANG 	= $(UEFI_SRC_DIR)/*.c
 
 # x86-64-uefiapp_edk2 #
 BUILDDIR_x86-64-uefiapp_EDK2 	= $(EDK2)/UefiAppBootloaderPkg
-SOURCES_x86-64-uefiapp_EDK2 	= uefi/*.c
+SOURCES_x86-64-uefiapp_EDK2 	= $(UEFI_SRC_DIR)/*.c
 
 
 ## EFI ##
@@ -115,7 +115,7 @@ build_x86-64-uefiapp_edk2:
 	rm -rf $(BUILDDIR_x86-64-uefiapp_EDK2)
 	mkdir -p $(BUILDDIR_x86-64-uefiapp)
 
-	cp -r uefi $(BUILDDIR_x86-64-uefiapp_EDK2)
+	cp -r $(UEFI_SRC_DIR) $(BUILDDIR_x86-64-uefiapp_EDK2)
 	cd $(EDK2) && \
 	. ./edksetup.sh &&		\
 	build -p UefiAppBootloaderPkg/$(TARGET_x86-64-uefiapp).dsc -t GCC5 -a X64
