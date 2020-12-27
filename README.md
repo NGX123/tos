@@ -47,8 +47,8 @@ Answears to questions
 ### Build and Run
 There are multiple options on how the OS could be built which will be later included in a little manual but for now, if you have only compiled the EDK2 toolkit as stated above, the options to build and run the OS are:
 
+_Note: These options are already fully packed with all steps of building and will automatically run the OS in qemu after the build_
+
 `make all_x86-32_clang` - compile 32 bit OS that can boot from x86 PC/VM with PC-BIOS firmware
 
 `make all_x86-64-uefiapp_clang` or `make all_x86-64-uefiapp_edk2` - compile 64 bit OS that can boot from x86 PC/VM with UEFI firmware
-
-_Note: These options are already fully packed with all steps of building and will automatically run the OS in qemu after the build_
