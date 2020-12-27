@@ -78,24 +78,24 @@ all_x86-64-uefiapp_edk2:	build_x86-64-uefiapp_edk2 disk_x86-64-uefiapp qemu_x86-
 # Compile code for x86-32 with gcc #
 build_x86-32_gcc:
 	rm -rf $(BUILDDIR_x86-32_GCC)
-	mkdir 				-p 													$(BUILDDIR_x86-32_GCC)
+	mkdir 				-p 														$(BUILDDIR_x86-32_GCC)
 
-	$(AS_x86-32_GCC) 	$(ASFLAGS_x86-32_GCC) 	$(INIT_SOURCES_x86-32)/boot.s 		-o 	$(BUILDDIR_x86-32_GCC)/boot.o
+	$(AS_x86-32_GCC) 	$(ASFLAGS_x86-32_GCC) 	$(INIT_SOURCES_x86-32)/boot.s 	-o 	$(BUILDDIR_x86-32_GCC)/boot.o
 	$(CC_x86-32_GCC) 	$(CFLAGS_x86-32_GCC) 	$(SOURCES_x86-32_GCC)
-	mv 											*.o 						$(BUILDDIR_x86-32_GCC)
-	$(CC_x86-32_GCC) 	$(LDFLAGS_x86-32_GCC) 	$(OBJECTS_x86-32_GCC)		-o $(BUILDDIR_x86-32_GCC)/os.o
+	mv 											*.o 							$(BUILDDIR_x86-32_GCC)
+	$(CC_x86-32_GCC) 	$(LDFLAGS_x86-32_GCC) 	$(OBJECTS_x86-32_GCC)			-o $(BUILDDIR_x86-32_GCC)/os.o
 
 
 ## CLANG/LLVM ##
 # Compile code for x86-32 with clang #
 build_x86-32_clang:
 	rm -rf $(BUILDDIR_x86-32_CLANG)
-	mkdir 				-p 													$(BUILDDIR_x86-32_CLANG)
+	mkdir 				-p 															$(BUILDDIR_x86-32_CLANG)
 
 	$(AS_x86-32_CLANG) 	$(ASFLAGS_x86-32_CLANG) 	$(INIT_SOURCES_x86-32)/boot.s	-o $(BUILDDIR_x86-32_CLANG)/boot.o
 	$(CC_x86-32_CLANG) 	$(CFLAGS_x86-32_CLANG)  	$(SOURCES_x86-32_CLANG)
-	mv												*.o						$(BUILDDIR_x86-32_CLANG)
-	$(LD_x86-32_CLANG)	$(LDFLAGS_x86-32_CLANG)		$(OBJECTS_x86-32_CLANG)	-o $(BUILDDIR_x86-32_CLANG)/os.o
+	mv												*.o								$(BUILDDIR_x86-32_CLANG)
+	$(LD_x86-32_CLANG)	$(LDFLAGS_x86-32_CLANG)		$(OBJECTS_x86-32_CLANG)			-o $(BUILDDIR_x86-32_CLANG)/os.o
 
 # Compile code for x86-64-uefi with clang #
 build_x86-64-uefiapp_clang:
