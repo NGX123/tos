@@ -67,10 +67,8 @@ EFI_OBJS						= -T $(EFI_LINK_SCRIPT) -L /usr/lib64/gnuefi -L /usr/lib -L /usr/l
 
 
 ### START ###
-all: 						x86-64_gcc
-all_x86-64_gcc: 			build_x86-64_gcc
+all: 						all_x86-32_clang
 all_x86-32_gcc: 			build_x86-32_gcc disk_x86-32-bios qemu_x86-32-bios
-all_x86-64_clang:			build_x86-64_clang
 all_x86-32_clang:			build_x86-32_clang disk_x86-32-bios qemu_x86-32-bios
 all_x86-64-uefiapp_clang:	build_x86-64-uefiapp_clang disk_x86-64-uefiapp qemu_x86-64-uefiapp
 all_x86-64-uefiapp_edk2:	build_x86-64-uefiapp_edk2 disk_x86-64-uefiapp qemu_x86-64-uefiapp
@@ -79,11 +77,6 @@ all_x86-64-uefiapp_edk2:	build_x86-64-uefiapp_edk2 disk_x86-64-uefiapp qemu_x86-
 
 ### BUILD ###
 ## GCC ##
-# Compile code for x86-64 with gcc #
-build_x86-64_gcc:
-	rm -rf $(BUILDDIR_x86-64_GCC)
-	echo "No source to compile yet"
-
 # Compile code for x86-32 with gcc #
 build_x86-32_gcc:
 	rm -rf $(BUILDDIR_x86-32_GCC)
@@ -96,11 +89,6 @@ build_x86-32_gcc:
 
 
 ## CLANG/LLVM ##
-# Compile code for x86-64 with clang
-build_x86-64_clang:
-	rm -rf $(BUILDDIR_x86-64_CLANG)
-	echo "No source to compile yet"
-
 # Compile code for x86-32 with clang #
 build_x86-32_clang:
 	rm -rf $(BUILDDIR_x86-32_CLANG)
@@ -165,15 +153,6 @@ disk_x86-32-bios:
 
 
 ### QEMU ###
-# Start qemu on 64-bit UEFI-only mode CPU #
-qemu_x86-64-uefi:
-	cp /usr/share/OVMF/OVMF_CODE.fd /usr/share/OVMF/OVMF_VARS.fd $(BUILDDIR_x86-64)
-	qemu-system-x86_64 -cpu qemu64 \
-	-drive if=pflash,format=raw,unit=0,file=$(BUILDDIR_x86-64)/OVMF_CODE.fd,readonly=on \
-	-drive if=pflash,format=raw,unit=1,file=$(BUILDDIR_x86-64)/OVMF_VARS.fd \
-	-net none \
-	-cdrom $(BUILDDIR_x86-64)/os.iso
-
 # Start qemu on 32-bit BIOS-mode CPU #
 qemu_x86-32-bios:
 	qemu-system-i386 -cdrom $(BUILDDIR_x86-32)/os.iso
@@ -204,9 +183,18 @@ clean:
 
 
 ### Extra ###
-# x86-64_gcc #
-CC_x86-64_GCC 					= $(TOOLCHAIN_PREFIX)/x86_64-elf-gcc
-AS_x86-64_GCC 					= nasm
-CFLAGS_x86-64_GCC 				= -ffreestanding -mcmodel=large -mno-red-zone -mno-mmx -mno-sse -mno-sse2 $(CFLAGS_GLOBAL)	# (-ffreestanding) Startup not at main() and no standard lib; (-mcmodel=large) No assumptions about addresses; (-mno-red-zone -mno-mmx -mno-sse -mno-sse2) Disable CPU specific features that could generate runtime errors
-LDFLAGS_x86-64_GCC 				= -T uefi/linker.ld -ffreestanding -nostdlib -l gcc											# (-T script.ld) Use custom linker script; (-ffreestanding)Startup not at main() and no standard lib; (-nostdlib) Do not link with standard library; (-l gcc) Link with gcc library
-BUILDDIR_x86-64_GCC 			= $(BUILDDIR_x86-64)
+# # x86-64_gcc #
+# CC_x86-64_GCC 					= $(TOOLCHAIN_PREFIX)/x86_64-elf-gcc
+# AS_x86-64_GCC 					= nasm
+# CFLAGS_x86-64_GCC 				= -ffreestanding -mcmodel=large -mno-red-zone -mno-mmx -mno-sse -mno-sse2 $(CFLAGS_GLOBAL)	# (-ffreestanding) Startup not at main() and no standard lib; (-mcmodel=large) No assumptions about addresses; (-mno-red-zone -mno-mmx -mno-sse -mno-sse2) Disable CPU specific features that could generate runtime errors
+# LDFLAGS_x86-64_GCC 				= -T uefi/linker.ld -ffreestanding -nostdlib -l gcc											# (-T script.ld) Use custom linker script; (-ffreestanding)Startup not at main() and no standard lib; (-nostdlib) Do not link with standard library; (-l gcc) Link with gcc library
+# BUILDDIR_x86-64_GCC 			= $(BUILDDIR_x86-64)
+
+# # Start qemu on 64-bit UEFI-only mode CPU #
+# qemu_x86-64-uefi:
+# 	cp /usr/share/OVMF/OVMF_CODE.fd /usr/share/OVMF/OVMF_VARS.fd $(BUILDDIR_x86-64)
+# 	qemu-system-x86_64 -cpu qemu64 \
+# 	-drive if=pflash,format=raw,unit=0,file=$(BUILDDIR_x86-64)/OVMF_CODE.fd,readonly=on \
+# 	-drive if=pflash,format=raw,unit=1,file=$(BUILDDIR_x86-64)/OVMF_VARS.fd \
+# 	-net none \
+# 	-cdrom $(BUILDDIR_x86-64)/os.iso
