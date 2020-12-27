@@ -1,11 +1,11 @@
 --- Books ---
 	- Practical -
-		+ OS Design and Implementation - Andrew Tanenbaum
-		+ MMURTL - Richard Burgess 
+		+ OSs: Design and Implementation - Andrew Tanenbaum
+		+ MMURTL - Richard Burgess
 
 	- Theory -
 		+ Modern OSs - Andrew Tanenbaum
-		+ Operating Systems: 3 Easy pieces - Remzi Arpaci-Dusseau 
+		+ Operating Systems: 3 Easy pieces - Remzi Arpaci-Dusseau
 		+ OS Concepts - Avi Silberschatz
 
 	- Based on Existing OSs -
@@ -53,10 +53,13 @@
 
 
 -- Source Code ---
-	+ Linux 0.01-0.99 - https://mirrors.edge.kernel.org/pub/linux/kernel/Historic/
-	+ All UNIX Versions - https://minnie.tuhs.org/cgi-bin/utree.pl
-	+ xv6 MIT OS - https://pdos.csail.mit.edu/6.828/2012/
-	+ Pint Harward OS - https://web.stanford.edu/class/cs140/projects/pintos/pintos_1.html
-	+ Raspberry Pi OS - https://github.com/s-matyukevich/raspberry-pi-os
-	+ Minix 1,2 - https://wiki.minix3.org/doku.php?id=www:download:previousversions
-	+ Melvix OS - https://github.com/marvinborner/Melvix
+	- Professional -
+		+ UNIX(All versions) - https://minnie.tuhs.org/cgi-bin/utree.pl
+		+ Minix 1,2 - https://wiki.minix3.org/doku.php?id=www:download:previousversions
+		+ Linux 0.01-0.99 - https://mirrors.edge.kernel.org/pub/linux/kernel/Historic/
+
+	- Hobby/Educational -
+		+ xv6 MIT OS - https://pdos.csail.mit.edu/6.828/2012/
+		+ Pint Harward OS - https://web.stanford.edu/class/cs140/projects/pintos/pintos_1.html
+		+ Raspberry Pi OS - https://github.com/s-matyukevich/raspberry-pi-os
+		+ Melvix OS - https://github.com/marvinborner/Melvix
