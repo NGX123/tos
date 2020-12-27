@@ -47,7 +47,7 @@ CC_x86-64-uefiapp_CLANG 		= clang # Can be changed to gcc, then change -DHAVE_US
 LD_x86-64-uefiapp_CLANG 		= ld
 OBJCPY 							= objcopy
 #Flags - (-fno-stack-protector)Disable monitoring variable at stack end to indicate overflow if overwritten; (-fpic)Position independent code(can be loaded anywhere in memory); (-fshort-wchar)Makes wchar_t short(2 byte), (-mno-red-zone)Disables feature according to ABI; (-DHAVE_USE_MS_ABI)Use windows function calling convention(it is used by UEFI); (-D GNUEFI_BUILD) Define a macro to switch my code from EDK2 to gnuefi(macro checking made by me)
-CFLAGS_x86-64-uefiapp_CLANG		= $(EFI_INCS) -fno-stack-protector -fpic -fshort-wchar -mno-red-zone -DHAVE_USE_MS_ABI -D GNUEFI_BUILD -Wall -Wextra -c
+CFLAGS_x86-64-uefiapp_CLANG		= $(EFI_INCS) -fno-stack-protector -fpic -fshort-wchar -mno-red-zone -DHAVE_USE_MS_ABI -D GNUEFI_BUILD $(CFLAGS_GLOBAL)
 #Flags - (-nostdlib)Do not link against any libs except specified; (-znocombreloc)Don't combine relocation sections; (-shared)Create a shared lib, for later conversion to binary; (-Bsymbolic)Bind global function references locally; (-l efi, -l gnuefi)Link with GNU EFI libraries
 LDFLAGS_x86-64-uefiapp_CLANG 	= $(EFI_OBJS) -nostdlib -znocombreloc -shared -Bsymbolic -l efi -l gnuefi
 #Flags - (-j)Only copy the specified section to output; (--target=efi-app-x86_64)Select the platform
