@@ -22,7 +22,7 @@ LDFLAGS_x86-64_GCC 				= -T uefi/linker.ld -ffreestanding -nostdlib -l gcc						
 BUILDDIR_x86-64_GCC 			= $(BUILDDIR_x86-64)
 
 # x86-32_gcc toolchain #
-CC_x86-32_GCC 					= $(TOOLCHAIN_PREFIX)i686-elf-gcc
+CC_x86-32_GCC 					= $(TOOLCHAIN_PREFIX)/i686-elf-gcc
 AS_x86-32_GCC 					= nasm
 ASFLAGS_x86-32_GCC 				= -felf32														# (-felf32) Set the target architecture to x86_32-elf
 CFLAGS_x86-32_GCC 				= -I libs/headers -std=gnu99 -ffreestanding $(CFLAGS_GLOBAL)	# (-I libs) Include the custo c library; (-std=gnu99) Becuase of code specifics should be older standard; (-ffreestanding) Startup not at main() and no standard lib
