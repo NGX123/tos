@@ -17,6 +17,7 @@
 * [PCI](https://wiki.osdev.org/PCI)
 * [ACPICA support](https://wiki.osdev.org/Category:ACPI)
 * [ATA](https://wiki.osdev.org/Category:ATA)
+* [Advanced integrated peripheral](https://wiki.osdev.org/Advanced_Integrated_Peripheral)
 	1. [PIO(Old, easier mode)](https://wiki.osdev.org/ATA_PIO_Mode)
 	2. [AHCI(Modern SATA native way)](https://wiki.osdev.org/AHCI)
 * Time devices
