@@ -68,6 +68,7 @@
 	* [BaseKernel - education all OS with all nesecarry parts(interrupts, video...)(14k lines)](https://github.com/dthain/basekernel)
 
 * Hobby
+	* [SkiftOS, full featured hobby OS(10k)](https://github.com/skiftOS/skift)
 	* [Micro OS - smallest OS with all PC hardware support(700 lines)](https://github.com/ssaroussi/Micro-OS)
 	* [Melvix OS(8k lines)](https://github.com/marvinborner/Melvix)
 	* [Raspberry Pi OS(10k lines)](https://github.com/s-matyukevich/raspberry-pi-os)
