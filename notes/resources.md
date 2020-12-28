@@ -26,6 +26,7 @@
 
 
 ## Specifications
+* [Writing an Operating system](https://wiki.osdev.org/Creating_an_Operating_System)
 * [Intel i386(80386)(1986) Programmers Manual](https://css.csail.mit.edu/6.858/2014/readings/i386.pdf)
 * [Intel 64/IA-32 Programmers Manual](https://software.intel.com/content/www/us/en/develop/articles/intel-sdm.html)
 * [UEFI Specifications](https://www.uefi.org/specifications)
