@@ -46,6 +46,8 @@
 	* [MIT OS Tasks](https://pdos.csail.mit.edu/6.828/2016/homework/)
 	* [MIT OS Course](https://ocw.mit.edu/courses/electrical-engineering-and-computer-science/6-828-operating-system-engineering-fall-2012/index.htm)
 	* [MIT OS Course Practical](https://pdos.csail.mit.edu/6.828/2020/schedule.html)
+	* [xv6 OS MIT Practical Course](https://pdos.csail.mit.edu/6.828/2012/)
+	* [PintOS Hardward PracticalCourse](https://web.stanford.edu/class/cs140/projects/pintos/pintos_1.html)
 
 * Other
 	* [Rust RISC-V OS](https://osblog.stephenmarz.com/index.html)
@@ -56,12 +58,16 @@
 
 ## Source Code
 * Professional
-	* [UNIX(All versions)](https://minnie.tuhs.org/cgi-bin/utree.pl)
-	* [Minix 1,2](https://wiki.minix3.org/doku.php?id=www:download:previousversions)
-	* [Linux 0.01-0.99](https://mirrors.edge.kernel.org/pub/linux/kernel/Historic/)
+	* [UNIX(All versions)(10k)](https://minnie.tuhs.org/cgi-bin/utree.pl)
+	* [Minix 1,2(50k)](https://wiki.minix3.org/doku.php?id=www:download:previousversions)
+	* [Linux 0.01-0.99(10k)](https://mirrors.edge.kernel.org/pub/linux/kernel/Historic/)
+	* [LittleKernel - ARM/Android proffessional kernel/bootloader(700k)](https://github.com/littlekernel/lk)
 
-* Hobby/Educational
-	* [xv6 MIT OS](https://pdos.csail.mit.edu/6.828/2012/)
-	* [Pint Harward OS](https://web.stanford.edu/class/cs140/projects/pintos/pintos_1.html)
-	* [Raspberry Pi OS](https://github.com/s-matyukevich/raspberry-pi-os)
-	* [Melvix OS](https://github.com/marvinborner/Melvix)
+* Educational
+	* [xv6(6k lines)](https://github.com/mit-pdos/xv6-public)
+	* [BaseKernel - education all OS with all nesecarry parts(interrupts, video...)(14k lines)](https://github.com/dthain/basekernel)
+
+* Hobby
+	* [Micro OS - smallest OS with all PC hardware support(700 lines)](https://github.com/ssaroussi/Micro-OS)
+	* [Melvix OS(8k lines)](https://github.com/marvinborner/Melvix)
+	* [Raspberry Pi OS(10k lines)](https://github.com/s-matyukevich/raspberry-pi-os)
