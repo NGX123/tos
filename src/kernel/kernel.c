@@ -1,7 +1,7 @@
 // File: kernel.c
 // Description: this is the main file which starts all other files
 
-#include "kernel.h"
+#include "headers/kernel.h"
 
 // Core function of the kernel that is called by bootloader
 void kernel_main(){
