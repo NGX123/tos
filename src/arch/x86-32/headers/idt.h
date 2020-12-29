@@ -28,11 +28,14 @@ struct idt_pointer{
 } __attribute__((packed));
 
 
+// PIC Remapping
+extern void picRemap();
+
 // IDT intialization
-extern void idt_init();
+extern void idtInit();
 
 // IDT loading ASM routine
-extern void load_idt();
+extern void idtLoad();
 
 // ASM interrupt handler addresses
 extern int irq0_handler_asm();

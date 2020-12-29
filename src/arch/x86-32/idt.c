@@ -8,9 +8,8 @@ struct idt_entry IDT[IDT_COUNT];
 struct idt_pointer ip;
 
 
-// Initializes the IDT
-void idt_init(){
-    // Remap the PIC
+// PIC Remapping
+void picRemap(){
     outb(0x20, 0x11);
     outb(0xA0, 0x11);
     outb(0x21, 0x20);
@@ -21,7 +20,11 @@ void idt_init(){
     outb(0xA1, 0x01);
     outb(0x21, 0x0);
     outb(0xA1, 0x0);
+}
 
+// Initializes the IDT
+void idtInit(){
+    picRemap();
 
     // Write the entries into IDT
 	IDT[32].offset_lowerbits = (uint32_t)irq0_handler_asm & 0xffff;
@@ -123,7 +126,7 @@ void idt_init(){
     ip.size = (sizeof(struct idt_entry) * IDT_COUNT) - 1;
     ip.address = (void*)IDT;
 
-    load_idt((void*)&ip);
+    idtLoad((void*)&ip);
 }
 
 
