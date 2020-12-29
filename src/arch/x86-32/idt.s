@@ -3,7 +3,7 @@
 
 
 ; Declaration of IDT initializer
-global load_idt:function
+global idtLoad:function
 
 ; Declaration of IDT display function
 extern display_idt
@@ -45,7 +45,7 @@ global irq14_handler_asm
 global irq15_handler_asm
 
 ; Load IDT ASM function
-load_idt:
+idtLoad:
 	mov edx, [esp + 4]
 	lidt[edx]
         sti
