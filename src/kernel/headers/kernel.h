@@ -19,7 +19,7 @@
 extern void initSerial();
 extern void writeSerial(char* a);
 extern void  setFlat();
-extern void  idt_init();
+extern void  idtInit();
 
 /// Declarations
 // Core function of the kernel that is called by bootloader

@@ -21,7 +21,7 @@ void kernel_main(){
     setFlat();
 
     // Initializes IDT
-    idt_init();
+    idtInit();
 
     // Writes to serial port to configure it
     initSerial();
