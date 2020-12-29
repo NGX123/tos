@@ -10,10 +10,10 @@ typedef int (*interrupt_interpreter_func_t)(int);
 
 
 // Initalizes the interrupt code ready to be used by the kernel
-int interruptsInit();
+extern int interruptsInit();
 
 // Change the function called by interrupt
-int bindInterrupt(int interrupt_num, interrupt_handler_t handlerfunc, int priority);
+extern int bindInterrupt(int interrupt_num, interrupt_handler_t handlerfunc, int priority);
 
 
 // Give platform specifc code a pointer to systems main interrupt manager
@@ -23,7 +23,7 @@ input:
 return:
     on fail - -1
     on success - 0*/
-int setInterruptInterpreterFunction(interrupt_interpreter_func_t function);
+extern int setInterruptInterpreterFunction(interrupt_interpreter_func_t function);
 
 // Sends request to platform specific code to get numbers of the interrupts that should be reserved and stay unchanged
 /*
@@ -33,4 +33,4 @@ input:
 return:
     on fail - -1
     on success - amount of interrupt numbers in the list(can be 0)*/
-int requestReservedInterrupts(int* numbers, int list_size);
+extern int requestReservedInterrupts(int* numbers, int list_size);
