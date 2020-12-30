@@ -61,8 +61,8 @@ static uint8_t scanset1[] =
   NO,   NO,   NO,   NO,   NO,   NO,   NO,   '7',  // 0x40
   '8',  '9',  '-',  '4',  '5',  '6',  '+',  '1',
   '2',  '3',  '0',  '.',  NO,   NO,   NO,   NO,   // 0x50
-  [0x9C] '\n',      // KP_Enter
-  [0xB5] '/'        // KP_Div
+  [0x9C] = '\n',      // KP_Enter
+  [0xB5] = '/'        // KP_Div
 };
 
 // Character map when shift is pressed
@@ -79,8 +79,8 @@ static uint8_t shiftmap[] =
   NO,   NO,   NO,   NO,   NO,   NO,   NO,   '7',  // 0x40
   '8',  '9',  '-',  '4',  '5',  '6',  '+',  '1',
   '2',  '3',  '0',  '.',  NO,   NO,   NO,   NO,   // 0x50
-  [0x9C] '\n',      // KP_Enter
-  [0xB5] '/'        // KP_Div
+  [0x9C] = '\n',      // KP_Enter
+  [0xB5] = '/'        // KP_Div
 };
 
 // Character map when control is pressed
@@ -93,8 +93,8 @@ static uint8_t ctlmap[] =
   C('D'),  C('F'),  C('G'),  C('H'),  C('J'),  C('K'),  C('L'),  NO,
   NO,      NO,      NO,      C('\\'), C('Z'),  C('X'),  C('C'),  C('V'),
   C('B'),  C('N'),  C('M'),  NO,      NO,      C('/'),  NO,      NO,
-  [0x9C] '\r',      // KP_Enter
-  [0xB5] C('/')     // KP_Div
+  [0x9C] = '\r',      // KP_Enter
+  [0xB5] = C('/')     // KP_Div
 };
 
 
