@@ -3,21 +3,21 @@
 * Practical
 	* OSs: Design and Implementation - Andrew Tanenbaum
 	* MMURTL - Richard Burgess
+	* OS Design: XINU - Douglas Comer
 
 * Theory
 	* Modern OSs - Andrew Tanenbaum
 	* Operating Systems: 3 Easy pieces - Remzi Arpaci-Dusseau
 	* OS Concepts - Avi Silberschatz
 
-* Based on Existing OSs
+* Existing OS Theory
 	* Lion's Commentary on UNIX - John Lions
 	* Design and Implementation of FreeBSD - Marshall McKusick
 	* Design of a UNIX OS - Maurice Bach
 	* How Linux Works - Brian Ward
 	* A Heavily Commented Linux Kernel Code - Zhao Jiong
 
-* Other
-	* OS Design: XINU - Douglas Comer
+* Driver/Module & Linux Development
 	* Linux Kernel Development - Robert Love
 	* FreeBSD Device Drivers - Jospeh Kong
 	* Linux Device Drivers Development - John Madieu
