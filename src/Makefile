@@ -32,7 +32,7 @@ CC_x86-32_CLANG 				= clang
 AS_x86-32_CLANG 				= nasm
 LD_x86-32_CLANG					= clang
 CFLAGS_x86-32_CLANG 			= -I libs/headers -std=gnu99 -ffreestanding $(CFLAGS_GLOBAL) -target i686-elf
-LDFLAGS_x86-32_CLANG 			= -T $(BIOS_SRC_DIR)/linker.ld -ffreestanding -nostdlib -l gcc -target i686-elf
+LDFLAGS_x86-32_CLANG 			= -T $(BIOS_SRC_DIR)/linker.ld -ffreestanding -nostdlib -target i686-elf # -l gcc
 ASFLAGS_x86-32_CLANG 			= -felf32
 BUILDDIR_x86-32_CLANG			= $(BUILDDIR_x86-32)
 SOURCES_x86-32_CLANG			= drivers/*.c kernel/*.c $(INIT_SOURCES_x86-32)/*.c libs/*.c
@@ -146,7 +146,7 @@ disk_x86-32-bios:
 	mkdir -p $(BUILDDIR_x86-32)/iso/boot/grub
 	mv $(BUILDDIR_x86-32)/os.o $(BUILDDIR_x86-32)/iso/boot
 	cp $(BIOS_SRC_DIR)/grub.cfg $(BUILDDIR_x86-32)/iso/boot/grub
-	grub2-mkrescue -o $(BUILDDIR_x86-32)/os.iso $(BUILDDIR_x86-32)/iso
+	grub2-mkrescue -o $(BUILDDIR_x86-32)/os.iso $(BUILDDIR_x86-32)/iso || grub-mkrescue -o $(BUILDDIR_x86-32)/os.iso $(BUILDDIR_x86-32)/iso
 
 
 
