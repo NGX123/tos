@@ -3,6 +3,9 @@
 
 #include "types.h"
 
+#ifndef INTERRUPTS_LOCAL_H
+#define INTERRUPTS_LOCAL_H
+
 #define INTERRUPTS_AMOUNT 255
 #define INTERRUPTS_HANDLERS_LIST_SIZE INTERRUPTS_AMOUNT+1
 
@@ -58,3 +61,4 @@ int bindInterrupt(int interrupt_num, interrupt_handler_t handlerfunc, int priori
 
 // Is called by system interrupt handlers and is the main function to transfer interrupts to their desired location
 static int interruptOccured(int interrupt_num);
+#endif

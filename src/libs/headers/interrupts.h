@@ -1,6 +1,9 @@
 // File: interrupts.h
 // Description: includes global defines for the interrupts handling part of the kernel
 
+#ifndef INTERRUPT_GLOBAL_H
+#define INTERRUPT_GLOBAL_H
+
 #define INTERRUPT_PRIORITY_SYSTEM 1
 #define INTERRUPT_PRIORITY_KERNEL 2
 #define INTERRUPT_PRIORITY_USER 3
@@ -34,3 +37,4 @@ return:
     on fail - -1
     on success - amount of interrupt numbers in the list(can be 0)*/
 extern int requestReservedInterrupts(int* numbers, int list_size);
+#endif
