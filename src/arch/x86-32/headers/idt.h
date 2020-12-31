@@ -32,7 +32,7 @@ struct idt_pointer{
 void picRemap();
 
 // IDT intialization
-void idtInit();
+void platformInterruptsInit();
 
 // IDT loading ASM routine
 extern void idtLoadAsm();

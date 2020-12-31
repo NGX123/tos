@@ -23,7 +23,7 @@ void picRemap(){
 }
 
 // Initializes the IDT
-void idtInit(){
+void platformInterruptsInit(){
     picRemap();
 
     // Write the entries into IDT
