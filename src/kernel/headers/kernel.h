@@ -14,12 +14,12 @@
 #include "drivers/x86.h"
 #include "drivers/acpi.h"
 #include "drivers/kbd.h"
+#include "kernel_interrupts.h"
 
 /// External declarations
 extern void initSerial();
 extern void writeSerial(char* a);
-extern void  setFlat();
-extern void  idtInit();
+extern void setFlat();
 
 /// Declarations
 // Core function of the kernel that is called by bootloader
