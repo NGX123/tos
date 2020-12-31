@@ -1,7 +1,7 @@
 // File: interrupts.c
 // Description: is platform independant main part of interrupt handling code
 
-#include "headers/interrupts.h"
+#include "headers/kernel_interrupts.h"
 
 // Interrupt handling functions list
 static interrupt_handler_struct_t interrupt_list[INTERRUPTS_HANDLERS_LIST_SIZE];

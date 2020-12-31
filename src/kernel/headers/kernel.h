@@ -14,7 +14,7 @@
 #include "drivers/x86.h"
 #include "drivers/acpi.h"
 #include "drivers/kbd.h"
-#include "kernel_interrupts.h"
+#include "interrupts.h"
 
 /// External declarations
 extern void initSerial();

@@ -5,7 +5,7 @@
 #define INTERRUPTS_LOCAL_H
 
 #include "types.h"
-#include "kernel_interrupts.h"
+#include "interrupts.h"
 
 #define INTERRUPTS_AMOUNT 255
 #define INTERRUPTS_HANDLERS_LIST_SIZE INTERRUPTS_AMOUNT+1
