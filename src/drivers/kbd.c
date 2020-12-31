@@ -129,9 +129,9 @@ void keyboard_handler(){
         return;
     if (callroutine != NULL){
         if (scancode != RARROW_SCAN && scancode != LARROW_SCAN)
-            callroutine(character, buttonStatuses, scancode);
+            callroutine(character, scancode);
         else
-            callroutine(scancode == RARROW_SCAN ? RARROW : LARROW, buttonStatuses, scancode);
+            callroutine(scancode == RARROW_SCAN ? RARROW : LARROW, scancode);
     }
 }
 
