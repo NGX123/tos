@@ -84,18 +84,18 @@ static uint8_t shiftmap[] =
 };
 
 // Character map when control is pressed
-static uint8_t ctlmap[] =
-{
-  NO,      NO,      NO,      NO,      NO,      NO,      NO,      NO,
-  NO,      NO,      NO,      NO,      NO,      NO,      NO,      NO,
-  C('Q'),  C('W'),  C('E'),  C('R'),  C('T'),  C('Y'),  C('U'),  C('I'),
-  C('O'),  C('P'),  NO,      NO,      '\r',    NO,      C('A'),  C('S'),
-  C('D'),  C('F'),  C('G'),  C('H'),  C('J'),  C('K'),  C('L'),  NO,
-  NO,      NO,      NO,      C('\\'), C('Z'),  C('X'),  C('C'),  C('V'),
-  C('B'),  C('N'),  C('M'),  NO,      NO,      C('/'),  NO,      NO,
-  [0x9C] = '\r',      // KP_Enter
-  [0xB5] = C('/')     // KP_Div
-};
+// static uint8_t ctlmap[] =
+// {
+//   NO,      NO,      NO,      NO,      NO,      NO,      NO,      NO,
+//   NO,      NO,      NO,      NO,      NO,      NO,      NO,      NO,
+//   C('Q'),  C('W'),  C('E'),  C('R'),  C('T'),  C('Y'),  C('U'),  C('I'),
+//   C('O'),  C('P'),  NO,      NO,      '\r',    NO,      C('A'),  C('S'),
+//   C('D'),  C('F'),  C('G'),  C('H'),  C('J'),  C('K'),  C('L'),  NO,
+//   NO,      NO,      NO,      C('\\'), C('Z'),  C('X'),  C('C'),  C('V'),
+//   C('B'),  C('N'),  C('M'),  NO,      NO,      C('/'),  NO,      NO,
+//   [0x9C] = '\r',      // KP_Enter
+//   [0xB5] = C('/')     // KP_Div
+// };
 
 
 /// Declarations
