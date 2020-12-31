@@ -1,8 +1,6 @@
 // File: kbd.h
 // Description: includes defines for the keyboard driver
 
-
-
 #ifndef KBD_H
 #define KBD_H
 

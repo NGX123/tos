@@ -3,6 +3,7 @@
 
 #ifndef ACPI_H
 #define ACPI_H
+
 #include <stdint.h>
 
 #define ACPI_CONTROL_FIND_FADT 1
@@ -39,10 +40,10 @@ struct FADT {
     struct   ACPISDT h;
     uint32_t FirmwareCtrl;
     uint32_t Dsdt;
- 
+
     // field used in ACPI 1.0; no longer in use, for compatibility only
     uint8_t  Reserved;
- 
+
     uint8_t  PreferredPowerManagementProfile;
     uint16_t SCI_Interrupt;
     uint32_t SMI_CommandPort;
@@ -75,23 +76,23 @@ struct FADT {
     uint8_t  DayAlarm;
     uint8_t  MonthAlarm;
     uint8_t  Century;
- 
+
     // reserved in ACPI 1.0; used since ACPI 2.0+
     uint16_t BootArchitectureFlags;
- 
+
     uint8_t  Reserved2;
     uint32_t Flags;
- 
+
     // 12 byte structure; see below for details
     struct GenericAddressStructure ResetReg;
- 
+
     uint8_t  ResetValue;
     uint8_t  Reserved3[3];
- 
+
     // 64bit pointers - Available on ACPI 2.0+
     uint64_t                X_FirmwareControl;
     uint64_t                X_Dsdt;
- 
+
     struct GenericAddressStructure X_PM1aEventBlock;
     struct GenericAddressStructure X_PM1bEventBlock;
     struct GenericAddressStructure X_PM1aControlBlock;

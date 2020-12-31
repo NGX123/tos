@@ -1,8 +1,6 @@
 // File: x86.h
 // Description: includes defines to use with the x86 CPUs
 
-
-
 #ifndef X86_H
 #define X86_H
 

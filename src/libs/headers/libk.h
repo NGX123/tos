@@ -1,10 +1,9 @@
 // File: libk.h
 // Description: header file for declarations of special functions for kernel
 
-
-
 #ifndef LIBK_H
 #define LIBK_H
+
 // Prints a system message with special formatting
 extern void printsys(char* string);
 

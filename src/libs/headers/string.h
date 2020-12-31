@@ -1,12 +1,11 @@
 // File: string.c
 // Description: includes defines of string functions
 
+#ifndef STRING_H
+#define STRING_H
 
 #include <stdint.h>
 #include <stddef.h>
-
-#ifndef STRING_H
-#define STRING_H
 
 #ifndef NULL
 #define NULL ((void *) 0)

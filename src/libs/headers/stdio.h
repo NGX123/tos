@@ -1,8 +1,6 @@
 // File: stdio.h
 // Description: stdio input/output library header
 
-
-
 #ifndef STDIO_H
 #define STDIO_H
 

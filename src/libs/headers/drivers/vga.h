@@ -1,10 +1,9 @@
 // File: vga.h
 // Description: includes defenition of vga control functions
 
-
-
 #ifndef VGA_H
 #define VGA_H
+
 #include <stdint.h>
 #include <stddef.h>
 

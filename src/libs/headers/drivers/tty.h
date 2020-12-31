@@ -1,8 +1,6 @@
 // File: tty.h
 // Description: includes tty declraractions
 
-
-
 #ifndef TTY_H
 #define TTY_H
 
