@@ -6,6 +6,7 @@
 
 #include <stdint.h>
 #include "drivers/x86.h"
+#include "interrupts.h"
 
 #define IDT_COUNT 256
 
@@ -30,9 +31,6 @@ struct idt_pointer{
 
 // PIC Remapping
 void picRemap();
-
-// IDT intialization
-void platformInterruptsInit();
 
 // IDT loading ASM routine
 extern void idtLoadAsm();

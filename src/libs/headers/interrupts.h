@@ -23,6 +23,9 @@ extern int interruptsInit();
 extern int bindInterrupt(int interrupt_num, interrupt_handler_t handlerfunc, int priority);
 
 
+// Platform specific interrupt intialization
+extern void platformInterruptsInit();
+
 // Give platform specifc code a pointer to systems main interrupt manager
 /*
 input:

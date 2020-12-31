@@ -21,6 +21,9 @@ int interruptsInit(){
     int reserved_interrupts[INTERRUPTS_AMOUNT];
     int reserved_interrupts_amount;
 
+    // Initialize the interrupts(hardware specific)
+    platformInterruptsInit();
+
     // Indicate the end of the list
     interrupt_list[INTERRUPTS_HANDLERS_LIST_SIZE-1].function = NULL;
 
