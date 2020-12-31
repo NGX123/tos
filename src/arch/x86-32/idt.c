@@ -126,7 +126,7 @@ void idtInit(){
     ip.size = (sizeof(struct idt_entry) * IDT_COUNT) - 1;
     ip.address = (void*)IDT;
 
-    idtLoad((void*)&ip);
+    idtLoadAsm((void*)&ip);
 }
 
 

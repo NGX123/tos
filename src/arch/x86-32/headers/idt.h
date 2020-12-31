@@ -29,13 +29,13 @@ struct idt_pointer{
 
 
 // PIC Remapping
-extern void picRemap();
+void picRemap();
 
 // IDT intialization
-extern void idtInit();
+void idtInit();
 
 // IDT loading ASM routine
-extern void idtLoad();
+extern void idtLoadAsm();
 
 // ASM interrupt handler addresses
 extern int irq0_handler_asm();
@@ -56,22 +56,22 @@ extern int irq14_handler_asm();
 extern int irq15_handler_asm();
 
 // C Interrupt handlers
-extern void irq0_handler();
-extern void irq1_handler();
-extern void irq2_handler();
-extern void irq3_handler();
-extern void irq4_handler();
-extern void irq5_handler();
-extern void irq6_handler();
-extern void irq7_handler();
-extern void irq8_handler();
-extern void irq9_handler();
-extern void irq10_handler();
-extern void irq11_handler();
-extern void irq12_handler();
-extern void irq13_handler();
-extern void irq14_handler();
-extern void irq15_handler();
+void irq0_handler();
+void irq1_handler();
+void irq2_handler();
+void irq3_handler();
+void irq4_handler();
+void irq5_handler();
+void irq6_handler();
+void irq7_handler();
+void irq8_handler();
+void irq9_handler();
+void irq10_handler();
+void irq11_handler();
+void irq12_handler();
+void irq13_handler();
+void irq14_handler();
+void irq15_handler();
 
 // Keyboard interrupt handler
 extern void keyboard_handler();
