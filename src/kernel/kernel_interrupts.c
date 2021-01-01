@@ -49,7 +49,10 @@ int bindInterrupt(int interrupt_num, interrupt_handler_t handlerfunc, int priori
     if (interrupt_num >= INTERRUPTS_AMOUNT || (priority > interrupt_list[interrupt_num].priority && interrupt_list[interrupt_num].status != INTERRUPT_STATUS_FREE))
         return -1;
 
+    // Fill in the fields for the interrupt
     interrupt_list[interrupt_num].function = handlerfunc;
+    interrupt_list[interrupt_num].status = INTERRUPT_STATUS_REGISTERED;
+    interrupt_list[interrupt_num].priority = priority;
 
     return 0;
 }
