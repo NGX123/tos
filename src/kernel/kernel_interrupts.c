@@ -46,7 +46,7 @@ int interruptsInit(){
 // Change the function called by interrupt
 int bindInterrupt(int interrupt_num, interrupt_handler_t handlerfunc, int priority){
     // Fail if the interrupt number is to large or callers priority is too low
-    if (interrupt_num >= INTERRUPTS_AMOUNT || priority > interrupt_list[interrupt_num].priority)
+    if (interrupt_num >= INTERRUPTS_AMOUNT || (priority > interrupt_list[interrupt_num].priority && interrupt_list[interrupt_num].status != INTERRUPT_STATUS_FREE))
         return -1;
 
     interrupt_list[interrupt_num].function = handlerfunc;
