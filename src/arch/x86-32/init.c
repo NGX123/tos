@@ -8,8 +8,15 @@
 struct gdt_entry gdt[3];
 struct gdt_ptr gp;
 
+// Makes platform specific initializations
+int hardwarePlatformInit(){
+    setFlat();
+
+    return 0;
+}
+
 // Initializes the flat memory model
-void setFlat(){
+static void setFlat(){
     for (int i = 0; i < 3; i++){
         gdt[i].limit_low = 0xffff;
         gdt[i].base_low = 0x0000;

@@ -30,5 +30,5 @@ struct gdt_ptr{
 extern void load_gdt(void*);
 
 // Initializes the flat memory model
-void setFlat();
+static void setFlat();
 #endif
