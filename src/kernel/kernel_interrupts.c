@@ -11,7 +11,7 @@ static int interruptOccured(int interrupt_num){
     if (interrupt_list[interrupt_num].status == INTERRUPT_STATUS_FREE)
         return -1;
 
-    interrupt_list[interrupt_num].function('\0');
+    interrupt_list[interrupt_num].function();
 
     return 0;
 }
