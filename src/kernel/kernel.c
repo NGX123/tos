@@ -12,13 +12,6 @@ void kernel_main(){
     initScreen(CURSOR_ON);
     printsys("VGA Text Mode\n", PRINTSYS_STATUS_SUCCESS);
 
-    // Writes data to set the ACPI mode
-    if ((FADTstruct = (struct FADT*)ACPIcontrol(ACPI_CONTROL_FIND_FADT)) != NULL){
-        outb(FADTstruct->SMI_CommandPort, FADTstruct->AcpiEnable);  // Initialise the ACPI mode
-        printsys("ACPI Detection\n", PRINTSYS_STATUS_SUCCESS);
-    }
-    else
-        printsys("ACPI Detection\n", PRINTSYS_STATUS_FAIL);
 
     // Initializes the platform specific stuff
     if (hardwarePlatformInit() != -1)
@@ -31,6 +24,16 @@ void kernel_main(){
         printsys("Interrupts\n", PRINTSYS_STATUS_SUCCESS);
     else
         printsys("Interrupts\n", PRINTSYS_STATUS_FAIL);
+
+
+    // TO BE TRANSFERED TO DEVICE MANAGER
+    // Writes data to set the ACPI mode
+    if ((FADTstruct = (struct FADT*)ACPIcontrol(ACPI_CONTROL_FIND_FADT)) != NULL){
+        outb(FADTstruct->SMI_CommandPort, FADTstruct->AcpiEnable);  // Initialise the ACPI mode
+        printsys("ACPI Detection\n", PRINTSYS_STATUS_SUCCESS);
+    }
+    else
+        printsys("ACPI Detection\n", PRINTSYS_STATUS_FAIL);
 
     // Bind keyboard interrupt
     if (bindInterrupt(1, &keyboard_handler, INTERRUPT_PRIORITY_KERNEL) != -1)
