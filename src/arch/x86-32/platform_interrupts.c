@@ -1,7 +1,7 @@
 // File: idt.c
 // Description: c setup of interrupt descriptor table, the names of irqs must also be added here for usage. outb(0xA0, 0x20); needs to be added before out(0x20, 0x20); on interrupts 8+
 
-#include "headers/idt.h"
+#include "headers/platform_interrupts.h"
 
 
 struct idt_entry IDT[IDT_COUNT];

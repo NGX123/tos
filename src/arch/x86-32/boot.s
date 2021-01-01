@@ -24,4 +24,4 @@ load_gdt:
                 ret
 
 ; IDT code
-%include "arch/x86-32/idt.s"
+%include "arch/x86-32/platform_interrupts.s"
