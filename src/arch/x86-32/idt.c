@@ -161,70 +161,84 @@ void irq0_handler(){
 }
 
 void irq1_handler(){
-    keyboard_handler();
+	interruptInterpreter(1);
     outb(0x20, 0x20);
 }
 
 void irq2_handler(){
+	interruptInterpreter(2);
     outb(0x20, 0x20);
 }
 
 void irq3_handler(){
+	interruptInterpreter(3);
     outb(0x20, 0x20);
 }
 
 void irq4_handler(){
+	interruptInterpreter(4);
     outb(0x20, 0x20);
 }
 
 void irq5_handler(){
+	interruptInterpreter(5);
     outb(0x20, 0x20);
 }
 
 void irq6_handler(){
+	interruptInterpreter(6);
     outb(0x20, 0x20);
 }
 
 void irq7_handler(){
+	interruptInterpreter(7);
     outb(0x20, 0x20);
 }
 
 void irq8_handler(){
+	interruptInterpreter(8);
     outb(0xA0, 0x20);
     outb(0x20, 0x20);
 }
 
 void irq9_handler(){
+	interruptInterpreter(9);
     outb(0xA0, 0x20);
     outb(0x20, 0x20);
 }
 
 void irq10_handler(){
+	interruptInterpreter(10);
     outb(0xA0, 0x20);
     outb(0x20, 0x20);
 }
 
 void irq11_handler(){
+	interruptInterpreter(11);
     outb(0xA0, 0x20);
     outb(0x20, 0x20);
 }
 
 void irq12_handler(){
+	interruptInterpreter(12);
     outb(0xA0, 0x20);
     outb(0x20, 0x20);
 }
 
 void irq13_handler(){
+	interruptInterpreter(13);
     outb(0xA0, 0x20);
     outb(0x20, 0x20);
 }
 
 void irq14_handler(){
+	interruptInterpreter(14);
     outb(0xA0, 0x20);
     outb(0x20, 0x20);
 }
 
 void irq15_handler(){
+	interruptInterpreter(15);
     outb(0xA0, 0x20);
     outb(0x20, 0x20);
 }
