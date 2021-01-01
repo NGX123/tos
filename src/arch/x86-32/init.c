@@ -1,8 +1,8 @@
-// File: gdt.c
+// File: init.c
 // Description: includes defenitions for loading the global descriptor table
 // WHEN CHANGING TO LONG MODE CHANGE THE "uint32_t" in the adresses to "uint64_t"
 
-#include "headers/gdt.h"
+#include "headers/init.h"
 
 // Our GDT, with 3 entries, and finally our special GDT pointer
 struct gdt_entry gdt[3];

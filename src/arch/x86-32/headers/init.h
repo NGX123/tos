@@ -1,4 +1,4 @@
-// File: gdt.h
+// File: init.h
 // Description: gdt initialization code header
 
 #ifndef GDT_DEFINES_H
