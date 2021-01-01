@@ -5,5 +5,5 @@
 #define PLATFORM_H
 
 // Makes platform specific initializations
-void hardwarePlatformInit();
+int hardwarePlatformInit();
 #endif
