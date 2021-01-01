@@ -17,11 +17,11 @@ void kernel_main(){
         printsys("Initialised: ACPI\n");
     }
 
-    // Initialize interrupts
-    interruptsInit();
-
     // Sets the flat memory mode and initializes GDT
     setFlat();
+
+    // Initialize interrupts
+    interruptsInit();
 
     // Writes to serial port to configure it
     initSerial();
