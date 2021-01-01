@@ -20,8 +20,11 @@ void kernel_main(){
     else
         printsys("ACPI Detection\n", PRINTSYS_STATUS_FAIL);
 
-    // Sets the flat memory mode and initializes GDT
-    setFlat();
+    // Initializes the platform specific stuff
+    if (hardwarePlatformInit() != -1)
+        printsys("Hardware Initialization\n", PRINTSYS_STATUS_SUCCESS);
+    else
+        printsys("Hardware Initialization\n", PRINTSYS_STATUS_SUCCESS);
 
     // Initialize interrupts
     if (interruptsInit() != -1)
@@ -34,11 +37,6 @@ void kernel_main(){
         printsys("Keyboard interrupts\n", PRINTSYS_STATUS_SUCCESS);
     else
         printsys("Keyboard interrupts\n", PRINTSYS_STATUS_FAIL);
-
-    // Writes to serial port to configure it
-    initSerial();
-    writeSerial("Serial test run");
-    printsys("Serial Port\n", PRINTSYS_STATUS_SUCCESS);
 
     // Initialise Keyboard
     if (keyboardInit(KEYBOARD_MODE_DISPLAY) != -1)

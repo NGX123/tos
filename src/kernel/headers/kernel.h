@@ -15,11 +15,7 @@
 #include "drivers/acpi.h"
 #include "drivers/kbd.h"
 #include "interrupts.h"
-
-/// External declarations
-extern void initSerial();
-extern void writeSerial(char* a);
-extern void setFlat();
+#include "platform.h"
 
 /// Declarations
 // Core function of the kernel that is called by bootloader
