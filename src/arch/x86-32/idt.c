@@ -6,7 +6,29 @@
 
 struct idt_entry IDT[IDT_COUNT];
 struct idt_pointer ip;
+interrupt_interpreter_func_t interruptInterpreter;
 
+
+// Reserved the important interrupts in the kernel
+int requestReservedInterrupts(int* numbers, int list_size){
+	int reserved_interupts_list[] = {1};
+	int i;
+
+	if ((signed)sizeof(reserved_interupts_list) > list_size)
+		return -1;
+	else
+		for (i = 0; i < (signed)sizeof(reserved_interupts_list) && i < list_size; i++)
+			numbers[i] = reserved_interupts_list[i];
+
+	return i;
+}
+
+// Sets the function that should be called by interrupts
+int setInterruptInterpreterFunction(interrupt_interpreter_func_t function){
+	interruptInterpreter = function;
+
+	return 0;
+}
 
 // PIC Remapping
 void picRemap(){
