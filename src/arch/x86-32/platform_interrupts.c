@@ -4,9 +4,9 @@
 #include "headers/platform_interrupts.h"
 
 
-struct idt_entry IDT[IDT_COUNT];
-struct idt_pointer ip;
-interrupt_interpreter_func_t interruptInterpreter;
+static struct idt_entry IDT[IDT_COUNT];
+static struct idt_pointer ip;
+static interrupt_interpreter_func_t interruptInterpreter;
 
 
 // Reserved the important interrupts in the kernel
@@ -33,7 +33,7 @@ int setInterruptInterpreterFunction(interrupt_interpreter_func_t function){
 }
 
 // PIC Remapping
-void picRemap(){
+static void picRemap(){
     outb(0x20, 0x11);
     outb(0xA0, 0x11);
     outb(0x21, 0x20);

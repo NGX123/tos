@@ -30,7 +30,7 @@ struct idt_pointer{
 
 
 // PIC Remapping
-void picRemap();
+static void picRemap();
 
 // IDT loading ASM routine
 extern void idtLoadAsm();
