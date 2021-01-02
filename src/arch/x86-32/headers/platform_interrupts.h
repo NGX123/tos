@@ -70,7 +70,4 @@ void irq12_handler();
 void irq13_handler();
 void irq14_handler();
 void irq15_handler();
-
-// Keyboard interrupt handler
-extern void keyboard_handler();
 #endif
