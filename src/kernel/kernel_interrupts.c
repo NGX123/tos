@@ -38,6 +38,8 @@ int interruptsInit(){
         for (int i = 0; i < reserved_interrupts_amount; i++)
             if (reserved_interrupts[i] < INTERRUPTS_AMOUNT)
                 interrupt_list[reserved_interrupts[i]].priority = INTERRUPT_PRIORITY_SYSTEM;
+            else
+                return -1;
     }
 
     return 0;
