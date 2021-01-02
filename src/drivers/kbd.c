@@ -1,7 +1,7 @@
 // File: kbd.c
 // Descriptions: keyboard driver
 
-#include "headers/kbd-defines.h"
+#include "headers/kbd.h"
 
 static uint8_t charBuffer[BUFSIZE];
 static ring_buffer_t charRingBufferStruct;
