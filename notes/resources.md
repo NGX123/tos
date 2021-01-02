@@ -63,6 +63,9 @@
 	* [Minix 1,2(50k)](https://wiki.minix3.org/doku.php?id=www:download:previousversions)
 	* [Linux 0.01-0.99(10k)](https://mirrors.edge.kernel.org/pub/linux/kernel/Historic/)
 	* [LittleKernel - ARM/Android proffessional kernel/bootloader(700k)](https://github.com/littlekernel/lk)
+	* [FreeBSD - General Purpose BSD](https://freebsd.org/developers/cvs.html)
+	* [OpenBSD - Security BSD](https://github.com/openbsd/src)
+	* [NetBSD - Portable BSD(easiest code)](https://netbsd.org/docs/guide/en/part-compile.html)
 
 * Educational OSs
 	* [xv6(6k lines)](https://github.com/mit-pdos/xv6-public)
