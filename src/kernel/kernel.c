@@ -35,12 +35,6 @@ void kernel_main(){
     else
         printsys("ACPI Detection\n", PRINTSYS_STATUS_FAIL);
 
-    // Bind keyboard interrupt
-    if (bindInterrupt(1, &keyboard_handler, INTERRUPT_PRIORITY_KERNEL) != -1)
-        printsys("Keyboard interrupts\n", PRINTSYS_STATUS_SUCCESS);
-    else
-        printsys("Keyboard interrupts\n", PRINTSYS_STATUS_FAIL);
-
     // Initialise Keyboard
     if (keyboardInit(KEYBOARD_MODE_DISPLAY) != -1)
         printsys("Keyboard\n", PRINTSYS_STATUS_SUCCESS);
