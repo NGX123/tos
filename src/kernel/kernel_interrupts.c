@@ -8,7 +8,7 @@ static interrupt_handler_struct_t interrupt_list[INTERRUPTS_HANDLERS_LIST_SIZE];
 
 // Is called by system interrupt handlers and is the main function to transfer interrupts to their desired location
 static int interruptOccured(int interrupt_num){
-    if (interrupt_list[interrupt_num].status == INTERRUPT_STATUS_FREE)
+    if (interrupt_list[interrupt_num].status == INTERRUPT_STATUS_OFF)
         return -1;
 
     interrupt_list[interrupt_num].function();
@@ -46,12 +46,12 @@ int interruptsInit(){
 // Change the function called by interrupt
 int bindInterrupt(int interrupt_num, interrupt_handler_t handlerfunc, int priority){
     // Fail if the interrupt number is to large or callers priority is too low
-    if (interrupt_num >= INTERRUPTS_AMOUNT || (priority > interrupt_list[interrupt_num].priority && interrupt_list[interrupt_num].status != INTERRUPT_STATUS_FREE))
+    if (interrupt_num >= INTERRUPTS_AMOUNT || (priority > interrupt_list[interrupt_num].priority && interrupt_list[interrupt_num].status != INTERRUPT_STATUS_OFF))
         return -1;
 
     // Fill in the fields for the interrupt
     interrupt_list[interrupt_num].function = handlerfunc;
-    interrupt_list[interrupt_num].status = INTERRUPT_STATUS_REGISTERED;
+    interrupt_list[interrupt_num].status = INTERRUPT_STATUS_ON;
     interrupt_list[interrupt_num].priority = priority;
 
     return 0;
