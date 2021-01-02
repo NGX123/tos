@@ -5,8 +5,8 @@
 #include "headers/init.h"
 
 // Our GDT, with 3 entries, and finally our special GDT pointer
-struct gdt_entry gdt[3];
-struct gdt_ptr gp;
+static struct gdt_entry gdt[3];
+static struct gdt_ptr gp;
 
 // Makes platform specific initializations
 int hardwarePlatformInit(){
