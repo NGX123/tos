@@ -139,6 +139,11 @@ void keyboard_handler(){
 /// IOCTL FUNCTIONS ///
 // Initializes the PS/2 keyboard
 int keyboardInit(uint8_t mode){
+    // Initialize the keyboard interrupts
+    if (bindInterrupt(1, &keyboard_handler, INTERRUPT_PRIORITY_KERNEL) == -1)
+        return -1;
+
+    // Set the mode
     kbd_mode = mode;
 
     // Disable the ps/2 controller

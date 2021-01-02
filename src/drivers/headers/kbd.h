@@ -14,7 +14,7 @@
 #include "drivers/x86.h"
 #include "drivers/vga.h"
 #include "drivers/kbd.h"
-
+#include "interrupts.h"
 
 
 /// Defines
