@@ -32,9 +32,9 @@ void printsys(char* string, int status){
 
 // Info prints ///
 void display_gdt(){
-    printsys("Initialized: GDT\n", PRINTSYS_STATUS_SUCCESS);
+    printsys("GDT\n", PRINTSYS_STATUS_SUCCESS);
 }
 
 void display_idt(){
-    printsys("Initialised: IDT\n", PRINTSYS_STATUS_SUCCESS);
+    printsys("IDT\n", PRINTSYS_STATUS_SUCCESS);
 }
