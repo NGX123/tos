@@ -25,7 +25,6 @@ int printBin(int num)
 
 
 int ps2ControllerInit(){
-    uint8_t test;
     uint8_t config_byte;
     int channels;
     int channel1_status = CHANNEL_STATUS_BROKEN;
