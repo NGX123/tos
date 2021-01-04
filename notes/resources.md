@@ -17,15 +17,16 @@
 	* Lion's Commentary on UNIX - John Lions
 	* Design and Implementation of FreeBSD - Marshall McKusick
 	* Design of a UNIX OS - Maurice Bach
-	* How Linux Works - Brian Ward
-	* A Heavily Commented Linux Kernel Code - Zhao Jiong
 	* POSIX Programmers Guide - D. Lewine
+	* How Linux Works - Brian Ward
+	* Understanding the Linux Kernel - D. Bovet
+	* A Heavily Commented Linux Kernel Code - Zhao Jiong
 
 * Driver/Module & Linux Development
 	* Linux Kernel Development - Robert Love
-	* FreeBSD Device Drivers - Jospeh Kong
 	* Linux Device Drivers Development - John Madieu
 	* Linux Device Drivers - Jonathan Corbet
+	* FreeBSD Device Drivers - Jospeh Kong
 
 
 
