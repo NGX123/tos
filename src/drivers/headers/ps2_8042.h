@@ -6,6 +6,10 @@
 
 #include "drivers/x86.h"
 
+
+#define CHANNEL_STATUS_BROKEN   0
+#define CHANNEL_STATUS_WORKING  1
+
 // Ports
 #define CONTROLLER_STATUS_PORT  0x64
 #define CONTROLLER_COMMAND_PORT 0x64
