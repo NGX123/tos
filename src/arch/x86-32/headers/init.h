@@ -1,11 +1,15 @@
-// File: init.h
-// Description: gdt initialization code header
+/*
+    @author = ngx123
+    @brief = local header with defines for the GDT initialization code
+*/
+
 
 #ifndef GDT_DEFINES_H
 #define GDT_DEFINES_H
 
-/// Includes
+
 #include <stdint.h>
+
 
 // A gdt entry to be loaded using pointer
 struct gdt_entry{
@@ -24,11 +28,14 @@ struct gdt_ptr{
 } __attribute__((packed));
 
 
-
-// Declarations
-// Loads the GDT in to the CPU
+/*
+    @brief = Loads the GDT in to the CPU
+    @param void* = Address of the GDT struct to load
+*/
 extern void load_gdt(void*);
 
-// Initializes the flat memory model
+/*
+    @brief = Sets up the GDT and fills it with data and then loads setting up the flat memory model
+*/
 static void setFlat();
 #endif

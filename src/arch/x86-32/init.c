@@ -1,21 +1,23 @@
-// File: init.c
-// Description: includes defenitions for loading the global descriptor table
-// WHEN CHANGING TO LONG MODE CHANGE THE "uint32_t" in the adresses to "uint64_t"
+/*
+    @author = ngx123
+    @brief = code for setting up GDT
+*/
+
 
 #include "headers/init.h"
+
 
 // Our GDT, with 3 entries, and finally our special GDT pointer
 static struct gdt_entry gdt[3];
 static struct gdt_ptr gp;
 
-// Makes platform specific initializations
+
 int hardwarePlatformInit(){
     setFlat();
 
     return 0;
 }
 
-// Initializes the flat memory model
 static void setFlat(){
     for (int i = 0; i < 3; i++){
         gdt[i].limit_low = 0xffff;
