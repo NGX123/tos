@@ -1,4 +1,4 @@
-// File: vga_print.h
+// File: vga.c
 // Description: includes functions to print strings and numbers to the VGA text buffer at 0xb8000
 
 #include "headers/vga.h"
