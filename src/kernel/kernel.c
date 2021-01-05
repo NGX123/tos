@@ -2,7 +2,6 @@
 // Description: this is the main file which starts all other files
 
 #include "headers/kernel.h"
-extern void keyboard_handler();
 
 // Core function of the kernel that is called by bootloader
 void kernel_main(){
@@ -27,6 +26,12 @@ void kernel_main(){
 
 
     // TO BE TRANSFERED TO DEVICE MANAGER
+    // Initialize the 8042 IBM PC PS/2 Controller
+    if (ps2ControllerInit() != -1)
+        printsys("8042 PS/2 Controller\n", PRINTSYS_STATUS_SUCCESS);
+    else
+        printsys("8042 PS/2 Controller\n", PRINTSYS_STATUS_FAIL);
+
     // Writes data to set the ACPI mode
     if ((FADTstruct = (struct FADT*)ACPIcontrol(ACPI_CONTROL_FIND_FADT)) != NULL){
         outb(FADTstruct->SMI_CommandPort, FADTstruct->AcpiEnable);  // Initialise the ACPI mode

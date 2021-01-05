@@ -14,6 +14,7 @@
 #include "drivers/x86.h"
 #include "drivers/acpi.h"
 #include "drivers/kbd.h"
+#include "drivers/ps2_8042.h"
 #include "interrupts.h"
 #include "platform.h"
 
