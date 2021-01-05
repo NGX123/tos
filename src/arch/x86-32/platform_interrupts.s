@@ -1,11 +1,10 @@
-; File: idt.s
-; Description: includes the assembly part of the irq handlers, to add new just changes the <NUM> in irq<NUM> for other number in all occurences
+/*
+    @author = ngx123
+    @brief = includes the assembly part of the irq handlers, to add new just changes the <NUM> in irq<NUM> for other number in all occurences
+*/
 
 
-; Declaration of IDT initializer
 global idtLoadAsm:function
-
-; Declaration of IDT display function
 extern display_idt
 
 ; Declaration of C IRQ handlers
@@ -44,7 +43,11 @@ global irq13_handler_asm
 global irq14_handler_asm
 global irq15_handler_asm
 
-; Load IDT ASM function
+
+/*
+    @brief = Load IDT ASM function
+    @param = address of the GDT struct
+*/
 idtLoadAsm:
 	mov edx, [esp + 4]
 	lidt[edx]
