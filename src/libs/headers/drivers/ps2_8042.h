@@ -2,7 +2,7 @@
 // Description: global declarations of functions from ps2 driver
 
 #ifndef PS2_8042_H
-#define PS2_8042_h
+#define PS2_8042_H
 
 
 #include "types.h"
