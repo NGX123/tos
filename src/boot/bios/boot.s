@@ -1,6 +1,7 @@
-; File: boot.s
-; Description: the main assembly file that initializes and starts everything
-
+/*
+        @author = ngx123
+        @brief = platform init file that takes over after bootloader
+*/
 
 
 ; Defines
@@ -9,8 +10,6 @@ MEMINFO equ 1 << 1              ; provide memory map
 FLAGS   equ MBALIGN | MEMINFO   ; muliboot 'flag'
 MAGIC   equ 0x1BADB002          ; magic number to let bootloader find the header
 CHECKSUM equ -(MAGIC + FLAGS)   ; checksum of above, to prove we are multiboot
-
-
 
 
 ;;; Multiboot(grub) section ;;;
@@ -23,8 +22,6 @@ align 4
     dd CHECKSUM
 
 
-
-
 ;;; Stack Section ;;;
 section .bss
 
@@ -34,8 +31,6 @@ stack_bottom:
 ; Allocate 16 kilobytes
 resb 16384
 stack_top:
-
-
 
 
 ;;; Code section ;;;
