@@ -1,5 +1,8 @@
-// File: idt.c
-// Description: c setup of interrupt descriptor table, the names of irqs must also be added here for usage. outb(0xA0, 0x20); needs to be added before out(0x20, 0x20); on interrupts 8+
+/*
+    @author = ngx123
+    @brief = c setup of interrupt descriptor table, the names of irqs must also be added here for usage. outb(0xA0, 0x20); needs to be added before out(0x20, 0x20); on interrupts 8+
+*/
+
 
 #include "headers/platform_interrupts.h"
 
@@ -9,7 +12,6 @@ static struct idt_pointer ip;
 static interrupt_interpreter_func_t interruptInterpreter;
 
 
-// Reserved the important interrupts in the kernel
 int requestReservedInterrupts(int* numbers, int list_size){
 	int i;
 	int reserved_interrupts_list_size = 1;
@@ -25,14 +27,12 @@ int requestReservedInterrupts(int* numbers, int list_size){
 	return i;
 }
 
-// Sets the function that should be called by interrupts
 int setInterruptInterpreterFunction(interrupt_interpreter_func_t function){
 	interruptInterpreter = function;
 
 	return 0;
 }
 
-// PIC Remapping
 static void picRemap(){
     outb(0x20, 0x11);
     outb(0xA0, 0x11);
@@ -46,7 +46,6 @@ static void picRemap(){
     outb(0xA1, 0x0);
 }
 
-// Initializes the IDT
 void platformInterruptsInit(){
     picRemap();
 

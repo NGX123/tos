@@ -1,12 +1,17 @@
-// File: idt.h
-// Description: idt handler code header
+/*
+    @author = ngx123
+    @brief = idt handler code header
+*/
+
 
 #ifndef IDT_DEFINES_H
 #define IDT_DEFINES_H
 
+
 #include <stdint.h>
 #include "drivers/x86.h"
 #include "interrupts.h"
+
 
 #define IDT_COUNT 256
 
@@ -29,10 +34,14 @@ struct idt_pointer{
 } __attribute__((packed));
 
 
-// PIC Remapping
+/*
+    @brief = PIC Remapping
+*/
 static void picRemap();
 
-// IDT loading ASM routine
+/*
+    @brief = ASM Routine to load IDT into memory
+*/
 extern void idtLoadAsm();
 
 // ASM interrupt handler addresses
