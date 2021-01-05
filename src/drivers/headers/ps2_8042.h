@@ -5,6 +5,8 @@
 #define PS2_8042_H
 
 #include "drivers/x86.h"
+#include "types.h"
+#include "stdarg.h"
 
 
 #define CHANNEL_STATUS_BROKEN   0
@@ -41,7 +43,7 @@
 // Status Byte(AND the status byte with needed define to get status)
 #define STATUS_OUTPUT_BUFFER            0x01 // Status: 0 - empty, 1 - full
 #define STATUS_INPUT_BUFFER             0x02 // 0 - empty, 1 - full
-#define STATUS_SYSTEM_FLAG              0x04 // 1 - POST passed, 0 - not passed
+#define STATUS_SYSTEM_FLAG              0x04 // 1 - POST passed, 0 - not passed - Implementation can be buggy in firmware so treat as unknown
 #define STATUS_WRITE_TYPE               0x08 // 0 - data written to input buffer is for device, 1 - for controller
 #define STATUS_KEYLOCK_UNDEFINED        0x10 // Chipset specific
 #define STATUS_RCV_TIMEOUT_UNDEFINED    0x20 // Chipset specific
@@ -51,7 +53,7 @@
 // Config Byte(AND the status byte with needed define to get status)
 #define CONFIG_PS2_PORT1_INTERRUPT      0x01 // Status 1 - interrupt enabled, 0 - disabled
 #define CONFIG_PS2_PORT2_INTERRUPT      0x02 // 1 - interrupt enabled, 0 - disabled
-#define CONFIG_POST_PASSED              0x04 // 1 - passed POST, 0 - system is broken(POST not passed)
+#define CONFIG_POST_PASSED              0x04 // 1 - passed POST, 0 - system is broken(POST not passed) - Implementation can be buggy in firmware so treat as unknown
 #define CONFIG_ZERO                     0x08 // Should be 0
 #define CONFIG_PS2_PORT1_CLOCK          0x10 // 1 - clock off, 0 - on
 #define CONFIG_PS2_PORT2_CLOCK          0x20 // 1 - clock off, 0 - on
@@ -68,5 +70,103 @@
 #define OUTPUT_PS2_PORT1_CLOCK      0x40
 #define OUTPUT_PS2_PORT1_DATA       0x80
 
+// IOctl commands
+#define IOCTL_CONTROLLER_SEND       0
+#define IOCTL_CONTROLLER_RECEIVE    1
 
+// Device Type Defines
+#define DEVICE_PS2_MOUSE                    0x00
+#define DEVICE_SCROLL_MOUSE                 0x03
+#define DEVICE_5BUTTON_MOUSE                0x04
+#define DEVICE_MF2_KEYBOARD_TRANSLATION     0xAB
+#define DEVICE_MF2_KEYBOARD_TRANSLATION2    0x41
+#define DEVICE_MF2_KEYBOARD_TRANSLATION3    0xC1
+#define DEVICE_MF2_KEYBOARD                 0xAB
+#define DEVICE_MF2_KEYBOARD1                0x83
+#define DEVICE_BROKEN                       0xEE
+
+
+struct controller_info
+{
+    uint8_t channels_present;
+    uint8_t channel1_status;
+    uint8_t channel2_status;
+    uint8_t channel1_device;
+    uint8_t channel2_device;
+    uint8_t translation;
+
+};
+
+
+/*
+    @brief = initialization of the PS/2 controller
+    @return = 0 on success, -1 on error
+*/
+int ps2ControllerInit();
+
+
+/*
+    @brief = Returns the data collected by controller during initialization
+    @param datatype = what data is requested(e.g. channels amount)
+    @param data = storage for the requested data
+    @return = 0 on success, -1 on error
+*/
+int ioctl_requestData(uint8_t datatype, uint8_t* data);
+
+/*
+    @brief = sends command to the controller and recieves data while also making some checks
+    @param command = the command to send to the controller
+    @param data = space to store recieved data or to read and send data from
+    @return = 0 on success, -1 on error
+*/
+int ioctl_controllerDataRecieve(uint8_t command, uint8_t data);
+
+/*
+    @brief = sends command and data to the controller while also checking it
+    @param command = the command to send to the controller
+    @param data = space to store recieved data or to read and send data from
+    @return = 0 on success, -1 on error
+*/
+int ioctl_controllerDataSend(uint8_t command, uint8_t data);
+
+/*
+    @brief = send data directly to chosen controller port
+    @param port = the port of the controller to send to
+    @param data = the data to send to the port
+    @return = 0 on success, -1 on fail
+*/
+int ioctl_controllerDirectSend(uint16_t port, uint8_t data);
+
+/*
+    @brief = recieve data directly from chosen controller port
+    @param port = the port of the controller to recieve from
+    @param data = storage for the recieved data
+    @return = 0 on success, -1 on fail
+*/
+int ioctl_controllerDirectRecieve(uint16_t port, uint8_t* data);
+
+/*
+    @brief = ioctl function to control the 8042
+    @param request = The command to send to the controller
+    @param ... = Extra parameters that might be required
+    @return = 0 or nonnegative on success, -1 on error
+*/
+int ioctl(unsigned long request, ...);
+
+
+/*
+    @brief = Disabled write function
+    @param buf = Buffer to write data from
+    @param count = Bytes amount to be written from buffer
+    @return = -1 on error
+*/
+ssize_t ps2_8042Write(void* buf, size_t count);
+
+/*
+    @brief = Disabled read function
+    @param buf = Buffer to read data to
+    @param count = Bytes amount to be read to the buffer
+    @return = -1 on error
+*/
+ssize_t ps2_8042Read(void* buf, size_t count);
 #endif

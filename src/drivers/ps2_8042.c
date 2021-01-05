@@ -4,31 +4,15 @@
 #include "headers/ps2_8042.h"
 #include "stdio.h"
 
-int printBin(int num)
+static struct controller_info recieved_data;
+
+/*
+    @brief = initialization of the PS/2 controller
+    @return = 0 on success, -1 on error
+*/
+int ps2ControllerInit()
 {
-  int c, k;
-
-  for (c = 31; c >= 0; c--)
-  {
-    k = num >> c;
-
-    if (k & 1)
-      printf("1");
-    else
-      printf("0");
-  }
-
-  printf("\n");
-
-  return 0;
-}
-
-
-int ps2ControllerInit(){
     uint8_t config_byte;
-    int channels;
-    int channel1_status = CHANNEL_STATUS_BROKEN;
-    int channel2_status = CHANNEL_STATUS_BROKEN;
 
     // Disable USB Legacy
 
@@ -45,8 +29,6 @@ int ps2ControllerInit(){
     outb(CONTROLLER_COMMAND_PORT, READ_CONFIG_BYTE);
     if (inb(CONTROLLER_STATUS_PORT) & STATUS_OUTPUT_BUFFER){
         config_byte = inb(CONTROLLER_DATA_PORT);
-        printf("Byte - %x\n", config_byte);
-        printf("Post - %d\n", (config_byte & CONFIG_POST_PASSED));
     }
     else
         return -1;
@@ -62,11 +44,11 @@ int ps2ControllerInit(){
     outb(CONTROLLER_COMMAND_PORT, READ_CONFIG_BYTE);
     if (inb(CONTROLLER_STATUS_PORT) & STATUS_OUTPUT_BUFFER){
         if (!(inb(CONTROLLER_DATA_PORT) & CONFIG_PS2_PORT2_CLOCK) && (config_byte & CONFIG_PS2_PORT2_CLOCK)){
-            channels = 2;
+            recieved_data.channels_present = 2;
             outb(CONTROLLER_COMMAND_PORT, DISABLE_PS2_PORT2);
         }
         else
-            channels = 1;
+            recieved_data.channels_present = 1;
     }
     else
         return -1;
@@ -75,25 +57,132 @@ int ps2ControllerInit(){
     outb(CONTROLLER_COMMAND_PORT, TEST_PS2_PORT1);                      // Port 1
     if (inb(CONTROLLER_STATUS_PORT) & STATUS_OUTPUT_BUFFER)
         if (inb(CONTROLLER_DATA_PORT) == 0x00)
-            channel1_status = CHANNEL_STATUS_WORKING;
-    if (channels == 2){
+            recieved_data.channel1_status = CHANNEL_STATUS_WORKING;
+    if (recieved_data.channels_present == 2){
         outb(CONTROLLER_COMMAND_PORT, TEST_PS2_PORT2);                  // Port 2
         if (inb(CONTROLLER_STATUS_PORT) & STATUS_OUTPUT_BUFFER)
             if (inb(CONTROLLER_DATA_PORT) != 0x00)
-                channel2_status = CHANNEL_STATUS_WORKING;
+                recieved_data.channel2_status = CHANNEL_STATUS_WORKING;
     }
     // Fail if all existing channels are broken
-    if ((channels == 1 && channel1_status == CHANNEL_STATUS_BROKEN) || (channels == 2 && (channel1_status == CHANNEL_STATUS_BROKEN && channel2_status == CHANNEL_STATUS_BROKEN)))
+    if ((recieved_data.channels_present == 1 && recieved_data.channel1_status == CHANNEL_STATUS_BROKEN) || (recieved_data.channels_present == 2 && (recieved_data.channel1_status == CHANNEL_STATUS_BROKEN && recieved_data.channel2_status == CHANNEL_STATUS_BROKEN)))
         return -1;
 
     // Enable the ports
     outb(CONTROLLER_COMMAND_PORT, ENABLE_PS2_PORT1);
-    if (channels == 2)
+    if (recieved_data.channels_present == 2)
         outb(CONTROLLER_COMMAND_PORT, ENABLE_PS2_PORT2);
 
     // Reset the connected devices
+    if (recieved_data.channel1_status == CHANNEL_STATUS_WORKING) // Device on Channel 1
+    {
+        inb(CONTROLLER_DATA_PORT);  // Flush data port
+        if (!(inb(CONTROLLER_STATUS_PORT) & STATUS_OUTPUT_BUFFER)){
+            outb(CONTROLLER_DATA_PORT, 0xFF);
+            if (inb(CONTROLLER_STATUS_PORT) & STATUS_OUTPUT_BUFFER)
+            {
+                if (inb(CONTROLLER_DATA_PORT) == 0xFA)
+                    printf("SUCCESS\n");
+                else
+                    recieved_data.channel1_device = DEVICE_BROKEN;
+            }
+        }
+        else
+            return -1;
+    }
+    if (recieved_data.channels_present == 2 && recieved_data.channel2_status == CHANNEL_STATUS_WORKING){  // Device on Channel 2
+        outb(CONTROLLER_COMMAND_PORT, WRITE_PS2_PORT2_INPUT);
+        if (!(inb(CONTROLLER_STATUS_PORT) & STATUS_OUTPUT_BUFFER)){
+            outb(CONTROLLER_DATA_PORT, 0xFF);
+            if (inb(CONTROLLER_STATUS_PORT) & STATUS_OUTPUT_BUFFER)
+            {
+                if (inb(CONTROLLER_DATA_PORT) == 0xFA)
+                    printf("SUCCESS 2\n");
+                else
+                    recieved_data.channel2_device = DEVICE_BROKEN;
+            }
+        }
+        else
+            return -1;
+    }
 
-    printf("Channels amount - %d\n", channels);
+    printf("%d %d %d %d %d\n", recieved_data.channel1_device, recieved_data.channel1_status, recieved_data.channel2_device, recieved_data.channel2_status, recieved_data.channels_present);
 
     return 0;
+}
+
+
+
+int ioctl_requestData(uint8_t datatype, uint8_t* data)
+{
+    return 0;
+}
+
+int ioctl_controllerDataRecieve(uint8_t command, uint8_t data)
+{
+    outb(CONTROLLER_COMMAND_PORT, command);
+    if (inb(CONTROLLER_STATUS_PORT) & STATUS_OUTPUT_BUFFER)
+        data = inb(CONTROLLER_DATA_PORT);
+    else
+        return -1;
+
+    return 0;
+}
+
+int ioctl_controllerDataSend(uint8_t command, uint8_t data)
+{
+    outb(CONTROLLER_COMMAND_PORT, command);
+    if (!(inb(CONTROLLER_STATUS_PORT) & STATUS_OUTPUT_BUFFER))
+        outb(CONTROLLER_DATA_PORT, data);
+    else
+        return -1;
+
+    return 0;
+}
+
+int ioctl_controllerDirectSend(uint16_t port, uint8_t data)
+{
+    if (port == CONTROLLER_DATA_PORT || port == CONTROLLER_STATUS_PORT || port == CONTROLLER_COMMAND_PORT)
+        outb(port, data);
+    else
+        return -1;
+
+    return 0;
+}
+
+int ioctl_controllerDirectRecieve(uint16_t port, uint8_t* data)
+{
+    if (port == CONTROLLER_DATA_PORT || port == CONTROLLER_STATUS_PORT || port == CONTROLLER_COMMAND_PORT)
+        *data = inb(port);
+    else
+        return -1;
+
+    return 0;
+}
+
+// int ioctl(unsigned long request, ...)
+// {
+//     va_list valist;
+//     if (request <= IOCTL_CONTROLLER_RECEIVE)
+//         va_start(valist, 2);
+
+//     if (request == IOCTL_CONTROLLER_SEND)
+//         controllerDataSend();
+//     else if (request == IOCTL_CONTROLLER_RECEIVE)
+//         controllerDataRecieve();
+
+//     va_end(valist);
+//     return 0;
+// }
+
+
+
+ssize_t ps2_8042Write(void* buf, size_t count)
+{
+    return -1;
+}
+
+ssize_t ps2_8042Read(void* buf, size_t count)
+{
+    return -1;
 }
