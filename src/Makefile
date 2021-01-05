@@ -2,7 +2,7 @@
 ## Global ##
 BUILDDIR 						= ./build
 TOOLCHAIN_PREFIX				= ../toolchain/bin
-CFLAGS_GLOBAL 					= -Wall -Wextra -c
+CFLAGS_GLOBAL 					= -Wshadow -Wall -Wextra -c
 CEXTRAWARNINGS 					= -pedantic -Wcast-align -Wcast-qual -Wdisabled-optimization -Wformat=2 -Winit-self -Wlogical-op -Wmissing-declarations -Wmissing-include-dirs -Wshadow -Wsign-conversion -Wstrict-overflow=5 -Wswitch-default -Wundef -Wno-unused
 OVMF 							= /usr/share/OVMF
 EDK2							= ../toolchain/edk2
