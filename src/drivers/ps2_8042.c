@@ -113,12 +113,12 @@ int ps2ControllerInit()
 
 
 
-int ioctl_requestData(uint8_t datatype, uint8_t* data)
+static int ioctl_requestData(uint8_t datatype, uint8_t* data)
 {
     return 0;
 }
 
-int ioctl_controllerDataRecieve(uint8_t command, uint8_t data)
+static int ioctl_controllerDataRecieve(uint8_t command, uint8_t data)
 {
     outb(CONTROLLER_COMMAND_PORT, command);
     if (inb(CONTROLLER_STATUS_PORT) & STATUS_OUTPUT_BUFFER)
@@ -129,7 +129,7 @@ int ioctl_controllerDataRecieve(uint8_t command, uint8_t data)
     return 0;
 }
 
-int ioctl_controllerDataSend(uint8_t command, uint8_t data)
+static int ioctl_controllerDataSend(uint8_t command, uint8_t data)
 {
     outb(CONTROLLER_COMMAND_PORT, command);
     if (!(inb(CONTROLLER_STATUS_PORT) & STATUS_OUTPUT_BUFFER))
@@ -140,7 +140,7 @@ int ioctl_controllerDataSend(uint8_t command, uint8_t data)
     return 0;
 }
 
-int ioctl_controllerDirectSend(uint16_t port, uint8_t data)
+static int ioctl_controllerDirectSend(uint16_t port, uint8_t data)
 {
     if (port == CONTROLLER_DATA_PORT || port == CONTROLLER_STATUS_PORT || port == CONTROLLER_COMMAND_PORT)
         outb(port, data);
@@ -150,7 +150,7 @@ int ioctl_controllerDirectSend(uint16_t port, uint8_t data)
     return 0;
 }
 
-int ioctl_controllerDirectRecieve(uint16_t port, uint8_t* data)
+static int ioctl_controllerDirectRecieve(uint16_t port, uint8_t* data)
 {
     if (port == CONTROLLER_DATA_PORT || port == CONTROLLER_STATUS_PORT || port == CONTROLLER_COMMAND_PORT)
         *data = inb(port);
