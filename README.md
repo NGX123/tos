@@ -63,3 +63,13 @@ or
 ```
 make all_x86-64-uefiapp_edk2
 ```
+
+
+## Credits(taken from other projects)
+* notes/coding_style.md
+    * [Original Source](https://github.com/skiftOS/skift/blob/main/manual/coding_style.md)
+    * Original Authors - @sleepy-monax, @Keyboard-Slayer, @optimisticside
+
+* src/include/string.h src/lib/string.c
+    * [Original Source](https://mirrors.edge.kernel.org/pub/linux/kernel/Historic/)
+    * Original Author - Linus Torvalds
