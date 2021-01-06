@@ -1,10 +1,5 @@
-/*
-        @author = ngx123
-        @brief = code for the initial setup of the platform
-*/
-
-
-%include "boot/bios/boot.s"
+; @author = ngx123
+; @brief = code for the initial setup of the platform
 
 
 global load_gdt:function

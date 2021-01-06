@@ -1,7 +1,6 @@
-/*
-    @author = ngx123
-    @brief = includes the assembly part of the irq handlers, to add new just changes the <NUM> in irq<NUM> for other number in all occurences
-*/
+; @author = ngx123
+; @brief = includes the assembly part of the irq handlers, to add new just changes the <NUM> in irq<NUM> for other number in all occurences
+
 
 
 global idtLoadAsm:function
@@ -44,10 +43,9 @@ global irq14_handler_asm
 global irq15_handler_asm
 
 
-/*
-    @brief = Load IDT ASM function
-    @param = address of the GDT struct
-*/
+
+; @brief = Load IDT ASM function
+; @param = address of the GDT struct
 idtLoadAsm:
 	mov edx, [esp + 4]
 	lidt[edx]
