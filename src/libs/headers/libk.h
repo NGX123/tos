@@ -1,18 +1,31 @@
-// File: libk.h
-// Description: header file for declarations of special functions for kernel
+/*
+    @author = ngx123
+    @brief = header for library with special function only available to kernel
+*/
+
 
 #ifndef LIBK_H
 #define LIBK_H
 
+
 #define PRINTSYS_STATUS_SUCCESS 0
 #define PRINTSYS_STATUS_FAIL 1
 
-// Prints a system message with special formatting
+
+/*
+    @brief = prints a system initialization message
+    @param string = the string to print
+    @param status = the status of the print - FAIL/SUCCESS
+*/
 extern void printsys(char* string, int status);
 
-// Print a message when gdt was initialised
+/*
+    @brief = prints a GDT initialization message
+*/
 extern void display_gdt();
 
-// Print a message when idt was initialised
+/*
+    @brief = prints an IDT initialization message
+*/
 extern void display_idt();
 #endif

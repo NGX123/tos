@@ -1,9 +1,13 @@
-// File: libk.c
-// Description: includes special function that will be available only to the kernel
+/*
+    @author = ngx123
+    @brief = library with special function only available to kernel
+*/
+
 
 #include "stdio.h"
 #include "drivers/vga.h"
 #include "libk.h"
+
 
 void printsys(char* string, int status){
     // Success Message
@@ -30,7 +34,6 @@ void printsys(char* string, int status){
     printf("%s", string);
 }
 
-// Info prints ///
 void display_gdt(){
     printsys("GDT\n", PRINTSYS_STATUS_SUCCESS);
 }
