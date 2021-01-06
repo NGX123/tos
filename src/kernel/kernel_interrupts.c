@@ -4,7 +4,7 @@
 */
 
 
-#include "headers/kernel_interrupts.h"
+#include "include/kernel_interrupts.h"
 
 
 // Interrupt handling functions list
