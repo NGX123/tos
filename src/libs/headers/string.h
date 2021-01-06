@@ -1,15 +1,21 @@
-// File: string.c
-// Description: includes defines of string functions
+/*
+	@author = COPYRIGHT Linus Torvals Linux v1.3
+	@brief = basic c string library header
+*/
+
 
 #ifndef STRING_H
 #define STRING_H
 
+
 #include <stdint.h>
 #include <stddef.h>
+
 
 #ifndef NULL
 #define NULL ((void *) 0)
 #endif
+
 
 extern char * ___strtok;
 extern char * strcpy(char *,const char *);

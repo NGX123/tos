@@ -1,10 +1,15 @@
-// File: string.c
-// Description: string library, some or most implementation taken from Linux-1.3(Copyright Linus Torvalds)
+/*
+	@author = COPYRIGHT Linus Torvals Linux v1.3
+	@brief = basic c string library
+*/
+
 
 #include "string.h"
 #include <stdint.h>
 
+
 char * ___strtok = NULL;
+
 
 char * strcpy(char * dest,const char *src)
 {
