@@ -1,10 +1,15 @@
-// File: 8042_ps2.c
-// Description: a device driver for the 8042 PS/2 controller
+/*
+    @author = ngx123
+    @brief = 8042 PS/2 controller driver
+*/
+
 
 #include "headers/ps2_8042.h"
 #include "stdio.h"
 
+
 static struct controller_info recieved_data;
+
 
 /*
     @brief = initialization of the PS/2 controller
@@ -112,7 +117,6 @@ int ps2ControllerInit()
 }
 
 
-
 static int ioctl_requestData(uint8_t datatype, uint8_t* data)
 {
     return 0;
@@ -174,7 +178,6 @@ static int ioctl_controllerDirectRecieve(uint16_t port, uint8_t* data)
 //     va_end(valist);
 //     return 0;
 // }
-
 
 
 ssize_t ps2_8042Write(void* buf, size_t count)

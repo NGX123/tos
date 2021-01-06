@@ -1,8 +1,12 @@
-// File: 8042_ps2.h
-// Description: defines for the 8042 controller driver
+/*
+    @author = ngx123
+    @breif = local header for 8042 PS/2 controller driver
+*/
+
 
 #ifndef PS2_8042_DEFINES_H
 #define PS2_8042_DEFINES_H
+
 
 #include "drivers/x86.h"
 #include "types.h"

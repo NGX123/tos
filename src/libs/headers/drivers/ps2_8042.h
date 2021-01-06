@@ -1,5 +1,8 @@
-// File ps2_8042.h
-// Description: global declarations of functions from ps2 driver
+/*
+    @author = ngx123
+    @breif = global header for 8042 PS/2 controller driver
+*/
+
 
 #ifndef PS2_8042_H
 #define PS2_8042_H
