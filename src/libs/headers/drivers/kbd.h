@@ -1,8 +1,12 @@
-// File: kbd.h
-// Description: includes defines for the keyboard driver
+/*
+  @author = ngx123
+  @breif = PS/2 keyboard driver external header
+*/
+
 
 #ifndef KBD_H
 #define KBD_H
+
 
 #define KEYBOARD_MODE_CURRENTMODE -1
 #define KEYBOARD_MODE_STANDARD 0
@@ -12,9 +16,11 @@
 #define LARROW 0x80
 #define RARROW 0x81
 
+
 #include <stdint.h>
 #include <stddef.h>
 #include "types.h"
+
 
 // Structure of a keyboard packet
 struct keyPacket {
@@ -29,18 +35,46 @@ struct keyPacket {
 typedef struct keyPacket keypacket_t;
 typedef void (*callroutine_t)(uint8_t, uint32_t);
 
-// Initialises the keyboard
+
+/*
+  @brief = handles the keypress interrupt by reading scancode and calling needed functions to interpret it
+*/
+extern void keyboard_handler();
+
+/*
+  @breif = makes the initialization for the PS/2 keyboard
+  @param mode = the mode in which keyboard should work(display/standard)
+  @return = 0 on success, -1 on fail
+*/
 extern int keyboardInit(uint8_t mode);
 
-// Changes or returns current mode
+/*
+  @brief = changes or tells current keyboard mode
+  @param command = selects the action - change or print current mode
+  @return = 0 or current mode on success, -1 on fail
+*/
 extern int keyboardMode(int command);
 
-// Sets a function pointer to be called when keyboard interrupt is sent
+/*
+  @brief = sets the function pointer to be called after the scancode has been interpreted
+  @param callroutine_func = function pointer to be called by the keyboard_handler
+  @return = 0 on success
+*/
 extern int keyboardCallFunc(callroutine_t callroutine_func);
 
-// Reads amount from keyboard to buf
+/*
+  @brief = reads from keyboard into the buffer
+  @param buf = buffer to read to
+  @param count = amount of bytes to read
+  @return = amount of read bytes on success, -1 on fail
+*/
 extern ssize_t keyboardRead(void* buf, size_t amount);
 
-// Writes amount from buf to keyboard(always fails)
+/*
+  @brief = writes to the keyboard from the buffer
+  @param buf = buffer to write from
+  @param count = amount of bytes to write from buffer
+  @return = -1
+*/
 extern ssize_t keyboardWrite(void* buf, size_t amount);
 #endif

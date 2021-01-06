@@ -1,10 +1,13 @@
-// File: kbd-defines.h
-// Description: internal to the keyboard driver header
+/*
+  @author = ngx123
+  @brief = PS/2 keyboard driver internal header
+*/
+
 
 #ifndef KBD_DEFINES_H
 #define KBD_DEFINES_H
 
-/// Includes
+
 #include <stdint.h>
 #include <stddef.h>
 #include "stdio.h"
@@ -17,11 +20,10 @@
 #include "interrupts.h"
 
 
-/// Defines
 #define KEYBOARD_STATUS_PORT  0x64
 #define KEYBOARD_COMMAND_PORT 0x64
 #define KEYBOARD_DATA_PORT    0x60
-#define KBS_DIB               0x01    // kbd data in buffer
+#define KBS_DIB               0x01
 
 #define NO 0x0
 #define ESC 0x01
@@ -46,41 +48,40 @@
 #define C(x) (x - '@')
 
 
-
 // Scanset 1 keymap
 static uint8_t scanset1[] =
 {
-  NO,   0x1B, '1',  '2',  '3',  '4',  '5',  '6',  // 0x00
+  NO,   0x1B, '1',  '2',  '3',  '4',  '5',  '6',
   '7',  '8',  '9',  '0',  '-',  '=',  '\b', '\t',
-  'q',  'w',  'e',  'r',  't',  'y',  'u',  'i',  // 0x10
+  'q',  'w',  'e',  'r',  't',  'y',  'u',  'i',
   'o',  'p',  '[',  ']',  '\n', CTRL, 'a',  's',
-  'd',  'f',  'g',  'h',  'j',  'k',  'l',  ';',  // 0x20
+  'd',  'f',  'g',  'h',  'j',  'k',  'l',  ';',
   '\'', '`',  SHIFT,'\\', 'z',  'x',  'c',  'v',
-  'b',  'n',  'm',  ',',  '.',  '/',  SHIFT,'*',  // 0x30
+  'b',  'n',  'm',  ',',  '.',  '/',  SHIFT,'*',
   ALT,   ' ',  CAPS,NO,   NO,   NO,   NO,   NO,
-  NO,   NO,   NO,   NO,   NO,   NO,   NO,   '7',  // 0x40
+  NO,   NO,   NO,   NO,   NO,   NO,   NO,   '7',
   '8',  '9',  '-',  '4',  '5',  '6',  '+',  '1',
-  '2',  '3',  '0',  '.',  NO,   NO,   NO,   NO,   // 0x50
-  [0x9C] = '\n',      // KP_Enter
-  [0xB5] = '/'        // KP_Div
+  '2',  '3',  '0',  '.',  NO,   NO,   NO,   NO,
+  [0x9C] = '\n',
+  [0xB5] = '/'
 };
 
 // Character map when shift is pressed
 static uint8_t shiftmap[] =
 {
-  NO,   033,  '!',  '@',  '#',  '$',  '%',  '^',  // 0x00
+  NO,   033,  '!',  '@',  '#',  '$',  '%',  '^',
   '&',  '*',  '(',  ')',  '_',  '+',  '\b', '\t',
-  'Q',  'W',  'E',  'R',  'T',  'Y',  'U',  'I',  // 0x10
+  'Q',  'W',  'E',  'R',  'T',  'Y',  'U',  'I',
   'O',  'P',  '{',  '}',  '\n', CTRL,   'A','S',
-  'D',  'F',  'G',  'H',  'J',  'K',  'L',  ':',  // 0x20
+  'D',  'F',  'G',  'H',  'J',  'K',  'L',  ':',
   '"',  '~',  SHIFT,'|',  'Z',  'X',  'C',  'V',
-  'B',  'N',  'M',  '<',  '>',  '?',  SHIFT,'*',  // 0x30
+  'B',  'N',  'M',  '<',  '>',  '?',  SHIFT,'*',
   ALT,   ' ',  CAPS, NO,   NO,   NO,   NO,   NO,
-  NO,   NO,   NO,   NO,   NO,   NO,   NO,   '7',  // 0x40
+  NO,   NO,   NO,   NO,   NO,   NO,   NO,   '7',
   '8',  '9',  '-',  '4',  '5',  '6',  '+',  '1',
-  '2',  '3',  '0',  '.',  NO,   NO,   NO,   NO,   // 0x50
-  [0x9C] = '\n',      // KP_Enter
-  [0xB5] = '/'        // KP_Div
+  '2',  '3',  '0',  '.',  NO,   NO,   NO,   NO,
+  [0x9C] = '\n',
+  [0xB5] = '/'
 };
 
 // Character map when control is pressed
@@ -93,40 +94,38 @@ static uint8_t shiftmap[] =
 //   C('D'),  C('F'),  C('G'),  C('H'),  C('J'),  C('K'),  C('L'),  NO,
 //   NO,      NO,      NO,      C('\\'), C('Z'),  C('X'),  C('C'),  C('V'),
 //   C('B'),  C('N'),  C('M'),  NO,      NO,      C('/'),  NO,      NO,
-//   [0x9C] = '\r',      // KP_Enter
-//   [0xB5] = C('/')     // KP_Div
+//   [0x9C] = '\r',
+//   [0xB5] = C('/')
 // };
 
 
-/// Declarations
-// Returns a status byte for all toggle and hold keys
+/*
+  @brief = returns the status(held/released) of held keys but before changes the state depending on scancode argument
+  @param scancode = the key whos status should be changed to opposite
+  @param buttonStatuses = the buffer to hold the status byte where key states are changed
+  @return = 0 on success
+*/
 static int getButtonStatuses(uint32_t scancode, uint8_t* buttonStatuses);
 
-// Gets the character from the scancode
+/*
+  @brief = interprets scancode and button statuses to produce an ASCII character instead of a scancode
+  @param scancode = the scancode that should be converted to character
+  @param buttonStatuses = current hold button statuses
+  @return = the scancode changed to character
+*/
 static uint8_t getCharacter(uint32_t scancode, uint8_t buttonStatuses);
 
-// Standard mode - arrows keys are straight passed to the display, all shortcuts are passed to system as interrupts(not made yet), normal keys are passed to the read buffer
+/*
+  @brief = handles the keyboard standard mode - arrows keys are straight passed to the display, all shortcuts are passed to system as interrupts(not made yet), normal keys are passed to the read buffer
+  @param scancode = scancode to perform checks and interpret before doing actions with character
+  @param character = the character to be used to output
+*/
 static void keyboardStdMode(uint32_t scancode, uint8_t character);
 
-// Display mode - nothing is sent to the buffer and everything gets automatically displayed on the screen, shortcuts are as interrupts
+/*
+  @brief = handles the keyboard display mode - nothing is sent to the buffer and everything gets automatically displayed on the screen, shortcuts are as interrupts
+  @param scancode = scancode to perform checks and interpret before doing actions with character
+  @param character = the character to be used to output
+*/
 static void keyboardDisplayMode(uint32_t scancode, uint8_t character);
-
-// Function that is called when keyboard interrupt occurs
-void keyboard_handler();
-
-// Initializes the PS/2 keyboard
-int keyboardInit(uint8_t mode);
-
-// Changes or tells the current keyboard mode
-int keyboardMode(int command);
-
-// Sets a function pointer to be called when keyboard interrupt is sent
-int keyboardCallFunc(callroutine_t callroutine_func);
-
-// Reads from the keyboard into the buffer, if there is an error returns -1
-ssize_t keyboardRead(void* buf, size_t count);
-
-// Just fails
-ssize_t keyboardWrite(void* buf, size_t count);
-
 #endif
