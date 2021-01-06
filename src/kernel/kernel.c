@@ -1,9 +1,12 @@
-// File: kernel.c
-// Description: this is the main file which starts all other files
+/*
+    @author = ngx123
+    @brief = main file from which function in others are started
+*/
+
 
 #include "headers/kernel.h"
 
-// Core function of the kernel that is called by bootloader
+
 void kernel_main(){
     struct FADT* FADTstruct;
 

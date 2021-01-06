@@ -1,10 +1,13 @@
-// File: kernel.h
-// Description: kernel code header
+/*
+    @author = ngx123
+    @brief = header file for the kernel
+*/
+
 
 #ifndef KERNEL_DEFINES_H
 #define KERNEL_DEFINES_H
 
-/// Includes
+
 #include <stdint.h>
 #include "string.h"
 #include "stdio.h"
@@ -18,7 +21,9 @@
 #include "interrupts.h"
 #include "platform.h"
 
-/// Declarations
-// Core function of the kernel that is called by bootloader
-void kernel_main();
+
+/*
+    @brief = main function of the kernel that calls all other functions
+*/
+extern void kernel_main();
 #endif
