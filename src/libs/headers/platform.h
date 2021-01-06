@@ -1,9 +1,16 @@
-// File: platform.h
-// Description: includes declaration for the platform specific functions
+/*
+    @author = ngx123
+    @breif = includes declaration for the hardware platform specific functions
+*/
+
 
 #ifndef PLATFORM_H
 #define PLATFORM_H
 
-// Makes platform specific initializations
+
+/*
+    @breif = make platform specific initialization
+    @return = 0 on success, -1 on fail
+*/
 int hardwarePlatformInit();
 #endif
