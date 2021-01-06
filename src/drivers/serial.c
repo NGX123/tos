@@ -1,9 +1,16 @@
-// File: serial.c
-// Description: this file includes functions for interacting with serial port
+/*
+    @author = ngx123
+    @brief = serial port device driver
+*/
+
 
 #include "headers/serial.h"
 
-// Initialize the serial port configuration
+
+static int is_transmit_empty() {
+   return inb(PORT + 5) & 0x20;
+}
+
 void initSerial() {
    outb(PORT + 1, 0x00);    // Disable all interrupts
    outb(PORT + 3, 0x80);    // Enable DLAB (set baud rate divisor)
@@ -14,12 +21,6 @@ void initSerial() {
    outb(PORT + 4, 0x0B);    // IRQs enabled, RTS/DSR set
 }
 
-// Check if the port is empty and ready for transmission
-int is_transmit_empty() {
-   return inb(PORT + 5) & 0x20;
-}
-
-// Send the data through serial port
 void writeSerial(uint8_t* a) {
     while (is_transmit_empty() == 0);
     while (*a != 0){
