@@ -1,12 +1,18 @@
-// File: acpi.h
-// Description: includes the declarations of ACPI structs and declarations
+/*
+  @author = ngx123
+  @brief = ACPI hardware detection driver global header
+*/
+
 
 #ifndef ACPI_H
 #define ACPI_H
 
+
 #include <stdint.h>
 
+
 #define ACPI_CONTROL_FIND_FADT 1
+
 
 // Contains header for ACPI structures
 struct ACPISDT {
@@ -30,18 +36,12 @@ struct GenericAddressStructure{
   uint64_t Address;
 };
 
-// The main function to control the ACPI
-extern void* ACPIcontrol(int action);
-
-
-
 // Large data structs
 struct FADT {
     struct   ACPISDT h;
     uint32_t FirmwareCtrl;
     uint32_t Dsdt;
 
-    // field used in ACPI 1.0; no longer in use, for compatibility only
     uint8_t  Reserved;
 
     uint8_t  PreferredPowerManagementProfile;
@@ -83,7 +83,6 @@ struct FADT {
     uint8_t  Reserved2;
     uint32_t Flags;
 
-    // 12 byte structure; see below for details
     struct GenericAddressStructure ResetReg;
 
     uint8_t  ResetValue;
@@ -102,4 +101,13 @@ struct FADT {
     struct GenericAddressStructure X_GPE0Block;
     struct GenericAddressStructure X_GPE1Block;
 };
+
+
+// The main function to control the ACPI
+/*
+  @brief = main function to control ACPI table searching
+  @param action = integer(use macro) that specifies what the function should do
+
+*/
+extern void* ACPIcontrol(int action);
 #endif

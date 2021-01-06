@@ -1,16 +1,16 @@
-// File: acpi.c
-// Description: driver for reading acpi tables from the memory
-
+/*
+    @author = ngx123
+    @brief = ACPI hardware detection driver
+*/
 
 
 #include <stdint.h>
 #include "stdio.h"
 #include "string.h"
 #include "headers/acpi.h"
-
 #include "drivers/acpi.h"
 
-// Checksum RSDP structure
+
 static int checksumRSDP(void* RSDPstruct){
     int i;
     uint8_t check = 0;
@@ -37,7 +37,6 @@ static int checksumRSDP(void* RSDPstruct){
     return -1;
 }
 
-// Checks for a given header and validates checksum
 static int checksumHeaderACPI(void* voidPtr)
 {
     uint32_t* ptr = (uint32_t*)voidPtr;
@@ -57,7 +56,6 @@ static int checksumHeaderACPI(void* voidPtr)
     return -1;
 }
 
-// Finds for RSDP in EBDA
 static void* findRSDPinEBDA(){
     volatile char* EBDApointer = (volatile char*)0x40E;
     volatile char* EBDA = (volatile char*)((int)*EBDApointer);
@@ -87,7 +85,6 @@ static void* findRSDPinEBDA(){
     return NULL;
 }
 
-// Search for RSDP in Extra Memory
 static void* findRSDPinEXTMEM(){
     volatile char* EXTMEMstart = (volatile char*)0x000E0000;
     volatile char* EXTMEMend = (volatile char*)0x000FFFFF;
@@ -116,7 +113,6 @@ static void* findRSDPinEXTMEM(){
     return NULL;
 }
 
-// Find the SDTs in memory
 static void* findSDT(void* RSDPstruct, char* signature){
     int i;
     int entries_amount;
@@ -161,7 +157,6 @@ static void* findSDT(void* RSDPstruct, char* signature){
     return NULL;
 }
 
-// One function to control the ACPI and the only one to be exposed
 void* ACPIcontrol(int action){
     if (action == ACPI_CONTROL_FIND_FADT){
         // Find the RSDP

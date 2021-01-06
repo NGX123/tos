@@ -1,13 +1,16 @@
-// File: acpi-defines.h
-// Description: internal to the acpi driver header
-
+/*
+    @author = ngx123
+    @brief = ACPI hardware detection driver internal header
+*/
 
 
 #ifndef ACPI_DEFINES_H
 #define ACPI_DEFINES_H
 
+
 #include <stdint.h>
 #include "drivers/acpi.h"
+
 
 // ACPIv1 RSPD structure
 struct RSDP {
@@ -21,7 +24,7 @@ struct RSDP {
 // ACPIv2 RSPD structure
 struct RSDP2 {
  struct RSDP firstPart;
- 
+
  uint32_t Length;
  void* XsdtAddress;
  uint8_t ExtendedChecksum;
@@ -41,14 +44,37 @@ struct XSDT {
 };
 
 
-// Finds pointer to RSDP in EBDA
+/*
+    @brief = Function to checksum RSDP structure
+    @param RSDPstruct = pointer to RSDP structure to checksum
+    @return = 0 on success, -1 on fail
+*/
+static int checksumRSDP(void* RSDPstruct);
+
+/*
+    @brief = Function to checksum ACPI Header struct
+    @param voidPtr = pointer to ACPI header struct to checksum
+    @return = 0 on success, -1 on fail
+*/
+static int checksumHeaderACPI(void* voidPtr);
+
+/*
+    @brief = Finds pointer to RSDP in EBDA
+    @return = pointer to RSDP struct on success, NULL on fail
+*/
 static void* findRSDPinEBDA();
 
-// Finds pointer to RSDP in Extra Memory
+/*
+    @brief = Finds pointer to RSDP in Extended EBDA
+    @return = pointer to RSDP struct on success, NULL on fail
+*/
 static void* findRSDPinEXTMEM();
 
-// Find the different SDTs using RSDT
+/*
+    @brief = Find chosen selected SDT in memory using pointer in RSDT
+    @param RSDPstruct = pointer to RSDT that should be used for searching
+    @param signature = string(signature) to search for in RSDT
+    @return = address to selected SDT on success, NULL on fail
+*/
 static void* findSDT(void* RSDPstruct, char* signature);
-
-
 #endif
