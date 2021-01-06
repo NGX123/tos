@@ -1,12 +1,16 @@
-// File: interrupts.c
-// Description: is platform independant main part of interrupt handling code
+/*
+    @author = ngx123
+    @brief = main platform independant interrupt handling part of kernel
+*/
+
 
 #include "headers/kernel_interrupts.h"
+
 
 // Interrupt handling functions list
 static interrupt_handler_struct_t interrupt_list[INTERRUPTS_HANDLERS_LIST_SIZE];
 
-// Is called by system interrupt handlers and is the main function to transfer interrupts to their desired location
+
 static int interruptOccured(int interrupt_num){
     if (interrupt_list[interrupt_num].status == INTERRUPT_STATUS_OFF)
         return -1;
@@ -16,7 +20,6 @@ static int interruptOccured(int interrupt_num){
     return 0;
 }
 
-// Initalizes the interrupt code ready to be used by the kernel
 int interruptsInit(){
     int reserved_interrupts[INTERRUPTS_AMOUNT];
     int reserved_interrupts_amount;
@@ -45,7 +48,6 @@ int interruptsInit(){
     return 0;
 }
 
-// Change the function called by interrupt
 int bindInterrupt(int interrupt_num, interrupt_handler_t handlerfunc, int priority){
     // Fail if the interrupt number is to large or callers priority is too low
     if (interrupt_num >= INTERRUPTS_AMOUNT || (priority > interrupt_list[interrupt_num].priority && interrupt_list[interrupt_num].priority != INTERRUPT_PRIORITY_UNINITIALIZED))
