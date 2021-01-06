@@ -7,7 +7,7 @@
 #include <stdint.h>
 #include "stdio.h"
 #include "string.h"
-#include "headers/acpi.h"
+#include "include/acpi.h"
 #include "drivers/acpi.h"
 
 

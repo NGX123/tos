@@ -4,7 +4,7 @@
 */
 
 
-#include "headers/tty.h"
+#include "include/tty.h"
 
 
 static struct tty_config termios;

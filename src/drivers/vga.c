@@ -4,7 +4,7 @@
 */
 
 
-#include "headers/vga.h"
+#include "include/vga.h"
 
 
 static volatile char* text_buffer = (volatile char*)VGA_ADDRESS;

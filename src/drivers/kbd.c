@@ -4,7 +4,7 @@
 */
 
 
-#include "headers/kbd.h"
+#include "include/kbd.h"
 
 
 static uint8_t charBuffer[BUFSIZE];
