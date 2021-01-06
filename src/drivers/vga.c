@@ -1,9 +1,12 @@
-// File: vga.c
-// Description: includes functions to print strings and numbers to the VGA text buffer at 0xb8000
+/*
+    @author = ngx123
+    @brief = vga device driver
+*/
+
 
 #include "headers/vga.h"
 
-/// Declarations ///
+
 static volatile char* text_buffer = (volatile char*)VGA_ADDRESS;
 static enum VGA_COLOR terminal_fg;
 static enum VGA_COLOR terminal_bg;
@@ -13,9 +16,6 @@ static int x;
 static int y;
 
 
-
-/// CURSOR ///
-// Enable the cursor
 static void enable_cursor(uint8_t cursor_start, uint8_t cursor_end)
 {
 	outb(0x3D4, 0x0A);
@@ -25,14 +25,12 @@ static void enable_cursor(uint8_t cursor_start, uint8_t cursor_end)
 	outb(0x3D5, (inb(0x3D5) & 0xE0) | cursor_end);
 }
 
-// Disable the cursor
 static void disable_cursor()
 {
 	outb(0x3D4, 0x0A);
 	outb(0x3D5, 0x20);
 }
 
-// Update the position of the cursor
 static void update_cursor(int x_axis, int y_axis)
 {
 	uint16_t pos = FORMULA_XY_CELL(x_axis, y_axis);
@@ -43,7 +41,6 @@ static void update_cursor(int x_axis, int y_axis)
 	outb(0x3D5, (uint8_t) ((pos >> 8) & 0xFF));
 }
 
-// Updates the cursor location
 static void updatexy(){
     x = cell % 80;
     y = (int)(cell / 80);
@@ -51,10 +48,6 @@ static void updatexy(){
 }
 
 
-
-
-//// SPECIAL SYMBOLS ///
-// Removes last printed letter
 static void backspace(){
     --cell;
 
@@ -62,7 +55,6 @@ static void backspace(){
     updatexy();
 }
 
-// Moves onto the next line
 static void enter(){
     color = terminal_fg | terminal_bg << 4;
 
@@ -74,7 +66,6 @@ static void enter(){
     updatexy();
 }
 
-// Moves cursor accrording to keyboard arrows
 static void arrows(const char direction){
     if (direction == '<')
         --cell;
@@ -83,7 +74,6 @@ static void arrows(const char direction){
     updatexy();
 }
 
-// Cleans the screen
 static void cleanScreen(char cleanOption){
     int tmpCell;
     int tmpByte;
@@ -107,7 +97,6 @@ static void cleanScreen(char cleanOption){
     }
 }
 
-// Scrolls the screen
 void scrollScreen(){
     int currentCell;
 
@@ -122,7 +111,6 @@ void scrollScreen(){
 }
 
 
-// Outputs a character to the screen
 int printScreen(const uint8_t character){
     // Check the text on bound
     int boundsCheckStatus = 0;
@@ -219,8 +207,6 @@ int printScreen(const uint8_t character){
 }
 
 
-/// IOCTL FUNCTIONS ///
-// Initialises the screen
 void initScreen(char cursor_status){
     terminal_fg = green;
     terminal_bg = black;
@@ -239,7 +225,6 @@ void initScreen(char cursor_status){
         disable_cursor();
 }
 
-// Changes color of all of the new text printed
 void changeColor(enum VGA_COLOR fg, enum VGA_COLOR bg, int command) {
     int tmpcell = 0;
 
@@ -263,8 +248,6 @@ void changeColor(enum VGA_COLOR fg, enum VGA_COLOR bg, int command) {
 }
 
 
-/// FILE OPERATIONS ///
-// Writes from buf to display
 int vgatextWrite(void* buf, size_t count){
     size_t i;
     for (i = 0; i < count; i++)
@@ -274,7 +257,6 @@ int vgatextWrite(void* buf, size_t count){
     return 0;
 }
 
-// Reads from display to buf
 int vgatextRead(void* buf, size_t count){
     int tempvar;
     tempvar = ((uint8_t*)buf)[count-1];
