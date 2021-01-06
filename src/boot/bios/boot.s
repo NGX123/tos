@@ -1,7 +1,5 @@
-/*
-        @author = ngx123
-        @brief = platform init file that takes over after bootloader
-*/
+; @author = ngx123
+; @brief = platform init file that takes over after bootloader
 
 
 ; Defines

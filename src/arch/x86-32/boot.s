@@ -1,6 +1,7 @@
 ; @author = ngx123
 ; @brief = code for the initial setup of the platform
 
+%include "boot/bios/boot.s"
 
 global load_gdt:function
 extern display_gdt
