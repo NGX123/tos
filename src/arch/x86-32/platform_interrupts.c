@@ -4,7 +4,7 @@
 */
 
 
-#include "headers/platform_interrupts.h"
+#include "include/platform_interrupts.h"
 
 
 static struct idt_entry IDT[IDT_COUNT];
