@@ -1,16 +1,18 @@
-// File: stdio.c
-// Description: standard input/output library
+/*
+    @author = ngx123
+    @brief = standard c input/output library
+*/
+
 
 #include "drivers/vga.h"
 #include "stdio.h"
 
-// Prints a character to the screen
+
 int putchar(int chara){
     int status = printScreen(chara);
     return status;
 }
 
-// Prints a string to the screen
 int puts(char* str){
     for (int i = 0; str[i] != 0; i++)
         if (putchar(str[i]) == -1)
@@ -19,8 +21,6 @@ int puts(char* str){
     return 0;
 }
 
-
-// Local functions
 static void printint(int xx, int base, int sgn)
 {
     static char digits[] = "0123456789ABCDEF";
@@ -48,8 +48,7 @@ static void printint(int xx, int base, int sgn)
         putchar(buf[i]);
 }
 
-// Small printf function - only understands %d, %x, %p, %s, %c
-void printf(const char *fmt, ...)
+void printf(const char *fmt, ...) // only understands %d, %x, %p, %s, %c
 {
   char *s;
   int c, i, state;
@@ -101,15 +100,7 @@ void printf(const char *fmt, ...)
   }
 }
 
-
-
-
-
-
-
-
-// Transfer to appropriate library
-int atoi(const char *s)
+int atoi(const char *s) // Transfer to appropriate library
 {
   int n;
 
