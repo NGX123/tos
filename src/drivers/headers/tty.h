@@ -1,33 +1,34 @@
-// File: tty.h
-// Description: defines for the tty driver
+/*
+    @author = ngx123
+    @brief = local header for tty device driver
+*/
+
 
 #ifndef TTY_DEFINES_H
 #define TTY_DEFINES_H
 
-/// Includes
+
 #include <stdint.h>
 #include <stddef.h>
 #include <stdarg.h>
-
 #include "drivers/vga.h"
 #include "drivers/kbd.h"
 #include "drivers/tty.h"
 #include "ringbuf.h"
 #include "types.h"
 
-/// Declarations
-// Handles keyboard interrupts
-void ttyHandleKeyboardInterrupt(uint8_t character, uint32_t scancode);
 
-// Initializes the tty0
-int ttyInit(uint8_t mode);
+/*
+    @brief = handles the calls from the keyboard interrupt handler
+    @param character = the character that should be interprted
+    @param scancode = scancode that should help interpret the character
+*/
+static void ttyHandleKeyboardInterrupt(uint8_t character, uint32_t scancode);
 
-// Writes count from buf to screen
-ssize_t ttyWrite(void* buf, size_t count);
-
-// Reads count from keyboard to buf
-ssize_t ttyRead(void* buf, size_t count);
-
-// Calls device specific functions
-int ttyIoctl(size_t request, ...);
+/*
+    @biref = initializes the tty driver
+    @param mode = the mode in which the tty driver should work
+    @return = 0 on success
+*/
+static int ttyInit(uint8_t mode);
 #endif

@@ -1,12 +1,17 @@
-// File: tty.c
-// Description: code for the tty device combining keyboard and display
+/*
+    @author = ngx123
+    @brief = tty device driver
+*/
+
 
 #include "headers/tty.h"
+
 
 static struct tty_config termios;
 static ring_buffer_t ttyInputBufferStruct;
 static uint8_t* ttyInputBuffer;
 typedef int (*ioctlOps_t)(size_t, int*);
+
 
 void ttyHandleKeyboardInterrupt(uint8_t character, uint32_t scancode){
     // Canonical/line mode
@@ -55,7 +60,6 @@ void ttyHandleKeyboardInterrupt(uint8_t character, uint32_t scancode){
 static callroutine_t ttyKeyboardCallFunc = &ttyHandleKeyboardInterrupt;
 
 
-/// IOCTL OPERATIONS ///
 int ttyInit(uint8_t mode){
     RingBufferInit(&ttyInputBufferStruct, BUFFER_INPUT_SIZE, ttyInputBuffer);
     keyboardMode(KEYBOARD_MODE_STANDARD);
@@ -65,8 +69,7 @@ int ttyInit(uint8_t mode){
     return 0;
 }
 
-/// FILE OPERATIONS ///
-// Writes count from buf to screen
+
 ssize_t ttyWrite(void* buf, size_t count){
     size_t i;
 
@@ -79,7 +82,6 @@ ssize_t ttyWrite(void* buf, size_t count){
     return (ssize_t)i;
 }
 
-// Reads count from keyboard to buf
 ssize_t ttyRead(void* buf, size_t count){
     size_t i;
     int tmpVar;
