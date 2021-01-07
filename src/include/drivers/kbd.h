@@ -22,7 +22,6 @@
 #include <types.h>
 
 
-// Structure of a keyboard packet
 struct keyPacket
 {
   uint32_t scancode;

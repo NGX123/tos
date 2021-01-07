@@ -19,7 +19,6 @@
 #define CURSOR_ON 1
 
 
-// Colors for the VGA 16-bit text mode
 enum VGA_COLOR
 {
     black = 0x0,

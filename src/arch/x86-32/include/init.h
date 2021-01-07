@@ -11,7 +11,6 @@
 #include <stdint.h>
 
 
-// A gdt entry to be loaded using pointer
 struct gdt_entry
 {
     uint16_t limit_low;
@@ -22,7 +21,6 @@ struct gdt_entry
     uint8_t base_high;
 } __attribute__((packed));
 
-// Pointer to the GDT, The max bytes taken up by the GDT, minus 1
 struct gdt_ptr
 {
     uint16_t limit;

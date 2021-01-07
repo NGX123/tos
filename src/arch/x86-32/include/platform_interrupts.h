@@ -16,7 +16,6 @@
 #define IDT_COUNT 256
 
 
-// IDT data structure
 struct idt_entry
 {
     uint16_t offset_lowerbits;
@@ -28,7 +27,6 @@ struct idt_entry
 
 } __attribute__((packed));
 
-// IDT data structure pointer(in form of struct)
 struct idt_pointer
 {
     uint16_t size;

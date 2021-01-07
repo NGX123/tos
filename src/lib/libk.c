@@ -11,7 +11,6 @@
 
 void printsys(char* string, int status)
 {
-    // Success Message
     if (status == PRINTSYS_STATUS_SUCCESS)
     {
         changeColor(white, black, CHANGE_COLOR_NEXT);
@@ -21,7 +20,6 @@ void printsys(char* string, int status)
         changeColor(white, black, CHANGE_COLOR_NEXT);
         printf(" ]   ");
     }
-    // Fail Message
     else if (status == PRINTSYS_STATUS_FAIL)
     {
         changeColor(white, black, CHANGE_COLOR_NEXT);
@@ -32,7 +30,6 @@ void printsys(char* string, int status)
         printf(" ] ");
     }
 
-    // Message
     changeColor(green, black, CHANGE_COLOR_NEXT);
     printf("%s", string);
 }

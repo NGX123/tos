@@ -13,8 +13,7 @@ static int checksumRSDP(void* RSDPstruct)
     uint8_t check = 0;
     uint8_t* bptr = (uint8_t*)RSDPstruct;
 
-    // Checksum ACPI v1
-    if (((struct RSDP*)RSDPstruct)->Revision == 0)
+    if (((struct RSDP*)RSDPstruct)->Revision == 0)  // Checksum ACPI v1
     {
         for (i = 0; i < (int)sizeof(struct RSDP); i++)
         {
@@ -22,8 +21,7 @@ static int checksumRSDP(void* RSDPstruct)
             bptr++;
         }
     }
-    // Checksum ACPI v2+
-    else if (((struct RSDP*)RSDPstruct)->Revision > 0)
+    else if (((struct RSDP*)RSDPstruct)->Revision > 0)  // Checksum ACPI v2+
     {
         for (i = 0; i < (int)sizeof(struct RSDP2); i++)
         {
@@ -69,16 +67,13 @@ static void* findRSDPinEBDA()
     int j = 0;                  // Counter for going through the string in memory
     int k = 0;                  // Counter for going through the string in array
 
-    // Search EBDA
     for (i = 0; i != 1023; i++)
     {
-        // Put the signature in the array
-        if (EBDA[i] == 'R'){
+        if (EBDA[i] == 'R'){    // Put the signature in the array
             for (j = i, k = 0; j != (i+8); j++, k++)
                 signature[k] = EBDA[j];
             signature[k] = 0;
 
-            // Case if signature found
             if (strcmp("RSD PTR ", signature) == 0)
             {
                 RSDPstruct = (void*)&EBDA[i];
@@ -103,14 +98,12 @@ static void* findRSDPinEXTMEM()
 
     for (i = 0; &EXTMEMstart[i] != EXTMEMend; i++)
     {
-        // Put signature into array
-        if (EXTMEMstart[i] == 'R')
+        if (EXTMEMstart[i] == 'R')  // Put signature into array
         {
             for (j = i, k = 0; j != (i+8); j++, k++)
                 signature[k] = EXTMEMstart[j];
             signature[k] = 0;
 
-            // Case if signature was found
             if (strcmp("RSD PTR ", signature) == 0)
             {
                 RSDPstruct = (void*)&EXTMEMstart[i];
@@ -129,8 +122,7 @@ static void* findSDT(void* RSDPstruct, char* signature)
     void* RSDTstruct;
     struct ACPISDT* ACPISDTtmp;
 
-    // Case for ACPI v1
-    if (((struct RSDP*)RSDPstruct)->Revision == 0)
+    if (((struct RSDP*)RSDPstruct)->Revision == 0)  // Case for ACPI v1
     {
         RSDTstruct = (struct RSDT*) (((struct RSDP*)RSDPstruct)->RsdtAddress);
 
@@ -139,8 +131,7 @@ static void* findSDT(void* RSDPstruct, char* signature)
 
         entries_amount = (((struct RSDT*)RSDTstruct)->h.Length - sizeof(struct ACPISDT)) / 4;
     }
-    // Case for ACPI v2+
-    else if (((struct RSDP*)RSDPstruct)->Revision > 0)
+    else if (((struct RSDP*)RSDPstruct)->Revision > 0)  // Case for ACPI v2+
     {
         RSDTstruct = (struct XSDT*) (((struct RSDP2*)RSDPstruct)->XsdtAddress);
 
@@ -174,7 +165,6 @@ void* ACPIcontrol(int action)
 {
     if (action == ACPI_CONTROL_FIND_FADT)
     {
-        // Find the RSDP
         void* RSDPstruct;
         void* FADTstruct;
         if ((RSDPstruct = findRSDPinEBDA()) == NULL)

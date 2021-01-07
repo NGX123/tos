@@ -7,8 +7,7 @@
 #include "include/init.h"
 
 
-// Our GDT, with 3 entries, and finally our special GDT pointer
-static struct gdt_entry gdt[3];
+static struct gdt_entry gdt[3]; // Array is used to hold all of the GDT entries as they go one after another
 static struct gdt_ptr gp;
 
 

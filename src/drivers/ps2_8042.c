@@ -62,13 +62,13 @@ int ps2ControllerInit()
         return -1;
 
     // Perform interface self-tests and if none succeed return -1
-    outb(CONTROLLER_COMMAND_PORT, TEST_PS2_PORT1);                      // Port 1
+    outb(CONTROLLER_COMMAND_PORT, TEST_PS2_PORT1);                  // Port 1
     if (inb(CONTROLLER_STATUS_PORT) & STATUS_OUTPUT_BUFFER)
         if (inb(CONTROLLER_DATA_PORT) == 0x00)
             recieved_data.channel1_status = CHANNEL_STATUS_WORKING;
     if (recieved_data.channels_present == 2)
     {
-        outb(CONTROLLER_COMMAND_PORT, TEST_PS2_PORT2);                  // Port 2
+        outb(CONTROLLER_COMMAND_PORT, TEST_PS2_PORT2);              // Port 2
         if (inb(CONTROLLER_STATUS_PORT) & STATUS_OUTPUT_BUFFER)
             if (inb(CONTROLLER_DATA_PORT) != 0x00)
                 recieved_data.channel2_status = CHANNEL_STATUS_WORKING;
@@ -83,9 +83,9 @@ int ps2ControllerInit()
         outb(CONTROLLER_COMMAND_PORT, ENABLE_PS2_PORT2);
 
     // Reset the connected devices
-    if (recieved_data.channel1_status == CHANNEL_STATUS_WORKING) // Device on Channel 1
+    if (recieved_data.channel1_status == CHANNEL_STATUS_WORKING)    // Device on Channel 1
     {
-        inb(CONTROLLER_DATA_PORT);  // Flush data port
+        inb(CONTROLLER_DATA_PORT);                                  // Flush data port
         if (!(inb(CONTROLLER_STATUS_PORT) & STATUS_OUTPUT_BUFFER))
         {
             outb(CONTROLLER_DATA_PORT, 0xFF);
@@ -101,7 +101,7 @@ int ps2ControllerInit()
             return -1;
     }
     if (recieved_data.channels_present == 2 && recieved_data.channel2_status == CHANNEL_STATUS_WORKING)
-    {  // Device on Channel 2
+    {                                                               // Device on Channel 2
         outb(CONTROLLER_COMMAND_PORT, WRITE_PS2_PORT2_INPUT);
         if (!(inb(CONTROLLER_STATUS_PORT) & STATUS_OUTPUT_BUFFER))
         {

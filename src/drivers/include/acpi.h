@@ -14,8 +14,7 @@
 #include <drivers/acpi.h>
 
 
-// ACPIv1 RSPD structure
-struct RSDP
+struct RSDP     // For ACPIv1
 {
     char Signature[8];
     uint8_t Checksum;
@@ -24,8 +23,7 @@ struct RSDP
     void* RsdtAddress;
 } __attribute__ ((packed));
 
-// ACPIv2 RSPD structure
-struct RSDP2
+struct RSDP2    // For ACPIv2
 {
  struct RSDP firstPart;
 
@@ -35,15 +33,13 @@ struct RSDP2
  uint8_t reserved[3];
 } __attribute__ ((packed));
 
-// RSDT structure
-struct RSDT
+struct RSDT // For ACPIv1
 {
     struct ACPISDT h;
     void* sdtptr;
 };
 
-// XSDT structure(for ACPIv2)
-struct XSDT
+struct XSDT // For ACPIv2
 {
     struct ACPISDT h;
     void* stdptr;

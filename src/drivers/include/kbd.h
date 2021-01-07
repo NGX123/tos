@@ -48,7 +48,6 @@
 #define C(x) (x - '@')
 
 
-// Scanset 1 keymap
 static uint8_t scanset1[] =
 {
   NO,   0x1B, '1',  '2',  '3',  '4',  '5',  '6',
@@ -66,7 +65,6 @@ static uint8_t scanset1[] =
   [0xB5] = '/'
 };
 
-// Character map when shift is pressed
 static uint8_t shiftmap[] =
 {
   NO,   033,  '!',  '@',  '#',  '$',  '%',  '^',
@@ -84,7 +82,6 @@ static uint8_t shiftmap[] =
   [0xB5] = '/'
 };
 
-// Character map when control is pressed
 // static uint8_t ctlmap[] =
 // {
 //   NO,      NO,      NO,      NO,      NO,      NO,      NO,      NO,

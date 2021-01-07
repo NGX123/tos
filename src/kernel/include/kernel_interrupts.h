@@ -19,14 +19,12 @@
 #define INTERRUPT_STATUS_ON 1
 
 
-// A struct type containing info for the interrupt handler
 struct interrupt_handler_struct
 {
     interrupt_handler_t function;
     int priority;
     int status;
 };
-// A type define for the interrupt handler structure
 typedef struct interrupt_handler_struct interrupt_handler_struct_t;
 
 

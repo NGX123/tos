@@ -90,24 +90,19 @@ void keyboard_handler()
     uint32_t keyboardStatus, scancode;                                                           // Data from ports
     uint8_t character, scancode_byte2;
 
-    // Get the keyboard input
     if ((keyboardStatus = inb(KEYBOARD_STATUS_PORT)) & KBS_DIB)
         scancode = inb(KEYBOARD_DATA_PORT);
     else
         return;
 
-    // Handle E0
     if (scancode == 0xE0){
         scancode_byte2 = inb(KEYBOARD_DATA_PORT);
         scancode = scancode | (scancode_byte2 << 8);
     }
 
-    // Initialize the variables
     getButtonStatuses(scancode, &buttonStatuses);
     character = getCharacter(scancode, buttonStatuses);
 
-
-    // Keyboard mode handling //
     if (kbd_mode == 0)
         keyboardStdMode(scancode, character);
     else if (kbd_mode == 1)
@@ -126,7 +121,6 @@ void keyboard_handler()
 
 int keyboardInit(uint8_t mode)
 {
-    // Initialize the keyboard interrupts
     if (bindInterrupt(1, &keyboard_handler, INTERRUPT_PRIORITY_KERNEL) == -1)
         return -1;
 

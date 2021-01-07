@@ -83,21 +83,18 @@ static void cleanScreen(char cleanOption)
     int tmpCell;
     int tmpByte;
 
-    // Clean colors and characters
     if (cleanOption == CLEAN_SCREEN_CHAR_COLOR)
     {
         for (tmpByte = 0; tmpByte < 4000; tmpByte++)
             text_buffer[tmpByte] = BLANK;
     }
 
-    // Clean characters
     if (cleanOption == CLEAN_SCREEN_CHAR)
     {
         for (tmpCell = 0; tmpCell < 2000; tmpCell++)
             text_buffer[FORMULA_CELL_CHARBYTE(tmpCell)] = BLANK;
     }
 
-    // Clean color
     if (cleanOption == CLEAN_SCREEN_COLOR)
     {
         for (tmpCell = 0; tmpCell < 2000; tmpCell++)
@@ -127,7 +124,6 @@ void scrollScreen(){
 
 int printScreen(const uint8_t character)
 {
-    // Check the text on bound
     int boundsCheckStatus = 0;
 
     // Make the text mode buffer bounds check
@@ -137,8 +133,6 @@ int printScreen(const uint8_t character)
         boundsCheckStatus = -2;
 
 
-    // HANDLE ASCII //
-    // Handle next line character
     if (character == '\n')
     {
         if (boundsCheckStatus == -1)
@@ -152,8 +146,6 @@ int printScreen(const uint8_t character)
 
         return 0;
     }
-
-    // Handle tab
     else if (character == '\t')
     {
         if (boundsCheckStatus == -1)
@@ -168,8 +160,6 @@ int printScreen(const uint8_t character)
 
         return 0;
     }
-
-    // Handle arrows
     else if (character == LARROW)
     {
         if (boundsCheckStatus == -2)
@@ -191,8 +181,6 @@ int printScreen(const uint8_t character)
 
         return 0;
     }
-
-    // Handle backspace
     else if (character == '\b')
     {
         if (boundsCheckStatus == -2)
@@ -201,8 +189,6 @@ int printScreen(const uint8_t character)
 
         return 0;
     }
-
-    // Handle letter and symbol ASCII
     else
     {
         if (boundsCheckStatus == -1)
@@ -234,13 +220,10 @@ void initScreen(char cursor_status)
     terminal_bg = black;
     color = terminal_fg | terminal_bg << 4;
 
-    // Clear screen
     cleanScreen(CLEAN_SCREEN_CHAR_COLOR);
 
-    // Change the screen color
     changeColor(green, black, CHANGE_COLOR_ALL);
 
-    // Change cursor status
     if (cursor_status == CURSOR_ON)
         enable_cursor(0, 15);
     else if (cursor_status == CURSOR_OFF)
@@ -251,7 +234,6 @@ void changeColor(enum VGA_COLOR fg, enum VGA_COLOR bg, int command)
 {
     int tmpcell = 0;
 
-    // Change color of all text printed next
     if (command == CHANGE_COLOR_NEXT)
     {
         terminal_fg = fg;
@@ -259,7 +241,6 @@ void changeColor(enum VGA_COLOR fg, enum VGA_COLOR bg, int command)
         color = terminal_fg | terminal_bg << 4;
     }
 
-    // Change color of all of next and current text on the screen
     else if (command == CHANGE_COLOR_ALL)
     {
         terminal_fg = fg;

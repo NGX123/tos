@@ -14,7 +14,6 @@
 #define ACPI_CONTROL_FIND_FADT 1
 
 
-// Contains header for ACPI structures
 struct ACPISDT
 {
     char Signature[4];
@@ -28,8 +27,7 @@ struct ACPISDT
     uint32_t CreatorRevision;
 };
 
-// GAS strucutre used to identify registers position
-struct GenericAddressStructure
+struct GenericAddressStructure  // For register position identification
 {
   uint8_t AddressSpace;
   uint8_t BitWidth;
@@ -38,7 +36,6 @@ struct GenericAddressStructure
   uint64_t Address;
 };
 
-// Large data structs
 struct FADT
 {
     struct   ACPISDT h;
