@@ -1,12 +1,5 @@
--- Bugs --
-kernel.c & libk.c
-    + Printsys changes the color to print the like systemd, when screen is scrolled and text get's there it is printed the color of systemd because color is not changed back
-
 -- List of possible bugs --
 string.c
     + strstr() -> size of length variables was changed from int to size_t
     + multiple functions -> removed the const qualiefier to mute the warning, unlikely but may cause some problems if there is a bug in code and const var gets changed
 		+ strlen() and strnlen() -> changed implementations and variable types
-
-tty.c
-    + tty.c -> ttyWrite() and ttyRead() -> because the functions return types are ssize_t which includes negative numbers the variable that counts the bytes(i) is typecasted from size_t(no negative numbers) to ssize_t which might cause it to return negative numbers of read bytes when more bytes are read then the largest positive number in ssize_t(it is possible becuase the amount of bytes to read is a size_t variable)
