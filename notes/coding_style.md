@@ -2,6 +2,7 @@
 
 ## File Layout
 
+* File sections should be arranged in the following order
 1. Headers
 2. Macros
 3. Types
@@ -9,68 +10,34 @@
 5. Functions
 6. main
 
-## Leading whitespace
-
-* **DO** use 4 spaces as tab.
-
-## Blocks
-
-* `{` on own line.
-* `}` also on own line except on `do while` statements.
+* Have a file description at the top of each file
 
 *Example:*
 
-```C
-if (cond)
-{
-    // ...
-}
-else
-{
-    // ...
-}
-
-while (cond)
-{
-    // ...
-}
-
-do
-{
-    // ...
-} while (cond);
-
-class FooBar
-{
-    FooBar();
-};
-
-namespace bazz
-{
-
-} // namespace bazz
-
-extern "C"
-{
-    // ...
-}
-
-void do_foo()
-{
-    // ...
-}
-```
-
-## Comments
-
-* Have a file description at the top of each file
 ```C
 /*
     @author = nickname
     @brief = file description
 */
-* Put the function description comments only in header files and not in source files
-* Use the special formating for the function comments
+```
+
+* Each seaction(e.g. file description, declarations, functions...) should be seperated with 2 lines while the elements within it should be seperated with one line
+
+*Example:*
+
+```C
+int foo; // Section 1
+
+
+int foobar(); // Section 2
+
+int foofoo(); // Section 2, element 2
+```
+
+* Use the special formating for the function comments and keep all function comments in the header file
+
+*Example:*
+
 ```C
 /*
     @brief = function description
@@ -78,16 +45,88 @@ void do_foo()
     @param paramter-name2 = parameter description
     @return = return values of the function
 */
-int foo();
 ```
-* Avoid comment that paraphrases the code. Comments should answer the why and the code the how.
+
+## Indentation
+
+* Use 4 spaces as tab.
+* **DO NOT** use space as an indentation
+* Try no to leave white spaces at the end of lines
+* Do not put multiple assignments or statements on a single line
+
+*Example:*
+
+**DON'T**
+```C
+    if (condition) do_this;
+    do_something_everytime;
+
+    something; something;
+```
+**DO**
+```C
+    if (condition)
+        do this;
+        do_something_everytime;
+
+    something;
+    something;
+```
+
+## Blocks
+
+* `{` and `}` are on their own lines, except on `do while` statements.
+
+*Example:*
+
+```C
+    if (cond)
+    {
+        // ...
+    }
+    else
+    {
+        // ...
+    }
+
+    do
+    {
+        // ...
+    } while (cond);
+```
+
+* Do not unnecessarily use braces where a single statement will do, unless only one brach of conditional statement is single statement, in latter case use braces in both branches
+
+*Example:*
+
+```C
+    if (condition)
+        action();
+
+    if (condition)
+    {
+        do_this();
+        do_that();
+    }
+    else
+    {
+        otherwise();
+    }
+```
+
+## Spaces
+
+* Use spaces after `if`, `for`, `while`, `switch`, `case`, `do`
+* Do not use spaces after `sizeof`
+* Use one space on each side of `=  +  -  <  >  *  /  %  |  &  ^  <=  >=  ==  !=  ?  :`
+* Do not use space after unary `&  *  +  -  ~  !  sizeof  typeof  alignof  __attribute__  defined`, `++  --` or `. ->`
 
 ## Functions
 
-* Return type and modifiers on the same line as the function name.
-* The arguments is adjacent to the function name.
+* Do not use more then 10 local variables
 * All functions that would be used globally should be seperated from local in a seperate header file and be declared as extern
 * All local functions should be declared static
+* Return type and modifiers on the same line as the function name.
 
 *Example:*
 
@@ -96,24 +135,25 @@ static void foo()
 {
     bar;
 }
-
-foo();
 ```
 
 ## Keywords
 
 * Use a space after `if`, `for`, `while`, `switch`.
 * Do not use a space after the opening ( and before the closing ).
-* Preferably use () with `sizeof`.
-* Use `nullptr` when necessary otherwise use `NULL`.
-* Mostly use curly braces after `if`, `for`, `while`, `switch` statements.
+* Use () with `sizeof`.
 
-**DO**
+## Headers
+
+* Include libraries first, then include local headers (separate them with a new line).
+* Use `.h` as extension.
+
+*Example:*
+
 ```C
-if (foo)
-{
-    bar;
-}
+#include <libsystem/io/Stream.h>
+
+#include "foo.h"
 ```
 
 ## Switch
@@ -135,40 +175,4 @@ switch(foo)
         printf("barmitzvah\n");
         break;
 }
-```
-
-## Headers
-
-* Include libraries first, then include local headers (separate them with a new line).
-* Use `.h` as extension.
-
-*Example:*
-
-```C
-#include <libsystem/io/Stream.h>
-
-#include "foo.h"
-```
-
-## Line length
-
-* Keep lines between 60 and 80 characters long.
-
-## Handling Errors
-
-* `return -1` when there is an error
-* `return 0` when there is not
-
-## Formating
-* Each seaction(e.g. file description, declarations, functions...) should be seperated with 2 lines while the elements within it should be seperated with one line
-
-*Example:*
-
-```C
-int foo;
-
-
-int foobar();
-
-int foofoo();
 ```
