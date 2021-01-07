@@ -4,6 +4,8 @@
 
 * File sections should be arranged in the following order
 1. Headers
+    * Global
+    * Local
 2. Macros
 3. Types
 4. Global Variables
@@ -118,6 +120,7 @@ int foofoo(); // Section 2, element 2
 
 * Use spaces after `if`, `for`, `while`, `switch`, `case`, `do`
 * Do not use spaces after `sizeof`
+* DO not use space after the opening ( and before the closing )
 * Use one space on each side of `=  +  -  <  >  *  /  %  |  &  ^  <=  >=  ==  !=  ?  :`
 * Do not use space after unary `&  *  +  -  ~  !  sizeof  typeof  alignof  __attribute__  defined`, `++  --` or `. ->`
 
@@ -134,45 +137,5 @@ int foofoo(); // Section 2, element 2
 static void foo()
 {
     bar;
-}
-```
-
-## Keywords
-
-* Use a space after `if`, `for`, `while`, `switch`.
-* Do not use a space after the opening ( and before the closing ).
-* Use () with `sizeof`.
-
-## Headers
-
-* Include libraries first, then include local headers (separate them with a new line).
-* Use `.h` as extension.
-
-*Example:*
-
-```C
-#include <libsystem/io/Stream.h>
-
-#include "foo.h"
-```
-
-## Switch
-
-* Indent cases another level.
-* Switch case should NOT falltrough.
-* But if you have no other choise (very unlikely) add a `/* FALLTROUGH */` comment.
-
-*Example:*
-
-```C
-switch(foo)
-{
-    case bar:
-        printf("foo");
-        /* FALLTROUGH */
-
-    case mitzvah:
-        printf("barmitzvah\n");
-        break;
 }
 ```
