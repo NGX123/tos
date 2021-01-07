@@ -41,21 +41,24 @@ static void update_cursor(int x_axis, int y_axis)
 	outb(0x3D5, (uint8_t) ((pos >> 8) & 0xFF));
 }
 
-static void updatexy(){
+static void updatexy()
+{
     x = cell % 80;
     y = (int)(cell / 80);
     update_cursor(x, y);
 }
 
 
-static void backspace(){
+static void backspace()
+{
     --cell;
 
     text_buffer[FORMULA_CELL_CHARBYTE(cell)] = BLANK;
     updatexy();
 }
 
-static void enter(){
+static void enter()
+{
     color = terminal_fg | terminal_bg << 4;
 
     ++y;
@@ -66,7 +69,8 @@ static void enter(){
     updatexy();
 }
 
-static void arrows(const char direction){
+static void arrows(const char direction)
+{
     if (direction == '<')
         --cell;
     else if (direction == '>')
@@ -74,24 +78,28 @@ static void arrows(const char direction){
     updatexy();
 }
 
-static void cleanScreen(char cleanOption){
+static void cleanScreen(char cleanOption)
+{
     int tmpCell;
     int tmpByte;
 
     // Clean colors and characters
-    if (cleanOption == CLEAN_SCREEN_CHAR_COLOR){
+    if (cleanOption == CLEAN_SCREEN_CHAR_COLOR)
+    {
         for (tmpByte = 0; tmpByte < 4000; tmpByte++)
             text_buffer[tmpByte] = BLANK;
     }
 
     // Clean characters
-    if (cleanOption == CLEAN_SCREEN_CHAR){
+    if (cleanOption == CLEAN_SCREEN_CHAR)
+    {
         for (tmpCell = 0; tmpCell < 2000; tmpCell++)
             text_buffer[FORMULA_CELL_CHARBYTE(tmpCell)] = BLANK;
     }
 
     // Clean color
-    if (cleanOption == CLEAN_SCREEN_COLOR){
+    if (cleanOption == CLEAN_SCREEN_COLOR)
+    {
         for (tmpCell = 0; tmpCell < 2000; tmpCell++)
             text_buffer[FORMULA_CELL_COLORBYTE(tmpCell)] = BLANK;
     }
@@ -117,7 +125,8 @@ void scrollScreen(){
 }
 
 
-int printScreen(const uint8_t character){
+int printScreen(const uint8_t character)
+{
     // Check the text on bound
     int boundsCheckStatus = 0;
 
@@ -130,7 +139,8 @@ int printScreen(const uint8_t character){
 
     // HANDLE ASCII //
     // Handle next line character
-    if (character == '\n'){
+    if (character == '\n')
+    {
         if (boundsCheckStatus == -1)
             return -1;
 
@@ -144,7 +154,8 @@ int printScreen(const uint8_t character){
     }
 
     // Handle tab
-    else if (character == '\t'){
+    else if (character == '\t')
+    {
         if (boundsCheckStatus == -1)
             return -1;
 
@@ -159,14 +170,16 @@ int printScreen(const uint8_t character){
     }
 
     // Handle arrows
-    else if (character == LARROW){
+    else if (character == LARROW)
+    {
         if (boundsCheckStatus == -2)
             return -1;
         arrows('<');
 
         return 0;
     }
-    else if (character == RARROW){
+    else if (character == RARROW)
+    {
         if (boundsCheckStatus == -1)
             return -1;
 
@@ -180,7 +193,8 @@ int printScreen(const uint8_t character){
     }
 
     // Handle backspace
-    else if (character == '\b'){
+    else if (character == '\b')
+    {
         if (boundsCheckStatus == -2)
             return -1;
         backspace();
@@ -189,7 +203,8 @@ int printScreen(const uint8_t character){
     }
 
     // Handle letter and symbol ASCII
-    else {
+    else
+    {
         if (boundsCheckStatus == -1)
             return -1;
 
@@ -213,7 +228,8 @@ int printScreen(const uint8_t character){
 }
 
 
-void initScreen(char cursor_status){
+void initScreen(char cursor_status)
+{
     terminal_fg = green;
     terminal_bg = black;
     color = terminal_fg | terminal_bg << 4;
@@ -231,18 +247,21 @@ void initScreen(char cursor_status){
         disable_cursor();
 }
 
-void changeColor(enum VGA_COLOR fg, enum VGA_COLOR bg, int command) {
+void changeColor(enum VGA_COLOR fg, enum VGA_COLOR bg, int command)
+{
     int tmpcell = 0;
 
     // Change color of all text printed next
-    if (command == CHANGE_COLOR_NEXT){
+    if (command == CHANGE_COLOR_NEXT)
+    {
         terminal_fg = fg;
         terminal_bg = bg;
         color = terminal_fg | terminal_bg << 4;
     }
 
     // Change color of all of next and current text on the screen
-    else if (command == CHANGE_COLOR_ALL) {
+    else if (command == CHANGE_COLOR_ALL)
+    {
         terminal_fg = fg;
         terminal_bg = bg;
         color = terminal_fg | terminal_bg << 4;
@@ -254,7 +273,8 @@ void changeColor(enum VGA_COLOR fg, enum VGA_COLOR bg, int command) {
 }
 
 
-int vgatextWrite(void* buf, size_t count){
+int vgatextWrite(void* buf, size_t count)
+{
     size_t i;
     for (i = 0; i < count; i++)
         if (printScreen(((uint8_t*)buf)[i]) == -1)
@@ -263,7 +283,8 @@ int vgatextWrite(void* buf, size_t count){
     return 0;
 }
 
-int vgatextRead(void* buf, size_t count){
+int vgatextRead(void* buf, size_t count)
+{
     int tempvar;
     tempvar = ((uint8_t*)buf)[count-1];
 

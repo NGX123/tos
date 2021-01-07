@@ -15,7 +15,8 @@
 
 
 // Contains header for ACPI structures
-struct ACPISDT {
+struct ACPISDT
+{
     char Signature[4];
     uint32_t Length;
     uint8_t Revision;
@@ -28,7 +29,8 @@ struct ACPISDT {
 };
 
 // GAS strucutre used to identify registers position
-struct GenericAddressStructure{
+struct GenericAddressStructure
+{
   uint8_t AddressSpace;
   uint8_t BitWidth;
   uint8_t BitOffset;
@@ -37,7 +39,8 @@ struct GenericAddressStructure{
 };
 
 // Large data structs
-struct FADT {
+struct FADT
+{
     struct   ACPISDT h;
     uint32_t FirmwareCtrl;
     uint32_t Dsdt;

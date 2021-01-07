@@ -11,7 +11,8 @@
 #include <stdint.h>
 
 
-struct RBufStruct {
+struct RBufStruct
+{
     int capacity;               // Capacity
     int size;                   // Current size(filled in)
     int readIndex;              // Current position to read from the buffer

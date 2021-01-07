@@ -8,8 +8,8 @@
 #define INTERRUPTS_LOCAL_H
 
 
-#include "types.h"
-#include "interrupts.h"
+#include <types.h>
+#include <interrupts.h>
 
 
 #define INTERRUPTS_AMOUNT 255
@@ -20,7 +20,8 @@
 
 
 // A struct type containing info for the interrupt handler
-struct interrupt_handler_struct {
+struct interrupt_handler_struct
+{
     interrupt_handler_t function;
     int priority;
     int status;

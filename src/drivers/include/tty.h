@@ -11,11 +11,11 @@
 #include <stdint.h>
 #include <stddef.h>
 #include <stdarg.h>
-#include "drivers/vga.h"
-#include "drivers/kbd.h"
-#include "drivers/tty.h"
-#include "ringbuf.h"
-#include "types.h"
+#include <drivers/vga.h>
+#include <drivers/kbd.h>
+#include <drivers/tty.h>
+#include <ringbuf.h>
+#include <types.h>
 
 
 /*

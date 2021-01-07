@@ -2,7 +2,6 @@
 ; @brief = includes the assembly part of the irq handlers, to add new just changes the <NUM> in irq<NUM> for other number in all occurences
 
 
-
 global idtLoadAsm:function
 extern display_idt
 

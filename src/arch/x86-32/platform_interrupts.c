@@ -12,7 +12,8 @@ static struct idt_pointer ip;
 static interrupt_interpreter_func_t interruptInterpreter;
 
 
-int requestReservedInterrupts(int* numbers, int list_size){
+int requestReservedInterrupts(int* numbers, int list_size)
+{
 	int i;
 	int reserved_interrupts_list_size = 1;
 	int reserved_interupts_list[reserved_interrupts_list_size];
@@ -27,13 +28,15 @@ int requestReservedInterrupts(int* numbers, int list_size){
 	return i;
 }
 
-int setInterruptInterpreterFunction(interrupt_interpreter_func_t function){
+int setInterruptInterpreterFunction(interrupt_interpreter_func_t function)
+{
 	interruptInterpreter = function;
 
 	return 0;
 }
 
-static void picRemap(){
+static void picRemap()
+{
     outb(0x20, 0x11);
     outb(0xA0, 0x11);
     outb(0x21, 0x20);
@@ -46,7 +49,8 @@ static void picRemap(){
     outb(0xA1, 0x0);
 }
 
-void platformInterruptsInit(){
+void platformInterruptsInit()
+{
     picRemap();
 
     // Write the entries into IDT
@@ -154,88 +158,104 @@ void platformInterruptsInit(){
 
 
 // C Interrupt Handlers
-void irq0_handler(){
+void irq0_handler()
+{
     outb(0x20, 0x20); // EOI(End of Interrupt)
 }
 
-void irq1_handler(){
+void irq1_handler()
+{
 	interruptInterpreter(1);
     outb(0x20, 0x20);
 }
 
-void irq2_handler(){
+void irq2_handler()
+{
 	interruptInterpreter(2);
     outb(0x20, 0x20);
 }
 
-void irq3_handler(){
+void irq3_handler()
+{
 	interruptInterpreter(3);
     outb(0x20, 0x20);
 }
 
-void irq4_handler(){
+void irq4_handler()
+{
 	interruptInterpreter(4);
     outb(0x20, 0x20);
 }
 
-void irq5_handler(){
+void irq5_handler()
+{
 	interruptInterpreter(5);
     outb(0x20, 0x20);
 }
 
-void irq6_handler(){
+void irq6_handler()
+{
 	interruptInterpreter(6);
     outb(0x20, 0x20);
 }
 
-void irq7_handler(){
+void irq7_handler()
+{
 	interruptInterpreter(7);
     outb(0x20, 0x20);
 }
 
-void irq8_handler(){
+void irq8_handler()
+{
 	interruptInterpreter(8);
     outb(0xA0, 0x20);
     outb(0x20, 0x20);
 }
 
-void irq9_handler(){
+void irq9_handler()
+{
 	interruptInterpreter(9);
     outb(0xA0, 0x20);
     outb(0x20, 0x20);
 }
 
-void irq10_handler(){
+void irq10_handler()
+{
 	interruptInterpreter(10);
     outb(0xA0, 0x20);
     outb(0x20, 0x20);
 }
 
-void irq11_handler(){
+void irq11_handler()
+{
 	interruptInterpreter(11);
     outb(0xA0, 0x20);
     outb(0x20, 0x20);
 }
 
-void irq12_handler(){
+void irq12_handler()
+{
 	interruptInterpreter(12);
     outb(0xA0, 0x20);
     outb(0x20, 0x20);
 }
 
-void irq13_handler(){
+void irq13_handler()
+{
 	interruptInterpreter(13);
     outb(0xA0, 0x20);
     outb(0x20, 0x20);
 }
 
-void irq14_handler(){
+void irq14_handler()
+{
 	interruptInterpreter(14);
     outb(0xA0, 0x20);
     outb(0x20, 0x20);
 }
 
-void irq15_handler(){
+void irq15_handler()
+{
 	interruptInterpreter(15);
     outb(0xA0, 0x20);
     outb(0x20, 0x20);

@@ -9,11 +9,14 @@
 
 
 #include <stdint.h>
-#include "drivers/acpi.h"
+#include <stdio.h>
+#include <string.h>
+#include <drivers/acpi.h>
 
 
 // ACPIv1 RSPD structure
-struct RSDP {
+struct RSDP
+{
     char Signature[8];
     uint8_t Checksum;
     char OEMID[6];
@@ -22,7 +25,8 @@ struct RSDP {
 } __attribute__ ((packed));
 
 // ACPIv2 RSPD structure
-struct RSDP2 {
+struct RSDP2
+{
  struct RSDP firstPart;
 
  uint32_t Length;
@@ -32,13 +36,15 @@ struct RSDP2 {
 } __attribute__ ((packed));
 
 // RSDT structure
-struct RSDT {
+struct RSDT
+{
     struct ACPISDT h;
     void* sdtptr;
 };
 
 // XSDT structure(for ACPIv2)
-struct XSDT {
+struct XSDT
+{
     struct ACPISDT h;
     void* stdptr;
 };

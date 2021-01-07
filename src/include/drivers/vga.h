@@ -20,7 +20,8 @@
 
 
 // Colors for the VGA 16-bit text mode
-enum VGA_COLOR {
+enum VGA_COLOR
+{
     black = 0x0,
     blue = 0x1,
     green = 0x2,

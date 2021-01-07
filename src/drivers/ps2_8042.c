@@ -32,7 +32,8 @@ int ps2ControllerInit()
 
     // Read and Edit the config byte
     outb(CONTROLLER_COMMAND_PORT, READ_CONFIG_BYTE);
-    if (inb(CONTROLLER_STATUS_PORT) & STATUS_OUTPUT_BUFFER){
+    if (inb(CONTROLLER_STATUS_PORT) & STATUS_OUTPUT_BUFFER)
+    {
         config_byte = inb(CONTROLLER_DATA_PORT);
     }
     else
@@ -47,8 +48,10 @@ int ps2ControllerInit()
     // Check if the controller is single or dual channel
     outb(CONTROLLER_COMMAND_PORT, ENABLE_PS2_PORT2);
     outb(CONTROLLER_COMMAND_PORT, READ_CONFIG_BYTE);
-    if (inb(CONTROLLER_STATUS_PORT) & STATUS_OUTPUT_BUFFER){
-        if (!(inb(CONTROLLER_DATA_PORT) & CONFIG_PS2_PORT2_CLOCK) && (config_byte & CONFIG_PS2_PORT2_CLOCK)){
+    if (inb(CONTROLLER_STATUS_PORT) & STATUS_OUTPUT_BUFFER)
+    {
+        if (!(inb(CONTROLLER_DATA_PORT) & CONFIG_PS2_PORT2_CLOCK) && (config_byte & CONFIG_PS2_PORT2_CLOCK))
+        {
             recieved_data.channels_present = 2;
             outb(CONTROLLER_COMMAND_PORT, DISABLE_PS2_PORT2);
         }
@@ -63,7 +66,8 @@ int ps2ControllerInit()
     if (inb(CONTROLLER_STATUS_PORT) & STATUS_OUTPUT_BUFFER)
         if (inb(CONTROLLER_DATA_PORT) == 0x00)
             recieved_data.channel1_status = CHANNEL_STATUS_WORKING;
-    if (recieved_data.channels_present == 2){
+    if (recieved_data.channels_present == 2)
+    {
         outb(CONTROLLER_COMMAND_PORT, TEST_PS2_PORT2);                  // Port 2
         if (inb(CONTROLLER_STATUS_PORT) & STATUS_OUTPUT_BUFFER)
             if (inb(CONTROLLER_DATA_PORT) != 0x00)
@@ -82,7 +86,8 @@ int ps2ControllerInit()
     if (recieved_data.channel1_status == CHANNEL_STATUS_WORKING) // Device on Channel 1
     {
         inb(CONTROLLER_DATA_PORT);  // Flush data port
-        if (!(inb(CONTROLLER_STATUS_PORT) & STATUS_OUTPUT_BUFFER)){
+        if (!(inb(CONTROLLER_STATUS_PORT) & STATUS_OUTPUT_BUFFER))
+        {
             outb(CONTROLLER_DATA_PORT, 0xFF);
             if (inb(CONTROLLER_STATUS_PORT) & STATUS_OUTPUT_BUFFER)
             {
@@ -95,9 +100,11 @@ int ps2ControllerInit()
         else
             return -1;
     }
-    if (recieved_data.channels_present == 2 && recieved_data.channel2_status == CHANNEL_STATUS_WORKING){  // Device on Channel 2
+    if (recieved_data.channels_present == 2 && recieved_data.channel2_status == CHANNEL_STATUS_WORKING)
+    {  // Device on Channel 2
         outb(CONTROLLER_COMMAND_PORT, WRITE_PS2_PORT2_INPUT);
-        if (!(inb(CONTROLLER_STATUS_PORT) & STATUS_OUTPUT_BUFFER)){
+        if (!(inb(CONTROLLER_STATUS_PORT) & STATUS_OUTPUT_BUFFER))
+        {
             outb(CONTROLLER_DATA_PORT, 0xFF);
             if (inb(CONTROLLER_STATUS_PORT) & STATUS_OUTPUT_BUFFER)
             {

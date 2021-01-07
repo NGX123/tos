@@ -8,7 +8,7 @@
 #define TTY_H
 
 
-#include "types.h"
+#include <types.h>
 
 
 #define BUFFER_INPUT_SIZE 250
@@ -16,7 +16,8 @@
 #define MODE_RAW          1
 
 
-struct tty_config {
+struct tty_config
+{
     uint8_t mode;
     uint8_t flags;
 };

@@ -7,7 +7,8 @@
 #include "include/kernel.h"
 
 
-void kernel_main(){
+void kernel_main()
+{
     struct FADT* FADTstruct;
 
     // Turns the cursor on and sets it size

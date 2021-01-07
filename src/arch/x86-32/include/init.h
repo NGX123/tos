@@ -12,7 +12,8 @@
 
 
 // A gdt entry to be loaded using pointer
-struct gdt_entry{
+struct gdt_entry
+{
     uint16_t limit_low;
     uint16_t base_low;
     uint8_t base_middle;
@@ -22,7 +23,8 @@ struct gdt_entry{
 } __attribute__((packed));
 
 // Pointer to the GDT, The max bytes taken up by the GDT, minus 1
-struct gdt_ptr{
+struct gdt_ptr
+{
     uint16_t limit;
     void* base;
 } __attribute__((packed));

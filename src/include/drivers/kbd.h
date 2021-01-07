@@ -19,11 +19,12 @@
 
 #include <stdint.h>
 #include <stddef.h>
-#include "types.h"
+#include <types.h>
 
 
 // Structure of a keyboard packet
-struct keyPacket {
+struct keyPacket
+{
   uint32_t scancode;
   uint32_t characterForm;   // Includes the scancode form as a character from keyboard(available only if it is a character) otherwise 0
   uint32_t pressedStatus;   // The status if the key is pressed(1) or released(0)

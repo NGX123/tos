@@ -7,11 +7,13 @@
 #include "include/serial.h"
 
 
-static int is_transmit_empty() {
+static int is_transmit_empty()
+{
    return inb(PORT + 5) & 0x20;
 }
 
-void initSerial() {
+void initSerial()
+{
    outb(PORT + 1, 0x00);    // Disable all interrupts
    outb(PORT + 3, 0x80);    // Enable DLAB (set baud rate divisor)
    outb(PORT + 0, 0x03);    // Set divisor to 3 (lo byte) 38400 baud
@@ -21,9 +23,11 @@ void initSerial() {
    outb(PORT + 4, 0x0B);    // IRQs enabled, RTS/DSR set
 }
 
-void writeSerial(uint8_t* a) {
+void writeSerial(uint8_t* a)
+{
     while (is_transmit_empty() == 0);
-    while (*a != 0){
+    while (*a != 0)
+    {
         outb(PORT, *a);
         a++;
     }

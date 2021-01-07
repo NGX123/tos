@@ -12,14 +12,17 @@ static struct gdt_entry gdt[3];
 static struct gdt_ptr gp;
 
 
-int hardwarePlatformInit(){
+int hardwarePlatformInit()
+{
     setFlat();
 
     return 0;
 }
 
-static void setFlat(){
-    for (int i = 0; i < 3; i++){
+static void setFlat()
+{
+    for (int i = 0; i < 3; i++)
+    {
         gdt[i].limit_low = 0xffff;
         gdt[i].base_low = 0x0000;
         gdt[i].base_middle = 0x00;
@@ -30,7 +33,8 @@ static void setFlat(){
         if (i == 2)
             gdt[i].access = 0x92;
 
-        if (i == 0){
+        if (i == 0)
+        {
             gdt[i].limit_low = 0x0000;
             gdt[i].base_low = 0x0000;
             gdt[i].base_middle = 0x00;

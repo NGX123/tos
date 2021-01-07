@@ -9,15 +9,16 @@
 
 
 #include <stdint.h>
-#include "drivers/x86.h"
-#include "interrupts.h"
+#include <drivers/x86.h>
+#include <interrupts.h>
 
 
 #define IDT_COUNT 256
 
 
 // IDT data structure
-struct idt_entry{
+struct idt_entry
+{
     uint16_t offset_lowerbits;
     uint16_t selector;
 
@@ -28,7 +29,8 @@ struct idt_entry{
 } __attribute__((packed));
 
 // IDT data structure pointer(in form of struct)
-struct idt_pointer{
+struct idt_pointer
+{
     uint16_t size;
     void* address;
 } __attribute__((packed));

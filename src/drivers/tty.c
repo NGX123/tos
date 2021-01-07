@@ -13,15 +13,18 @@ static uint8_t* ttyInputBuffer;
 typedef int (*ioctlOps_t)(size_t, int*);
 
 
-void ttyHandleKeyboardInterrupt(uint8_t character, uint32_t scancode){
+void ttyHandleKeyboardInterrupt(uint8_t character, uint32_t scancode)
+{
     // Canonical/line mode
-    if (termios.mode == MODE_CANON){
+    if (termios.mode == MODE_CANON)
+    {
         // Skip the release events and the extra buttons events
         if (scancode < 0x80)
             return;
 
         // Printable ASCII Codes - Print to the screen
-        if (character >= 32 && character <= 127){
+        if (character >= 32 && character <= 127)
+        {
             vgatextWrite(&character, 1);
             writeBuf(&ttyInputBufferStruct, character);
         }
@@ -31,7 +34,8 @@ void ttyHandleKeyboardInterrupt(uint8_t character, uint32_t scancode){
             vgatextWrite(&character, 1);
 
         // Handle the next line escape sequence as special case
-        else if (character == '\n'){
+        else if (character == '\n')
+        {
             vgatextWrite(&character, 1);
             writeBuf(&ttyInputBufferStruct, character);
         }
@@ -41,7 +45,8 @@ void ttyHandleKeyboardInterrupt(uint8_t character, uint32_t scancode){
             return;
     }
 
-    else if (termios.mode == MODE_RAW){
+    else if (termios.mode == MODE_RAW)
+    {
         if (scancode < 0x80)
             return;
 
@@ -60,7 +65,8 @@ void ttyHandleKeyboardInterrupt(uint8_t character, uint32_t scancode){
 static callroutine_t ttyKeyboardCallFunc = &ttyHandleKeyboardInterrupt;
 
 
-int ttyInit(uint8_t mode){
+int ttyInit(uint8_t mode)
+{
     RingBufferInit(&ttyInputBufferStruct, BUFFER_INPUT_SIZE, ttyInputBuffer);
     keyboardMode(KEYBOARD_MODE_STANDARD);
     keyboardCallFunc(ttyKeyboardCallFunc);
@@ -70,11 +76,13 @@ int ttyInit(uint8_t mode){
 }
 
 
-ssize_t ttyWrite(void* buf, size_t count){
+ssize_t ttyWrite(void* buf, size_t count)
+{
     size_t i;
 
     for (i = 0; i < count; i++)
-        if (writeBuf(&ttyInputBufferStruct, ((uint8_t*)buf)[count]) == -1){
+        if (writeBuf(&ttyInputBufferStruct, ((uint8_t*)buf)[count]) == -1)
+        {
             if (i == 0)
                 return -1;
         }
@@ -82,12 +90,14 @@ ssize_t ttyWrite(void* buf, size_t count){
     return (ssize_t)i;
 }
 
-ssize_t ttyRead(void* buf, size_t count){
+ssize_t ttyRead(void* buf, size_t count)
+{
     size_t i;
     int tmpVar;
 
     for (i = 0; i < count; i++)
-        if((tmpVar = readBuf(&ttyInputBufferStruct)) == -1){
+        if((tmpVar = readBuf(&ttyInputBufferStruct)) == -1)
+        {
             if (i == 0)
                 return -1;
         }

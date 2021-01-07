@@ -11,7 +11,8 @@
 static interrupt_handler_struct_t interrupt_list[INTERRUPTS_HANDLERS_LIST_SIZE];
 
 
-static int interruptOccured(int interrupt_num){
+static int interruptOccured(int interrupt_num)
+{
     if (interrupt_list[interrupt_num].status == INTERRUPT_STATUS_OFF)
         return -1;
 
@@ -20,7 +21,8 @@ static int interruptOccured(int interrupt_num){
     return 0;
 }
 
-int interruptsInit(){
+int interruptsInit()
+{
     int reserved_interrupts[INTERRUPTS_AMOUNT];
     int reserved_interrupts_amount;
 
@@ -37,7 +39,8 @@ int interruptsInit(){
     // Reserve the platform specific special interrupts
     if ((reserved_interrupts_amount = requestReservedInterrupts(reserved_interrupts, INTERRUPTS_AMOUNT)) == -1)
         return -1;
-    else{
+    else
+    {
         for (int i = 0; i < reserved_interrupts_amount; i++)
             if (reserved_interrupts[i] < INTERRUPTS_AMOUNT)
                 interrupt_list[reserved_interrupts[i]].priority = INTERRUPT_PRIORITY_SYSTEM;
@@ -48,7 +51,8 @@ int interruptsInit(){
     return 0;
 }
 
-int bindInterrupt(int interrupt_num, interrupt_handler_t handlerfunc, int priority){
+int bindInterrupt(int interrupt_num, interrupt_handler_t handlerfunc, int priority)
+{
     // Fail if the interrupt number is to large or callers priority is too low
     if (interrupt_num >= INTERRUPTS_AMOUNT || (priority > interrupt_list[interrupt_num].priority && interrupt_list[interrupt_num].priority != INTERRUPT_PRIORITY_UNINITIALIZED))
         return -1;

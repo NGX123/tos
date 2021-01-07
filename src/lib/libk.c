@@ -4,14 +4,16 @@
 */
 
 
-#include "stdio.h"
-#include "drivers/vga.h"
-#include "libk.h"
+#include <stdio.h>
+#include <drivers/vga.h>
+#include <libk.h>
 
 
-void printsys(char* string, int status){
+void printsys(char* string, int status)
+{
     // Success Message
-    if (status == PRINTSYS_STATUS_SUCCESS){
+    if (status == PRINTSYS_STATUS_SUCCESS)
+    {
         changeColor(white, black, CHANGE_COLOR_NEXT);
         printf("[ ");
         changeColor(green, black, CHANGE_COLOR_NEXT);
@@ -20,7 +22,8 @@ void printsys(char* string, int status){
         printf(" ]   ");
     }
     // Fail Message
-    else if (status == PRINTSYS_STATUS_FAIL){
+    else if (status == PRINTSYS_STATUS_FAIL)
+    {
         changeColor(white, black, CHANGE_COLOR_NEXT);
         printf("[ ");
         changeColor(red, black, CHANGE_COLOR_NEXT);
@@ -34,10 +37,12 @@ void printsys(char* string, int status){
     printf("%s", string);
 }
 
-void display_gdt(){
+void display_gdt()
+{
     printsys("GDT\n", PRINTSYS_STATUS_SUCCESS);
 }
 
-void display_idt(){
+void display_idt()
+{
     printsys("IDT\n", PRINTSYS_STATUS_SUCCESS);
 }

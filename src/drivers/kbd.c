@@ -13,7 +13,8 @@ static uint8_t kbd_mode = 0;
 static callroutine_t callroutine = 0;
 
 
-static int getButtonStatuses(uint32_t scancode, uint8_t* buttonStatuses){
+static int getButtonStatuses(uint32_t scancode, uint8_t* buttonStatuses)
+{
     if ((scancode == 0x1D      || scancode == 0x1DE0) && !(*buttonStatuses & SHORTCUT_CTRL))
         *buttonStatuses ^= SHORTCUT_CTRL;
     else if ((scancode == 0x9D || scancode == 0x9DE0) &&  (*buttonStatuses & SHORTCUT_CTRL))
@@ -37,7 +38,8 @@ static int getButtonStatuses(uint32_t scancode, uint8_t* buttonStatuses){
     return 0;
 }
 
-static uint8_t getCharacter(uint32_t scancode, uint8_t buttonStatuses){
+static uint8_t getCharacter(uint32_t scancode, uint8_t buttonStatuses)
+{
     uint8_t character = 0;
 
     if (!(buttonStatuses & (SHORTCUT_CTRL | SHORTCUT_ALT | KEYBYTE_CAPS)) && !(scancode & 0x80))
@@ -53,7 +55,8 @@ static uint8_t getCharacter(uint32_t scancode, uint8_t buttonStatuses){
 }
 
 
-static void keyboardStdMode(uint32_t scancode, uint8_t character){
+static void keyboardStdMode(uint32_t scancode, uint8_t character)
+{
     if (character >= 32 && character <= 127 && scancode < 0x80)
         writeBuf(&charRingBufferStruct, character);
 
@@ -66,7 +69,8 @@ static void keyboardStdMode(uint32_t scancode, uint8_t character){
         writeBuf(&charRingBufferStruct, RARROW);
 }
 
-static void keyboardDisplayMode(uint32_t scancode, uint8_t character){
+static void keyboardDisplayMode(uint32_t scancode, uint8_t character)
+{
     if (character >= 32 && character <= 127 && scancode < 0x80)
         printScreen(character);
 
@@ -80,7 +84,8 @@ static void keyboardDisplayMode(uint32_t scancode, uint8_t character){
 }
 
 
-void keyboard_handler(){
+void keyboard_handler()
+{
     static uint8_t buttonStatuses = 0;                                                           // Toggle/Hold button statuses
     uint32_t keyboardStatus, scancode;                                                           // Data from ports
     uint8_t character, scancode_byte2;
@@ -109,7 +114,8 @@ void keyboard_handler(){
         keyboardDisplayMode(scancode, character);
     else if (kbd_mode == 2)
         return;
-    if (callroutine != NULL){
+    if (callroutine != NULL)
+    {
         if (scancode != RARROW_SCAN && scancode != LARROW_SCAN)
             callroutine(character, scancode);
         else
@@ -118,7 +124,8 @@ void keyboard_handler(){
 }
 
 
-int keyboardInit(uint8_t mode){
+int keyboardInit(uint8_t mode)
+{
     // Initialize the keyboard interrupts
     if (bindInterrupt(1, &keyboard_handler, INTERRUPT_PRIORITY_KERNEL) == -1)
         return -1;
@@ -144,11 +151,13 @@ int keyboardInit(uint8_t mode){
     return 0;
 }
 
-int keyboardMode(int command){
+int keyboardMode(int command)
+{
     if (command == KEYBOARD_MODE_CURRENTMODE)
         return kbd_mode;
 
-    if (command < 3){
+    if (command < 3)
+    {
         kbd_mode = command;
         return 0;
     }
@@ -156,18 +165,21 @@ int keyboardMode(int command){
     return -1;
 }
 
-int keyboardCallFunc(callroutine_t callroutine_func){
+int keyboardCallFunc(callroutine_t callroutine_func)
+{
     callroutine = callroutine_func;
     return 0;
 }
 
 
-ssize_t keyboardRead(void* buf, size_t count){
+ssize_t keyboardRead(void* buf, size_t count)
+{
     size_t i;
     int tmpVar;
 
     for (i = 0; i < count; i++)
-        if((tmpVar = readBuf(&charRingBufferStruct)) == -1){
+        if((tmpVar = readBuf(&charRingBufferStruct)) == -1)
+        {
             if (i == 0)
                 return -1;
         }
@@ -177,7 +189,8 @@ ssize_t keyboardRead(void* buf, size_t count){
     return (ssize_t)i;
 }
 
-ssize_t keyboardWrite(void* buf, size_t count){
+ssize_t keyboardWrite(void* buf, size_t count)
+{
     int tempvar;
     tempvar = ((uint8_t*)buf)[count-1];
 
