@@ -23,6 +23,10 @@
 #define FORMULA_CELL_CHARBYTE(currentCell) (currentCell * 2)
 #define FORMULA_CELL_COLORBYTE(currentCell) (currentCell * 2 + 1)
 
+#define CLEAN_SCREEN_CHAR_COLOR 0
+#define CLEAN_SCREEN_CHAR 1
+#define CLEAN_SCREEN_COLOR 2
+
 
 /*
     @brief = enables the cursor
