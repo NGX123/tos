@@ -124,6 +124,27 @@ int foofoo(); // Section 2, element 2
 * Use one space on each side of `=  +  -  <  >  *  /  %  |  &  ^  <=  >=  ==  !=  ?  :`
 * Do not use space after unary `&  *  +  -  ~  !  sizeof  typeof  alignof  __attribute__  defined`, `++  --` or `. ->`
 
+## Comments
+
+* Put all of the code description near the code and not above or below it, except for declarations and sections
+
+*Example:*
+
+**DON'T**
+```C
+    // This does something
+    while (condition)
+        if (this  == this)
+            do_something()
+```
+
+**DO**
+```C
+    while (condition)       // This does something
+        if (this  == this)
+            do_something();
+```
+
 ## Functions
 
 * Do not use more then 10 local variables
@@ -134,8 +155,8 @@ int foofoo(); // Section 2, element 2
 *Example:*
 
 ```C
-static void foo()
-{
-    bar;
-}
+    static void foo()
+    {
+        bar;
+    }
 ```
