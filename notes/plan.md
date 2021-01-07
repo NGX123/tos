@@ -1,3 +1,9 @@
+## To Do
+* drivers/ps2_8042.c
+	* Instead of checking the status byte once and if the buffer full/empty bit is not in the right position failing, poll the status bit until time is out or it is in the right position, tracking time should be done with PIT
+
+
+
 ### [Hardware](https://wiki.osdev.org/Category:Hardware)
 * [PS/2 Controller](https://wiki.osdev.org/%228042%22_PS/2_Controller)
 	* Implement detection of PS/2 controller presence
@@ -58,6 +64,7 @@
 		* When an interrupt occurs it will be transferred to tty and the signal library will be called by it which in turn will call function binded to the interrupt(if there is one)
 * [File System](https://wiki.osdev.org/Filesystem)
 * A CLI shell that is close to UNIX/POSIX
+
 
 
 ## Extra
