@@ -4,6 +4,8 @@
 	* OSs: Design and Implementation - Andrew Tanenbaum
 	* MMURTL - Richard Burgess
 	* OS Design: XINU - Douglas Comer
+	* Different books from Peter Norton
+		* Peter Norton's Assembly Language Book for the IBM PC - Peter Norton
 
 * Theory
 	* Modern OSs - Andrew Tanenbaum
