@@ -126,10 +126,10 @@ int ps2ControllerInit()
 }
 
 
-static int ioctl_requestData(uint8_t datatype, uint8_t* data)
-{
-    return 0;
-}
+// static int ioctl_requestData(uint8_t datatype, uint8_t* data)
+// {
+//     return 0;
+// }
 
 static int ioctl_controllerDataRecieve(uint8_t command, uint8_t data)
 {
@@ -173,28 +173,32 @@ static int ioctl_controllerDirectRecieve(uint16_t port, uint8_t* data)
     return 0;
 }
 
-// int ioctl(unsigned long request, ...)
+int ioctl(unsigned long request, ...)
+{
+    va_list valist;
+    if (request <= IOCTL_CONTROLLER_RECEIVE)
+        va_start(valist, request);
+
+    if (request == IOCTL_CONTROLLER_SEND)
+        return ioctl_controllerDataSend(0, 0); // TO FINISH
+    else if (request == IOCTL_CONTROLLER_RECEIVE)
+        return ioctl_controllerDataRecieve(0, 0); // TO FINISH
+    else if (request == IOCTL_CONTROLLER_DIRECT_SEND)
+        return ioctl_controllerDirectSend(0, 0); // TO FINISH
+    else if (request == IOCTL_CONTROLLER_DIRECT_RECIEVE)
+        return ioctl_controllerDirectRecieve(0, 0); // TO FINISH
+
+    va_end(valist);
+    return 0;
+}
+
+
+// ssize_t ps2_8042Write(void* buf, size_t count)
 // {
-//     va_list valist;
-//     if (request <= IOCTL_CONTROLLER_RECEIVE)
-//         va_start(valist, 2);
-
-//     if (request == IOCTL_CONTROLLER_SEND)
-//         controllerDataSend();
-//     else if (request == IOCTL_CONTROLLER_RECEIVE)
-//         controllerDataRecieve();
-
-//     va_end(valist);
-//     return 0;
+//     return -1;
 // }
 
-
-ssize_t ps2_8042Write(void* buf, size_t count)
-{
-    return -1;
-}
-
-ssize_t ps2_8042Read(void* buf, size_t count)
-{
-    return -1;
-}
+// ssize_t ps2_8042Read(void* buf, size_t count)
+// {
+//     return -1;
+// }
