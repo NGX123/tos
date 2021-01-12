@@ -48,17 +48,17 @@ struct XSDT // For ACPIv2
 
 /*
     @brief = Function to checksum RSDP structure
-    @param RSDPstruct = pointer to RSDP structure to checksum
+    @param RSDPptr = pointer to RSDP structure to checksum
     @return = 0 on success, -1 on fail
 */
-static int checksumRSDP(void* RSDPstruct);
+static int checksumRSDP(void* RSDPptr);
 
 /*
     @brief = Function to checksum ACPI Header struct
-    @param voidPtr = pointer to ACPI header struct to checksum
+    @param STDptr = pointer to ACPI header struct to checksum
     @return = 0 on success, -1 on fail
 */
-static int checksumHeaderACPI(void* voidPtr);
+static int checksumSDT(void* STDptr);
 
 /*
     @brief = Finds pointer to RSDP in EBDA
@@ -74,9 +74,9 @@ static void* findRSDPinEXTMEM();
 
 /*
     @brief = Find chosen selected SDT in memory using pointer in RSDT
-    @param RSDPstruct = pointer to RSDT that should be used for searching
+    @param RSDPptr = pointer to RSDT that should be used for searching
     @param signature = string(signature) to search for in RSDT
     @return = address to selected SDT on success, NULL on fail
 */
-static void* findSDT(void* RSDPstruct, char* signature);
+static void* findSDT(void* RSDPptr, char* signature);
 #endif

@@ -36,7 +36,7 @@ static int checksumRSDP(void* RSDPptr)
     return 0;
 }
 
-static int checksumHeaderACPI(void* SDTptr)
+static int checksumSDT(void* SDTptr)
 {
     uint32_t* SDTptr_uint32 = (uint32_t*)SDTptr;
 
@@ -126,7 +126,7 @@ static void* findSDT(void* RSDPptr, char* signature)
     {
         RSDTptr = (struct RSDT*) (((struct RSDP*)RSDPptr)->RsdtAddress);
 
-        if (checksumHeaderACPI((void*)RSDTptr) != 0)
+        if (checksumSDT((void*)RSDTptr) != 0)
             return NULL;
 
         SDTentriesAmount = (((struct RSDT*)RSDTptr)->h.Length - sizeof(struct ACPISDT)) / 4;
@@ -135,7 +135,7 @@ static void* findSDT(void* RSDPptr, char* signature)
     {
         RSDTptr = (struct XSDT*) (((struct RSDP2*)RSDPptr)->XsdtAddress);
 
-        if (checksumHeaderACPI((void*)RSDTptr) != 0)
+        if (checksumSDT((void*)RSDTptr) != 0)
             return NULL;
 
         if (strncmp(((struct XSDT*)RSDTptr)->h.Signature, "XSDT", 4) != 0)
@@ -154,14 +154,14 @@ static void* findSDT(void* RSDPptr, char* signature)
             tmpSDTptr = (struct ACPISDT*)(((struct XSDT*)RSDTptr)->stdptr+i);
 
         if (strncmp(tmpSDTptr->Signature, signature, 4) == 0)
-            if (checksumHeaderACPI((unsigned int*)tmpSDTptr) == 0)
+            if (checksumSDT((unsigned int*)tmpSDTptr) == 0)
                 return (void*)tmpSDTptr;
     }
 
     return NULL;
 }
 
-void* ACPIcontrol(int action)
+void* ACPIinit(int action)
 {
     if (action == ACPI_CONTROL_FIND_FADT)
     {

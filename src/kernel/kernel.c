@@ -37,7 +37,7 @@ void kernel_main()
         printsys("8042 PS/2 Controller\n", PRINTSYS_STATUS_FAIL);
 
     // Writes data to set the ACPI mode
-    if ((FADTstruct = (struct FADT*)ACPIcontrol(ACPI_CONTROL_FIND_FADT)) != NULL){
+    if ((FADTstruct = (struct FADT*)ACPIinit(ACPI_CONTROL_FIND_FADT)) != NULL){
         outb(FADTstruct->SMI_CommandPort, FADTstruct->AcpiEnable);  // Initialise the ACPI mode
         printsys("ACPI Detection\n", PRINTSYS_STATUS_SUCCESS);
     }
