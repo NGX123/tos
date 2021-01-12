@@ -109,5 +109,5 @@ struct FADT
   @param action = integer(use macro) that specifies what the function should do
 
 */
-extern void* ACPIcontrol(int action);
+extern void* ACPIinit(int action);
 #endif
