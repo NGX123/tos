@@ -9,8 +9,6 @@
 
 void kernel_main()
 {
-    struct FADT* FADTstruct;
-
     // Turns the cursor on and sets it size
     initScreen(CURSOR_ON);
     printsys("VGA Text Mode\n", PRINTSYS_STATUS_SUCCESS);
@@ -36,13 +34,11 @@ void kernel_main()
     else
         printsys("8042 PS/2 Controller\n", PRINTSYS_STATUS_FAIL);
 
-    // Writes data to set the ACPI mode
-    if ((FADTstruct = (struct FADT*)ACPIinit(ACPI_CONTROL_FIND_FADT)) != NULL){
-        outb(FADTstruct->SMI_CommandPort, FADTstruct->AcpiEnable);  // Initialise the ACPI mode
-        printsys("ACPI Detection\n", PRINTSYS_STATUS_SUCCESS);
-    }
+    // Initialize the ACPI mode
+    if (ACPIinit(ACPI_CONTROL_FIND_FADT) != -1)
+        printsys("ACPI\n", PRINTSYS_STATUS_SUCCESS);
     else
-        printsys("ACPI Detection\n", PRINTSYS_STATUS_FAIL);
+        printsys("ACPI\n", PRINTSYS_STATUS_FAIL);
 
     // Initialise Keyboard
     if (keyboardInit(KEYBOARD_MODE_DISPLAY) != -1)
