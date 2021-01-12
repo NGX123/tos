@@ -115,12 +115,12 @@ static void* findRSDPinEXTMEM()
     return NULL;
 }
 
-static void* findSDT(void* RSDPptr, char* signature)
+static void* findSDTinMem(void* RSDPptr, char* signature)
 {
     int i;
     int SDTentriesAmount;
     void* RSDTptr;
-    struct SDTheader* tmpSDTptr;
+    struct SDTheader* SDTptr;
 
     if (((struct RSDP*)RSDPptr)->Revision == 0)     // Case for ACPI v1
     {
@@ -149,16 +149,22 @@ static void* findSDT(void* RSDPptr, char* signature)
     for (i = 0; i < SDTentriesAmount; i++)
     {
         if (((struct RSDP*)RSDPptr)->Revision == 0)
-            tmpSDTptr = (struct SDTheader*)(((struct RSDT*)RSDTptr)->sdtptr+i);
+            SDTptr = (struct SDTheader*)(((struct RSDT*)RSDTptr)->sdtptr+i);
         else if (((struct RSDP*)RSDPptr)->Revision > 0)
-            tmpSDTptr = (struct SDTheader*)(((struct XSDT*)RSDTptr)->stdptr+i);
+            SDTptr = (struct SDTheader*)(((struct XSDT*)RSDTptr)->stdptr+i);
 
-        if (strncmp(tmpSDTptr->Signature, signature, 4) == 0)
-            if (checksumSDT((unsigned int*)tmpSDTptr) == 0)
-                return (void*)tmpSDTptr;
+        if (strncmp(SDTptr->Signature, signature, 4) == 0)
+            if (checksumSDT((unsigned int*)SDTptr) == 0)
+                return (void*)SDTptr;
     }
 
     return NULL;
+}
+
+static int saveSDT(void* RSDPptr){
+}
+
+int retrieveSDT(void* buf, int size, char* signature){
 }
 
 int ACPIinit()
