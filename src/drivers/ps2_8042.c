@@ -92,7 +92,8 @@ int ps2ControllerInit()
             if (inb(CONTROLLER_STATUS_PORT) & STATUS_OUTPUT_BUFFER)
             {
                 if (inb(CONTROLLER_DATA_PORT) == 0xFA)
-                    printf("SUCCESS\n");
+                    //printf("SUCCESS\n")
+                    ;
                 else
                     recieved_data.channel1_device = DEVICE_BROKEN;
             }
@@ -109,7 +110,8 @@ int ps2ControllerInit()
             if (inb(CONTROLLER_STATUS_PORT) & STATUS_OUTPUT_BUFFER)
             {
                 if (inb(CONTROLLER_DATA_PORT) == 0xFA)
-                    printf("SUCCESS 2\n");
+                    //printf("SUCCESS 2\n")
+                    ;
                 else
                     recieved_data.channel2_device = DEVICE_BROKEN;
             }
@@ -118,7 +120,7 @@ int ps2ControllerInit()
             return -1;
     }
 
-    printf("%d %d %d %d %d\n", recieved_data.channel1_device, recieved_data.channel1_status, recieved_data.channel2_device, recieved_data.channel2_status, recieved_data.channels_present);
+    // printf("%d %d %d %d %d\n", recieved_data.channel1_device, recieved_data.channel1_status, recieved_data.channel2_device, recieved_data.channel2_status, recieved_data.channels_present);
 
     return 0;
 }
