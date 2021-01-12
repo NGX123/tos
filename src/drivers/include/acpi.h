@@ -36,13 +36,13 @@ struct RSDP2    // For ACPIv2
 
 struct RSDT // For ACPIv1
 {
-    struct ACPISDT h;
+    struct SDTheader h;
     void* sdtptr;
 };
 
 struct XSDT // For ACPIv2
 {
-    struct ACPISDT h;
+    struct SDTheader h;
     void* stdptr;
 };
 

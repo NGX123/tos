@@ -120,7 +120,7 @@ static void* findSDT(void* RSDPptr, char* signature)
     int i;
     int SDTentriesAmount;
     void* RSDTptr;
-    struct ACPISDT* tmpSDTptr;
+    struct SDTheader* tmpSDTptr;
 
     if (((struct RSDP*)RSDPptr)->Revision == 0)     // Case for ACPI v1
     {
@@ -129,7 +129,7 @@ static void* findSDT(void* RSDPptr, char* signature)
         if (checksumSDT((void*)RSDTptr) != 0)
             return NULL;
 
-        SDTentriesAmount = (((struct RSDT*)RSDTptr)->h.Length - sizeof(struct ACPISDT)) / 4;
+        SDTentriesAmount = (((struct RSDT*)RSDTptr)->h.Length - sizeof(struct SDTheader)) / 4;
     }
     else if (((struct RSDP*)RSDPptr)->Revision > 0)  // Case for ACPI v2+
     {
@@ -141,7 +141,7 @@ static void* findSDT(void* RSDPptr, char* signature)
         if (strncmp(((struct XSDT*)RSDTptr)->h.Signature, "XSDT", 4) != 0)
             return NULL;
 
-        SDTentriesAmount = (((struct XSDT*)RSDTptr)->h.Length - sizeof(struct ACPISDT)) / 8;
+        SDTentriesAmount = (((struct XSDT*)RSDTptr)->h.Length - sizeof(struct SDTheader)) / 8;
     }
     else
         return NULL;
@@ -149,9 +149,9 @@ static void* findSDT(void* RSDPptr, char* signature)
     for (i = 0; i < SDTentriesAmount; i++)
     {
         if (((struct RSDP*)RSDPptr)->Revision == 0)
-            tmpSDTptr = (struct ACPISDT*)(((struct RSDT*)RSDTptr)->sdtptr+i);
+            tmpSDTptr = (struct SDTheader*)(((struct RSDT*)RSDTptr)->sdtptr+i);
         else if (((struct RSDP*)RSDPptr)->Revision > 0)
-            tmpSDTptr = (struct ACPISDT*)(((struct XSDT*)RSDTptr)->stdptr+i);
+            tmpSDTptr = (struct SDTheader*)(((struct XSDT*)RSDTptr)->stdptr+i);
 
         if (strncmp(tmpSDTptr->Signature, signature, 4) == 0)
             if (checksumSDT((unsigned int*)tmpSDTptr) == 0)
@@ -161,7 +161,7 @@ static void* findSDT(void* RSDPptr, char* signature)
     return NULL;
 }
 
-int ACPIinit(int action)
+int ACPIinit()
 {
     void* RSDPptr;
     void* FADTptr;

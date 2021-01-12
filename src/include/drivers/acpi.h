@@ -14,7 +14,7 @@
 #define ACPI_CONTROL_FIND_FADT 1
 
 
-struct ACPISDT
+struct SDTheader
 {
     char Signature[4];
     uint32_t Length;
@@ -38,7 +38,7 @@ struct GenericAddressStructure  // For register position identification
 
 struct FADT
 {
-    struct   ACPISDT h;
+    struct   SDTheader h;
     uint32_t FirmwareCtrl;
     uint32_t Dsdt;
 
