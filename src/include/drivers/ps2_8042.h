@@ -70,8 +70,10 @@
 #define OUTPUT_PS2_PORT1_DATA       0x80
 
 // IOctl commands
-#define IOCTL_CONTROLLER_SEND       0
-#define IOCTL_CONTROLLER_RECEIVE    1
+#define IOCTL_CONTROLLER_SEND           0
+#define IOCTL_CONTROLLER_RECEIVE        1
+#define IOCTL_CONTROLLER_DIRECT_SEND    2
+#define IOCTL_CONTROLLER_DIRECT_RECIEVE 3
 
 // Controller Info defenitions
 #define DEVICE_PS2_MOUSE                    0x00
