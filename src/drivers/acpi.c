@@ -161,22 +161,19 @@ static void* findSDT(void* RSDPptr, char* signature)
     return NULL;
 }
 
-void* ACPIinit(int action)
+int ACPIinit(int action)
 {
-    if (action == ACPI_CONTROL_FIND_FADT)
-    {
-        void* RSDPptr;
-        void* FADTptr;
-        if ((RSDPptr = findRSDPinEBDA()) == NULL)
-            if ((RSDPptr = findRSDPinEXTMEM()) == NULL)
-                return NULL;
+    void* RSDPptr;
+    void* FADTptr;
 
-        if ((FADTptr = findSDT(RSDPptr, "FACP")) == NULL)
-            return NULL;
-        else
-            return FADTptr;
+    if ((RSDPptr = findRSDPinEBDA()) == NULL)
+        if ((RSDPptr = findRSDPinEXTMEM()) == NULL)
+            return -1;
 
-    }
+    if ((FADTptr = findSDT(RSDPptr, "FACP")) != NULL)
+        outb(((struct FADT*)FADTptr)->SMI_CommandPort, ((struct FADT*)FADTptr)->AcpiEnable);
+    else
+        return -1;
 
-    return NULL;
+    return 0;
 }

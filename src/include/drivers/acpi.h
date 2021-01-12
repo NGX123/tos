@@ -106,8 +106,7 @@ struct FADT
 // The main function to control the ACPI
 /*
   @brief = main function to control ACPI table searching
-  @param action = integer(use macro) that specifies what the function should do
-
+  @return = 0 on success, -1 on fail
 */
-extern void* ACPIinit(int action);
+extern int ACPIinit();
 #endif
