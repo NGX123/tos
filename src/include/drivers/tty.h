@@ -45,4 +45,11 @@ extern ssize_t ttyRead(void* buf, size_t count);
     @return = 0 or data on success, -1 on fial
 */
 extern int ttyIoctl(size_t request, ...);
+
+/*
+    @biref = initializes the tty driver
+    @param mode = the mode in which the tty driver should work
+    @return = 0 on success
+*/
+int ttyInit(uint8_t mode);
 #endif

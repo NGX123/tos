@@ -24,11 +24,4 @@
     @param scancode = scancode that should help interpret the character
 */
 static void ttyHandleKeyboardInterrupt(uint8_t character, uint32_t scancode);
-
-/*
-    @biref = initializes the tty driver
-    @param mode = the mode in which the tty driver should work
-    @return = 0 on success
-*/
-static int ttyInit(uint8_t mode);
 #endif
