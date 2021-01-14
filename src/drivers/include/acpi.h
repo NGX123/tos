@@ -37,13 +37,13 @@ struct RSDP2    // For ACPIv2
 struct RSDT // For ACPIv1
 {
     struct SDTheader h;
-    void* sdtptr;
+    uint32_t sdtptr;
 };
 
 struct XSDT // For ACPIv2
 {
     struct SDTheader h;
-    void* stdptr;
+    uint64_t stdptr;
 };
 
 
@@ -74,10 +74,9 @@ static void* findRSDPinEBDA();
 static void* findRSDPinEXTMEM();
 
 /*
-    @brief = Find chosen selected SDT in memory using pointer in RSDT
-    @param RSDPptr = pointer to RSDT that should be used for searching
-    @param signature = string(signature) to search for in RSDT
-    @return = address to selected SDT on success, NULL on fail
+    @brief = Saves all the ACPI tables in a known memory location
+    @param RSDPptr = pointer to the RSDP pointer struct to get SDTs using it
+    @return = 0 on success, -1 on fail
 */
-static void* findSDT(void* RSDPptr, char* signature);
+static int saveSDT(void* RSDPptr);
 #endif
