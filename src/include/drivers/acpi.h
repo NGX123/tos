@@ -13,6 +13,27 @@
 
 #define ACPI_CONTROL_FIND_FADT 1
 
+#define MADTsignature "APIC"
+#define BGRTsignature "BGRT"
+#define BERTsignature "BERT"
+#define CPEPsignature "CPEP"
+#define DSDTsignature "DSDT"
+#define ECDTsignature "ECDT"
+#define EINJsignature "EINJ"
+#define ERSTsignature "ERST"
+#define FADTsignature "FACP"
+#define FACSsignature "FACS"
+#define HESTsignature "HEST"
+#define MSCTsignature "MSCT"
+#define MPSTsignature "MPST"
+#define PMTTsignature "PMTT"
+#define PSDTsignature "PSDT"
+#define RASFsignature "RASF"
+#define SBSTsignature "SBST"
+#define SLITsignature "SLIT"
+#define SRATsignature "SRAT"
+#define SSDTsignature "SSDT"
+
 
 struct SDTheader
 {
@@ -102,8 +123,15 @@ struct FADT
     struct GenericAddressStructure X_GPE1Block;
 };
 
+/*
+  @brief = searches for correct structure within the saved ones and copies it to user specified buffer if it was found and fits
+  @param buf = the buffer to where the data structure should be copied
+  @param size = the size of the buffer to which it should be copied
+  @param signature = the signature of struct that should be searched for
+  @return = 0 on success, -1 on fail
+*/
+int retrieveSDT(void* buf, int size, char* signature);
 
-// The main function to control the ACPI
 /*
   @brief = main function to control ACPI table searching
   @return = 0 on success, -1 on fail
