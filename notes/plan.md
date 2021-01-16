@@ -1,7 +1,20 @@
 ## To Do
+1. ACPI driver
+	1. saveSDT:
+		* Loop through tables pointed to by RSDT, fix the problem where only FADT has the signature
+		* Count size of all tables pointed to by RSDT
+		* Allocate the space for the tables with malloc
+		* Memcpy the tables into allocated buffer
+		* Memcmp the original tables and ones in the buffer
+	2. retrieveSDT:
+		* Find the SDT in the malloced buffer using signature requested by user
+		* Memcpy SDT from buffer to user supplied location if size of table does not exceed max size specified by user
+		* Memcmp buffer and user versions
 * drivers/ps2_8042.c
+	* Add 8042 presence check using ACPI
 	* Instead of checking the status byte once and if the buffer full/empty bit is not in the right position failing, poll the status bit until time is out or it is in the right position, tracking time should be done with PIT
-
+* drivers/kbd.c
+	* Rework the driver
 
 
 ### [Hardware](https://wiki.osdev.org/Category:Hardware)
