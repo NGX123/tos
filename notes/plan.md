@@ -3,7 +3,7 @@
 	1. saveSDT:
 		* Loop through tables pointed to by RSDT, fix the problem where only FADT has the signature
 		* Count size of all tables pointed to by RSDT
-		* Allocate the space for the tables with malloc
+		* Allocate the space for the tables with malloc in a static global variable so it could be used by other functions
 		* Memcpy the tables into allocated buffer
 		* Memcmp the original tables and ones in the buffer
 	2. retrieveSDT:
