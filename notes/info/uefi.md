@@ -1,5 +1,5 @@
 # UEFI Toolchain
-## BUILD TOOLCHAIN
+## Building toolchain
 * [GNU-EFI](https://sourceforge.net/projects/gnu-efi/)
 	* Build GNU-EFI from source
 		1. [Download](https://sourceforge.net/projects/gnu-efi/)
@@ -16,7 +16,7 @@
 
 
 
-## BUILD RUN ENVIRONMENT
+## Building running environment
 * EDK2 OVMF UEFI Firmware
 	* [Build OVMF from source](https://github.com/tianocore/tianocore.github.io/wiki/OVMF)
 		1. [Setup dependencies using instructions](https://github.com/tianocore/tianocore.github.io/wiki/Using-EDK-II-with-Native-GCC)
@@ -31,7 +31,7 @@
 
 
 
-## PROGRAMMING
+## Programming
 * [GNU-EFI](https://github.com/tianocore/tianocore.github.io/wiki/EFI-Toolkit)
 
 * [EDK2](https://github.com/tianocore/tianocore.github.io/wiki/EDK-II-Documents)
@@ -83,12 +83,12 @@
 
 
 
-## RUNNING
+## Running
 * [To run OVMF follow insturctions and get binaries in OVMF/Build direcotry](https://github.com/tianocore/tianocore.github.io/wiki/How-to-run-OVMF)
 
 
 
-## NOTES
+## Notes
 * On boot UEFI searches all available storage devices for the "BOOTX64.EFI" file located in "DRIVE_NAME:EFI/BOOT/" - full path "DRIVE_NAME:EFI/BOOT/BOOTX64.EFI"(::/EFI/BOOT/BOOTX64.EFI). For other platforms the file should be names BOOT\<ARCH>.EFI
 	* If the file is found - it will be ran, otherwise UEFI boots into shell
 * To find the correct package that contains right includes and libs to compile use find
