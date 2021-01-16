@@ -32,7 +32,7 @@ struct controller_info
     @param data = storage for the requested data
     @return = 0 on success, -1 on error
 */
-static int ioctl_requestData(uint8_t datatype, uint8_t* data);
+//static int ioctl_requestData(uint8_t datatype, uint8_t* data);
 
 /*
     @brief = sends command to the controller and recieves data while also making some checks
