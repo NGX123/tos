@@ -34,7 +34,7 @@
 
 ## Specifications
 * [Intel Manuals](https://software.intel.com/content/www/us/en/develop/articles/intel-sdm.html)
-	* [Intel 64 & IA-32 Programmers Manual](https://software.intel.com/content/www/us/en/develop/download/intel-64-and-ia-32-architectures-sdm-combined-volumes-1-2a-2b-2c-2d-3a-3b-3c-3d-and-4.html)
+	* [Intel 64 & IA-32 Programmers Manual(All Volums)](https://software.intel.com/content/www/us/en/develop/download/intel-64-and-ia-32-architectures-sdm-combined-volumes-1-2a-2b-2c-2d-3a-3b-3c-3d-and-4.html)
 	* [Intel i386(80386)(1986) Programmers Manual](https://css.csail.mit.edu/6.858/2014/readings/i386.pdf)
 * [AMD64 Manuals](https://developer.amd.com/resources/developer-guides-manuals/)
 	* [AMD64 Programmer's Manual(All Volums)](https://www.amd.com/system/files/TechDocs/40332.pdf)
