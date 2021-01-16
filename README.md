@@ -14,8 +14,8 @@ tOS is an operating system that i want to be very seperated in pieces very indep
  * (TO BE IMPLEMENTED IN FUTURE)UEFI native application
 
 ### Screenshots
-![tOS Running in QEMU with BIOS](notes/screenshot-bios.png)
-![tOS Running in QEMU with UEFI(not really ready yet)](notes/screenshot-uefi.png)
+![tOS Running in QEMU with BIOS](media/screenshot-bios.png)
+![tOS Running in QEMU with UEFI(not really ready yet)](media/screenshot-uefi.png)
 
 
 
