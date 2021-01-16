@@ -7,6 +7,10 @@
 #include "include/acpi.h"
 
 
+/* WARNING - DOES, NOT WORK AND SHOULD BE MALLOCED BEFORE USAGE*/
+void* tableArray;   // The array to where ACPI structs will be copied
+
+
 static int checksumRSDP(void* RSDPptr)
 {
     int i;
@@ -115,9 +119,8 @@ static void* findRSDPinEXTMEM()
     return NULL;
 }
 
-static void* findSDTinMem(void* RSDPptr, char* signature)
-{
-    int i;
+static int saveSDT(void* RSDPptr){
+    int i, j;
     int SDTentriesAmount;
     void* RSDTptr;
     struct SDTheader* SDTptr;
@@ -125,61 +128,98 @@ static void* findSDTinMem(void* RSDPptr, char* signature)
     if (((struct RSDP*)RSDPptr)->Revision == 0)     // Case for ACPI v1
     {
         RSDTptr = (struct RSDT*) (((struct RSDP*)RSDPptr)->RsdtAddress);
-
         if (checksumSDT((void*)RSDTptr) != 0)
-            return NULL;
-
+            return -1;
         SDTentriesAmount = (((struct RSDT*)RSDTptr)->h.Length - sizeof(struct SDTheader)) / 4;
     }
     else if (((struct RSDP*)RSDPptr)->Revision > 0)  // Case for ACPI v2+
     {
         RSDTptr = (struct XSDT*) (((struct RSDP2*)RSDPptr)->XsdtAddress);
-
         if (checksumSDT((void*)RSDTptr) != 0)
-            return NULL;
-
-        if (strncmp(((struct XSDT*)RSDTptr)->h.Signature, "XSDT", 4) != 0)
-            return NULL;
-
+            if (strncmp(((struct XSDT*)RSDTptr)->h.Signature, "XSDT", 4) != 0)
+                return -1;
         SDTentriesAmount = (((struct XSDT*)RSDTptr)->h.Length - sizeof(struct SDTheader)) / 8;
     }
     else
-        return NULL;
+        return -1;
 
-    for (i = 0; i < SDTentriesAmount; i++)
-    {
-        if (((struct RSDP*)RSDPptr)->Revision == 0)
-            SDTptr = (struct SDTheader*)(((struct RSDT*)RSDTptr)->sdtptr+i);
-        else if (((struct RSDP*)RSDPptr)->Revision > 0)
-            SDTptr = (struct SDTheader*)(((struct XSDT*)RSDTptr)->stdptr+i);
+    if (((struct RSDP*)RSDPptr)->Revision == 0)
+        SDTptr = (struct SDTheader*)(((struct RSDT*)RSDTptr)->sdtptr);
+    else if (((struct RSDP*)RSDPptr)->Revision > 0)
+        SDTptr = (struct SDTheader*)(((struct XSDT*)RSDTptr)->stdptr);
 
-        if (strncmp(SDTptr->Signature, signature, 4) == 0)
-            if (checksumSDT((unsigned int*)SDTptr) == 0)
-                return (void*)SDTptr;
-    }
-
-    return NULL;
-}
-
-static int saveSDT(void* RSDPptr){
+    return 0;
 }
 
 int retrieveSDT(void* buf, int size, char* signature){
+
+    return 0;
 }
 
 int ACPIinit()
 {
     void* RSDPptr;
-    void* FADTptr;
+    struct FADT FADTptr;
 
     if ((RSDPptr = findRSDPinEBDA()) == NULL)
         if ((RSDPptr = findRSDPinEXTMEM()) == NULL)
             return -1;
 
-    if ((FADTptr = findSDT(RSDPptr, "FACP")) != NULL)
-        outb(((struct FADT*)FADTptr)->SMI_CommandPort, ((struct FADT*)FADTptr)->AcpiEnable);
-    else
-        return -1;
+    saveSDT(RSDPptr);
+    // if (saveSDT(RSDPptr) != -1)
+    // {
+    //     retrieveSDT(&FADTptr, sizeof(FADTptr), "FACP");
+    //     outb(FADTptr.SMI_CommandPort, FADTptr.AcpiEnable);
+    // }
+    // else
+    //     return -1;
 
     return 0;
 }
+
+
+// static void* findSDTinMem(void* RSDPptr, char* signature)
+// {
+//     int i;
+//     int SDTentriesAmount;
+//     void* RSDTptr;
+//     struct SDTheader* SDTptr;
+
+//     if (((struct RSDP*)RSDPptr)->Revision == 0)     // Case for ACPI v1
+//     {
+//         RSDTptr = (struct RSDT*) (((struct RSDP*)RSDPptr)->RsdtAddress);
+
+//         if (checksumSDT((void*)RSDTptr) != 0)
+//             return NULL;
+
+//         SDTentriesAmount = (((struct RSDT*)RSDTptr)->h.Length - sizeof(struct SDTheader)) / 4;
+//     }
+//     else if (((struct RSDP*)RSDPptr)->Revision > 0)  // Case for ACPI v2+
+//     {
+//         RSDTptr = (struct XSDT*) (((struct RSDP2*)RSDPptr)->XsdtAddress);
+
+//         if (checksumSDT((void*)RSDTptr) != 0)
+//             return NULL;
+
+//         if (strncmp(((struct XSDT*)RSDTptr)->h.Signature, "XSDT", 4) != 0)
+//             return NULL;
+
+//         SDTentriesAmount = (((struct XSDT*)RSDTptr)->h.Length - sizeof(struct SDTheader)) / 8;
+//     }
+//     else
+//         return NULL;
+
+//     for (i = 0; i < SDTentriesAmount; i++)
+//     {
+//         if (((struct RSDP*)RSDPptr)->Revision == 0)
+//             SDTptr = (struct SDTheader*)(((struct RSDT*)RSDTptr)->sdtptr+i);
+//         else if (((struct RSDP*)RSDPptr)->Revision > 0)
+//             SDTptr = (struct SDTheader*)(((struct XSDT*)RSDTptr)->stdptr+i);
+
+//         if (strncmp(SDTptr->Signature, signature, 4) == 0)
+//             if (checksumSDT((unsigned int*)SDTptr) == 0)
+//                 return (void*)SDTptr;
+//     }
+
+//     return NULL;
+// }
