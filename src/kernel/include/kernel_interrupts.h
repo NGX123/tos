@@ -9,7 +9,7 @@
 
 
 #include <types.h>
-#include <interrupts.h>
+#include <kernel/interrupts.h>
 
 
 #define INTERRUPTS_AMOUNT 255

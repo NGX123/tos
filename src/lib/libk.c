@@ -6,7 +6,7 @@
 
 #include <stdio.h>
 #include <drivers/vga.h>
-#include <libk.h>
+#include <kernel/libk.h>
 
 
 void printsys(char* string, int status)

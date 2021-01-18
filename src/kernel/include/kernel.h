@@ -11,14 +11,14 @@
 #include <stdint.h>
 #include <string.h>
 #include <stdio.h>
-#include <libk.h>
+#include <kernel/libk.h>
 
 #include <drivers/vga.h>
 #include <drivers/x86.h>
 #include <drivers/acpi.h>
 #include <drivers/kbd.h>
 #include <drivers/ps2_8042.h>
-#include <interrupts.h>
+#include <kernel/interrupts.h>
 #include <platform.h>
 
 

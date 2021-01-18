@@ -10,7 +10,7 @@
 
 #include <stdint.h>
 #include <drivers/x86.h>
-#include <interrupts.h>
+#include <kernel/interrupts.h>
 
 
 #define IDT_COUNT 256
