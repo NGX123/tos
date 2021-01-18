@@ -37,5 +37,10 @@ extern void load_gdt(void*);
 /*
     @brief = Sets up the GDT and fills it with data and then loads setting up the flat memory model
 */
-static void setFlat();
+static void makeMemFlat();
+
+/*
+    @brief = Sets up memory paging
+*/
+static void initPaging();
 #endif
