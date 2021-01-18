@@ -14,6 +14,8 @@
     - Lexically-allocated - space allocated for vars, arrays... local to the function block, allocated at the start of function block and freed at the end of it
     - Dynamically allocated - used for data with unknown size and lifetime, allocated at runtime
 
+## Implementation
+
 ## Resources
 - AMD Manual - VOL 2, Chapters 3 & 4
 - Intel Manual - VOL 3A, Chapters 3 & 4
@@ -26,4 +28,9 @@
 
 
 ## [Notes](https://wiki.osdev.org/Paging)
+* Where does the grub load the kernel?
+* How to i exit bios fully and is all of it's memory become free for use(look at the mem map)?
+* What flags are in the cr0 and cr3 registers?
+
 * What does it mean that the address needs to be 4KiB aligned?
+* Releated to paging in x86 https://wiki.osdev.org/TLB
