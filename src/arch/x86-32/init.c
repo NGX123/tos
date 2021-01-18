@@ -13,12 +13,12 @@ static struct gdt_ptr gp;
 
 int hardwarePlatformInit()
 {
-    setFlat();
+    makeMemFlat();
 
     return 0;
 }
 
-static void setFlat()
+static void makeMemFlat()
 {
     for (int i = 0; i < 3; i++)
     {
