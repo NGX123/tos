@@ -2,10 +2,12 @@
 ; @brief = includes the assembly part of the irq handlers, to add new just changes the <NUM> in irq<NUM> for other number in all occurences
 
 
+; @brief = loads IDT
+; @param = address of the IDT struct
 global idtLoadAsm:function
+
 extern display_idt
 
-; Declaration of C IRQ handlers
 extern irq0_handler
 extern irq1_handler
 extern irq2_handler
@@ -23,7 +25,6 @@ extern irq13_handler
 extern irq14_handler
 extern irq15_handler
 
-; Declaration of ASM IRQ handlers
 global irq0_handler_asm
 global irq1_handler_asm
 global irq2_handler_asm
@@ -42,17 +43,14 @@ global irq14_handler_asm
 global irq15_handler_asm
 
 
-
-; @brief = Load IDT ASM function
-; @param = address of the GDT struct
 idtLoadAsm:
 	mov edx, [esp + 4]
-	lidt[edx]
-        sti
-        call display_idt
+    lidt[edx]
+    sti
+    call display_idt
 	ret
 
-; Initialization of ASM IRQ handlers
+
 irq0_handler_asm:
     pusha
     call irq0_handler
