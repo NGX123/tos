@@ -1,35 +1,38 @@
-/* Bootloader will look at this image and start execution at entry point symbol*/
+/*Place the code right at the start of .text*/
 ENTRY(_start)
 
-/* Tell where idfferent sections of object files will be put in the final kernel image*/
+/*Arrange sections*/
 SECTIONS
 {
-    /* Begin putting sections at 1MiB, a place for kernels to be loaded by bootloaders */
-    . = 1M;
+    /*Change current address to change starting from where sections will be placed(current address specified by .), 0x00100000 - 1Mb(2^20)*/
+    . = 0x00100000;
 
-    /*Make .text and .multiboot sections follow .text permissions, align and fix size*/
-    .text BLOCK(4K) : ALIGN(4K)
+    /*Put .multiboot & .text sections from all files into one .text section and align it to 4Kb*/
+    .text ALIGN(4K) :
     {
         *(.multiboot)
         *(.text)
     }
 
-    /* Make .rodata section follow .rodata permissions, align and fix size */
-    .rodata BLOCK(4K) : ALIGN(4K)
+    /*Put .rodata sections from all files into one .rodata section and align it to 4Kb*/
+    .rodata ALIGN(4K) :
     {
         *(.rodata)
     }
 
-    /* Read write data */
-    .data BLOCK(4K) : ALIGN(4K)
+    /*Put .data sections from all files into one .data section and align it to 4Kb*/
+    .data ALIGN(4K) :
     {
         *(.data)
     }
 
-    /* Read-write data and stack */
-    .bss BLOCK(4K) : ALIGN(4K)
+    /*Put .bss and ....... sections from all files into one .bss section and align it to 4Kb*/
+    .bss ALIGN(4K) :
     {
         *(COMMON)
         *(.bss)
+
+        /*Declare variable to hold the address where kernel ends(current address)*/
+        kernel_end_addr = .;
     }
 }
