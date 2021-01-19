@@ -88,3 +88,10 @@
 
 ## Extra
 * Add special macros to hide parts of code(if macro isn't defined) to all the files that contain extra features
+* [Assembly](https://wiki.osdev.org/Assembly)
+	* Change assembly compilation from inclusion of everything into one file to seperate compilation and then linking together with other executables
+	* Switch code from NASM to GAS
+		* [OSdev GAS](https://wiki.osdev.org/GAS)
+		* [OSdev NASM](https://wiki.osdev.org/NASM)
+		* [GAS tutorial](https://en.wikibooks.org/wiki/X86_Assembly/GAS_Syntax)
+		* [NASM tutorial](https://en.wikibooks.org/wiki/X86_Assembly/NASM_Syntax)
