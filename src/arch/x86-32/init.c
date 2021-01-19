@@ -45,5 +45,5 @@ static void makeMemFlat()
 
     gp.limit = (sizeof(struct gdt_entry) * 3) - 1;
     gp.base = (void*)gdt;
-    load_gdt((void*)&gp);
+    gdtLoadAsm((void*)&gp);
 }

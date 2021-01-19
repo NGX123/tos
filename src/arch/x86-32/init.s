@@ -5,11 +5,14 @@
 %include "boot/bios/boot.s"
 
 
-global load_gdt:function
+; @brief = loads GDT
+; @param = address of GDT struct
+global gdtLoadAsm:function
+
 extern display_gdt
 
 
-load_gdt:
+gdtLoadAsm:
         cli
         mov edx, [esp + 4]
         lgdt[edx]
@@ -27,4 +30,5 @@ load_gdt:
                 ret
 
 
+; Assembly interrupt code declarations
 %include "arch/x86-32/platform_interrupts.s"

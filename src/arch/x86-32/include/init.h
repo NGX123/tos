@@ -32,7 +32,7 @@ struct gdt_ptr
     @brief = Loads the GDT in to the CPU
     @param void* = Address of the GDT struct to load
 */
-extern void load_gdt(void*);
+extern void gdtLoadAsm(void*);
 
 /*
     @brief = Sets up the GDT and fills it with data and then loads setting up the flat memory model
