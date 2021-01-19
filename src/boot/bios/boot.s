@@ -2,49 +2,41 @@
 ; @brief = platform init file that takes over after bootloader
 
 
-; Defines
-MBALIGN equ 1 << 0              ; align loaded modules on page boundaries
-MEMINFO equ 1 << 1              ; provide memory map
-FLAGS   equ MBALIGN | MEMINFO   ; muliboot 'flag'
-MAGIC   equ 0x1BADB002          ; magic number to let bootloader find the header
+; Kernel start called by grub(_start is specified in linker.ld)
+global _start:function ; in error case change to (_start.end - _start)
+
+extern kernel_main
+
+
+MBALIGN equ 1 << 0              ; Loaded modules page boundaries aligning flag
+MEMINFO equ 1 << 1              ; Memory map flag
+FLAGS   equ MBALIGN | MEMINFO   ; GRUB boot flags combination
+MAGIC   equ 0x1BADB002          ; Value for grub detection
 CHECKSUM equ -(MAGIC + FLAGS)   ; checksum of above, to prove we are multiboot
 
 
-;;; Multiboot(grub) section ;;;
-section .multiboot
-
-; Writes special data aligned to 3 bytes according to the multiboot standard for programm to be loaded by GRUB
+section .multiboot              ; GRUB section, includes writing special data at start of binary for grub to see the OS
 align 4
     dd MAGIC
     dd FLAGS
     dd CHECKSUM
 
 
-;;; Stack Section ;;;
 section .bss
-
-; Stack requires to be 16 bytes aligned, then 16 kib are allocated for the stack
-align 16
-stack_bottom:
-; Allocate 16 kilobytes
-resb 16384
-stack_top:
+align 16                        ; Aligning is required for stack
+        stack_bottom:
+                resb 16384      ; Allocate 16 kilobytes
+        stack_top:
 
 
-;;; Code section ;;;
 section .text
-
-; Linker specifies _start as the entry to the kernel, bootloader jumps here once his work is done(loads us into 32-bit protected mode)
-global _start:function ; (_start.end - _start) ; add if something does not work
 _start:
-        ; Setup stack by loading memory address of the top of the stack into stack register
-        mov esp, stack_top
+        mov esp, stack_top      ; Load stack address into stack register(initialize)
 
-        ; Call external C function
-        extern kernel_main
         call kernel_main
 
-; Infinite loop
-.hang:  hlt
-        jmp .hang
+
+.hang:
+        hlt
+        jmp .hang               ; Loop forever
 .end:
