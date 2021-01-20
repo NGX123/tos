@@ -7,6 +7,35 @@
 #include "include/kernel.h"
 
 
+struct bootHeader bootHeader_struct;
+
+
+void kernel_init(uint16_t protocol, int var_num, ...)
+{
+    va_list valist;
+    va_start(valist, var_num);
+
+    void* headerPtr;
+
+    if (protocol == PROTOCOL_MULTIBOOT){
+        if (va_arg(valist, uint32_t) != MULTIBOOT_BOOTLOADER_MAGIC)             // Check if the multiboot magic number is present
+            return;
+
+        headerPtr = va_arg(valist, void*);
+        if ((((multiboot_info_t*)headerPtr)->flags & (1<<6)) == 0)              // Check if memory map flag is on
+            return;
+
+        bootHeader_struct.struct_reserved_start_addr = headerPtr;
+        bootHeader_struct.struct_reserved_end_addr = headerPtr + sizeof(multiboot_info_t);
+        bootHeader_struct.memory_map_start_addr = (void*)((multiboot_info_t*)headerPtr)->mmap_addr;
+        bootHeader_struct.memory_map_end_addr = bootHeader_struct.memory_map_start_addr + ((multiboot_info_t*)headerPtr)->mmap_length;
+    }
+
+    bootHeader_struct.protocol = protocol;
+
+    va_end(valist);
+}
+
 void kernel_main()
 {
     // Turns the cursor on and sets it size

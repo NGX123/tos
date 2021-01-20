@@ -5,8 +5,11 @@
 ; Kernel start called by grub(_start is specified in linker.ld)
 global _start   ; If errors - _start:function
 
+extern kernel_init
 extern kernel_main
 
+
+PROTOCOL_MULTIBOOT  equ 0x01
 
 MBALIGN         equ 1 << 0              ; Loaded modules page boundaries aligning flag
 MEMINFO         equ 1 << 1              ; Memory map flag
@@ -32,6 +35,12 @@ align 16                        ; Aligning is required for stack
 section .text
 _start:
         mov esp, stack_top      ; Load stack address into stack register(initialize)
+
+        push ebx
+        push eax
+        push 2
+        push PROTOCOL_MULTIBOOT
+        call kernel_init        ; kernel_init(protocol, var_num, mboot_magic_num, mboot_struct)
 
         call kernel_main
 
