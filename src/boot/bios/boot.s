@@ -3,7 +3,7 @@
 
 
 ; Kernel start called by grub(_start is specified in linker.ld)
-global _start:function ; in error case change to (_start.end - _start)
+global _start   ; If errors - _start:function
 
 extern kernel_main
 
@@ -39,4 +39,3 @@ _start:
 .hang:
         hlt
         jmp .hang               ; Loop forever
-.end:

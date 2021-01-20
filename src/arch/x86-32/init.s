@@ -7,7 +7,7 @@
 
 ; @brief = loads GDT
 ; @param = address of GDT struct
-global gdtLoadAsm:function
+global gdtLoadAsm       ; If errors - gdtLoadAsm:function
 
 extern display_gdt
 

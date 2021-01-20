@@ -4,7 +4,7 @@
 
 ; @brief = loads IDT
 ; @param = address of the IDT struct
-global idtLoadAsm:function
+global idtLoadAsm   ; If errors - idtLoadAsm:function
 
 extern display_idt
 
