@@ -42,6 +42,8 @@
 * Boot
 	* [UEFI Specifications](https://www.uefi.org/specifications)
 	* [BIOS Specification](https://www.scs.stanford.edu/nyu/04fa/lab/specsbbs101.pdf)
+	* [GRUB Multiboot Specification](https://www.gnu.org/software/grub/manual/multiboot/)
+		* [Multiboot Manual](https://www.gnu.org/software/grub/manual/multiboot/)
 
 
 
