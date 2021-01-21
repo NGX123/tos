@@ -21,3 +21,10 @@ struct kernInfo
     uint16_t protocol;
     size_t high_ram_amount;
 };
+
+
+/*
+    @breif = return the pointer to data collected by the kernel
+    @return = pointer to kernInfo struct
+*/
+extern void* recieve_kernel_info();

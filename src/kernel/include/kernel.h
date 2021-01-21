@@ -27,12 +27,6 @@
 
 
 /*
-    @breif = return the pointer to data collected by the kernel
-    @return = pointer to kernInfo struct
-*/
-extern void* recieve_kernel_info();
-
-/*
     @brief = solves all of the platform specfic stuff for the kernel
     @param protocol = type of boot protocol used
     @param var_num = amount of arguments to be passed
