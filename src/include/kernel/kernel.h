@@ -7,14 +7,17 @@
 #include <stdint.h>
 
 
+#define PROTOCOL_NONE       0x0
 #define PROTOCOL_MULTIBOOT  0x01
 
 
-struct bootHeader
+struct kernInfo
 {
-    uint16_t protocol;
-    void* struct_reserved_start_addr;
+    void* boot_protocol_struct_ptr;
     void* struct_reserved_end_addr;
     void* memory_map_start_addr;
     void* memory_map_end_addr;
+
+    uint16_t protocol;
+    size_t high_ram_amount;
 };
