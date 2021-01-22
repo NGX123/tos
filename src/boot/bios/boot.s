@@ -39,7 +39,6 @@ _start:
         push ebx
         push eax
         push 2
-        push PROTOCOL_MULTIBOOT
         call setBootInfo        ; kernel_init(protocol, var_num, mboot_magic_num, mboot_struct)
 
         call kernel_main
