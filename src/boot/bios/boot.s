@@ -5,7 +5,7 @@
 ; Kernel start called by grub(_start is specified in linker.ld)
 global _start   ; If errors - _start:function
 
-extern kernel_init
+extern setBootInfo
 extern kernel_main
 
 
@@ -40,7 +40,7 @@ _start:
         push eax
         push 2
         push PROTOCOL_MULTIBOOT
-        call kernel_init        ; kernel_init(protocol, var_num, mboot_magic_num, mboot_struct)
+        call setBootInfo        ; kernel_init(protocol, var_num, mboot_magic_num, mboot_struct)
 
         call kernel_main
 
