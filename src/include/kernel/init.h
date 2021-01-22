@@ -9,6 +9,7 @@
 
 
 #include <types.h>
+#include <kernel/multiboot.h>
 
 
 #define PROTOCOL_NONE       0x0

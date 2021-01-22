@@ -11,7 +11,6 @@
 #include <stdint.h>
 #include <types.h>
 #include <stdarg.h>
-#include <kernel/multiboot.h>
 #include <kernel/init.h>
 
 
