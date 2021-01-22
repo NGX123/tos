@@ -17,31 +17,18 @@ void* getBootInfo()
     return &kernInfo_struct;
 }
 
-void setBootInfo(uint16_t protocol, int var_num, ...)
+void setBootInfo(int var_num, ...)
 {
     va_list valist;
     va_start(valist, var_num);
 
     void* headerPtr;
 
-    if (protocol == PROTOCOL_MULTIBOOT){
-        if (va_arg(valist, uint32_t) != MULTIBOOT_BOOTLOADER_MAGIC)             // Check if the multiboot magic number is present
-            return;
-
-        headerPtr = va_arg(valist, void*);
-        if ((((multiboot_info_t*)headerPtr)->flags & (1<<6)) == 0)              // Check if memory map flag is on
-            return;
-
-        kernInfo_struct.boot_protocol_struct_ptr = headerPtr;
-        kernInfo_struct.struct_reserved_end_addr = headerPtr + sizeof(multiboot_info_t);
-        kernInfo_struct.memory_map_start_addr = (void*)((multiboot_info_t*)headerPtr)->mmap_addr;
-        kernInfo_struct.memory_map_end_addr = kernInfo_struct.memory_map_start_addr + ((multiboot_info_t*)headerPtr)->mmap_length;
-
-        if (((multiboot_info_t*)headerPtr)->flags & 0x1)
-            kernInfo_struct.high_ram_amount = ((multiboot_info_t*)kernInfo_struct.boot_protocol_struct_ptr)->mem_upper;
+    if (va_arg(valist, uint32_t) == MULTIBOOT_HEADER_MAGIC){
+        kernInfo_struct.protocol = PROTOCOL_MULTIBOOT;
+        kernInfo_struct.boot_protocol_struct_ptr = va_arg(valist, void*);
+        kernInfo_struct.boot_protocol_struct_end_ptr = headerPtr + sizeof(multiboot_info_t);
     }
-
-    kernInfo_struct.protocol = protocol;
 
     va_end(valist);
 }
