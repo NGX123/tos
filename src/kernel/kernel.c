@@ -5,6 +5,7 @@
 
 
 #include "include/kernel.h"
+extern void* initPFA();
 
 
 void kernel_main()
@@ -13,14 +14,6 @@ void kernel_main()
     initScreen(CURSOR_ON);
     printsys("VGA Text Mode\n", PRINTSYS_STATUS_SUCCESS);
 
-    // Memory detection
-    struct kernInfo* kernInfo_struct = getBootInfo();
-    if (kernInfo_struct->protocol != PROTOCOL_NONE){
-        printsys("RAM Detected ", PRINTSYS_STATUS_SUCCESS);
-        printf("- Lower: %d(0x%p) KiB, Upper: %d(0x%p) KiB\n", ((multiboot_info_t*)kernInfo_struct->boot_protocol_struct_ptr)->mem_lower, ((multiboot_info_t*)kernInfo_struct->boot_protocol_struct_ptr)->mem_lower, kernInfo_struct->high_ram_amount, kernInfo_struct->high_ram_amount);
-    }
-    else
-        printsys("RAM Detection", PRINTSYS_STATUS_FAIL);
 
     // Initializes the platform specific stuff
     if (hardwarePlatformInit() != -1)
