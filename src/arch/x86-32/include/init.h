@@ -4,11 +4,15 @@
 */
 
 
-#ifndef GDT_DEFINES_H
-#define GDT_DEFINES_H
+#ifndef INIT_DEFINES_H
+#define INIT_DEFINES_H
 
 
 #include <stdint.h>
+#include <types.h>
+#include <stdarg.h>
+#include <kernel/multiboot.h>
+#include <kernel/init.h>
 
 
 struct gdt_entry
