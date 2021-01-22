@@ -22,17 +22,8 @@
 #include <kernel/interrupts.h>
 #include <platform.h>
 #include <kernel/multiboot.h>
+#include <kernel/init.h>
 
-#include "kernel/kernel.h"
-
-
-/*
-    @brief = solves all of the platform specfic stuff for the kernel
-    @param protocol = type of boot protocol used
-    @param var_num = amount of arguments to be passed
-    @param ... = the platform specific arguments
-*/
-extern void kernel_init(uint16_t protocol, int var_num, ...);
 
 /*
     @brief = main function of the kernel that calls all other functions
