@@ -18,13 +18,9 @@
 
 struct kernInfo
 {
-    void* boot_protocol_struct_ptr;
-    void* struct_reserved_end_addr;
-    void* memory_map_start_addr;
-    void* memory_map_end_addr;
-
     uint16_t protocol;
-    size_t high_ram_amount;
+    void* boot_protocol_struct_ptr;
+    void* boot_protocol_struct_end_ptr;
 };
 
 
@@ -40,5 +36,5 @@ extern void* getBootInfo();
     @param var_num = amount of arguments to be passed
     @param ... = the platform specific arguments
 */
-extern void setBootInfo(uint16_t protocol, int var_num, ...);
+extern void setBootInfo(int var_num, ...);
 #endif
