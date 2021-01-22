@@ -1,4 +1,7 @@
 ## Fixes
+### Hardware
+* The memory map has reserved areas below 1mb and right at the end of it, all other space is free. The map will change depending on amount of RAM(in 200mb, only about 150 will be free)
+
 ### Code
 * When using functions from `<stdarg.h>` like `va_start(), va_end(), va_arg()`, the function where they were used should not call other functions(e.g. if `func1()` uses va_start(), `func2()` or any other function can't be called from `func1()`)
 
