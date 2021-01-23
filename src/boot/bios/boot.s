@@ -39,7 +39,7 @@ _start:
         push ebx
         push eax
         push 2
-        call setBootInfo        ; kernel_init(protocol, var_num, mboot_magic_num, mboot_struct)
+        call setBootInfo        ; kernel_init(var_num, mboot_magic_num, mboot_struct)
 
         call kernel_main
 
