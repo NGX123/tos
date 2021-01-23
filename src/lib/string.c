@@ -176,16 +176,13 @@ char * strtok(char * s,char * ct)
 	return (sbegin);
 }
 
-// Confliciting declarations
-// void * memset(void * s,char c,size_t count)
-// {
-// 	char *xs = (char *) s;
-
-// 	while (count--)
-// 		*xs++ = c;
-
-// 	return s;
-// }
+void * memset(void *s, int c, size_t n)
+{
+    unsigned char* p=s;
+    while(n--)
+        *p++ = (unsigned char)c;
+    return s;
+}
 
 char * bcopy(const char * src, char * dest, int count)
 {
@@ -237,20 +234,6 @@ int memcmp(const void * cs,const void * ct,size_t count)
 			break;
 	return res;
 }
-
-// Conflicting types
-// void * memscan(void * addr, int c, size_t size)
-// {
-// 	unsigned char * p = (unsigned char *) addr;
-
-// 	while (size) {
-// 		if (*p == c)
-// 			return (void *) p;
-// 		p++;
-// 		size--;
-// 	}
-//   	return (void *) p;
-// }
 
 const char * strstr(const char * s1,const char * s2)
 {

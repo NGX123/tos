@@ -37,6 +37,5 @@ char * bcopy(const char * src, char * dest, int count);
 extern void * memcpy(void *,void *,size_t);
 extern void * memmove(void *,void *,size_t);
 extern int memcmp(const void *,const void *,size_t);
-//extern void * memset(void *,int,size_t);
-//extern void * memscan(void *,int,size_t);
+extern void * memset(void *,int,size_t);
 #endif
