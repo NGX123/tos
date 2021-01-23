@@ -16,7 +16,7 @@
     4. PFA finds free memory page(free 4KiB of RAM) and gives it's start address to VMM,
     5. VMM mapes virtual(in virtual address space) page to the physical page provided by the PFA and returns page to the malloc()
     6. Finally malloc() carves the amount of needed memory from the page and returns it's address to it's caller
-+ [Physical frame allocation(PFA)](https://wiki.osdev.org/Page_Frame_Allocation) - PFA does not really allocate anything and just returns address of free 4KiB(page) in physical RAM
+1. [Physical frame allocation(PFA)](https://wiki.osdev.org/Page_Frame_Allocation) - PFA does not really allocate anything and just returns address of free 4KiB(page) in physical RAM
     - Bitmap method
         1. A list of `RAM size / 4096` entries is made(called bitmap/bytemap), each entry here corresponds to a page(4KiB) in RAM and represents it's status(e.g. if 0 - free page, 1 - allocated page)
         2. Pointer to the start of free memory is made(e.g. right after the end of the kernel executable)
@@ -29,14 +29,15 @@
             * kfree_frame(address)
                 1. Set the entry number `(address - start_address) / 4096` as free(0) in bitmap
             * A seperate function is needed to map specific addresses - e.g. 0xb8000-... to the same address in physical RAM, becuase some devices like VGA require it
-+ [Paging](https://wiki.osdev.org/Paging)
+2. [Paging](https://wiki.osdev.org/Paging)
     - [Identity Paging](https://wiki.osdev.org/Identity_Paging)
     1. Load the paging directory table start address into CR3
     2. Set 32 bit of CR0
+3. Virtual Memory Manager - gets a physical page from PFA and maps it to a virtual page
+4. Memory allocator - allocates memory by carving needed amount out of virtual page
 + Memmory allocation
     - [Port an existing memory manager to the OS](https://wiki.osdev.org/Memory_Allocation#Porting_an_existing_Memory_Allocator)
     - [Pancakes memory allocator implementations](https://wiki.osdev.org/User:Pancakes/SimpleHeapImplementation)
-
 
 ## Resources
 - AMD Manual - VOL 2, Chapters 3 & 4
