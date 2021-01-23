@@ -12,3 +12,4 @@
 	* To check if compiler adds _ before symbols use - "objdump -t filename.ext"
 * When linking problems occured when in linker flags -L <lib>(include library) was used after -l <lib>(use library)
 	* Swaping -L and -l places fixed the linker errors
+* [The compiler does not follow packed attribute if there is 64bit field in the structure](https://forum.osdev.org/viewtopic.php?t=30318)
