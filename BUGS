@@ -1,5 +1,4 @@
 -- List of possible bugs --
-string.c
-    + strstr() -> size of length variables was changed from int to size_t
-    + multiple functions -> removed the const qualiefier to mute the warning, unlikely but may cause some problems if there is a bug in code and const var gets changed
-		+ strlen() and strnlen() -> changed implementations and variable types
+init.c
+  + In all occurances of toggleBit(), when passing variable warning occurs(type incompatible with size_t*). So in all occurances conversion to size_t was added (e.g. toggleBit((size_t*)var) )
+    - Possible source of overflows, stack corruption...
