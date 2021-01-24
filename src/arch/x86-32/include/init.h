@@ -12,6 +12,10 @@
 #include <types.h>
 #include <stdarg.h>
 #include <kernel/init.h>
+#include "string.h"
+
+#define TOGGLE_BIT_ON   1
+#define TOGGLE_BIT_OFF  0
 
 
 struct gdt_entry
