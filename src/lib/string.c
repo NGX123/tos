@@ -21,12 +21,12 @@
 #include <stdbool.h>
 
 
-void memcpy(void *dest, void *src, size_t n) {	/*CUSTOM*/
-   int i;
-   char *src_char = (char *)src;
-   char *dest_char = (char *)dest;
-   for (i=0; i<n; i++)
-      dest_char[i] = src_char[i];
+void* memcpy(void *dest, const void *src, size_t n) {	/*CUSTOM*/
+    char *dp = dest;
+    const char *sp = src;
+    while (n--)
+        *dp++ = *sp++;
+    return dest;
 }
 
 void* memmove(void* dest_ptr, const void* src_ptr, size_t n)	/*Copy memory between potentionally overlapping regions, SORTIX*/
@@ -177,26 +177,26 @@ size_t strxfrm(char* dest, const char* src, size_t n)	/*Transform a string such 
 	return srclen;
 }
 
-char* strdup(const char* input)	/*Creates a copy of a string, SORTIX*/
-{
-	size_t input_length = strlen(input);
-	char* result = (char*) malloc(input_length + 1);
-	if ( !result )
-		return NULL;
-	memcpy(result, input, input_length + 1);
-	return result;
-}
+// char* strdup(const char* input)	/*Creates a copy of a string, SORTIX*/
+// {
+// 	size_t input_length = strlen(input);
+// 	char* result = (char*) malloc(input_length + 1);
+// 	if ( !result )
+// 		return NULL;
+// 	memcpy(result, input, input_length + 1);
+// 	return result;
+// }
 
-char* strndup(const char* input, size_t n)	/*Creates a copy of a string, SORTIX*/
-{
-	size_t input_size = strnlen(input, n);
-	char* result = (char*) malloc(input_size + 1);
-	if ( !result )
-		return NULL;
-	memcpy(result, input, input_size);
-	result[input_size] = 0;
-	return result;
-}
+// char* strndup(const char* input, size_t n)	/*Creates a copy of a string, SORTIX*/
+// {
+// 	size_t input_size = strnlen(input, n);
+// 	char* result = (char*) malloc(input_size + 1);
+// 	if ( !result )
+// 		return NULL;
+// 	memcpy(result, input, input_size);
+// 	result[input_size] = 0;
+// 	return result;
+// }
 
 char* strchr(const char* str, int uc)	/*Searches a string for a specific character, SORTIX*/
 {
