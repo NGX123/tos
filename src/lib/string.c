@@ -6,177 +6,47 @@
 
 #include <string.h>
 #include <stdint.h>
+#include <stdbool.h>
 
 
-char * ___strtok = NULL;
-
-
-char * strcpy(char * dest,const char *src)
-{
-	char *tmp = dest;
-
-	while ((*dest++ = *src++) != '\0')
-		/* nothing */;
-	return tmp;
+void memcpy(void *dest, void *src, size_t n) {	/*CUSTOM*/
+   int i;
+   char *src_char = (char *)src;
+   char *dest_char = (char *)dest;
+   for (i=0; i<n; i++)
+      dest_char[i] = src_char[i];
 }
 
-char * strncpy(char * dest,const char *src,size_t count)
+void* memmove(void* dest_ptr, const void* src_ptr, size_t n)	/*Copy memory between potentionally overlapping regions, SORTIX*/
 {
-	char *tmp = dest;
-
-	while (count-- && (*dest++ = *src++) != '\0')
-		/* nothing */;
-
-	return tmp;
-}
-
-char * strcat(char * dest, const char * src)
-{
-	char *tmp = dest;
-
-	while (*dest)
-		dest++;
-	while ((*dest++ = *src++) != '\0')
-		;
-
-	return tmp;
-}
-
-char * strncat(char *dest, const char *src, size_t count)
-{
-	char *tmp = dest;
-
-	if (count) {
-		while (*dest)
-			dest++;
-		while ((*dest++ = *src++)) {
-			if (--count == 0) {
-				*dest = '\0';
-				break;
-			}
-		}
+	unsigned char* dest = (unsigned char*) dest_ptr;
+	const unsigned char* src = (const unsigned char*) src_ptr;
+	if ( (uintptr_t) dest < (uintptr_t) src )
+	{
+		for ( size_t i = 0; i < n; i++ )
+			dest[i] = src[i];
 	}
-
-	return tmp;
-}
-
-int strcmp(const char * cs,const char * ct)
-{
-	register signed char __res;
-
-	while (1) {
-		if ((__res = *cs - *ct++) != 0 || !*cs++)
-			break;
+	else
+	{
+		for ( size_t i = 0; i < n; i++ )
+			dest[n-(i+1)] = src[n-(i+1)];
 	}
-
-	return __res;
+	return dest_ptr;
 }
 
-int strncmp(const char * cs,const char * ct,size_t count)
+void* memccpy(void* dest_ptr, const void* src_ptr, int c, size_t n)	/*Copy memory until length is met or character is encountered, SORTIX*/
 {
-	register signed char __res = 0;
-
-	while (count) {
-		if ((__res = *cs - *ct++) != 0 || !*cs++)
-			break;
-		count--;
-	}
-
-	return __res;
-}
-
-char * strchr(char * s, int c)
-{
-	for(; *s != (char) c; ++s)
-		if (*s == '\0')
-			return NULL;
-	return (char *) s;
-}
-
-char * strrchr(char * s, int c)
-{
-       char *p = s + strlen(s);
-       do {
-           if (*p == (char)c)
-               return (char *)p;
-       } while (--p >= s);
-       return NULL;
-}
-
-uint32_t strlen(const char * s)
-{
-	int n;
-
-	for(n = 0; s[n]; n++)
-    ;
-
-	return n;
-}
-
-size_t strnlen(const char * s, size_t maxlen)
-{
-	size_t len;
-
-	for (len = 0; len < maxlen; len++, s++) {
-		if (!*s)
-			break;
-	}
-	return (len);
-}
-
-size_t strspn(const char *s, const char *accept)
-{
-	const char *p;
-	const char *a;
-	size_t count = 0;
-
-	for (p = s; *p != '\0'; ++p) {
-		for (a = accept; *a != '\0'; ++a) {
-			if (*p == *a)
-				break;
-		}
-		if (*a == '\0')
-			return count;
-		++count;
-	}
-
-	return count;
-}
-
-char * strpbrk(char * cs,char * ct)
-{
-	char *sc1,*sc2;
-
-	for( sc1 = cs; *sc1 != '\0'; ++sc1) {
-		for( sc2 = ct; *sc2 != '\0'; ++sc2) {
-			if (*sc1 == *sc2)
-				return (char *) sc1;
-		}
+	unsigned char* dest = (unsigned char*) dest_ptr;
+	const unsigned char* src = (const unsigned char*) src_ptr;
+	for ( size_t i = 0; i < n; i++ )
+	{
+		if ( (dest[i] = src[i]) == (unsigned char) c )
+			return dest + i + 1;
 	}
 	return NULL;
 }
 
-char * strtok(char * s,char * ct)
-{
-	char *sbegin, *send;
-
-	sbegin  = s ? s : ___strtok;
-	if (!sbegin) {
-		return NULL;
-	}
-	sbegin += strspn(sbegin,ct);
-	if (*sbegin == '\0') {
-		___strtok = NULL;
-		return( NULL );
-	}
-	send = strpbrk( sbegin, ct);
-	if (send && *send != '\0')
-		*send++ = '\0';
-	___strtok = send;
-	return (sbegin);
-}
-
-void * memset(void *s, int c, size_t n)
+void *memset(void *s, int c, size_t n)	/*CUSTOM*/
 {
     unsigned char* p=s;
     while(n--)
@@ -184,70 +54,266 @@ void * memset(void *s, int c, size_t n)
     return s;
 }
 
-char * bcopy(const char * src, char * dest, int count)
+int memcmp(const void* a_ptr, const void* b_ptr, size_t size)	/*Compares two memory regions, SORTIX*/
 {
-	char *tmp = dest;
+	const unsigned char* a = (const unsigned char*) a_ptr;
+	const unsigned char* b = (const unsigned char*) b_ptr;
+	for ( size_t i = 0; i < size; i++ )
+	{
+		if ( a[i] < b[i] )
+			return -1;
+		if ( a[i] > b[i] )
+			return +1;
+	}
+	return 0;
+}
 
-	while (count--)
-		*tmp++ = *src++;
+void* memchr(const void* s, int c, size_t size)	/*Scans memory for a character, SORTIX*/
+{
+	const unsigned char* buf = (const unsigned char*) s;
+	for ( size_t i = 0; i < size; i++ )
+		if ( buf[i] == (unsigned char) c )
+			return (void*) (buf + i);
+	return NULL;
+}
 
+void* memrchr(const void* ptr, int c, size_t n)	/*Scans memory in reverse directory for a character, SORTIX*/
+{
+	const unsigned char* buf = (const unsigned char*) ptr;
+	for ( size_t i = n; i != 0; i-- )
+		if ( buf[i-1] == (unsigned char) c )
+			return (void*) (buf + i-1);
+	return NULL;
+}
+
+char* strcpy(char* dest, const char* src)	/*Copies a string and returns dest, SORTIX*/
+{
+	size_t index;
+	for ( index = 0; src[index]; index++ )
+		dest[index] = src[index];
+	dest[index] = '\0';
 	return dest;
 }
 
-void * memcpy(void * dest,void *src,size_t count)
+char* strncpy(char* dest, const char* src, size_t n)	/*Copies a string into a fixed size buffer and returns dest, SORTIX*/
 {
-	char *tmp = (char *) dest, *s = (char *) src;
-
-	while (count--)
-		*tmp++ = *s++;
-
+	size_t i;
+	for ( i = 0; i < n && src[i] != '\0'; i++ )
+		dest[i] = src[i];
+	for ( ; i < n; i++ )
+		dest[i] = '\0';
 	return dest;
 }
 
-void * memmove(void * dest, void *src,size_t count)
+char* strcat(char* dest, const char* src)	/*Appends a string onto another string, SORTIX*/
 {
-	char *tmp, *s;
-
-	if (dest <= src) {
-		tmp = (char *) dest;
-		s = (char *) src;
-		while (count--)
-			*tmp++ = *s++;
-		}
-	else {
-		tmp = (char *) dest + count;
-		s = (char *) src + count;
-		while (count--)
-			*--tmp = *--s;
-		}
-
+	strcpy(dest + strlen(dest), src);
 	return dest;
 }
 
-int memcmp(const void * cs,const void * ct,size_t count)
+char* strncat(char* dest, const char* src, size_t n)	/*Appends parts of a string onto another string, SORTIX*/
 {
-	const unsigned char *su1, *su2;
-	signed char res = 0;
+	size_t dest_len = strlen(dest);
+	size_t i;
+	for ( i = 0; i < n && src[i] != '\0'; i++ )
+		dest[dest_len + i] = src[i];
+	dest[dest_len + i] = '\0';
+	return dest;
+}
 
-	for( su1 = cs, su2 = ct; 0 < count; ++su1, ++su2, count--)
-		if ((res = *su1 - *su2) != 0)
+int strcmp(const char* a, const char* b)	/*Compares two strings, SORTIX*/
+{
+	for ( size_t i = 0; true; i++ )
+	{
+		unsigned char ac = (unsigned char) a[i];
+		unsigned char bc = (unsigned char) b[i];
+		if ( ac == '\0' && bc == '\0' )
+			return 0;
+		if ( ac < bc )
+			return -1;
+		if ( ac > bc )
+			return 1;
+	}
+}
+
+int strncmp(const char* a, const char* b, size_t max_count)	/*Compares a prefix of two strings, SORTIX*/
+{
+	for ( size_t i = 0; i < max_count; i++ )
+	{
+		unsigned char ac = (unsigned char) a[i];
+		unsigned char bc = (unsigned char) b[i];
+		if ( ac == '\0' && bc == '\0' )
+			return 0;
+		if ( ac < bc )
+			return -1;
+		if ( ac > bc )
+			return 1;
+	}
+	return 0;
+}
+
+int strcoll(const char* s1, const char* s2)	/*Compare two strings using the current locale, SORTIX*/
+{
+	// TODO: Pay attention to locales.
+	return strcmp(s1, s2);
+}
+
+size_t strxfrm(char* dest, const char* src, size_t n)	/*Transform a string such that the result of strcmp is the same as strcoll, SORTIX*/
+{
+	size_t srclen = strlen(src);
+	strncpy(dest, src, n);
+	return srclen;
+}
+
+char* strdup(const char* input)	/*Creates a copy of a string, SORTIX*/
+{
+	size_t input_length = strlen(input);
+	char* result = (char*) malloc(input_length + 1);
+	if ( !result )
+		return NULL;
+	memcpy(result, input, input_length + 1);
+	return result;
+}
+
+char* strndup(const char* input, size_t n)	/*Creates a copy of a string, SORTIX*/
+{
+	size_t input_size = strnlen(input, n);
+	char* result = (char*) malloc(input_size + 1);
+	if ( !result )
+		return NULL;
+	memcpy(result, input, input_size);
+	result[input_size] = 0;
+	return result;
+}
+
+char* strchr(const char* str, int uc)	/*Searches a string for a specific character, SORTIX*/
+{
+	char* ret = strchrnul(str, uc);
+	return (unsigned char) uc == ((unsigned char*) ret)[0] ? ret : NULL;
+}
+
+char* strrchr(const char* str, int uc)	/*Searches a string for a specific character, SORTIX*/
+{
+	const unsigned char* ustr = (const unsigned char*) str;
+	const char* last = NULL;
+	for ( size_t i = 0; true; i++ )
+	{
+		if ( ustr[i] == (unsigned char) uc )
+			last = str + i;
+		if ( !ustr[i] )
 			break;
-	return res;
+	}
+	return (char*) last;
 }
 
-const char * strstr(const char * s1,const char * s2)
+size_t strcspn(const char* str, const char* reject)	/*Search a string for a set of characters, SORTIX*/
 {
-	size_t l1, l2;
+	size_t reject_length = 0;
+	while ( reject[reject_length] )
+		reject_length++;
+	for ( size_t result = 0; true; result++ )
+	{
+		char c = str[result];
+		if ( !c )
+			return result;
+		bool matches = false;
+		for ( size_t i = 0; i < reject_length; i++ )
+		{
+			if ( str[result] != reject[i] )
+				continue;
+			matches = true;
+			break;
+		}
+		if ( matches )
+			return result;
+	}
+}
 
-	l2 = strlen(s2);
-	if (!l2)
-		return (const char *) s1;
-	l1 = strlen(s1);
-	while (l1 >= l2) {
-		l1--;
-		if (!memcmp(s1,s2,l2))
-			return (const char *) s1;
-		s1++;
+size_t strspn(const char* str, const char* accept) /*Search a string for a set of characters, SORTIX*/
+{
+	size_t accept_length = 0;
+	while ( accept[accept_length] )
+		accept_length++;
+	for ( size_t result = 0; true; result++ )
+	{
+		char c = str[result];
+		if ( !c )
+			return result;
+		bool matches = false;
+		for ( size_t i = 0; i < accept_length; i++ )
+		{
+			if ( str[result] != accept[i] )
+				continue;
+			matches = true;
+			break;
+		}
+		if ( !matches )
+			return result;
+	}
+}
+
+char* strpbrk(const char* str, const char* accept)	/*Search a string for any of a set of characters, SORTIX*/
+{
+	size_t reject_length = strcspn(str, accept);
+	if ( !str[reject_length] )
+		return NULL;
+	return (char*) str + reject_length;
+}
+
+char* strstr(const char* haystack, const char* needle)	/*Locate a substring, SORTIX*/
+{
+	if ( !needle[0] )
+		return (char*) haystack;
+	for ( size_t i = 0; haystack[i]; i++ )
+	{
+		bool diff = false;
+		for ( size_t j = 0; needle[j]; j++ )
+		{
+			if ( haystack[i+j] != needle[j] ) { diff = true; break; }
+		}
+		if ( diff )
+			continue;
+		return (char*) haystack + i;
 	}
 	return NULL;
+}
+
+char* strtok(char* str, const char* delim)	/*Extract tokens from strings, SORTIX*/
+{
+	static char* lasttokensaveptr = NULL;
+	return strtok_r(str, delim, &lasttokensaveptr);
+}
+
+char* strtok_r(char* str, const char* delim, char** saveptr)	/*Extract tokens from strings, SORTIX*/
+{
+	if ( !str && !*saveptr )
+		return NULL;
+	if ( !str )
+		str = *saveptr;
+	str += strspn(str, delim); // Skip leading
+	if ( !*str )
+		return *saveptr = NULL;
+	size_t amount = strcspn(str, delim);
+	if ( str[amount] )
+		*saveptr = str + amount + 1;
+	else
+		*saveptr = NULL;
+	str[amount] = '\0';
+	return str;
+}
+
+size_t strlen(const char* str)	/*Returns the length of a string, SORTIX*/
+{
+	size_t ret = 0;
+	while ( str[ret] )
+		ret++;
+	return ret;
+}
+
+char* strchrnul(const char* str, int uc)	/*Searches a string for a specific character, SORTIX*/
+{
+	const unsigned char* ustr = (const unsigned char*) str;
+	for ( size_t i = 0; true; i++)
+		if ( ustr[i] == (unsigned char) uc || !ustr[i] )
+			return (char*) str + i;
 }

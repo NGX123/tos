@@ -17,25 +17,31 @@
 #endif
 
 
-extern char * ___strtok;
-extern char * strcpy(char *,const char *);
-extern char * strncpy(char *,const char *,size_t);
-extern char * strcat(char *, const char *);
-extern char * strncat(char *, const char *, size_t);
-extern char * strchr(char *,int);
-extern char * strrchr(char *,int);
-extern char * strpbrk(char *,char *);
-extern char * strtok(char *,char *);
-extern const char * strstr(const char *,const char *);
-extern uint32_t strlen(const char *);
-extern size_t strnlen(const char *,size_t);
-extern size_t strspn(const char *,const char *);
-extern int strcmp(const char *,const char *);
-extern int strncmp(const char *,const char *,size_t);
-char * bcopy(const char * src, char * dest, int count);
+void* memcpy(void*, const void*, size_t);
+void* memmove(void*, const void*, size_t);
+void* memccpy(void*, const void*, int, size_t);
+void* memset(void*, int, size_t);
+int memcmp(const void*, const void*, size_t);
+void* memchr(const void*, int, size_t);
+void* memrchr(const void*, int, size_t);
 
-extern void * memcpy(void *,void *,size_t);
-extern void * memmove(void *,void *,size_t);
-extern int memcmp(const void *,const void *,size_t);
-extern void * memset(void *,int,size_t);
+char* strcpy(char*, const char*);
+char* strncpy(char*, const char*, size_t);
+char* strcat(char*, const char*);
+char* strncat(char*, const char*, size_t);
+int strcmp(const char*, const char*);
+int strncmp(const char*, const char*, size_t);
+
+int strcoll(const char*, const char*);
+size_t strxfrm(char*, const char*, size_t);
+char* strdup(const char*);
+char* strndup(const char*, size_t);
+char* strchr(const char*, int);
+char* strrchr(const char*, int);
+size_t strcspn(const char*, const char*);
+char* strpbrk(const char*, const char*);
+char* strstr(const char*, const char*);
+char* strtok(char*, const char*);
+char* strtok_r(char*, const char*, char**);
+size_t strlen(const char*);
 #endif
