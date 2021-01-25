@@ -28,8 +28,8 @@ struct bootInfo
 
 struct kernelMemMap
 {
-    void* mem_area_start_addr;
-    void* mem_area_end_addr;
+    uint64_t mem_area_start_addr;
+    uint64_t mem_area_end_addr;
     size_t mem_area_size;
     uint8_t mem_area_type;
 };
