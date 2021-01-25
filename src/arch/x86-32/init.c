@@ -20,7 +20,7 @@ static void toggleBit(size_t* var, size_t bitmask, uint8_t bit_status)
         *var ^= bitmask;
 }
 
-static struct memInfo getMultibootMemInfo(int* count){
+static struct memInfo getMultibootMemInfo(int count){ /*DOES NOT FILL THE MEMORY MAP YET AND IS UNUSABLE, MEM MAP BIT IS ALSO NOT TOGGLED - TO BE IMPLEMENTED*/
     multiboot_info_t* mboot_header = ((multiboot_info_t*)bootInfo_struct.boot_protocol_struct_ptr);
     struct memInfo memInfo_struct = {0};
 
@@ -41,16 +41,15 @@ static struct memInfo getMultibootMemInfo(int* count){
 
         if (!(mboot_mmap_current_entry < mboot_mmap_end))
         {
-            *count = -1;
+            toggleBit((size_t*)&memInfo_struct.flags, MEMINFO_ERROR, TOGGLE_BIT_ON);
             toggleBit((size_t*)&memInfo_struct.flags, MEMINFO_MEM_MAP, TOGGLE_BIT_OFF);
             return memInfo_struct;
         }
         //printf("Start: %p, Length: %p, Type: %p\n", (uint32_t)((multiboot_memory_map_t*)mboot_mmap_current_entry)->addr, (uint32_t)((multiboot_memory_map_t*)mboot_mmap_current_entry)->len, mboot_mmap_current_entry->type);
-        *count += 1;
     }
     else
     {
-        *count = -1;
+        toggleBit((size_t*)&memInfo_struct.flags, MEMINFO_ERROR, TOGGLE_BIT_ON);
         toggleBit((size_t*)&memInfo_struct.flags, MEMINFO_MEM_MAP, TOGGLE_BIT_OFF);
     }
 
@@ -59,9 +58,12 @@ static struct memInfo getMultibootMemInfo(int* count){
 
 struct memInfo scanMemory(int* count)
 {
+    struct memInfo memInfo_struct = {0};
     if (bootInfo_struct.protocol == PROTOCOL_MULTIBOOT){
         return getMultibootMemInfo(count);
     }
+
+    return memInfo_struct;
 }
 
 void* getBootInfo()

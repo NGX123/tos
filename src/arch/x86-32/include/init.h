@@ -49,7 +49,7 @@ static void makeMemFlat();
 /*
     @brief = Sets up memory paging
 */
-static void initPaging();
+// static void initPaging();
 
 /*
     @brief = changes the chosen bit in supplied variable to chosen value(ON(1) or OFF(0))
@@ -61,8 +61,8 @@ static void toggleBit(size_t* var, size_t bitmask, uint8_t bit_status);
 
 /*
     @brief = constantly returns filled memInfo structs with new entries from mem map
-    @param count = variable which contains the number of the entrys that should be read(it is automatically increased by the function and is set to -1 when func comes to an end)
+    @param count = variable which contains the number of the entrys that should be read, sets error bit when entries list reaches end, variable should be increased by user
     @return = filled memInfo struct
 */
-static struct memInfo getMultibootMemInfo(int* count);
+static struct memInfo getMultibootMemInfo(int count);
 #endif
