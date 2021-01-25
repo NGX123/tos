@@ -5,7 +5,6 @@
 
 
 #include "include/kernel.h"
-extern void* initPFA();
 
 
 void kernel_main()
