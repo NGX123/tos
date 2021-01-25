@@ -58,8 +58,9 @@ extern void* getBootInfo();
 extern void setBootInfo(int var_num, ...);
 
 /*
-    @brief = uses the boot resources to get amount of ram and the memory map
-    @return = unimplemented
+    @brief = a wrapper around bootloader specific functions to that frees other functions fromhaving to find out which bootloader is used
+    @param count = passed to bootloader
+    @return = passed on from bootloader
 */
-extern void* scanMemory();
+extern struct memInfo scanMemory(int* count);
 #endif

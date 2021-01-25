@@ -57,16 +57,11 @@ static struct memInfo getMultibootMemInfo(int* count){
     return memInfo_struct;
 }
 
-void* scanMemory()
+struct memInfo scanMemory(int* count)
 {
     if (bootInfo_struct.protocol == PROTOCOL_MULTIBOOT){
-        int count = 0;
-        while(count != -1){
-            getMultibootMemInfo(&count);
-        }
+        return getMultibootMemInfo(count);
     }
-
-    return NULL;
 }
 
 void* getBootInfo()
