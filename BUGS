@@ -1,5 +1,9 @@
+-- Bugs --
++ stdio.c
+  + printf does not support multiple modes and does not support 64bit integers
+
 -- List of possible bugs --
 init.c
   + In all occurances of toggleBit(), when passing variable warning occurs(type incompatible with size_t*). So in all occurances conversion to size_t was added (e.g. toggleBit((size_t*)var) )
     - Possible source of overflows, stack corruption...
-  + When merging two parts of an address into one(2 uint32_t into 1 uint64_t), the problem could occur becuase before typecast to uint64_t was added(the one before bit left shift) there was a warning
+  + In init.c if printf is used for printing memory map contents - it will output garbage until all values passed to it are smaller 32-bit or smaller(can be typecasted) becuase printf does not support 64bit numbers
