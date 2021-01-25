@@ -56,4 +56,10 @@ extern void* getBootInfo();
     @param ... = the platform specific arguments
 */
 extern void setBootInfo(int var_num, ...);
+
+/*
+    @brief = uses the boot resources to get amount of ram and the memory map
+    @return = unimplemented
+*/
+extern void* scanMemory();
 #endif
