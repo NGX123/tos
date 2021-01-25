@@ -86,3 +86,5 @@
 	* [Micro OS - smallest OS with all PC hardware support(700 lines)](https://github.com/ssaroussi/Micro-OS)
 	* [Melvix OS(8k lines)](https://github.com/marvinborner/Melvix)
 	* [Raspberry Pi OS(10k lines)](https://github.com/s-matyukevich/raspberry-pi-os)
+	* [POSIX Hobby OS](https://gitlab.com/sortix/sortix)
+		* Easy C Library implementation - sortix/libc
