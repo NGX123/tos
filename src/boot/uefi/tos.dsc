@@ -29,7 +29,7 @@ DebugLib|MdePkg/Library/BaseDebugLibNull/BaseDebugLibNull.inf
 MemoryAllocationLib|MdePkg/Library/UefiMemoryAllocationLib/UefiMemoryAllocationLib.inf
 
 [Components]
-UefiAppBootloaderPkg/uefi.inf
+UefiAppBootloaderPkg/tos.inf
 
 [BuildOptions]
 *_*_*_CC_FLAGS = -D DISABLE_NEW_DEPRECATED_INTERFACES
