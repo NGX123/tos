@@ -64,6 +64,9 @@
 * [Time Library]()
 	* A timer could be set by a programm and kernel will call the binded function when the time is up, the kernel will manage the time with whatever time device was found using the device manager(e.g. PIC)
 * [Memory management](https://wiki.osdev.org/Category:Memory_management)
+	* Mark all memory regions reserved except the ones specified in memory map as free(no matter if region is really free or not, mem map should be followed)
+	* The maximum address at which page could end should be no more then physical amount of upper RAM
+	* For x86 - mark all areas below 1mb as reserved
 * [Device manager](https://wiki.osdev.org/Device_Management)
 	* [Guide](https://wiki.osdev.org/User:Kmcguire/Quick_And_Dirty_Device_Management)
 	* [Thread](https://www.reddit.com/r/osdev/comments/dr2qym/device_driver_model_for_oshypervisor/)
