@@ -2,11 +2,11 @@
 ## Global ##
 BUILDDIR 						= ./build
 TOOLCHAIN_PREFIX				= ../toolchain/bin
-CFLAGS_GLOBAL 					= -Wshadow -Wall -Wextra -c
-CEXTRAWARNINGS 					= -pedantic -Wcast-align -Wcast-qual -Wdisabled-optimization -Wformat=2 -Winit-self -Wlogical-op -Wmissing-declarations -Wmissing-include-dirs -Wshadow -Wsign-conversion -Wstrict-overflow=5 -Wswitch-default -Wundef -Wno-unused
-
 OVMF 							= /usr/share/OVMF
 EDK2							= ../toolchain/edk2
+
+CFLAGS_GLOBAL 					= -Wshadow -Wall -Wextra -c
+CEXTRAWARNINGS 					= -pedantic -Wcast-align -Wcast-qual -Wdisabled-optimization -Wformat=2 -Winit-self -Wlogical-op -Wmissing-declarations -Wmissing-include-dirs -Wshadow -Wsign-conversion -Wstrict-overflow=5 -Wswitch-default -Wundef -Wno-unused
 
 
 ## Compilation ##
@@ -18,11 +18,23 @@ BUILDDIR_x86-64					= $(BUILDDIR)/x86-64
 BUILDDIR_x86-32					= $(BUILDDIR)/x86-32
 TARGET							= tos
 
+# x86-64-uefi_gcc toolchain #
+CC_x86-64_GCC 					= $(TOOLCHAIN_PREFIX)/x86_64-elf-gcc
+AS_x86-64_GCC 					= nasm
+LD_x86-64_GCC					= $(TOOLCHAIN_PREFIX)/x86_64-elf-gcc
+ASFLAGS_x86-64_GCC				= -felf64
+CFLAGS_x86-64_GCC 				= -ffreestanding -mcmodel=large -mno-red-zone -mno-mmx -mno-sse -mno-sse2 $(CFLAGS_GLOBAL)	# (-ffreestanding) Startup not at main() and no standard lib; (-mcmodel=large) No assumptions about addresses; (-mno-red-zone -mno-mmx -mno-sse -mno-sse2) Disable CPU specific features that could generate runtime errors
+LDFLAGS_x86-64_GCC 				= -T uefi/linker.ld -ffreestanding -nostdlib -l gcc											# (-T script.ld) Use custom linker script; (-ffreestanding)Startup not at main() and no standard lib; (-nostdlib) Do not link with standard library; (-l gcc) Link with gcc library
+BUILDDIR_x86-64_GCC 			= $(BUILDDIR_x86-64)
+SOURCES_x86-64-uefi_CLANG		= $(INIT_SOURCES_x86-64)/*.c
+OBJECTS_x86-64-uefi_CLANG		= $(BUILDDIR_x86-64_GCC)/*.o
+
 # x86-32_gcc toolchain #
 CC_x86-32_GCC 					= $(TOOLCHAIN_PREFIX)/i686-elf-gcc
 AS_x86-32_GCC 					= nasm
+LD_x86-32_GCC					= $(TOOLCHAIN_PREFIX)/i686-elf-gcc
 ASFLAGS_x86-32_GCC 				= -felf32														# (-felf32) Set the target architecture to x86_32-elf
-CFLAGS_x86-32_GCC 				= -I include -std=gnu99 -ffreestanding $(CFLAGS_GLOBAL)	# (-I libs) Include the custo c library; (-std=gnu99) Becuase of code specifics should be older standard; (-ffreestanding) Startup not at main() and no standard lib
+CFLAGS_x86-32_GCC 				= -I include -std=gnu99 -ffreestanding $(CFLAGS_GLOBAL)			# (-I libs) Include the custo c library; (-std=gnu99) Becuase of code specifics should be older standard; (-ffreestanding) Startup not at main() and no standard lib
 LDFLAGS_x86-32_GCC 				= -T $(BIOS_SRC_DIR)/linker.ld -ffreestanding -nostdlib -l gcc	# (-T script.ld) Use custom linker script; (-ffreestanding)Startup not at main() and no standard lib; (-nostdlib) Do not link with standard library; (-l gcc) Link with gcc library
 BUILDDIR_x86-32_GCC 			= $(BUILDDIR_x86-32)
 SOURCES_x86-32_GCC				= drivers/*.c kernel/*.c $(INIT_SOURCES_x86-32)/*.c lib/*.c
@@ -32,8 +44,9 @@ OBJECTS_x86-32_GCC				= $(BUILDDIR_x86-32_GCC)/*.o
 CC_x86-64-uefi_CLANG 			= clang
 AS_x86-64-uefi_CLANG			= nasm
 LD_x86-64-uefi_CLANG			= clang
+ASFLAGS_x86-64-uefi_CLANG		= -felf64
 CFLAGS_x86-64-uefi_CLANG 		= -T $(INIT_SOURCES_x86-64)/link.ld -I include -ffreestanding $(CFLAGS_GLOBAL) -target x86_64-elf -mcmodel=large -mno-red-zone -mno-mmx -mno-sse -mno-sse2
-LDFLAGS_x86-64-uefi_CLANG		= -f elf64
+LDFLAGS_x86-64-uefi_CLANG		= -T $(INIT_SOURCES_x86-64)/$(TARGET).ld -ffreestanding -nostdlib -target x86_64-elf
 BUILDDIR_x86-64-uefi_CLANG		= $(BUILDDIR_x86-64)
 SOURCES_x86-64-uefi_CLANG		= $(INIT_SOURCES_x86-64)/*.c
 OBJECTS_x86-64-uefi_CLANG		= $(BUILDDIR_x86-64-uefi_CLANG)/*.o
@@ -42,9 +55,9 @@ OBJECTS_x86-64-uefi_CLANG		= $(BUILDDIR_x86-64-uefi_CLANG)/*.o
 CC_x86-32_CLANG 				= clang
 AS_x86-32_CLANG 				= nasm
 LD_x86-32_CLANG					= clang
+ASFLAGS_x86-32_CLANG 			= -felf32
 CFLAGS_x86-32_CLANG 			= -I include -std=gnu99 -ffreestanding $(CFLAGS_GLOBAL) -target i686-elf
 LDFLAGS_x86-32_CLANG 			= -T $(BIOS_SRC_DIR)/linker.ld -ffreestanding -nostdlib -target i686-elf # -l gcc
-ASFLAGS_x86-32_CLANG 			= -felf32
 BUILDDIR_x86-32_CLANG			= $(BUILDDIR_x86-32)
 SOURCES_x86-32_CLANG			= drivers/*.c kernel/*.c $(INIT_SOURCES_x86-32)/*.c lib/*.c
 OBJECTS_x86-32_CLANG			= $(BUILDDIR_x86-32_CLANG)/*.o
@@ -93,7 +106,7 @@ build_x86-32_gcc:
 	$(AS_x86-32_GCC) 	$(ASFLAGS_x86-32_GCC) 	$(INIT_SOURCES_x86-32)/init.s 	-o 	$(BUILDDIR_x86-32_GCC)/boot.o
 	$(CC_x86-32_GCC) 	$(CFLAGS_x86-32_GCC) 	$(SOURCES_x86-32_GCC)
 	mv 											*.o 							$(BUILDDIR_x86-32_GCC)
-	$(CC_x86-32_GCC) 	$(LDFLAGS_x86-32_GCC) 	$(OBJECTS_x86-32_GCC)			-o $(BUILDDIR_x86-32_GCC)/os.o
+	$(CC_x86-32_GCC) 	$(LDFLAGS_x86-32_GCC) 	$(OBJECTS_x86-32_GCC)			-o $(BUILDDIR_x86-32_GCC)/$(TARGET).o
 
 
 ## CLANG/LLVM ##
@@ -112,7 +125,7 @@ build_x86-32_clang:
 	$(AS_x86-32_CLANG) 	$(ASFLAGS_x86-32_CLANG) 	$(INIT_SOURCES_x86-32)/init.s	-o $(BUILDDIR_x86-32_CLANG)/boot.o
 	$(CC_x86-32_CLANG) 	$(CFLAGS_x86-32_CLANG)  	$(SOURCES_x86-32_CLANG)
 	mv												*.o								$(BUILDDIR_x86-32_CLANG)
-	$(LD_x86-32_CLANG)	$(LDFLAGS_x86-32_CLANG)		$(OBJECTS_x86-32_CLANG)			-o $(BUILDDIR_x86-32_CLANG)/os.o
+	$(LD_x86-32_CLANG)	$(LDFLAGS_x86-32_CLANG)		$(OBJECTS_x86-32_CLANG)			-o $(BUILDDIR_x86-32_CLANG)/$(TARGET).o
 
 # Compile code for x86-64-uefi with clang #
 build_x86-64-uefiapp_clang:
@@ -133,9 +146,9 @@ build_x86-64-uefiapp_edk2: clean
 	cp -r $(UEFI_SRC_DIR) $(BUILDDIR_x86-64-uefiapp_EDK2)
 	cd $(EDK2) && \
 	. ./edksetup.sh &&		\
-	build -p UefiAppBootloaderPkg/$(TARGET_x86-64-uefi).dsc -t GCC5 -a X64
+	build -p UefiAppBootloaderPkg/$(TARGET).dsc -t GCC5 -a X64
 
-	cp $(BUILDDIR_x86-64-uefiapp_EDK2)/Build/DEBUG_GCC5/X64/UefiAppBootloaderPkg.efi $(BUILDDIR_x86-64)/$(TARGET_x86-64-uefi).efi
+	cp $(BUILDDIR_x86-64-uefiapp_EDK2)/Build/DEBUG_GCC5/X64/UefiAppBootloaderPkg.efi $(BUILDDIR_x86-64)/$(TARGET).efi
 
 
 
@@ -145,32 +158,41 @@ disk_x86-64-uefi:
 	mkdir -p $(BUILDDIR_x86-64)
 
 	# Create an empty disk image with size of 94 KB
-	dd if=/dev/zero of=$(BUILDDIR_x86-64)/$(TARGET_x86-64-uefi).img bs=512 count=93750
+	dd if=/dev/zero of=$(BUILDDIR_x86-64)/$(TARGET).img bs=512 count=93750
 
 	# Format the disk image with 1440 byte sectors
-	mformat -i $(BUILDDIR_x86-64)/$(TARGET_x86-64-uefi).img -f 1440 ::
+	mformat -i $(BUILDDIR_x86-64)/$(TARGET).img -f 1440 ::
 
 	# Create EFI and then EFI/BOOT directory on the disk image
-	mmd -i $(BUILDDIR_x86-64)/$(TARGET_x86-64-uefi).img ::/EFI
-	mmd -i $(BUILDDIR_x86-64)/$(TARGET_x86-64-uefi).img ::/EFI/BOOT
+	mmd -i $(BUILDDIR_x86-64)/$(TARGET).img ::/EFI
+	mmd -i $(BUILDDIR_x86-64)/$(TARGET).img ::/EFI/BOOT
 
 	# Copy the efi executable to the EFI/BOOT folder on the drive
-	mv $(BUILDDIR_x86-64)/$(TARGET_x86-64-uefi).efi $(BUILDDIR_x86-64)/BOOTX64.EFI
-	mcopy -i $(BUILDDIR_x86-64)/$(TARGET_x86-64-uefi).img $(BUILDDIR_x86-64)/BOOTX64.EFI ::/EFI/BOOT
+	mv $(BUILDDIR_x86-64)/$(TARGET).efi $(BUILDDIR_x86-64)/BOOTX64.EFI
+	mcopy -i $(BUILDDIR_x86-64)/$(TARGET).img $(BUILDDIR_x86-64)/BOOTX64.EFI ::/EFI/BOOT
 
-# 32 bit OS Image Build #
+# x86-32 BIOS Disk Image Build #
 disk_x86-32-bios:
 	mkdir -p $(BUILDDIR_x86-32)/iso/boot/grub
-	mv $(BUILDDIR_x86-32)/os.o $(BUILDDIR_x86-32)/iso/boot
+	mv $(BUILDDIR_x86-32)/$(TARGET).o $(BUILDDIR_x86-32)/iso/boot
 	cp $(BIOS_SRC_DIR)/grub.cfg $(BUILDDIR_x86-32)/iso/boot/grub
-	grub2-mkrescue -o $(BUILDDIR_x86-32)/os.iso $(BUILDDIR_x86-32)/iso || grub-mkrescue -o $(BUILDDIR_x86-32)/os.iso $(BUILDDIR_x86-32)/iso
+	grub2-mkrescue -o $(BUILDDIR_x86-32)/$(TARGET).iso $(BUILDDIR_x86-32)/iso || grub-mkrescue -o $(BUILDDIR_x86-32)/$(TARGET).iso $(BUILDDIR_x86-32)/iso
 
 
 
 ### QEMU ###
+# Start QEMU in 64-bit UEFI mode with disc(ISO) inserted #
+qemu_x86-64-uefi:
+	cp /usr/share/OVMF/OVMF_CODE.fd /usr/share/OVMF/OVMF_VARS.fd $(BUILDDIR_x86-64)
+	qemu-system-x86_64 -cpu qemu64 \
+	-drive if=pflash,format=raw,unit=0,file=$(BUILDDIR_x86-64)/OVMF_CODE.fd,readonly=on \
+	-drive if=pflash,format=raw,unit=1,file=$(BUILDDIR_x86-64)/OVMF_VARS.fd \
+	-net none \
+	-cdrom $(BUILDDIR_x86-64)/$(TARGET).iso
+
 # Start qemu on 32-bit BIOS-mode CPU #
 qemu_x86-32-bios:
-	qemu-system-i386 -cdrom $(BUILDDIR_x86-32)/os.iso
+	qemu-system-i386 -cdrom $(BUILDDIR_x86-32)/$(TARGET).iso
 
 # Start qemu on 64-bit UEFI-only mode CPU with UEFI app inserted #
 qemu_x86-64-uefiapp:
@@ -178,7 +200,7 @@ qemu_x86-64-uefiapp:
 	cp $(OVMF)/OVMF_CODE.fd $(OVMF)/OVMF_VARS.fd $(BUILDDIR_x86-64)
 
 	# Run qemu - (-drive ...img) Boot our created disk image; (-net none) No network boot; (-cpu qemu64) Run with 64bit CPU; (-drive ...fd) Insert our compiled UEFI code and variable space
-	qemu-system-x86_64 -drive format=raw,file=$(BUILDDIR_x86-64)/$(TARGET_x86-64-uefi).img \
+	qemu-system-x86_64 -drive format=raw,file=$(BUILDDIR_x86-64)/$(TARGET).img \
 	-cpu qemu64 -net none \
 	-drive if=pflash,format=raw,unit=0,file=$(BUILDDIR_x86-64)/OVMF_CODE.fd -drive if=pflash,format=raw,unit=1,file=$(BUILDDIR_x86-64)/OVMF_VARS.fd
 
@@ -194,22 +216,3 @@ toolchain:
 # Build clean up #
 clean:
 	rm -rf *.o *.so *.out *.img *.fd *.efi *iso $(BUILDDIR)
-
-
-
-### Extra ###
-# # x86-64_gcc #
-# CC_x86-64_GCC 					= $(TOOLCHAIN_PREFIX)/x86_64-elf-gcc
-# AS_x86-64_GCC 					= nasm
-# CFLAGS_x86-64_GCC 				= -ffreestanding -mcmodel=large -mno-red-zone -mno-mmx -mno-sse -mno-sse2 $(CFLAGS_GLOBAL)	# (-ffreestanding) Startup not at main() and no standard lib; (-mcmodel=large) No assumptions about addresses; (-mno-red-zone -mno-mmx -mno-sse -mno-sse2) Disable CPU specific features that could generate runtime errors
-# LDFLAGS_x86-64_GCC 				= -T uefi/linker.ld -ffreestanding -nostdlib -l gcc											# (-T script.ld) Use custom linker script; (-ffreestanding)Startup not at main() and no standard lib; (-nostdlib) Do not link with standard library; (-l gcc) Link with gcc library
-# BUILDDIR_x86-64_GCC 			= $(BUILDDIR_x86-64)
-
-# # Start qemu on 64-bit UEFI-only mode CPU #
-# qemu_x86-64-uefi:
-# 	cp /usr/share/OVMF/OVMF_CODE.fd /usr/share/OVMF/OVMF_VARS.fd $(BUILDDIR_x86-64)
-# 	qemu-system-x86_64 -cpu qemu64 \
-# 	-drive if=pflash,format=raw,unit=0,file=$(BUILDDIR_x86-64)/OVMF_CODE.fd,readonly=on \
-# 	-drive if=pflash,format=raw,unit=1,file=$(BUILDDIR_x86-64)/OVMF_VARS.fd \
-# 	-net none \
-# 	-cdrom $(BUILDDIR_x86-64)/os.iso
