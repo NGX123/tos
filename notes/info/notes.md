@@ -16,3 +16,12 @@
 * When linking problems occured when in linker flags -L <lib>(include library) was used after -l <lib>(use library)
 	* Swaping -L and -l places fixed the linker errors
 * [The compiler does not follow packed attribute if there is 64bit field in the structure](https://forum.osdev.org/viewtopic.php?t=30318)
+
+## Other
+* Accessing peripherals, hardware... on ARM and RISC-V(platforms with no PC-like standartisation(in terms of video output, keyboard input...))
+	* No generic interface exists so specific board(e.g. RPI) should be selected and documentation for it should be used
+		* To select a specific board(computer) - `qemu-system-* -machine boardname`
+		* To get all supported boards - `qemu-system-* -machine help`
+	* Links
+		* [QEMU ARM Docs](https://wiki.qemu.org/Documentation/Platforms/ARM)
+		* [Forum Post](https://stackoverflow.com/questions/20811203/how-can-i-output-to-vga-through-qemu-arm)
