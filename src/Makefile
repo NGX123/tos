@@ -91,8 +91,8 @@ EFI_OBJS						= -T $(EFI_LINK_SCRIPT) -L /usr/lib64/gnuefi -L /usr/lib -L /usr/l
 all: 						all_x86-32_clang
 all_x86-32_gcc: 			clean build_x86-32_gcc disk_x86-32-bios qemu_x86-32-bios
 all_x86-32_clang:			clean build_x86-32_clang disk_x86-32-bios qemu_x86-32-bios
-all_x86-64-uefiapp_clang:	clean build_x86-64-uefiapp_clang disk_x86-64-uefi qemu_x86-64-uefiapp
-all_x86-64-uefiapp_edk2:	clean build_x86-64-uefiapp_edk2 disk_x86-64-uefi qemu_x86-64-uefiapp
+all_x86-64-uefiapp_clang:	clean build_x86-64-uefiapp_clang disk_x86-64-uefi_bootloader qemu_x86-64-uefiapp
+all_x86-64-uefiapp_edk2:	clean build_x86-64-uefiapp_edk2 disk_x86-64-uefi_bootloader qemu_x86-64-uefiapp
 
 
 
@@ -115,7 +115,8 @@ build_x86-64-uefi_clang: clean
 	rm -rf $(BUILDDIR_x86-64)
 	mkdir -p $(BUILDDIR_x86-64-uefi_CLANG)
 
-	$()
+	$(AS_x86-64-uefi_CLANG) $(ASFLAGS_x86-64-uefi_CLANG) $(INIT_SOURCES_x86-64)/init.s -o $(BUILDDIR_x86-64-uefi_CLANG)/boot.o
+	$(LD_x86-64-uefi_CLANG)	$(LDFLAGS_x86-64-uefi_CLANG) $(OBJECTS_x86-64-uefi_CLANG) -o $(BUILDDIR_x86-64-uefi_CLANG)/$(TARGET)
 
 # Compile code for x86-32 with clang #
 build_x86-32_clang:
@@ -154,7 +155,7 @@ build_x86-64-uefiapp_edk2: clean
 
 ### DISK IMAGES ###
 # x86-64 UEFI Disk Image Build #
-disk_x86-64-uefi:
+disk_x86-64-uefi_bootloader:
 	mkdir -p $(BUILDDIR_x86-64)
 
 	# Create an empty disk image with size of 94 KB
