@@ -90,6 +90,7 @@ EFI_OBJS						= -T $(EFI_LINK_SCRIPT) -L /usr/lib64/gnuefi -L /usr/lib -L /usr/l
 ### START ###
 all: 						all_x86-32_clang
 all_x86-32_gcc: 			clean build_x86-32_gcc disk_x86-32-bios qemu_x86-32-bios
+all_x86-64_clang:     		clean build_x86-64-uefi_clang disk_x86-64-uefi qemu_x86-64-uefi
 all_x86-32_clang:			clean build_x86-32_clang disk_x86-32-bios qemu_x86-32-bios
 all_x86-64-uefiapp_clang:	clean build_x86-64-uefiapp_clang disk_x86-64-uefi_bootloader qemu_x86-64-uefiapp
 all_x86-64-uefiapp_edk2:	clean build_x86-64-uefiapp_edk2 disk_x86-64-uefi_bootloader qemu_x86-64-uefiapp
@@ -115,8 +116,11 @@ build_x86-64-uefi_clang: clean
 	rm -rf $(BUILDDIR_x86-64)
 	mkdir -p $(BUILDDIR_x86-64-uefi_CLANG)
 
-	$(AS_x86-64-uefi_CLANG) $(ASFLAGS_x86-64-uefi_CLANG) $(INIT_SOURCES_x86-64)/init.s -o $(BUILDDIR_x86-64-uefi_CLANG)/boot.o
-	$(LD_x86-64-uefi_CLANG)	$(LDFLAGS_x86-64-uefi_CLANG) $(OBJECTS_x86-64-uefi_CLANG) -o $(BUILDDIR_x86-64-uefi_CLANG)/$(TARGET)
+	$(AS_x86-32_CLANG) 	$(ASFLAGS_x86-32_CLANG) 	$(INIT_SOURCES_x86-64)/init.s			-o $(BUILDDIR_x86-64-uefi_CLANG)/boot.o
+	$(LD_x86-32_CLANG)	$(LDFLAGS_x86-32_CLANG)		$(OBJECTS_x86-64-uefi_CLANG)			-o $(BUILDDIR_x86-64-uefi_CLANG)/$(TARGET).o
+
+	grub2-mkstandalone -O x86_64-efi -o $(BUILDDIR_x86-64)/BOOTX64.EFI "boot/grub/grub.cfg=$(INIT_SOURCES_x86-64)/grub.cfg"	|| \
+	grub-mkstandalone -O x86_64-efi -o $(BUILDDIR_x86-64)/BOOTX64.EFI "boot/grub/grub.cfg=$(INIT_SOURCES_x86-64)/grub.cfg"
 
 # Compile code for x86-32 with clang #
 build_x86-32_clang:
@@ -136,7 +140,7 @@ build_x86-64-uefiapp_clang:
 	$(CC_x86-64-uefiapp_CLANG)	$(CFLAGS_x86-64-uefiapp_CLANG)	$(SOURCES_x86-64-uefiapp_CLANG)
 	mv															*.o																$(BUILDDIR_x86-64-uefiapp_CLANG)
 	$(LD_x86-64-uefiapp_CLANG)	$(LDFLAGS_x86-64-uefiapp_CLANG)	$(BUILDDIR_x86-64-uefiapp_CLANG)/*.o 							-o $(BUILDDIR_x86-64-uefiapp_CLANG)/$(TARGET).so
-	$(OBJCPY) 					$(OBJCPYFLAGS)					$(BUILDDIR_x86-64-uefiapp_CLANG)/$(TARGET).so 	$(BUILDDIR_x86-64-uefiapp_CLANG)/$(TARGET).efi
+	$(OBJCPY) 					$(OBJCPYFLAGS)					$(BUILDDIR_x86-64-uefiapp_CLANG)/$(TARGET).so 					$(BUILDDIR_x86-64-uefiapp_CLANG)/BOOTX64.EFI
 
 # Compile code for x86-64-uefi with edk2 toolchain #
 build_x86-64-uefiapp_edk2: clean
@@ -149,28 +153,32 @@ build_x86-64-uefiapp_edk2: clean
 	. ./edksetup.sh &&		\
 	build -p UefiAppBootloaderPkg/$(TARGET).dsc -t GCC5 -a X64
 
-	cp $(BUILDDIR_x86-64-uefiapp_EDK2)/Build/DEBUG_GCC5/X64/UefiAppBootloaderPkg.efi $(BUILDDIR_x86-64)/$(TARGET).efi
+	cp $(BUILDDIR_x86-64-uefiapp_EDK2)/Build/DEBUG_GCC5/X64/UefiAppBootloaderPkg.efi $(BUILDDIR_x86-64)/BOOTX64.EFI
 
 
 
 ### DISK IMAGES ###
-# x86-64 UEFI Disk Image Build #
+# x86-64 UEFI Bootloader Disk Image Build #
 disk_x86-64-uefi_bootloader:
 	mkdir -p $(BUILDDIR_x86-64)
 
 	# Create an empty disk image with size of 94 KB
-	dd if=/dev/zero of=$(BUILDDIR_x86-64)/$(TARGET).img bs=512 count=93750
+	dd if=/dev/zero of=$(BUILDDIR_x86-64)/$(TARGET).img bs=512 count=500000
 
-	# Format the disk image with 1440 byte sectors
-	mformat -i $(BUILDDIR_x86-64)/$(TARGET).img -f 1440 ::
+	# Format the disk image with 1440 byte sectors, if problems occur add -f 1440
+	mformat -i $(BUILDDIR_x86-64)/$(TARGET).img ::
 
 	# Create EFI and then EFI/BOOT directory on the disk image
 	mmd -i $(BUILDDIR_x86-64)/$(TARGET).img ::/EFI
 	mmd -i $(BUILDDIR_x86-64)/$(TARGET).img ::/EFI/BOOT
 
 	# Copy the efi executable to the EFI/BOOT folder on the drive
-	mv $(BUILDDIR_x86-64)/$(TARGET).efi $(BUILDDIR_x86-64)/BOOTX64.EFI
 	mcopy -i $(BUILDDIR_x86-64)/$(TARGET).img $(BUILDDIR_x86-64)/BOOTX64.EFI ::/EFI/BOOT
+
+# x86-64 UEFI Disk image edit
+disk_x86-64-uefi: disk_x86-64-uefi_bootloader
+	mcopy -i $(BUILDDIR_x86-64)/$(TARGET).img $(BUILDDIR_x86-64)/$(TARGET).o ::/EFI/BOOT
+
 
 # x86-32 BIOS Disk Image Build #
 disk_x86-32-bios:
@@ -189,7 +197,7 @@ qemu_x86-64-uefi:
 	-drive if=pflash,format=raw,unit=0,file=$(BUILDDIR_x86-64)/OVMF_CODE.fd,readonly=on \
 	-drive if=pflash,format=raw,unit=1,file=$(BUILDDIR_x86-64)/OVMF_VARS.fd \
 	-net none \
-	-cdrom $(BUILDDIR_x86-64)/$(TARGET).iso
+	-drive format=raw,file=$(BUILDDIR_x86-64)/$(TARGET).img
 
 # Start qemu on 32-bit BIOS-mode CPU #
 qemu_x86-32-bios:
