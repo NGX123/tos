@@ -85,15 +85,12 @@ build_x86-32_gcc:
 
 ## CLANG/LLVM ##
 # Compile code for x86-64 with clang #
-build_x86-64-uefi_clang: clean
+build_x86-64-uefi_clang:
 	rm -rf $(BUILDDIR_x86-64)
 	mkdir -p $(BUILDDIR_x86-64-uefi_CLANG)
 
 	$(AS_x86-32_CLANG) 	$(ASFLAGS_x86-32_CLANG) 	$(INIT_SOURCES_x86-64)/init.s			-o $(BUILDDIR_x86-64-uefi_CLANG)/boot.o
 	$(LD_x86-32_CLANG)	$(LDFLAGS_x86-32_CLANG)		$(OBJECTS_x86-64-uefi_CLANG)			-o $(BUILDDIR_x86-64-uefi_CLANG)/$(TARGET).o
-
-	grub2-mkstandalone -O x86_64-efi -o $(BUILDDIR_x86-64)/BOOTX64.EFI "boot/grub/grub.cfg=$(INIT_SOURCES_x86-64)/grub.cfg"	|| \
-	grub-mkstandalone -O x86_64-efi -o $(BUILDDIR_x86-64)/BOOTX64.EFI "boot/grub/grub.cfg=$(INIT_SOURCES_x86-64)/grub.cfg"
 
 # Compile code for x86-32 with clang #
 build_x86-32_clang:
@@ -109,7 +106,7 @@ build_x86-32_clang:
 
 ### DISK IMAGES ###
 # x86-64 UEFI Bootloader Disk Image Build #
-disk_x86-64-uefi_bootloader:
+disk_x86-64-uefi:
 	mkdir -p $(BUILDDIR_x86-64)
 
 	# Create an empty disk image with size of 94 KB
@@ -122,13 +119,15 @@ disk_x86-64-uefi_bootloader:
 	mmd -i $(BUILDDIR_x86-64)/$(TARGET).img ::/EFI
 	mmd -i $(BUILDDIR_x86-64)/$(TARGET).img ::/EFI/BOOT
 
-	# Copy the efi executable to the EFI/BOOT folder on the drive
+	# Create the GRUB Uefiapplication/Bootloader Binary
+	grub2-mkstandalone -O x86_64-efi -o $(BUILDDIR_x86-64)/BOOTX64.EFI "boot/grub/grub.cfg=$(INIT_SOURCES_x86-64)/grub.cfg"	|| \
+	grub-mkstandalone -O x86_64-efi -o $(BUILDDIR_x86-64)/BOOTX64.EFI "boot/grub/grub.cfg=$(INIT_SOURCES_x86-64)/grub.cfg"
+
+	# Copy the efi bootloader to the EFI/BOOT folder on the drive
 	mcopy -i $(BUILDDIR_x86-64)/$(TARGET).img $(BUILDDIR_x86-64)/BOOTX64.EFI ::/EFI/BOOT
 
-# x86-64 UEFI Disk image edit
-disk_x86-64-uefi: disk_x86-64-uefi_bootloader
+	# Copy the kernel/executable to the drive
 	mcopy -i $(BUILDDIR_x86-64)/$(TARGET).img $(BUILDDIR_x86-64)/$(TARGET).o ::/EFI/BOOT
-
 
 # x86-32 BIOS Disk Image Build #
 disk_x86-32-bios:
