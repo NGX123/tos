@@ -2,8 +2,6 @@
 ## Global ##
 BUILDDIR 						= ./build
 TOOLCHAIN_PREFIX				= ../toolchain/bin
-OVMF 							= /usr/share/OVMF
-EDK2							= ../toolchain/edk2
 
 CFLAGS_GLOBAL 					= -Wshadow -Wall -Wextra -c
 CEXTRAWARNINGS 					= -pedantic -Wcast-align -Wcast-qual -Wdisabled-optimization -Wformat=2 -Winit-self -Wlogical-op -Wmissing-declarations -Wmissing-include-dirs -Wshadow -Wsign-conversion -Wstrict-overflow=5 -Wswitch-default -Wundef -Wno-unused
@@ -62,38 +60,13 @@ BUILDDIR_x86-32_CLANG			= $(BUILDDIR_x86-32)
 SOURCES_x86-32_CLANG			= drivers/*.c kernel/*.c $(INIT_SOURCES_x86-32)/*.c lib/*.c
 OBJECTS_x86-32_CLANG			= $(BUILDDIR_x86-32_CLANG)/*.o
 
-# x86-64-uefiapp_clang #
-CC_x86-64-uefiapp_CLANG 		= clang # Can be changed to gcc, then change -DHAVE_USE_MS_ABI to -DEFI_FUNCTION_WRAPPER
-LD_x86-64-uefiapp_CLANG 		= ld
-OBJCPY 							= objcopy
-CFLAGS_x86-64-uefiapp_CLANG		= $(EFI_INCS) -fno-stack-protector -fpic -fshort-wchar -mno-red-zone -DHAVE_USE_MS_ABI -D GNUEFI_BUILD $(CFLAGS_GLOBAL) # (-fno-stack-protector)Disable monitoring variable at stack end to indicate overflow if overwritten; (-fpic)Position independent code(can be loaded anywhere in memory); (-fshort-wchar)Makes wchar_t short(2 byte), (-mno-red-zone)Disables feature according to ABI; (-DHAVE_USE_MS_ABI)Use windows function calling convention(it is used by UEFI); (-D GNUEFI_BUILD) Define a macro to switch my code from EDK2 to gnuefi(macro checking made by me)
-LDFLAGS_x86-64-uefiapp_CLANG 	= $(EFI_OBJS) -nostdlib -znocombreloc -shared -Bsymbolic -l efi -l gnuefi												# (-nostdlib)Do not link against any libs except specified; (-znocombreloc)Don't combine relocation sections; (-shared)Create a shared lib, for later conversion to binary; (-Bsymbolic)Bind global function references locally; (-l efi, -l gnuefi)Link with GNU EFI libraries
-OBJCPYFLAGS 					= -j .text -j .sdata -j .data -j .dynamic -j .dynsym -j .rel -j .rela -j .reloc --target=efi-app-x86_64 				# (-j)Only copy the specified section to output; (--target=efi-app-x86_64)Select the platform
-BUILDDIR_x86-64-uefiapp_CLANG	= $(BUILDDIR_x86-64)
-SOURCES_x86-64-uefiapp_CLANG 	= $(UEFI_SRC_DIR)/*.c
-
-# x86-64-uefiapp_edk2 #
-BUILDDIR_x86-64-uefiapp_EDK2 	= $(EDK2)/UefiAppBootloaderPkg
-SOURCES_x86-64-uefiapp_EDK2 	= $(UEFI_SRC_DIR)/*.c
-
-
-## EFI ##
-ARCH 							= x86_64
-EFI_INCLUDE_PATH 				= /usr/include/efi 																		# Contains all of the headers necessery to compiler EFI apps
-EFI_LINK_OBJ 					= /usr/lib/crt0-efi-$(ARCH).o															# Shared library to link the UEFI header functions
-EFI_LINK_SCRIPT 				= /usr/lib/elf_$(ARCH)_efi.lds															# GNU-EFI custom linker script for linking with it's shared libraries
-EFI_INCS 						= -I /usr/include/efi -I /usr/include/efi/$(ARCH) -I /usr/include/efi/protocol			# Includes general UEFI headers, platform specific UEFI headers and UEFI protocol headers
-EFI_OBJS						= -T $(EFI_LINK_SCRIPT) -L /usr/lib64/gnuefi -L /usr/lib -L /usr/lib64 $(EFI_LINK_OBJ)	# Adds objects and libs for linker to link the UEFI app with
-
 
 
 ### START ###
-all: 						all_x86-32_clang
+all: 						all_x86-64_clang
 all_x86-32_gcc: 			clean build_x86-32_gcc disk_x86-32-bios qemu_x86-32-bios
 all_x86-64_clang:     		clean build_x86-64-uefi_clang disk_x86-64-uefi qemu_x86-64-uefi
 all_x86-32_clang:			clean build_x86-32_clang disk_x86-32-bios qemu_x86-32-bios
-all_x86-64-uefiapp_clang:	clean build_x86-64-uefiapp_clang disk_x86-64-uefi_bootloader qemu_x86-64-uefiapp
-all_x86-64-uefiapp_edk2:	clean build_x86-64-uefiapp_edk2 disk_x86-64-uefi_bootloader qemu_x86-64-uefiapp
 
 
 
@@ -131,29 +104,6 @@ build_x86-32_clang:
 	$(CC_x86-32_CLANG) 	$(CFLAGS_x86-32_CLANG)  	$(SOURCES_x86-32_CLANG)
 	mv												*.o								$(BUILDDIR_x86-32_CLANG)
 	$(LD_x86-32_CLANG)	$(LDFLAGS_x86-32_CLANG)		$(OBJECTS_x86-32_CLANG)			-o $(BUILDDIR_x86-32_CLANG)/$(TARGET).o
-
-# Compile code for x86-64-uefi with clang #
-build_x86-64-uefiapp_clang:
-	rm -rf $(BUILDDIR_x86-64-uefiapp_CLANG)
-	mkdir 						-p 																								$(BUILDDIR_x86-64-uefiapp_CLANG)
-
-	$(CC_x86-64-uefiapp_CLANG)	$(CFLAGS_x86-64-uefiapp_CLANG)	$(SOURCES_x86-64-uefiapp_CLANG)
-	mv															*.o																$(BUILDDIR_x86-64-uefiapp_CLANG)
-	$(LD_x86-64-uefiapp_CLANG)	$(LDFLAGS_x86-64-uefiapp_CLANG)	$(BUILDDIR_x86-64-uefiapp_CLANG)/*.o 							-o $(BUILDDIR_x86-64-uefiapp_CLANG)/$(TARGET).so
-	$(OBJCPY) 					$(OBJCPYFLAGS)					$(BUILDDIR_x86-64-uefiapp_CLANG)/$(TARGET).so 					$(BUILDDIR_x86-64-uefiapp_CLANG)/BOOTX64.EFI
-
-# Compile code for x86-64-uefi with edk2 toolchain #
-build_x86-64-uefiapp_edk2: clean
-	rm -rf $(BUILDDIR_x86-64)
-	rm -rf $(BUILDDIR_x86-64-uefiapp_EDK2)
-	mkdir -p $(BUILDDIR_x86-64)
-
-	cp -r $(UEFI_SRC_DIR) $(BUILDDIR_x86-64-uefiapp_EDK2)
-	cd $(EDK2) && \
-	. ./edksetup.sh &&		\
-	build -p UefiAppBootloaderPkg/$(TARGET).dsc -t GCC5 -a X64
-
-	cp $(BUILDDIR_x86-64-uefiapp_EDK2)/Build/DEBUG_GCC5/X64/UefiAppBootloaderPkg.efi $(BUILDDIR_x86-64)/BOOTX64.EFI
 
 
 
@@ -202,16 +152,6 @@ qemu_x86-64-uefi:
 # Start qemu on 32-bit BIOS-mode CPU #
 qemu_x86-32-bios:
 	qemu-system-i386 -cdrom $(BUILDDIR_x86-32)/$(TARGET).iso
-
-# Start qemu on 64-bit UEFI-only mode CPU with UEFI app inserted #
-qemu_x86-64-uefiapp:
-	# Copy over the code and variable vars for OVMF
-	cp $(OVMF)/OVMF_CODE.fd $(OVMF)/OVMF_VARS.fd $(BUILDDIR_x86-64)
-
-	# Run qemu - (-drive ...img) Boot our created disk image; (-net none) No network boot; (-cpu qemu64) Run with 64bit CPU; (-drive ...fd) Insert our compiled UEFI code and variable space
-	qemu-system-x86_64 -drive format=raw,file=$(BUILDDIR_x86-64)/$(TARGET).img \
-	-cpu qemu64 -net none \
-	-drive if=pflash,format=raw,unit=0,file=$(BUILDDIR_x86-64)/OVMF_CODE.fd -drive if=pflash,format=raw,unit=1,file=$(BUILDDIR_x86-64)/OVMF_VARS.fd
 
 
 
