@@ -9,8 +9,6 @@ extern setBootInfo
 extern kernel_main
 
 
-PROTOCOL_MULTIBOOT  equ 0x01
-
 MBALIGN         equ 1 << 0              ; Loaded modules page boundaries aligning flag
 MEMINFO         equ 1 << 1              ; Memory map flag
 FLAGS           equ MBALIGN | MEMINFO   ; GRUB boot flags combination
