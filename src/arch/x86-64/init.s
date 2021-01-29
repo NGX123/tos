@@ -7,17 +7,15 @@ global _start
 
 MAGIC       equ 0xE85250D6
 ARCH_x86_32 equ 0
-HEADER_LEN  equ 24
-CHECKSUM    equ -(MAGIC + ARCH_x86_32 + HEADER_LEN + 8)
 
 
 section .multiboot
 multiboot_header_start:
-    align    8
-        dd   MAGIC
-        dd   ARCH_x86_32
-        dd   multiboot_header_end - multiboot_header_start
-        dd   CHECKSUM
+    align 8
+        dd  MAGIC
+        dd  ARCH_x86_32
+        dd  multiboot_header_end - multiboot_header_start
+        dd  -(MAGIC + ARCH_x86_32 + (multiboot_header_end - multiboot_header_start) + 8)
 multiboot_header_end:
 
 
