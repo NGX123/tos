@@ -89,10 +89,11 @@
 
 
 ## Extra
-* Add special macros to hide parts of code(if macro isn't defined) to all the files that contain extra features
+* Try to use EDK2 headers and EDK2 objects to build a UEFI app with a normal compiler and not the EDK2 build system
+	* [TomatBoot does it](https://github.com/TomatOrg/TomatBoot)
 * [Assembly](https://wiki.osdev.org/Assembly)
 	* Change assembly compilation from inclusion of everything into one file to seperate compilation and then linking together with other executables
-	* Switch code from NASM to GAS
+	* Switch code from NASM to GAS or improve NASM skills
 		* Ask on reddit, how to use clang as assembler and write in GNU GAS syntax
 		* [OSdev GAS](https://wiki.osdev.org/GAS)
 		* [OSdev NASM](https://wiki.osdev.org/NASM)
