@@ -93,6 +93,7 @@
 * [Assembly](https://wiki.osdev.org/Assembly)
 	* Change assembly compilation from inclusion of everything into one file to seperate compilation and then linking together with other executables
 	* Switch code from NASM to GAS
+		* Ask on reddit, how to use clang as assembler and write in GNU GAS syntax
 		* [OSdev GAS](https://wiki.osdev.org/GAS)
 		* [OSdev NASM](https://wiki.osdev.org/NASM)
 		* [GAS tutorial](https://en.wikibooks.org/wiki/X86_Assembly/GAS_Syntax)
