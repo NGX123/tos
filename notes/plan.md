@@ -66,6 +66,7 @@
 		* [Anastasion Page Frame Allocator Tutorial](https://anastas.io/osdev/memory/2016/08/08/page-frame-allocator.html)
 		* [James Molloy Paging](http://www.jamesmolloy.co.uk/tutorial_html/6.-Paging.html)
 		* [Bona Fide Paging](http://www.osdever.net/tutorials/view/implementing-basic-paging)
+		* [Small malloc implementation](https://github.com/CCareaga/heap_allocator)
 * [Device manager](https://wiki.osdev.org/Device_Management)
 	* [Guide](https://wiki.osdev.org/User:Kmcguire/Quick_And_Dirty_Device_Management)
 	* [Thread](https://www.reddit.com/r/osdev/comments/dr2qym/device_driver_model_for_oshypervisor/)
