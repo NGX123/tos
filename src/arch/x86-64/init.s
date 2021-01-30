@@ -21,5 +21,7 @@ multiboot_header_end:
 
 
 _start:
+
+hang:                   ; Loop forever
     hlt
     jmp _start
