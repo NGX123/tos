@@ -50,7 +50,11 @@
     * [Writing MM](https://wiki.osdev.org/Writing_a_memory_manager)
     * [Make Page frame alloctor](https://wiki.osdev.org/Writing_A_Page_Frame_Allocator)
     * [Setup paging](https://wiki.osdev.org/Setting_Up_Paging)
-
+    * [Anastasion Page Frame Allocator Tutorial](https://anastas.io/osdev/memory/2016/08/08/page-frame-allocator.html)
+    * [James Molloy Paging](http://www.jamesmolloy.co.uk/tutorial_html/6.-Paging.html)
+    * [Bona Fide Paging](http://www.osdever.net/tutorials/view/implementing-basic-paging)
+- Other
+    * [Small malloc implementation](https://github.com/CCareaga/heap_allocator)
 
 ## [Notes](https://wiki.osdev.org/Paging)
 * Releated to paging in x86 https://wiki.osdev.org/TLB
