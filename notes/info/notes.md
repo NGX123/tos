@@ -1,6 +1,13 @@
 ## Fixes
 ### Hardware
-* The memory map has reserved areas below 1mb and right at the end of it, all other space is free. The map will change depending on amount of RAM(in 200mb, only about 150 will be free)
+* The free space in the middle of BIOS memory map will change size depending on amount of RAM(in 200mb, only about 150 will be free)
+* Accessing peripherals, hardware... on ARM and RISC-V(platforms with no PC-like standartisation(in terms of video output, keyboard input...))
+	* No generic interface exists so specific board(e.g. RPI) should be selected and documentation for it should be used
+		* To select a specific board(computer) - `qemu-system-* -machine boardname`
+		* To get all supported boards - `qemu-system-* -machine help`
+	* Links
+		* [QEMU ARM Docs](https://wiki.qemu.org/Documentation/Platforms/ARM)
+		* [Forum Post](https://stackoverflow.com/questions/20811203/how-can-i-output-to-vga-through-qemu-arm)
 
 ### Code
 * When using functions from `<stdarg.h>` like `va_start(), va_end(), va_arg()`, the function where they were used should not call other functions(e.g. if `func1()` uses va_start(), `func2()` or any other function can't be called from `func1()`)
@@ -9,19 +16,14 @@
 	- To combine the two split variables back into on x86 - e.g. if `uint64_t original` is split into `uint32_t part1`, `uint32_t part2` then to combine use `part1 | (uint64_t)part2 << 32`
 
 ### Build tools
-* When compiling x86-32_clang with target set to i386-elf the os was incorrectly linked
-	* Changed of target to i686-elf fixed incorrect linkage
-* Older c compilers added _ before all symbols(e.g. "symbol" was made into "_symbol"), newer c compilers do not do this so when interfacing with assembly same function/variable names should be used
+* When compiling x86-32_clang with target set to `i386-elf` the os will link incorrectly
+	* Target change to `i686-elf` will fix linkage
+* Older c compilers added `_` before all symbols(e.g. "symbol" was made into "_symbol"), newer c compilers do not do this so when interfacing with assembly same function/variable names should be used("symbol" not "_symbol")
 	* To check if compiler adds _ before symbols use - "objdump -t filename.ext"
-* When linking problems occured when in linker flags -L <lib>(include library) was used after -l <lib>(use library)
-	* Swaping -L and -l places fixed the linker errors
+* Linkage problems will occur if -L <lib>(include library) is located after -l <lib>(use library)
+	* Swaping -L and -l places should be done, because first one includes the path and second library from that path
 * [The compiler does not follow packed attribute if there is 64bit field in the structure](https://forum.osdev.org/viewtopic.php?t=30318)
-
-## Other
-* Accessing peripherals, hardware... on ARM and RISC-V(platforms with no PC-like standartisation(in terms of video output, keyboard input...))
-	* No generic interface exists so specific board(e.g. RPI) should be selected and documentation for it should be used
-		* To select a specific board(computer) - `qemu-system-* -machine boardname`
-		* To get all supported boards - `qemu-system-* -machine help`
-	* Links
-		* [QEMU ARM Docs](https://wiki.qemu.org/Documentation/Platforms/ARM)
-		* [Forum Post](https://stackoverflow.com/questions/20811203/how-can-i-output-to-vga-through-qemu-arm)
+* When making a Multiboot two kernel changes are needed in conifg file to make it work
+	* `multiboot executable` in menuentry {} in grub.cfg should be changed to `multiboot2 executable`
+	* If grub uefi is used the start of file system is not /, so diks name should be added before the path - instead of `multiboot2 /path/to/exe`, use `multiboot2 (hd0)/path/to/exe`
+		* `(hd0)` can be changed to any other disk, to check the available disks use the GRUB console `ls` command
