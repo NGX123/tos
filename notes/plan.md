@@ -7,8 +7,9 @@
 
 ### [Hardware](https://wiki.osdev.org/Category:Hardware)
 1. [64bit CPU support(Long mode)](https://wiki.osdev.org/Category:X86-64)
-	* [Setting up stack](https://forum.osdev.org/viewtopic.php?f=1&t=21772)
-	* [Setup Paging](https://wiki.osdev.org/Setting_Up_Paging)
+	1. [Switch to long mode](https://wiki.osdev.org/Setting_Up_Long_Mode)
+	2. [Setting up stack](https://forum.osdev.org/viewtopic.php?f=1&t=21772)
+	3. [Setup Paging](https://wiki.osdev.org/Setting_Up_Paging)
 2. [Graphics](https://wiki.osdev.org/Category:Video)
 	* [GRUB Framebuffer]()
 2. [Interrupts](https://wiki.osdev.org/Category:Interrupts)
