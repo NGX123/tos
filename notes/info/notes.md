@@ -23,7 +23,7 @@
 * Linkage problems will occur if -L <lib>(include library) is located after -l <lib>(use library)
 	* Swaping -L and -l places should be done, because first one includes the path and second library from that path
 * [The compiler does not follow packed attribute if there is 64bit field in the structure](https://forum.osdev.org/viewtopic.php?t=30318)
-* When making a Multiboot two kernel changes are needed in conifg file to make it work
+* When making a Multiboot2 2 kernel, changes are needed in conifg files to make it work
 	* `multiboot executable` in menuentry {} in grub.cfg should be changed to `multiboot2 executable`
-	* If grub uefi is used the start of file system is not /, so diks name should be added before the path - instead of `multiboot2 /path/to/exe`, use `multiboot2 (hd0)/path/to/exe`
+	* If grub uefi is used the start of file system is not /, so disk name should be added before the path - instead of `multiboot2 /path/to/exe`, use `multiboot2 (hd0)/path/to/exe`
 		* `(hd0)` can be changed to any other disk, to check the available disks use the GRUB console `ls` command
