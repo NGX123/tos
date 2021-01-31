@@ -9,7 +9,6 @@
 
 
 #include <types.h>
-#include <kernel/multiboot.h>
 
 
 #define PROTOCOL_NONE       0x0
@@ -42,26 +41,4 @@ struct memInfo
     uint64_t upper_ram_size;
     struct kernelMemMap memory_map;
 };
-
-
-/*
-    @breif = return the pointer to data collected by the kernel
-    @return = pointer to kernInfo struct
-*/
-extern void* getBootInfo();
-
-/*
-    @brief = solves all of the platform specfic stuff for the kernel
-    @param protocol = type of boot protocol used
-    @param var_num = amount of arguments to be passed
-    @param ... = the platform specific arguments
-*/
-extern void setBootInfo(int var_num, ...);
-
-/*
-    @brief = a wrapper around bootloader specific functions to that frees other functions fromhaving to find out which bootloader is used
-    @param count = passed to bootloader
-    @return = passed on from bootloader
-*/
-extern struct memInfo scanMemory(int* count);
 #endif
