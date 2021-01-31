@@ -42,8 +42,7 @@
 * Boot
 	* [UEFI Specifications](https://www.uefi.org/specifications)
 	* [BIOS Specification](https://www.scs.stanford.edu/nyu/04fa/lab/specsbbs101.pdf)
-	* [GRUB Multiboot Specification](https://www.gnu.org/software/grub/manual/multiboot/)
-		* [Multiboot Manual](https://www.gnu.org/software/grub/manual/multiboot/)
+	* [GRUB Multiboot 2 Specification](https://www.gnu.org/software/grub/manual/multiboot2/)
 
 
 
@@ -53,7 +52,8 @@
 	* [Bham OS Book](https://www.cs.bham.ac.uk/~exr/lectures/opsys/10_11/lectures/os-dev.pdf)
 	* [Bona Fide OSdev](http://www.osdever.net/tutorials/)
 	* [James KernelDev Guide](http://www.jamesmolloy.co.uk/tutorial_html/)
-	* [BrokenThron OS Turials](http://www.brokenthorn.com/Resources/OSDevIndex.html)
+	* [BrokenThron OS Tutorials](http://www.brokenthorn.com/Resources/OSDevIndex.html)
+	* [WhyOS Lectures and Tutorials](http://wyoos.org/impressum.php?redirect=%2Findex.php)
 
 * University Courses
 	* [MIT 6.828 Course](https://ocw.mit.edu/courses/electrical-engineering-and-computer-science/6-828-operating-system-engineering-fall-2012/index.htm)
