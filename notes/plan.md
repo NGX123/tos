@@ -12,6 +12,14 @@
 	3. [Setup Paging](https://wiki.osdev.org/Setting_Up_Paging)
 2. [Graphics](https://wiki.osdev.org/Category:Video)
 	* [GRUB Framebuffer]()
+		1. Supply the multiboot2 header with framebuffer tag(5 in documentation)
+		2. Copy and modify the driver from documentation
+	* [GOP](https://wiki.osdev.org/GOP)
+		1. Use the GRUB Header tags to make it load os into "i386 with EFI boot servicers not exited"
+		2. Setup a framebuffer with GOP
+		3. exitbootservices()
+		4. Write a driver for using the raw framebuffer that was before used by UEFI
+		* [GOP Thread](https://forum.osdev.org/viewtopic.php?f=1&t=26796)
 2. [Interrupts](https://wiki.osdev.org/Category:Interrupts)
 	1. [APIC(Modern)](https://wiki.osdev.org/APIC)
 		* [IOAPIC](https://wiki.osdev.org/IOAPIC)
