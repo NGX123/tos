@@ -65,6 +65,7 @@
 
 * Not standard OS courses
 	* [Rust RISC-V OS](https://osblog.stephenmarz.com/index.html)
+	* [Rust x86 OS](https://os.phil-opp.com/)
 
 
 
