@@ -22,7 +22,7 @@ AS_x86-64_GCC 					= nasm
 LD_x86-64_GCC					= $(TOOLCHAIN_PREFIX)/x86_64-elf-gcc
 ASFLAGS_x86-64_GCC				= -felf64
 CFLAGS_x86-64_GCC 				= -ffreestanding -mcmodel=large -mno-red-zone -mno-mmx -mno-sse -mno-sse2 $(CFLAGS_GLOBAL)	# (-ffreestanding) Startup not at main() and no standard lib; (-mcmodel=large) No assumptions about addresses; (-mno-red-zone -mno-mmx -mno-sse -mno-sse2) Disable CPU specific features that could generate runtime errors
-LDFLAGS_x86-64_GCC 				= -T uefi/linker.ld -ffreestanding -nostdlib -l gcc											# (-T script.ld) Use custom linker script; (-ffreestanding)Startup not at main() and no standard lib; (-nostdlib) Do not link with standard library; (-l gcc) Link with gcc library
+LDFLAGS_x86-64_GCC 				= -T $(INIT_SOURCES_x86-64)/$(TARGET)-x86_64-efi.ld -ffreestanding -nostdlib -l gcc											# (-T script.ld) Use custom linker script; (-ffreestanding)Startup not at main() and no standard lib; (-nostdlib) Do not link with standard library; (-l gcc) Link with gcc library
 BUILDDIR_x86-64_GCC 			= $(BUILDDIR_x86-64)
 SOURCES_x86-64-uefi_CLANG		= $(INIT_SOURCES_x86-64)/*.c
 OBJECTS_x86-64-uefi_CLANG		= $(BUILDDIR_x86-64_GCC)/*.o
@@ -33,7 +33,7 @@ AS_x86-32_GCC 					= nasm
 LD_x86-32_GCC					= $(TOOLCHAIN_PREFIX)/i686-elf-gcc
 ASFLAGS_x86-32_GCC 				= -felf32														# (-felf32) Set the target architecture to x86_32-elf
 CFLAGS_x86-32_GCC 				= -I include -std=gnu99 -ffreestanding $(CFLAGS_GLOBAL)			# (-I libs) Include the custo c library; (-std=gnu99) Becuase of code specifics should be older standard; (-ffreestanding) Startup not at main() and no standard lib
-LDFLAGS_x86-32_GCC 				= -T $(BIOS_SRC_DIR)/linker.ld -ffreestanding -nostdlib -l gcc	# (-T script.ld) Use custom linker script; (-ffreestanding)Startup not at main() and no standard lib; (-nostdlib) Do not link with standard library; (-l gcc) Link with gcc library
+LDFLAGS_x86-32_GCC 				= -T $(BIOS_SRC_DIR)/tos-x86_32.ld -ffreestanding -nostdlib -l gcc	# (-T script.ld) Use custom linker script; (-ffreestanding)Startup not at main() and no standard lib; (-nostdlib) Do not link with standard library; (-l gcc) Link with gcc library
 BUILDDIR_x86-32_GCC 			= $(BUILDDIR_x86-32)
 SOURCES_x86-32_GCC				= drivers/*.c kernel/*.c $(INIT_SOURCES_x86-32)/*.c lib/*.c
 OBJECTS_x86-32_GCC				= $(BUILDDIR_x86-32_GCC)/*.o
@@ -43,8 +43,8 @@ CC_x86-64-uefi_CLANG 			= clang
 AS_x86-64-uefi_CLANG			= nasm
 LD_x86-64-uefi_CLANG			= clang
 ASFLAGS_x86-64-uefi_CLANG		= -felf64
-CFLAGS_x86-64-uefi_CLANG 		= -T $(INIT_SOURCES_x86-64)/link.ld -I include -ffreestanding $(CFLAGS_GLOBAL) -target x86_64-elf -mcmodel=large -mno-red-zone -mno-mmx -mno-sse -mno-sse2
-LDFLAGS_x86-64-uefi_CLANG		= -T $(INIT_SOURCES_x86-64)/$(TARGET).ld -ffreestanding -nostdlib -target x86_64-elf
+CFLAGS_x86-64-uefi_CLANG 		= -I include -ffreestanding $(CFLAGS_GLOBAL) -target x86_64-elf -mcmodel=large -mno-red-zone -mno-mmx -mno-sse -mno-sse2
+LDFLAGS_x86-64-uefi_CLANG		= -T $(INIT_SOURCES_x86-64)/$(TARGET)-x86_64-efi.ld -ffreestanding -nostdlib -target x86_64-elf
 BUILDDIR_x86-64-uefi_CLANG		= $(BUILDDIR_x86-64)
 SOURCES_x86-64-uefi_CLANG		= $(INIT_SOURCES_x86-64)/*.c
 OBJECTS_x86-64-uefi_CLANG		= $(BUILDDIR_x86-64-uefi_CLANG)/*.o
@@ -55,7 +55,7 @@ AS_x86-32_CLANG 				= nasm
 LD_x86-32_CLANG					= clang
 ASFLAGS_x86-32_CLANG 			= -felf32
 CFLAGS_x86-32_CLANG 			= -I include -std=gnu99 -ffreestanding $(CFLAGS_GLOBAL) -target i686-elf
-LDFLAGS_x86-32_CLANG 			= -T $(BIOS_SRC_DIR)/linker.ld -ffreestanding -nostdlib -target i686-elf # -l gcc
+LDFLAGS_x86-32_CLANG 			= -T $(BIOS_SRC_DIR)/tos-x86_32.ld -ffreestanding -nostdlib -target i686-elf # -l gcc
 BUILDDIR_x86-32_CLANG			= $(BUILDDIR_x86-32)
 SOURCES_x86-32_CLANG			= drivers/*.c kernel/*.c $(INIT_SOURCES_x86-32)/*.c lib/*.c
 OBJECTS_x86-32_CLANG			= $(BUILDDIR_x86-32_CLANG)/*.o
