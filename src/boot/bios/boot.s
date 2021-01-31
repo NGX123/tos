@@ -1,5 +1,5 @@
 ; @author = ngx123
-; @brief = platform init file that takes over after bootloader
+; @brief = x86-32 platform init file that takes over after bootloader
 
 
 ; Kernel start called by grub(_start is specified in linker.ld)
