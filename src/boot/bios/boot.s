@@ -5,7 +5,6 @@
 ; Kernel start called by grub(_start is specified in linker.ld)
 global _start   ; If errors - _start:function
 
-extern setBootInfo
 extern kernel_main
 
 
@@ -34,14 +33,9 @@ section .text
 _start:
         mov esp, stack_top      ; Load stack address into stack register(initialize)
 
-        push ebx
-        push eax
-        push 2
-        call setBootInfo        ; kernel_init(var_num, mboot_magic_num, mboot_struct)
-
         call kernel_main
 
 
-.hang:
+hang:
         hlt
-        jmp .hang               ; Loop forever
+        jmp hang               ; Loop forever
