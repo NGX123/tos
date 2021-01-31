@@ -49,8 +49,8 @@ disk_x86-64-uefi:
 	mmd -i $(BUILDDIR_x86-64)/$(TARGET).img ::/EFI/BOOT
 
 	# Create the GRUB Uefiapplication/Bootloader Binary
-	grub2-mkstandalone -O x86_64-efi -o $(BUILDDIR_x86-64)/BOOTX64.EFI "boot/grub/grub.cfg=$(UEFI_SRC_DIR)/grub.cfg"	|| \
-	grub-mkstandalone -O x86_64-efi -o $(BUILDDIR_x86-64)/BOOTX64.EFI "boot/grub/grub.cfg=$(UEFI_SRC_DIR)/grub.cfg"
+	grub2-mkstandalone -O x86_64-efi -o $(BUILDDIR_x86-64)/BOOTX64.EFI "boot/grub/grub.cfg=$(MULTIBOOT2_DIR)/grub.cfg"	|| \
+	grub-mkstandalone -O x86_64-efi -o $(BUILDDIR_x86-64)/BOOTX64.EFI "boot/grub/grub.cfg=$(MULTIBOOT2_DIR)/grub.cfg"
 
 	# Copy the efi bootloader to the EFI/BOOT folder on the drive
 	mcopy -i $(BUILDDIR_x86-64)/$(TARGET).img $(BUILDDIR_x86-64)/BOOTX64.EFI ::/EFI/BOOT
