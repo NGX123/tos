@@ -1,5 +1,5 @@
 ; @author = ngx123
-; @brief = code for the initial setup of the platform
+; @brief = code for the initial setup of the x86-32 platform
 
 
 %include "boot/bios/boot.s"
