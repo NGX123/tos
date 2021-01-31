@@ -1,11 +1,11 @@
 ## Variables ##
-BUILDDIR 						= ./build
+BUILDDIR 						= build
 TOOLCHAIN_PREFIX				= ../toolchain/bin
 
-BIOS_SRC_DIR					= ./boot/bios
-UEFI_SRC_DIR					= ./boot/uefi
-INIT_SOURCES_x86-64				= ./arch/x86-64
-INIT_SOURCES_x86-32 			= ./arch/x86-32
+BIOS_SRC_DIR					= boot/bios
+UEFI_SRC_DIR					= boot/uefi
+INIT_SOURCES_x86-64				= arch/x86-64
+INIT_SOURCES_x86-32 			= arch/x86-32
 BUILDDIR_x86-64					= $(BUILDDIR)/x86-64
 BUILDDIR_x86-32					= $(BUILDDIR)/x86-32
 TARGET							= tos
