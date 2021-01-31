@@ -102,6 +102,9 @@
 
 
 ## Extra
+* Clean up the source tree
+	1. Change files in boot to boot protocols and not platforms
+	2. Rename all the same name files like init.s to init-x86_64.s
 * Try to use EDK2 headers and EDK2 objects to build a UEFI app with a normal compiler and not the EDK2 build system
 	* [TomatBoot does it](https://github.com/TomatOrg/TomatBoot)
 * [Assembly](https://wiki.osdev.org/Assembly)
