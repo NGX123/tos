@@ -4,11 +4,13 @@ ENTRY(_start)
 /*Arrange sections*/
 SECTIONS
 {
+    /*Change current address to change starting from where sections will be placed(current address specified by .), 0x00100000 - 1Mb(2^20)*/
     . = 0x00100000;
 
     /*Put .multiboot & .text sections from all files into one .text section and align it to 4Kb*/
     .text ALIGN(4K) :
     {
+        *(.multiboot)
         *(.text)
     }
 
