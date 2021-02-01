@@ -3,7 +3,10 @@
   + printf does not support multiple modes and does not support 64bit integers
 
 -- List of possible bugs --
-init.c
++ init.c
   + In all occurances of toggleBit(), when passing variable warning occurs(type incompatible with size_t*). So in all occurances conversion to size_t was added (e.g. toggleBit((size_t*)var) )
     - Possible source of overflows, stack corruption...
   + In init.c if printf is used for printing memory map contents - it will output garbage until all values passed to it are smaller 32-bit or smaller(can be typecasted) becuase printf does not support 64bit numbers
+
++ init-x86_32.s
+  + BUGS might occur becuase multiboot 1 was changed to multiboot2
