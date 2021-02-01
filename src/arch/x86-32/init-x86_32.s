@@ -2,7 +2,7 @@
 ; @brief = code for the initial setup of the x86-32 platform
 
 
-%include "boot/bios/boot.s"
+%include "boot/multiboot2/multiboot2_bootstrap.s"
 
 
 ; @brief = loads GDT
@@ -10,6 +10,14 @@
 global gdtLoadAsm       ; If errors - gdtLoadAsm:function
 
 extern display_gdt
+extern kernel_main
+
+
+kernel_setup:
+        call kernel_main
+kernel_hang:
+        hlt
+        jmp hang               ; Loop forever
 
 
 gdtLoadAsm:
