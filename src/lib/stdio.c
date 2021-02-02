@@ -5,7 +5,7 @@
 
 
 #include <drivers/vga.h>
-#include <stdio.h>
+#include "stdio.h"
 
 
 int putchar(int chara)
@@ -111,6 +111,31 @@ void printf(const char *fmt, ...) // only understands %d, %x, %p, %s, %c
         state = 0;
     }
   }
+}
+
+void printsys(char* string, int status)
+{
+    if (status == PRINTSYS_STATUS_SUCCESS)
+    {
+        changeColor(white, black, CHANGE_COLOR_NEXT);
+        printf("[ ");
+        changeColor(green, black, CHANGE_COLOR_NEXT);
+        printf("OK");
+        changeColor(white, black, CHANGE_COLOR_NEXT);
+        printf(" ]   ");
+    }
+    else if (status == PRINTSYS_STATUS_FAIL)
+    {
+        changeColor(white, black, CHANGE_COLOR_NEXT);
+        printf("[ ");
+        changeColor(red, black, CHANGE_COLOR_NEXT);
+        printf("FAIL");
+        changeColor(white, black, CHANGE_COLOR_NEXT);
+        printf(" ] ");
+    }
+
+    changeColor(green, black, CHANGE_COLOR_NEXT);
+    printf("%s", string);
 }
 
 int atoi(const char *s) // Transfer to appropriate library
