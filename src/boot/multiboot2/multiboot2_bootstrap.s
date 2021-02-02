@@ -6,6 +6,7 @@
 global _start
 
 extern kernel_main
+extern interpretMultiboot2
 
 
 %ifndef USE_MULTIBOOT1_PROTOCOL
@@ -45,20 +46,25 @@ dd FLAGS
 dd CHECKSUM
 %endif
 
+
 section .bss
 align 16                        ; Aligning is required for stack
-        stack_bottom:
-                resb 16384      ; Allocate 16 kilobytes for stack
-        stack_top:
+    stack_bottom:
+            resb 16384      ; Allocate 16 kilobytes for stack
+    stack_top:
 
 
 section .text
 _start:
-        mov esp, stack_top      ; Load stack address into stack register(initialize)
+    mov esp, stack_top      ; Load stack address into stack register(initialize)
 
-        call kernel_setup       ; Switch to the init code of the platform
+    push ebx                ; ebx - holds Multiboot2 information struct address
+    push eax                ; eax - holds Multiboot2 Bootloader Checksum
+    call interpretMultiboot2
+
+    call kernel_setup       ; Switch to the init code of the platform
 
 
 hang:
-        hlt
-        jmp hang               ; Loop forever
+    hlt
+    jmp hang               ; Loop forever
