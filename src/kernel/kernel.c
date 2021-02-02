@@ -16,9 +16,9 @@ void kernel_main()
 
     // Initializes the platform specific stuff
     if (hardwarePlatformInit() != -1)
-        printsys("Hardware Initialization\n", PRINTSYS_STATUS_SUCCESS);
+        printsys("Platform\n", PRINTSYS_STATUS_SUCCESS);
     else
-        printsys("Hardware Initialization\n", PRINTSYS_STATUS_SUCCESS);
+        printsys("Platform\n", PRINTSYS_STATUS_SUCCESS);
 
     // Initialize interrupts
     if (interruptsInit() != -1)
@@ -45,4 +45,29 @@ void kernel_main()
         printsys("Keyboard\n", PRINTSYS_STATUS_SUCCESS);
     else
         printsys("Keyboard\n", PRINTSYS_STATUS_FAIL);
+}
+
+void printsys(char* string, int status)
+{
+    if (status == PRINTSYS_STATUS_SUCCESS)
+    {
+        changeColor(white, black, CHANGE_COLOR_NEXT);
+        printf("[ ");
+        changeColor(green, black, CHANGE_COLOR_NEXT);
+        printf("OK");
+        changeColor(white, black, CHANGE_COLOR_NEXT);
+        printf(" ]   ");
+    }
+    else if (status == PRINTSYS_STATUS_FAIL)
+    {
+        changeColor(white, black, CHANGE_COLOR_NEXT);
+        printf("[ ");
+        changeColor(red, black, CHANGE_COLOR_NEXT);
+        printf("FAIL");
+        changeColor(white, black, CHANGE_COLOR_NEXT);
+        printf(" ] ");
+    }
+
+    changeColor(green, black, CHANGE_COLOR_NEXT);
+    printf("%s", string);
 }
