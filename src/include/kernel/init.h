@@ -11,20 +11,10 @@
 #include <types.h>
 
 
-#define PROTOCOL_NONE       0x0
-#define PROTOCOL_MULTIBOOT  0x01
+#define MEMINFO_FLAG_ERROR       0x1
+#define MEMINFO_FLAG_RAM_AMOUNT  0x2
+#define MEMINFO_FLAG_MEM_MAP     0x3
 
-#define MEMINFO_ERROR       0x1
-#define MEMINFO_RAM_AMOUNT  0x2
-#define MEMINFO_MEM_MAP     0x3
-
-
-struct bootInfo
-{
-    uint16_t protocol;
-    void* boot_protocol_struct_ptr;
-    void* boot_protocol_struct_end_ptr;
-};
 
 struct kernelMemMap
 {
