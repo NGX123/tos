@@ -11,7 +11,6 @@
 #include <stdint.h>
 #include <string.h>
 #include <stdio.h>
-#include <kernel/libk.h>
 #include <stdarg.h>
 
 #include <drivers/vga.h>
