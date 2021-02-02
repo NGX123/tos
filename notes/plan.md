@@ -2,6 +2,8 @@
 1. Switch to long mode
 	* Setup stack
 	* Setup paging
+2. Add documentation on what OS needs to boot - what init functions should be present, what bootloader functions should be present, what should be called in waht order - function_that_will_be_specific_in_each_bootloader_bootstrap, kernel_setup, kernel_init
+3. Make a kernel data allocator to have a certain space in memory where kernel data structures will be stored to be safe, instead of the stack
 
 
 
