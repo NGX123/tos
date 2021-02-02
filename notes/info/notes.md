@@ -36,3 +36,4 @@
 * In multiboot2 there are two types of tags in documentation and header
 	* MULTIBOOT_HEADER_TAG_* - are supplied in the multiboot header(and ended with 008) to turn on some features(e.g. framebuffer) or change some config during boottime
 	* MULTIBOOT_TAG_TYPE_* - tags user searches for in the multiboot struct with information(the one located in EBX after boot) to get some info about a certain thing(e.g. memory map, networking...)
+* Align in assembly/linker - aligns the next instruction/piece of data to start at address that is divisible by number align is supplied with. Normally next instruction/data will start right after the finish of previous, but in this case if the address after finish of previos data/instruction is not divisible by supplied number, the instruction after align will be moved to start at the closest address that is divisible by supplied number
