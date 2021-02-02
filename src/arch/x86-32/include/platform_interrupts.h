@@ -11,6 +11,7 @@
 #include <stdint.h>
 #include <drivers/x86.h>
 #include <kernel/interrupts.h>
+#include "stdio.h"
 
 
 #define IDT_COUNT 256

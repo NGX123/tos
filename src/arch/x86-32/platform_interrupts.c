@@ -154,6 +154,7 @@ void platformInterruptsInit()
     ip.address = (void*)IDT;
 
     idtLoadAsm((void*)&ip);
+	//printf("IDT\n");
 }
 
 

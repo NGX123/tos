@@ -13,6 +13,7 @@
 #include <stdarg.h>
 #include <kernel/init.h>
 #include "string.h"
+#include "stdio.h"
 
 
 struct gdt_entry
