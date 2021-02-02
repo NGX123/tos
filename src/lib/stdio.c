@@ -113,31 +113,6 @@ void printf(const char *fmt, ...) // only understands %d, %x, %p, %s, %c
   }
 }
 
-void printsys(char* string, int status)
-{
-    if (status == PRINTSYS_STATUS_SUCCESS)
-    {
-        changeColor(white, black, CHANGE_COLOR_NEXT);
-        printf("[ ");
-        changeColor(green, black, CHANGE_COLOR_NEXT);
-        printf("OK");
-        changeColor(white, black, CHANGE_COLOR_NEXT);
-        printf(" ]   ");
-    }
-    else if (status == PRINTSYS_STATUS_FAIL)
-    {
-        changeColor(white, black, CHANGE_COLOR_NEXT);
-        printf("[ ");
-        changeColor(red, black, CHANGE_COLOR_NEXT);
-        printf("FAIL");
-        changeColor(white, black, CHANGE_COLOR_NEXT);
-        printf(" ] ");
-    }
-
-    changeColor(green, black, CHANGE_COLOR_NEXT);
-    printf("%s", string);
-}
-
 int atoi(const char *s) // Transfer to appropriate library
 {
   int n;
