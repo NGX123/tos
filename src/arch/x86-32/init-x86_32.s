@@ -9,7 +9,6 @@
 ; @param = address of GDT struct
 global gdtLoadAsm       ; If errors - gdtLoadAsm:function
 
-extern display_gdt
 extern kernel_main
 
 
@@ -34,7 +33,6 @@ gdtLoadAsm:
                 mov   gs, ax
                 mov   ss, ax
 
-                call display_gdt
                 ret
 
 
