@@ -6,7 +6,6 @@
 ; @param = address of the IDT struct
 global idtLoadAsm   ; If errors - idtLoadAsm:function
 
-extern display_idt
 
 extern irq0_handler
 extern irq1_handler
@@ -47,7 +46,6 @@ idtLoadAsm:
 	mov edx, [esp + 4]
     lidt[edx]
     sti
-    call display_idt
 	ret
 
 
