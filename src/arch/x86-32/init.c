@@ -14,7 +14,7 @@ static struct gdt_ptr gp;
 int hardwarePlatformInit()
 {
     makeMemFlat();
-    printf("GDT\n");
+    //printf("GDT\n");
 
     return 0;
 }
