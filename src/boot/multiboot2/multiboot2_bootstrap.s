@@ -19,12 +19,12 @@ extern interpretMultiboot2
 section .multiboot          ; Has data located that will be used by grub to find the executable
 multiboot_header_start:
     align 8                                                                         ; The header must be 8 bytes(64 bit) aligned
-        dd  MAGIC
+    dd  MAGIC
     dd  ARCH_x86_32
     dd  multiboot_header_end - multiboot_header_start                               ; Size of the header
     dd  -(MAGIC + ARCH_x86_32 + (multiboot_header_end - multiboot_header_start))    ; Checksum
     align 8                                                                         ; Tags must start at 8 byte aligned address
-        dd MULTIBOOT2_HEADER_TAG_END                                                ; The tag which indicates end of tag section is type - 0
+    dd MULTIBOOT2_HEADER_TAG_END                                                    ; The tag which indicates end of tag section is type - 0
     dd 0                                                                            ; with flags - 0
     dd 8                                                                            ; and size - 8
 multiboot_header_end:
