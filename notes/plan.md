@@ -13,6 +13,7 @@
 	2. [Setting up stack](https://forum.osdev.org/viewtopic.php?f=1&t=21772)
 	3. [Setup Paging](https://wiki.osdev.org/Setting_Up_Paging)
 2. [Graphics](https://wiki.osdev.org/Category:Video)
+	* Implement video output detection - GRUB, GOP, VGA Text Mode...
 	* [GRUB Framebuffer]()
 		1. Supply the multiboot2 header with framebuffer tag(5 in documentation)
 		2. Copy and modify the driver from documentation
