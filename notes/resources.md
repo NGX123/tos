@@ -54,6 +54,7 @@
 	* [James KernelDev Guide](http://www.jamesmolloy.co.uk/tutorial_html/)
 	* [BrokenThron OS Tutorials](http://www.brokenthorn.com/Resources/OSDevIndex.html)
 	* [WhyOS Lectures and Tutorials](http://wyoos.org/impressum.php?redirect=%2Findex.php)
+	* [UEFI From Scratch](https://youtu.be/01-UA2LKQ9Y)
 
 * University Courses
 	* [MIT 6.828 Course](https://ocw.mit.edu/courses/electrical-engineering-and-computer-science/6-828-operating-system-engineering-fall-2012/index.htm)
