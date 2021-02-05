@@ -22,12 +22,12 @@ build_gnuefi=n
 
 
 ## Installation Config ##
-read -r -p "Package Manager(dnf, apt, macos, other): " TOOLCHAIN_PM
-read -r -p "Do you want to compile the EDK2 tools(y/n): " EDK2_TOOLS_BUILD_OPTION
-read -r -p "Do you want to configure other options(y/n): " EXTRA_CONFIG_OPTION
+read -r -p "Package Manager(dnf, apt, macos, other): " package_manager
+read -r -p "Do you want to compile the EDK2 tools(y/n): " build_option_edk2
+read -r -p "Do you want to configure other options(y/n): " option_extra
 
 # Extra configuration of the build
-if [ "$EXTRA_CONFIG_OPTION" == y ]
+if [ "$option_extra" == y ]
   then
     # GCC Toolchain Build option
     read -r -p "Should the x86_32/x86_64 cross-compiler be compiled(no/all/64/32): " build_gnu_tools
@@ -39,8 +39,8 @@ if [ "$EXTRA_CONFIG_OPTION" == y ]
     read -r -p "Should the GNU-EFI be compiled(y/n): " build_gnuefi
 
     # Configure the build directory
-    read -r -p "Do you want to customize the build path(y/n): " PREFIX_OPTION
-    if [ "$PREFIX_OPTION" == y ]
+    read -r -p "Do you want to customize the build path(y/n): " option_prefix
+    if [ "$option_prefix" == y ]
       then
         read -r -p "Enter a new build directory path: " toolchain_prefix
     fi
@@ -49,7 +49,7 @@ fi
 
 ## Package installations ##
 # DNF Installations
-if [ "$TOOLCHAIN_PM" == dnf ]
+if [ "$package_manager" == dnf ]
   then
     # Install developer tools and headers
     sudo dnf -y install $packages @development-tools kernel-headers kernel-devel edk2-ovmf
@@ -68,7 +68,7 @@ if [ "$TOOLCHAIN_PM" == dnf ]
 fi
 
 # APT Installations
-if [ "$TOOLCHAIN_PM" == apt ]
+if [ "$package_manager" == apt ]
   then
     # Install developer tools and headers
     sudo apt -y install $packages build-essential linux-headers-$(uname -r) ovmf
@@ -87,7 +87,7 @@ if [ "$TOOLCHAIN_PM" == apt ]
 fi
 
 # MacOS
-if [ "$TOOLCHAIN_PM" == macos ]
+if [ "$package_manager" == macos ]
   then
     # Packages
     brew install gdb nasm binutils diffutils coreutils
@@ -99,7 +99,7 @@ if [ "$TOOLCHAIN_PM" == macos ]
 fi
 
 # Other package managers
-if [ "$TOOLCHAIN_PM" == other ]
+if [ "$package_manager" == other ]
   then
     echo "If you are here, your package manager is probably not in the list, so you need to make sure all of the libs are installed before preceding, here is the list: "
     echo "$packages"
@@ -122,7 +122,7 @@ fi
 
 ## Compilation setup ##
 # Setup for compiling the OVMF UEFI
-if [[ $build_ovmf == y || $EDK2_TOOLS_BUILD_OPTION == y ]]
+if [[ $build_ovmf == y || $build_option_edk2 == y ]]
   then
     # Create the necessery directories
     mkdir -p "$toolchain_prefix"/edk2/
@@ -152,7 +152,7 @@ if [ "$build_ovmf" == y ]
 fi
 
 # Compile EDK2 Tools
-if [[ $EDK2_TOOLS_BUILD_OPTION == y && $build_ovmf != y ]]
+if [[ $build_option_edk2 == y && $build_ovmf != y ]]
   then
     cd "$toolchain_prefix"/edk2/ || exit
     make -C BaseTools
@@ -221,7 +221,7 @@ if [ "$build_gnuefi" == y ]
 fi
 
 # Compile the x86_32 cross-compiler
-if [ "$TOOLCHAIN_PM" != macos ]
+if [ "$package_manager" != macos ]
   then
     if [[ $build_gnu_tools == 32 || $build_gnu_tools == all ]]
       then
@@ -262,7 +262,7 @@ if [ "$TOOLCHAIN_PM" != macos ]
 fi
 
 # Seperate build instructions if the MacOS is used
-if [ "$TOOLCHAIN_PM" == macos ]
+if [ "$package_manager" == macos ]
   then
     # Compile x86-32 gcc cross-compiler
     if [[ $build_gnu_tools == 32 || $build_gnu_tools == all ]]
@@ -327,7 +327,7 @@ if [ "$build_gnuefi" == y ]
   ls "$toolchain_prefix"/gnu-efi/x86_64
 fi
 
-if [ "$EDK2_TOOLS_BUILD_OPTION" == y ]
+if [ "$build_option_edk2" == y ]
   then
     echo "
 ----- EDK2 Build Tools -----"
