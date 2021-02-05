@@ -1,5 +1,7 @@
 #! /bin/bash
 
+
+## Variables ##
 script_start_time=$(date +%s)
 
 CROSSPLATFORM_DEPENDENCIES="nasm binutils diffutils valgrind clang gcc qemu-system-x86 gnu-efi"
@@ -8,11 +10,9 @@ CROSS_BINUTILS_VERSION="2.30"
 TOOLCHAIN_PREFIX=$(realpath ../toolchain/)
 MAKE_FOLDER=$(realpath ./make)
 
-# Can't be decalred without making folder
-mkdir -p ../toolchain/src
+mkdir -p ../toolchain/src   # toolchain_src - Can't be decalred without making folder
 TOOLCHAIN_SRC=$(realpath ../toolchain/src)
 
-# GCC variables
 export TARGET_x86_32
 export TARGET_x86_64
 export PREFIX
@@ -22,12 +22,12 @@ TARGET_x86_64=x86_64-elf
 PREFIX=$(realpath "$TOOLCHAIN_PREFIX")
 PATH="$PREFIX/bin:$PATH"
 
-
-
-## INSTALLATION CONFIGURATION ##
 OVMF_BUILD_OPTION=n
 CROSS_GNU_TOOLS_BUILD_OPTION=n
 GNUEFI_BUILD_OPTION=n
+
+
+## Installation Config ##
 read -r -p "Package Manager(dnf, apt, macos, other): " TOOLCHAIN_PM
 read -r -p "Do you want to compile the EDK2 tools(y/n): " EDK2_TOOLS_BUILD_OPTION
 read -r -p "Do you want to configure other options(y/n): " EXTRA_CONFIG_OPTION
@@ -53,9 +53,7 @@ if [ "$EXTRA_CONFIG_OPTION" == y ]
 fi
 
 
-
-
-## PACKAGE INSTALLATIONS ##
+## Package installations ##
 # DNF Installations
 if [ "$TOOLCHAIN_PM" == dnf ]
   then
@@ -128,9 +126,7 @@ if [ "$TOOLCHAIN_PM" == other ]
 fi
 
 
-
-
-## COMPILATION SETUP ##
+## Compilation setup ##
 # Setup for compiling the OVMF UEFI
 if [[ $OVMF_BUILD_OPTION == y || $EDK2_TOOLS_BUILD_OPTION == y ]]
   then
@@ -144,9 +140,7 @@ if [[ $OVMF_BUILD_OPTION == y || $EDK2_TOOLS_BUILD_OPTION == y ]]
 fi
 
 
-
-
-## BUILD PROCCESS ##
+## Build proccess ##
 # Compile the OVMF UEFI
 if [ "$OVMF_BUILD_OPTION" == y ]
   then
@@ -172,9 +166,7 @@ if [[ $EDK2_TOOLS_BUILD_OPTION == y && $OVMF_BUILD_OPTION != y ]]
 fi
 
 
-
-
-## EXTRA ##
+## Extra ##
 # If kernel headers installation on debian not work check "ls -l /usr/src/linux-headers-$(uname -r)"(if does not exist then there are no headers), insetad try to find the latest version if not installed
 # Setup for GNU-EFI toolkit compilation
 if [ "$GNUEFI_BUILD_OPTION" == y ]
@@ -318,9 +310,7 @@ if [ "$TOOLCHAIN_PM" == macos ]
 fi
 
 
-
-
-## CHECK OF INSTALLTION ##
+## Installation check ##
 echo "
 ----- Execution Time -----"
 script_end_time=$(date +%s)
