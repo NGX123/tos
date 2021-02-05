@@ -1,10 +1,15 @@
 ## To Do
 1. Switch to long mode
+	1. Bootstrap into long mode(from the kernel_setup())
+		1. Use CPUID to check if the CPU supports long mode, if not - fail
+		2. Enable the paging
+		3. Switch to long mode
+	2. How to check from a running OS that redzone is disabled
 	* Setup stack
 	* Setup paging
 	* Ask if the data could be gone becuase of some stack change releated to 64 bit mode(maybe paging)
-2. Add documentation on what OS needs to boot - what init functions should be present, what bootloader functions should be present, what should be called in waht order - function_that_will_be_specific_in_each_bootloader_bootstrap, kernel_setup, kernel_init
-3. Make a kernel data allocator to have a certain space in memory where kernel data structures will be stored to be safe, instead of the stack
+2. Implement a bootloader control function - kernel will call and path MAGIC and COMMAND to it. If the kernel was loaded by bootloader returning MAGIC - function will interpret COMMAND(number macro) and get appropriate data from where bootloader supplied it, if no command found return error
+3. Add documentation on what OS needs to boot - what init functions should be present, what bootloader functions should be present, what should be called in waht order - function_that_will_be_specific_in_each_bootloader_bootstrap, kernel_setup, kernel_init
 
 
 
@@ -92,8 +97,9 @@
 
 
 ## Features
-1. Reworked Universal Keyboard Driver
-2. [TTY](https://www.reddit.com/r/osdev/comments/hgzg6k/tty_questions/)
+1. Make a kernel data allocator to have a certain space in memory where kernel data structures will be stored to be safe, instead of the stack. And pieces of memory will be allocated from this space and given for filling in with data
+2. Reworked Universal Keyboard Driver
+3. [TTY](https://www.reddit.com/r/osdev/comments/hgzg6k/tty_questions/)
 	* Be able to be used with PS/2, USB... interfaced keyboards and different video outputs
 	* STDIN implementation to be read with read() syscall
 	* STDOUT & STDERR to be wrote to with write() syscall
@@ -101,7 +107,7 @@
 	* Interchangable keymap for the keybaord with ioctl code to change it
 	* Shortcuts(e.g. CTRL+C) will be implemented with signals
 		* When an interrupt occurs it will be transferred to tty and the signal library will be called by it which in turn will call function binded to the interrupt(if there is one)
-3. [File System](https://wiki.osdev.org/Category:Filesystems)
+4. [File System](https://wiki.osdev.org/Category:Filesystems)
 
 
 
