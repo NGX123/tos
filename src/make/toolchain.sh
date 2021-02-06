@@ -120,7 +120,7 @@ if [ "$package_manager" == other ]
 fi
 
 
-## Compilation setup ##
+## Build proccess ##
 # Setup for compiling the OVMF UEFI
 if [[ $build_ovmf == y || $build_option_edk2 == y ]]
   then
@@ -133,8 +133,6 @@ if [[ $build_ovmf == y || $build_option_edk2 == y ]]
     git submodule update --init
 fi
 
-
-## Build proccess ##
 # Compile the OVMF UEFI
 if [ "$build_ovmf" == y ]
   then
@@ -159,8 +157,6 @@ if [[ $build_option_edk2 == y && $build_ovmf != y ]]
     . edksetup.sh
 fi
 
-
-## Extra ##
 # If kernel headers installation on debian not work check "ls -l /usr/src/linux-headers-$(uname -r)"(if does not exist then there are no headers), insetad try to find the latest version if not installed
 # Setup for GNU-EFI toolkit compilation
 if [ "$build_gnuefi" == y ]
@@ -187,6 +183,21 @@ if [[ $build_gnu_tools == 32 || $build_gnu_tools == all ]]
     wget https://ftp.gnu.org/gnu/gcc/gcc-"$gcc_build_version"/gcc-"$gcc_build_version".tar.gz
     tar -xzf gcc-"$gcc_build_version".tar.gz
     rm gcc-"$gcc_build_version".tar.gz
+
+    # Build binutils
+    cd "$toolchain_src"/binutils"$binutils_build_version"_i686/build/ || exit
+    ../binutils-"$binutils_build_version"/configure --target=$target_x86_32 --prefix="$toolchain_prefix" --with-sysroot --disable-nls --disable-werror
+    make
+    make install
+
+    # Build GCC
+    cd "$toolchain_src"/gcc"$gcc_build_version"_i686/build/ || exit
+    which -- $target_x86_32-as || echo $target_x86_32-as is not in the PATH
+    ../gcc-"$gcc_build_version"/configure --target=$target_x86_32 --prefix="$toolchain_prefix" --disable-nls --enable-language=c,c++ --without-headers
+    make all-gcc
+    make all-target-libgcc
+    make install-gcc
+    make install-target-libgcc
 fi
 
 # Setup for compiling the x86_64 compiler
@@ -211,6 +222,21 @@ if [[ $build_gnu_tools == 64 || $build_gnu_tools == all ]]
     echo "MULTILIB_OPTIONS += mno-red-zone
 MULTILIB_DIRNAMES += no-red-zone" > gcc-"$gcc_build_version"/gcc/config/i386/t-x86_64-elf
     cat "$make_folder"/config.gcc > gcc-"$gcc_build_version"/gcc/config.gcc
+
+    # Build binutils
+    cd "$toolchain_src"/binutils"$binutils_build_version"_amd64/build/ || exit
+    ../binutils-"$binutils_build_version"/configure --target=$target_x86_64 --prefix="$toolchain_prefix" --with-sysroot --disable-nls --disable-werror
+    make
+    make install
+
+    # Build GCC
+    cd "$toolchain_src"/gcc"$gcc_build_version"_amd64/build/ || exit
+    which -- $target_x86_64-as || echo $target_x86_64-as is not in the PATH
+    ../gcc-"$gcc_build_version"/configure --target=$target_x86_64 --prefix="$toolchain_prefix" --disable-nls --enable-language=c,c++ --without-headers
+    make all-gcc
+    make all-target-libgcc
+    make install-gcc
+    make install-target-libgcc
 fi
 
 # Compile the GNU EFI toolkit
@@ -225,39 +251,13 @@ if [ "$package_manager" != macos ]
   then
     if [[ $build_gnu_tools == 32 || $build_gnu_tools == all ]]
       then
-        # Building binutils
-        cd "$toolchain_src"/binutils"$binutils_build_version"_i686/build/ || exit
-        ../binutils-"$binutils_build_version"/configure --target=$target_x86_32 --prefix="$toolchain_prefix" --with-sysroot --disable-nls --disable-werror
-        make
-        make install
 
-        # Building GCC
-        cd "$toolchain_src"/gcc"$gcc_build_version"_i686/build/ || exit
-        which -- $target_x86_32-as || echo $target_x86_32-as is not in the PATH
-        ../gcc-"$gcc_build_version"/configure --target=$target_x86_32 --prefix="$toolchain_prefix" --disable-nls --enable-language=c,c++ --without-headers
-        make all-gcc
-        make all-target-libgcc
-        make install-gcc
-        make install-target-libgcc
     fi
 
     # Compile the x86_64 cross-compiler
     if [[ $build_gnu_tools == 64 || $build_gnu_tools == all ]]
       then
-        # Building binutils
-        cd "$toolchain_src"/binutils"$binutils_build_version"_amd64/build/ || exit
-        ../binutils-"$binutils_build_version"/configure --target=$target_x86_64 --prefix="$toolchain_prefix" --with-sysroot --disable-nls --disable-werror
-        make
-        make install
 
-        # Building GCC
-        cd "$toolchain_src"/gcc"$gcc_build_version"_amd64/build/ || exit
-        which -- $target_x86_64-as || echo $target_x86_64-as is not in the PATH
-        ../gcc-"$gcc_build_version"/configure --target=$target_x86_64 --prefix="$toolchain_prefix" --disable-nls --enable-language=c,c++ --without-headers
-        make all-gcc
-        make all-target-libgcc
-        make install-gcc
-        make install-target-libgcc
     fi
 fi
 
