@@ -47,10 +47,9 @@ if [ "$option_extra" == y ]
 fi
 
 
-## Package installations ##
-# DNF Installations
-if [ "$package_manager" == dnf ]
-  then
+## Package Installation ##
+# DNF
+pm_dnf() {
     # Install developer tools and headers
     sudo dnf -y install $packages @development-tools kernel-headers kernel-devel edk2-ovmf
 
@@ -65,11 +64,10 @@ if [ "$package_manager" == dnf ]
       then
         sudo dnf -y install @development-tools gcc-c++ iasl libuuid-devel nasm edk2-tools-python
     fi
-fi
+}
 
-# APT Installations
-if [ "$package_manager" == apt ]
-  then
+# APT
+pm_apt() {
     # Install developer tools and headers
     sudo apt -y install $packages build-essential linux-headers-$(uname -r) ovmf
 
@@ -84,11 +82,10 @@ if [ "$package_manager" == apt ]
       then
         sudo apt -y install build-essential uuid-dev iasl nasm python3-distutils
     fi
-fi
+}
 
 # MacOS
-if [ "$package_manager" == macos ]
-  then
+pm_macos() {
     # Packages
     brew install gdb nasm binutils diffutils coreutils
 
@@ -96,11 +93,10 @@ if [ "$package_manager" == macos ]
     brew install gmp mpfr libmpc libiconv
     brew install libiconv
     echo "There maybe problems during the compilation proccess due to wrong attributes, then remove -with-sysroot and add --enable-interwork to both gcc and binutils"
-fi
+}
 
-# Other package managers
-if [ "$package_manager" == other ]
-  then
+# Other
+pm_other() {
     echo "If you are here, your package manager is probably not in the list, so you need to make sure all of the libs are installed before preceding, here is the list: "
     echo "$packages"
 
@@ -117,7 +113,7 @@ if [ "$package_manager" == other ]
     fi
 
     read -r -p "Press any button to continue, if all libs are installed"
-fi
+}
 
 
 ## Build proccess ##
@@ -301,6 +297,21 @@ if [ "$package_manager" == macos ]
         make install-gcc
         make install-target-libgcc
     fi
+fi
+
+
+# Start
+if [ "$package_manager" == dnf ]
+  then
+    pm_dnf
+  elif [ "$package_manager" == apt ]
+  then
+    pm_apt
+  elif [ "$package_manager" == macos ]
+  then
+    pm_macos
+  else
+    pm_other
 fi
 
 
