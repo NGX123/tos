@@ -4,7 +4,7 @@
 
 ## Variables ##
 BUILDDIR_x86-64-uefi 		= $(BUILDDIR_x86-64)
-SOURCES_x86-64-uefi			= $(INIT_SOURCES_x86-64)/*.c
+SOURCES_x86-64-uefi			= lib/arch/io_x86.c drivers/serial.c $(MULTIBOOT2_DIR)/*.c #$(INIT_SOURCES_x86-64)/*.c
 OBJECTS_x86-64-uefi			= $(BUILDDIR_x86-64-uefi)/*.o
 
 # x86-64-uefi_gcc
@@ -30,7 +30,10 @@ build_x86-64-uefi_clang:
 	rm -rf $(BUILDDIR_x86-64)
 	mkdir -p $(BUILDDIR_x86-64-uefi)
 
+	# Bootstrap
 	$(AS_x86-32_CLANG) 	$(ASFLAGS_x86-32_CLANG) 	$(INIT_SOURCES_x86-64)/init-x86_64.s			-o $(BUILDDIR_x86-64-uefi)/boot.o
+	$(CC_x86-32_CLANG) 	$(CFLAGS_x86-32_CLANG)		$(SOURCES_x86-64-uefi)
+	mv 												*.o												$(BUILDDIR_x86-64-uefi)
 	$(LD_x86-32_CLANG)	$(LDFLAGS_x86-32_CLANG)		$(OBJECTS_x86-64-uefi)							-o $(BUILDDIR_x86-64-uefi)/$(TARGET).o
 
 
