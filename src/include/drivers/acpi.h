@@ -136,5 +136,5 @@ int retrieveSDT(void* buf, int size, char* signature);
   @brief = main function to control ACPI table searching
   @return = 0 on success, -1 on fail
 */
-extern int ACPIinit();
+extern int ACPIinit(void);
 #endif

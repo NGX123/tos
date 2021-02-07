@@ -31,7 +31,7 @@
 /*
     @brief = main function of the kernel that calls all other functions
 */
-extern void kernel_main();
+extern void kernel_main(void);
 
 /*
     @brief = prints a system initialization message

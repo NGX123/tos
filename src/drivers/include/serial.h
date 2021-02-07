@@ -23,7 +23,7 @@ static int is_transmit_empty();
 /*
     @brief = initialize the serial port device
 */
-extern void initSerial();
+extern void initSerial(void);
 
 /*
     @brief = send data through the serial port

@@ -22,7 +22,7 @@ typedef int (*interrupt_interpreter_func_t)(int);   // Function type of the kern
     @brief = intializes the kernel side interrupt code
     @return = 0 on success, -1 on fail
 */
-extern int interruptsInit();
+extern int interruptsInit(void);
 
 /*
     @brief = binds a function to interrupt number, so it is called when an interrupt occures
@@ -36,7 +36,7 @@ extern int bindInterrupt(int interrupt_num, interrupt_handler_t handlerfunc, int
 /*
     @brief = specific to hardware platform side initializtion of interrupts
 */
-extern void platformInterruptsInit();
+extern void platformInterruptsInit(void);
 
 /*
     @brief = give platform specifc code a pointer to systems main interrupt interpreter function

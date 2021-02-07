@@ -12,5 +12,5 @@
     @breif = make platform specific initialization
     @return = 0 on success, -1 on fail
 */
-int hardwarePlatformInit();
+int hardwarePlatformInit(void);
 #endif

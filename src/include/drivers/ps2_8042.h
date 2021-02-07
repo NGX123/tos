@@ -94,7 +94,7 @@
     @brief = initialization of the PS/2 controller
     @return = 0 on success, -1 on error
 */
-extern int ps2ControllerInit();
+extern int ps2ControllerInit(void);
 
 /*
     @brief = ioctl function to control the 8042

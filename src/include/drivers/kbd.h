@@ -39,7 +39,7 @@ typedef void (*callroutine_t)(uint8_t, uint32_t);
 /*
   @brief = handles the keypress interrupt by reading scancode and calling needed functions to interpret it
 */
-extern void keyboard_handler();
+extern void keyboard_handler(void);
 
 /*
   @breif = makes the initialization for the PS/2 keyboard
