@@ -117,9 +117,8 @@ pm_other() {
 
 
 ## Build proccess ##
-# Setup for compiling the OVMF UEFI
-if [[ $build_ovmf == y || $build_option_edk2 == y ]]
-  then
+# Compilation Setup for EDK2
+func_setup_edk2() {
     # Create the necessery directories
     mkdir -p "$toolchain_prefix"/edk2/
 
@@ -127,11 +126,10 @@ if [[ $build_ovmf == y || $build_option_edk2 == y ]]
     git clone https://github.com/tianocore/edk2 "$toolchain_prefix"/edk2/
     cd "$toolchain_prefix"/edk2/ || exit
     git submodule update --init
-fi
+}
 
 # Compile the OVMF UEFI
-if [ "$build_ovmf" == y ]
-  then
+func_build_ovmf() {
     cd "$toolchain_prefix"/edk2/ || exit
     make -C BaseTools
     . edksetup.sh
@@ -143,23 +141,21 @@ if [ "$build_ovmf" == y ]
     TOOL_CHAIN_TAG = GCC5
     BUILD_RULE_CONF = Conf/build_rule.txt" > Conf/target.txt
     build
-fi
+}
 
 # Compile EDK2 Tools
-if [[ $build_option_edk2 == y && $build_ovmf != y ]]
-  then
+func_build_edk2_tools() {
     cd "$toolchain_prefix"/edk2/ || exit
     make -C BaseTools
     . edksetup.sh
-fi
+}
 
 # If kernel headers installation on debian not work check "ls -l /usr/src/linux-headers-$(uname -r)"(if does not exist then there are no headers), insetad try to find the latest version if not installed
 # Setup for GNU-EFI toolkit compilation
-if [ "$build_gnuefi" == y ]
-  then
+func_build_gnuefi() {
     mkdir -p "$toolchain_prefix"/gnu-efi/
     git clone https://git.code.sf.net/p/gnu-efi/code "$toolchain_prefix"/gnu-efi/
-fi
+}
 
 # Setup for compiling the x86_32 compiler
 if [[ $build_gnu_tools == 32 || $build_gnu_tools == all ]]
@@ -300,7 +296,8 @@ if [ "$package_manager" == macos ]
 fi
 
 
-# Start
+## Start ##
+# Package Management
 if [ "$package_manager" == dnf ]
   then
     pm_dnf
@@ -312,6 +309,26 @@ if [ "$package_manager" == dnf ]
     pm_macos
   else
     pm_other
+fi
+
+# Build Setup
+if [[ $build_ovmf == y || $build_option_edk2 == y ]]
+  then
+    func_setup_edk2
+fi
+
+# Build
+if [ "$build_ovmf" == y ]
+  then
+    func_build_ovmf
+fi
+if [[ $build_option_edk2 == y && $build_ovmf != y ]]
+  then
+    func_build_edk2_tools
+fi
+if [ "$build_gnuefi" == y ]
+  then
+    func_build_gnuefi
 fi
 
 
