@@ -18,7 +18,7 @@
 #include <stdarg.h>
 
 #include <drivers/vga.h>
-#include <drivers/x86.h>
+#include <arch/io_x86.h>
 #include <drivers/acpi.h>
 #include <drivers/kbd.h>
 #include <drivers/ps2_8042.h>

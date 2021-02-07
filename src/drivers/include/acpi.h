@@ -12,7 +12,7 @@
 #include <stdio.h>
 #include <string.h>
 #include <drivers/acpi.h>
-#include <drivers/x86.h>
+#include <arch/io_x86.h>
 
 
 struct RSDP     // For ACPIv1

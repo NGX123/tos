@@ -8,7 +8,7 @@
 #define VGA_DEFINES_H
 
 
-#include <drivers/x86.h>
+#include <arch/io_x86.h>
 #include <drivers/vga.h>
 #include <drivers/kbd.h>
 

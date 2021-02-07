@@ -14,7 +14,7 @@
 #include <ringbuf.h>
 #include <types.h>
 
-#include <drivers/x86.h>
+#include <arch/io_x86.h>
 #include <drivers/vga.h>
 #include <drivers/kbd.h>
 #include <kernel/interrupts.h>

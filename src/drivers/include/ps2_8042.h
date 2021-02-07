@@ -8,7 +8,7 @@
 #define PS2_8042_DEFINES_H
 
 
-#include <drivers/x86.h>
+#include <arch/io_x86.h>
 #include <types.h>
 #include <stdarg.h>
 #include <drivers/ps2_8042.h>
