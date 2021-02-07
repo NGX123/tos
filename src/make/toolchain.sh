@@ -158,78 +158,80 @@ func_build_gnuefi() {
 }
 
 # Setup for compiling the x86_32 compiler
-if [[ $build_gnu_tools == 32 || $build_gnu_tools == all ]]
-  then
-    # Create the nesecerry direcotries
-    mkdir -p "$toolchain_src"/binutils"$binutils_build_version"_i686/build/
-    mkdir -p "$toolchain_src"/gcc"$gcc_build_version"_i686/build/
-    mkdir -p "$toolchain_prefix"
+func_build_gcc_linux() {
+  if [[ $build_gnu_tools == 32 || $build_gnu_tools == all ]]
+    then
+      # Create the nesecerry direcotries
+      mkdir -p "$toolchain_src"/binutils"$binutils_build_version"_i686/build/
+      mkdir -p "$toolchain_src"/gcc"$gcc_build_version"_i686/build/
+      mkdir -p "$toolchain_prefix"
 
-    # Download and unpack source code
-    cd "$toolchain_src"/binutils"$binutils_build_version"_i686/ || exit
-    wget https://ftp.gnu.org/gnu/binutils/binutils-"$binutils_build_version".tar.gz
-    tar -xzf binutils-"$binutils_build_version".tar.gz
-    rm binutils-"$binutils_build_version".tar.gz
+      # Download and unpack source code
+      cd "$toolchain_src"/binutils"$binutils_build_version"_i686/ || exit
+      wget https://ftp.gnu.org/gnu/binutils/binutils-"$binutils_build_version".tar.gz
+      tar -xzf binutils-"$binutils_build_version".tar.gz
+      rm binutils-"$binutils_build_version".tar.gz
 
-    cd "$toolchain_src"/gcc"$gcc_build_version"_i686/ || exit
-    wget https://ftp.gnu.org/gnu/gcc/gcc-"$gcc_build_version"/gcc-"$gcc_build_version".tar.gz
-    tar -xzf gcc-"$gcc_build_version".tar.gz
-    rm gcc-"$gcc_build_version".tar.gz
+      cd "$toolchain_src"/gcc"$gcc_build_version"_i686/ || exit
+      wget https://ftp.gnu.org/gnu/gcc/gcc-"$gcc_build_version"/gcc-"$gcc_build_version".tar.gz
+      tar -xzf gcc-"$gcc_build_version".tar.gz
+      rm gcc-"$gcc_build_version".tar.gz
 
-    # Build binutils
-    cd "$toolchain_src"/binutils"$binutils_build_version"_i686/build/ || exit
-    ../binutils-"$binutils_build_version"/configure --target=$target_x86_32 --prefix="$toolchain_prefix" --with-sysroot --disable-nls --disable-werror
-    make
-    make install
+      # Build binutils
+      cd "$toolchain_src"/binutils"$binutils_build_version"_i686/build/ || exit
+      ../binutils-"$binutils_build_version"/configure --target=$target_x86_32 --prefix="$toolchain_prefix" --with-sysroot --disable-nls --disable-werror
+      make
+      make install
 
-    # Build GCC
-    cd "$toolchain_src"/gcc"$gcc_build_version"_i686/build/ || exit
-    which -- $target_x86_32-as || echo $target_x86_32-as is not in the PATH
-    ../gcc-"$gcc_build_version"/configure --target=$target_x86_32 --prefix="$toolchain_prefix" --disable-nls --enable-language=c,c++ --without-headers
-    make all-gcc
-    make all-target-libgcc
-    make install-gcc
-    make install-target-libgcc
-fi
+      # Build GCC
+      cd "$toolchain_src"/gcc"$gcc_build_version"_i686/build/ || exit
+      which -- $target_x86_32-as || echo $target_x86_32-as is not in the PATH
+      ../gcc-"$gcc_build_version"/configure --target=$target_x86_32 --prefix="$toolchain_prefix" --disable-nls --enable-language=c,c++ --without-headers
+      make all-gcc
+      make all-target-libgcc
+      make install-gcc
+      make install-target-libgcc
+  fi
 
-# Setup for compiling the x86_64 compiler
-if [[ $build_gnu_tools == 64 || $build_gnu_tools == all ]]
-  then
-    # Create the nesecerry direcotries
-    mkdir -p "$toolchain_src"/binutils"$binutils_build_version"_amd64/build/
-    mkdir -p "$toolchain_src"/gcc"$gcc_build_version"_amd64/build/
-    mkdir -p "$toolchain_prefix"
+  # Setup for compiling the x86_64 compiler
+  if [[ $build_gnu_tools == 64 || $build_gnu_tools == all ]]
+    then
+      # Create the nesecerry direcotries
+      mkdir -p "$toolchain_src"/binutils"$binutils_build_version"_amd64/build/
+      mkdir -p "$toolchain_src"/gcc"$gcc_build_version"_amd64/build/
+      mkdir -p "$toolchain_prefix"
 
-    # Download and unpack source code
-    cd "$toolchain_src"/binutils"$binutils_build_version"_amd64/ || exit
-    wget https://ftp.gnu.org/gnu/binutils/binutils-"$binutils_build_version".tar.gz
-    tar -xzf binutils-"$binutils_build_version".tar.gz
-    rm binutils-"$binutils_build_version".tar.gz
+      # Download and unpack source code
+      cd "$toolchain_src"/binutils"$binutils_build_version"_amd64/ || exit
+      wget https://ftp.gnu.org/gnu/binutils/binutils-"$binutils_build_version".tar.gz
+      tar -xzf binutils-"$binutils_build_version".tar.gz
+      rm binutils-"$binutils_build_version".tar.gz
 
-    cd "$toolchain_src"/gcc"$gcc_build_version"_amd64/ || exit
-    wget https://ftp.gnu.org/gnu/gcc/gcc-"$gcc_build_version"/gcc-"$gcc_build_version".tar.gz
-    tar -xzf gcc-"$gcc_build_version".tar.gz
-    rm gcc-"$gcc_build_version".tar.gz
+      cd "$toolchain_src"/gcc"$gcc_build_version"_amd64/ || exit
+      wget https://ftp.gnu.org/gnu/gcc/gcc-"$gcc_build_version"/gcc-"$gcc_build_version".tar.gz
+      tar -xzf gcc-"$gcc_build_version".tar.gz
+      rm gcc-"$gcc_build_version".tar.gz
 
-    echo "MULTILIB_OPTIONS += mno-red-zone
-MULTILIB_DIRNAMES += no-red-zone" > gcc-"$gcc_build_version"/gcc/config/i386/t-x86_64-elf
-    cat "$make_folder"/config.gcc > gcc-"$gcc_build_version"/gcc/config.gcc
+      echo "MULTILIB_OPTIONS += mno-red-zone
+  MULTILIB_DIRNAMES += no-red-zone" > gcc-"$gcc_build_version"/gcc/config/i386/t-x86_64-elf
+      cat "$make_folder"/config.gcc > gcc-"$gcc_build_version"/gcc/config.gcc
 
-    # Build binutils
-    cd "$toolchain_src"/binutils"$binutils_build_version"_amd64/build/ || exit
-    ../binutils-"$binutils_build_version"/configure --target=$target_x86_64 --prefix="$toolchain_prefix" --with-sysroot --disable-nls --disable-werror
-    make
-    make install
+      # Build binutils
+      cd "$toolchain_src"/binutils"$binutils_build_version"_amd64/build/ || exit
+      ../binutils-"$binutils_build_version"/configure --target=$target_x86_64 --prefix="$toolchain_prefix" --with-sysroot --disable-nls --disable-werror
+      make
+      make install
 
-    # Build GCC
-    cd "$toolchain_src"/gcc"$gcc_build_version"_amd64/build/ || exit
-    which -- $target_x86_64-as || echo $target_x86_64-as is not in the PATH
-    ../gcc-"$gcc_build_version"/configure --target=$target_x86_64 --prefix="$toolchain_prefix" --disable-nls --enable-language=c,c++ --without-headers
-    make all-gcc
-    make all-target-libgcc
-    make install-gcc
-    make install-target-libgcc
-fi
+      # Build GCC
+      cd "$toolchain_src"/gcc"$gcc_build_version"_amd64/build/ || exit
+      which -- $target_x86_64-as || echo $target_x86_64-as is not in the PATH
+      ../gcc-"$gcc_build_version"/configure --target=$target_x86_64 --prefix="$toolchain_prefix" --disable-nls --enable-language=c,c++ --without-headers
+      make all-gcc
+      make all-target-libgcc
+      make install-gcc
+      make install-target-libgcc
+  fi
+}
 
 # Compile the GNU EFI toolkit
 if [ "$build_gnuefi" == y ]
@@ -238,24 +240,8 @@ if [ "$build_gnuefi" == y ]
     make
 fi
 
-# Compile the x86_32 cross-compiler
-if [ "$package_manager" != macos ]
-  then
-    if [[ $build_gnu_tools == 32 || $build_gnu_tools == all ]]
-      then
-
-    fi
-
-    # Compile the x86_64 cross-compiler
-    if [[ $build_gnu_tools == 64 || $build_gnu_tools == all ]]
-      then
-
-    fi
-fi
-
 # Seperate build instructions if the MacOS is used
-if [ "$package_manager" == macos ]
-  then
+func_build_gcc_macos() {
     # Compile x86-32 gcc cross-compiler
     if [[ $build_gnu_tools == 32 || $build_gnu_tools == all ]]
       then
@@ -293,7 +279,7 @@ if [ "$package_manager" == macos ]
         make install-gcc
         make install-target-libgcc
     fi
-fi
+}
 
 
 ## Start ##
@@ -329,6 +315,16 @@ fi
 if [ "$build_gnuefi" == y ]
   then
     func_build_gnuefi
+fi
+if [ "$build_gnu_tools" != no ]
+  then
+    if [ "$package_manager" != macos ]
+      then
+        func_build_gcc_linux
+      elif [ "$package_manager" == macos ]
+      then
+        func_build_gcc_macos
+    fi
 fi
 
 
