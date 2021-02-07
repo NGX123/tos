@@ -25,7 +25,7 @@
 #include <kernel/interrupts.h>
 #include <arch/platform.h>
 #include <kernel/multiboot.h>
-#include <kernel/init.h>
+#include <arch/init.h>
 
 
 /*

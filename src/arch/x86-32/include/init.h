@@ -11,7 +11,7 @@
 #include <stdint.h>
 #include <types.h>
 #include <stdarg.h>
-#include <kernel/init.h>
+#include <arch/init.h>
 #include <arch/platform.h>
 #include "string.h"
 #include "stdio.h"
