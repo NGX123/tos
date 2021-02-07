@@ -35,7 +35,7 @@ void kernel_main()
         printsys("8042 PS/2 Controller\n", PRINTSYS_STATUS_FAIL);
 
     // Initialize the ACPI mode
-    if (ACPIinit(ACPI_CONTROL_FIND_FADT) != -1)
+    if (ACPIinit() != -1)
         printsys("ACPI\n", PRINTSYS_STATUS_SUCCESS);
     else
         printsys("ACPI\n", PRINTSYS_STATUS_FAIL);

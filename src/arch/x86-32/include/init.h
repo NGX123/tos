@@ -12,6 +12,7 @@
 #include <types.h>
 #include <stdarg.h>
 #include <kernel/init.h>
+#include <platform.h>
 #include "string.h"
 #include "stdio.h"
 

@@ -69,6 +69,11 @@ static void enter();
 static void arrows(const char direction);
 
 /*
+    @brief = scrolls one line on the screen
+*/
+static void scrollScreen();
+
+/*
     @brief = cleans the screen based on the supplied parameters
     @param cleanOption = the mode in which the screen should be cleaned
 */

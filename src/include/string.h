@@ -40,6 +40,7 @@ char* strchr(const char*, int);
 char* strchrnul(const char* str, int c);
 char* strrchr(const char*, int);
 size_t strcspn(const char*, const char*);
+size_t strspn(const char*, const char*);
 char* strpbrk(const char*, const char*);
 char* strstr(const char*, const char*);
 char* strtok(char*, const char*);

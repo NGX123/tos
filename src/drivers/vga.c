@@ -102,7 +102,7 @@ static void cleanScreen(char cleanOption)
     }
 }
 
-void scrollScreen(){
+static void scrollScreen(){
     int currentCell;
 
     for (currentCell = 80; currentCell < 2000; currentCell++)
