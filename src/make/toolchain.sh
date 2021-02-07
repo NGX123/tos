@@ -116,7 +116,28 @@ func_pm_other() {
 }
 
 
-## Build proccess ##
+## Compilation Setup ##
+# Compilation Setup for GCC
+func_setup_gcc() {
+    local arch=$1
+
+    # Create the nesecerry direcotries
+    mkdir -p "$toolchain_src"/binutils"$binutils_build_version"_"$arch"/build/
+    mkdir -p "$toolchain_src"/gcc"$gcc_build_version"_"$arch"/build/
+    mkdir -p "$toolchain_prefix"
+
+    # Download and unpack source code
+    cd "$toolchain_src"/binutils"$binutils_build_version"_"$arch"/ || exit
+    wget https://ftp.gnu.org/gnu/binutils/binutils-"$binutils_build_version".tar.gz
+    tar -xzf binutils-"$binutils_build_version".tar.gz
+    rm binutils-"$binutils_build_version".tar.gz
+
+    cd "$toolchain_src"/gcc"$gcc_build_version"_"$arch"/ || exit
+    wget https://ftp.gnu.org/gnu/gcc/gcc-"$gcc_build_version"/gcc-"$gcc_build_version".tar.gz
+    tar -xzf gcc-"$gcc_build_version".tar.gz
+    rm gcc-"$gcc_build_version".tar.gz
+}
+
 # Compilation Setup for EDK2
 func_setup_edk2() {
     # Create the necessery directories
@@ -128,6 +149,8 @@ func_setup_edk2() {
     git submodule update --init
 }
 
+
+## Build proccess ##
 # Compile the OVMF UEFI
 func_build_ovmf() {
     cd "$toolchain_prefix"/edk2/ || exit
@@ -163,21 +186,7 @@ func_build_gnuefi() {
 func_build_gcc_linux() {
   if [[ $build_gnu_tools == 32 || $build_gnu_tools == all ]]
     then
-      # Create the nesecerry direcotries
-      mkdir -p "$toolchain_src"/binutils"$binutils_build_version"_i686/build/
-      mkdir -p "$toolchain_src"/gcc"$gcc_build_version"_i686/build/
-      mkdir -p "$toolchain_prefix"
-
-      # Download and unpack source code
-      cd "$toolchain_src"/binutils"$binutils_build_version"_i686/ || exit
-      wget https://ftp.gnu.org/gnu/binutils/binutils-"$binutils_build_version".tar.gz
-      tar -xzf binutils-"$binutils_build_version".tar.gz
-      rm binutils-"$binutils_build_version".tar.gz
-
-      cd "$toolchain_src"/gcc"$gcc_build_version"_i686/ || exit
-      wget https://ftp.gnu.org/gnu/gcc/gcc-"$gcc_build_version"/gcc-"$gcc_build_version".tar.gz
-      tar -xzf gcc-"$gcc_build_version".tar.gz
-      rm gcc-"$gcc_build_version".tar.gz
+      func_setup_gcc "i686"
 
       # Build binutils
       cd "$toolchain_src"/binutils"$binutils_build_version"_i686/build/ || exit
@@ -198,21 +207,7 @@ func_build_gcc_linux() {
   # Setup for compiling the x86_64 compiler
   if [[ $build_gnu_tools == 64 || $build_gnu_tools == all ]]
     then
-      # Create the nesecerry direcotries
-      mkdir -p "$toolchain_src"/binutils"$binutils_build_version"_amd64/build/
-      mkdir -p "$toolchain_src"/gcc"$gcc_build_version"_amd64/build/
-      mkdir -p "$toolchain_prefix"
-
-      # Download and unpack source code
-      cd "$toolchain_src"/binutils"$binutils_build_version"_amd64/ || exit
-      wget https://ftp.gnu.org/gnu/binutils/binutils-"$binutils_build_version".tar.gz
-      tar -xzf binutils-"$binutils_build_version".tar.gz
-      rm binutils-"$binutils_build_version".tar.gz
-
-      cd "$toolchain_src"/gcc"$gcc_build_version"_amd64/ || exit
-      wget https://ftp.gnu.org/gnu/gcc/gcc-"$gcc_build_version"/gcc-"$gcc_build_version".tar.gz
-      tar -xzf gcc-"$gcc_build_version".tar.gz
-      rm gcc-"$gcc_build_version".tar.gz
+      func_setup_gcc "amd64"
 
       echo "MULTILIB_OPTIONS += mno-red-zone
   MULTILIB_DIRNAMES += no-red-zone" > gcc-"$gcc_build_version"/gcc/config/i386/t-x86_64-elf
@@ -240,6 +235,8 @@ func_build_gcc_macos() {
     # Compile x86-32 gcc cross-compiler
     if [[ $build_gnu_tools == 32 || $build_gnu_tools == all ]]
       then
+        func_setup_gcc "i686"
+
         # Building binutils
         cd "$toolchain_src"/binutils"$binutils_build_version"_i686/build || exit
         ../binutils-"$binutils_build_version"/configure --target=$target_x86_32 --prefix="$toolchain_prefix" --with-sysroot --disable-nls --disable-werror --enable-multilib --with-libiconv-prefix=/usr/local/opt/libiconv/
@@ -259,6 +256,8 @@ func_build_gcc_macos() {
     # Compile the x86_64 gcc cross-compiler
     if [[ $build_gnu_tools == 64 || $build_gnu_tools == all ]]
       then
+        func_setup_gcc "amd64"
+
         # Building binutils
         cd "$toolchain_src"/binutils"$binutils_build_version"_amd64/build/ || exit
         ../binutils-"$binutils_build_version"/configure --target=$target_x86_64 --prefix="$toolchain_prefix" --with-sysroot --disable-nls --disable-werror --enable-multilib --with-libiconv-prefix=/usr/local/opt/libiconv/
