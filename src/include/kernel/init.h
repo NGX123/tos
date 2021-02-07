@@ -31,4 +31,16 @@ struct memInfo
     uint64_t upper_ram_size;
     struct kernelMemMap memory_map;
 };
+
+/*
+    @brief = fills memInfo structure based on "count". Sets error flag if "count" is bigger then amount of entries in the memory map. Example use is - calling memInfo with count 0, reading data from memInfo, incrementing count by one, doing previous steps until error flag is set
+    @param count = specifies the entry in the memory map
+    @return = filled in memory structure
+*/
+extern struct memInfo getMemInfo(int count);
+
+/*
+    @breif = reads needed information from the bootloader based on command and responds with it
+*/
+extern void bootloaderInterface(void);
 #endif
