@@ -4,7 +4,7 @@
 
 ## Variables ##
 BUILDDIR_x86-32_CLANG	= $(BUILDDIR_x86-32)
-SOURCES_x86-32			= drivers/*.c kernel/*.c $(INIT_SOURCES_x86-32)/*.c lib/*.c
+SOURCES_x86-32			= drivers/*.c kernel/*.c $(INIT_SOURCES_x86-32)/*.c lib/*.c lib/arch/*.c
 OBJECTS_x86-32			= $(BUILDDIR_x86-32)/*.o
 
 # x86-32_gcc
