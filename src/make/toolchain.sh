@@ -282,6 +282,46 @@ func_build_gcc_macos() {
 }
 
 
+## Installation check ##
+func_installation_check() {
+  if [ "$build_ovmf" == y ]
+    then
+      echo "
+  ----- OVMF -----"
+      ls "$toolchain_prefix"/edk2/Build
+  fi
+
+  if [ "$build_gnuefi" == y ]
+    then
+      echo "
+  ----- GNU-EFI Toolkit -----"
+    ls "$toolchain_prefix"/gnu-efi/x86_64
+  fi
+
+  if [ "$build_option_edk2" == y ]
+    then
+      echo "
+  ----- EDK2 Build Tools -----"
+      ls "$toolchain_prefix"/edk2/
+  fi
+
+  # Extra
+  if [[ $build_gnu_tools == 64 || $build_gnu_tools == all ]]
+    then
+      echo "
+  --- GCC Toolchain 64 bit ---"
+      "$toolchain_prefix"/bin/x86_64-elf-gcc --version
+      find "$toolchain_prefix"/lib -name 'libgcc.a'
+  fi
+  if [[ $build_gnu_tools == 32 || $build_gnu_tools == all ]]
+    then
+      echo "
+  --- GCC Toolchain 32 bit ---"
+      "$toolchain_prefix"/bin/i686-elf-gcc --version
+  fi
+}
+
+
 ## Start ##
 # Package Management
 if [ "$package_manager" == dnf ]
@@ -327,8 +367,10 @@ if [ "$build_gnu_tools" != no ]
     fi
 fi
 
+func_installation_check
 
-## Installation check ##
+
+# Time taken output
 echo "
 ----- Execution Time -----"
 script_end_time=$(date +%s)
@@ -336,39 +378,3 @@ script_execution_time="$((script_end_time-script_start_time))"
 echo "Script took
 Seconds: $script_execution_time
 Minutes: $((script_execution_time / 60))"
-
-if [ "$build_ovmf" == y ]
-  then
-    echo "
------ OVMF -----"
-    ls "$toolchain_prefix"/edk2/Build
-fi
-
-if [ "$build_gnuefi" == y ]
-  then
-    echo "
------ GNU-EFI Toolkit -----"
-  ls "$toolchain_prefix"/gnu-efi/x86_64
-fi
-
-if [ "$build_option_edk2" == y ]
-  then
-    echo "
------ EDK2 Build Tools -----"
-    ls "$toolchain_prefix"/edk2/
-fi
-
-# Extra
-if [[ $build_gnu_tools == 64 || $build_gnu_tools == all ]]
-  then
-    echo "
---- GCC Toolchain 64 bit ---"
-    "$toolchain_prefix"/bin/x86_64-elf-gcc --version
-    find "$toolchain_prefix"/lib -name 'libgcc.a'
-fi
-if [[ $build_gnu_tools == 32 || $build_gnu_tools == all ]]
-  then
-    echo "
---- GCC Toolchain 32 bit ---"
-    "$toolchain_prefix"/bin/i686-elf-gcc --version
-fi
