@@ -5,10 +5,9 @@
 #include <stdint.h>
 #include <types.h>
 #include <stdarg.h>
-#include <kernel/init.h>
-#include "string.h
+#include <arch/init.h>
 #include <kernel/multiboot2.h>
-#include <kernel/multiboot.h>
+#include "string.h"
 
 
 #define TOGGLE_BIT_ON   1
@@ -24,16 +23,8 @@
 static void toggleBit(size_t* var, size_t bitmask, uint8_t bit_status);
 
 /*
-    @brief = constantly returns filled memInfo structs with new entries from mem map
-    @param count = variable which contains the number of the entrys that should be read, sets error bit when entries list reaches end, variable should be increased by user
-    @return = filled memInfo struct
+    @breif = recieves data from a multiboot2 bootloader and interprets it
+    @param magic = magic number to check if the OS was booted by a multiboot2 compilent bootloader
+    @param infoStruct_addr = pointer to multiboot information structure
 */
-static struct memInfo getMultibootMemInfo(int count);
-
-/*
-    @brief = solves all of the platform specfic stuff for the kernel
-    @param protocol = type of boot protocol used
-    @param var_num = amount of arguments to be passed
-    @param ... = the platform specific arguments
-*/
-extern void setBootInfo(int var_num, ...);
+extern void interpretMultiboot2(uint32_t magic, uint32_t infoStruct_addr);
