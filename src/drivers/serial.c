@@ -23,7 +23,7 @@ void initSerial()
    outb(PORT + 4, 0x0B);    // IRQs enabled, RTS/DSR set
 }
 
-void writeSerial(uint8_t* a)
+void writeSerial(char* a)
 {
     while (is_transmit_empty() == 0);
     while (*a != 0)

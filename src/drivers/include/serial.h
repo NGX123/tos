@@ -29,5 +29,5 @@ extern void initSerial(void);
     @brief = send data through the serial port
     @param a = data to send
 */
-extern void writeSerial(uint8_t* a);
+extern void writeSerial(char* a);
 #endif
