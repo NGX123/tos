@@ -49,7 +49,7 @@ fi
 
 ## Package Installation ##
 # DNF
-pm_dnf() {
+func_pm_dnf() {
     # Install developer tools and headers
     sudo dnf -y install $packages @development-tools kernel-headers kernel-devel edk2-ovmf
 
@@ -67,7 +67,7 @@ pm_dnf() {
 }
 
 # APT
-pm_apt() {
+func_pm_apt() {
     # Install developer tools and headers
     sudo apt -y install $packages build-essential linux-headers-$(uname -r) ovmf
 
@@ -85,7 +85,7 @@ pm_apt() {
 }
 
 # MacOS
-pm_macos() {
+func_pm_macos() {
     # Packages
     brew install gdb nasm binutils diffutils coreutils
 
@@ -96,7 +96,7 @@ pm_macos() {
 }
 
 # Other
-pm_other() {
+func_pm_other() {
     echo "If you are here, your package manager is probably not in the list, so you need to make sure all of the libs are installed before preceding, here is the list: "
     echo "$packages"
 
@@ -155,6 +155,8 @@ func_build_edk2_tools() {
 func_build_gnuefi() {
     mkdir -p "$toolchain_prefix"/gnu-efi/
     git clone https://git.code.sf.net/p/gnu-efi/code "$toolchain_prefix"/gnu-efi/
+    cd "$toolchain_prefix"/gnu-efi/ || exit
+    make
 }
 
 # Setup for compiling the x86_32 compiler
@@ -232,13 +234,6 @@ func_build_gcc_linux() {
       make install-target-libgcc
   fi
 }
-
-# Compile the GNU EFI toolkit
-if [ "$build_gnuefi" == y ]
-  then
-    cd "$toolchain_prefix"/gnu-efi/ || exit
-    make
-fi
 
 # Seperate build instructions if the MacOS is used
 func_build_gcc_macos() {
@@ -326,15 +321,15 @@ func_installation_check() {
 # Package Management
 if [ "$package_manager" == dnf ]
   then
-    pm_dnf
+    func_pm_dnf
   elif [ "$package_manager" == apt ]
   then
-    pm_apt
+    func_pm_apt
   elif [ "$package_manager" == macos ]
   then
-    pm_macos
+    func_pm_macos
   else
-    pm_other
+    func_pm_other
 fi
 
 # Build Setup
