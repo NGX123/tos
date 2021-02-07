@@ -4,10 +4,8 @@
 		1. Use CPUID to check if the CPU supports long mode, if not - fail
 		2. Enable the paging
 		3. Switch to long mode
-	2. How to check from a running OS that redzone is disabled
 	* Setup stack
 	* Setup paging
-	* Ask if the data could be gone becuase of some stack change releated to 64 bit mode(maybe paging)
 2. Implement a bootloader control function - kernel will call and path MAGIC and COMMAND to it. If the kernel was loaded by bootloader returning MAGIC - function will interpret COMMAND(number macro) and get appropriate data from where bootloader supplied it, if no command found return error
 3. Add documentation on what OS needs to boot - what init functions should be present, what bootloader functions should be present, what should be called in waht order - function_that_will_be_specific_in_each_bootloader_bootstrap, kernel_setup, kernel_init
 
