@@ -7,6 +7,10 @@
 #include "include/serial.h"
 
 
+/*
+    @brief = check if the transmission line is empty before sending
+    @return = status of transmission line
+*/
 static int is_transmit_empty()
 {
    return inb(PORT + 5) & 0x20;

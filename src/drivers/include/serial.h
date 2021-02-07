@@ -15,12 +15,6 @@
 
 
 /*
-    @brief = check if the transmission line is empty before sending
-    @return = status of transmission line
-*/
-static int is_transmit_empty();
-
-/*
     @brief = initialize the serial port device
 */
 extern void initSerial(void);
