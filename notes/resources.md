@@ -83,6 +83,7 @@
 * Educational OSs
 	* [xv6(6k lines)](https://github.com/mit-pdos/xv6-public)
 	* [BaseKernel - education all OS with all nesecarry parts(interrupts, video...)(14k lines)](https://github.com/dthain/basekernel)
+	* [Building a 64bit bootloader](https://github.com/gmarino2048/64bit-os-tutorial)
 
 * Hobby OSs
 	* [TomatOS - small conveniet c-only OS and bootloader](https://github.com/TomatOrg/TomatOS)
