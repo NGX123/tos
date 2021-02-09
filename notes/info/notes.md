@@ -24,6 +24,8 @@
 	* `multiboot executable` in menuentry {} in grub.cfg should be changed to `multiboot2 executable`
 	* If grub uefi is used the start of file system is not /, so disk name should be added before the path - instead of `multiboot2 /path/to/exe`, use `multiboot2 (hd0)/path/to/exe`
 		* `(hd0)` can be changed to any other disk, to check the available disks use the GRUB console `ls` command
+* If multiboot2 says "no video found" or similar
+	* in grub config before the `multiboot /path/to/bin` insert `insmod efi_gop`
 
 ## Information
 * Accessing peripherals, hardware... on ARM and RISC-V(platforms with no PC-like standartisation(in terms of video output, keyboard input...))
@@ -36,4 +38,5 @@
 * In multiboot2 there are two types of tags in documentation and header
 	* MULTIBOOT_HEADER_TAG_* - are supplied in the multiboot header(and ended with 008) to turn on some features(e.g. framebuffer) or change some config during boottime
 	* MULTIBOOT_TAG_TYPE_* - tags user searches for in the multiboot struct with information(the one located in EBX after boot) to get some info about a certain thing(e.g. memory map, networking...)
+* In grub2 there are multiple modules that can be found by searching different folders in `grub-source/grub-core/*`, to understand that something is a module search the c file for `GRUB MOD LICENSE *` or similar, then load the module by the name of c file. e.g. to load `gop_efi.c` add `insmod gop_efi` before the kernel executable entry in grub config
 * Align in assembly/linker - aligns the next instruction/piece of data to start at address that is divisible by number align is supplied with. Normally next instruction/data will start right after the finish of previous, but in this case if the address after finish of previos data/instruction is not divisible by supplied number, the instruction after align will be moved to start at the closest address that is divisible by supplied number
