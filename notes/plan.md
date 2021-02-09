@@ -123,6 +123,11 @@
 		* [OSdev NASM](https://wiki.osdev.org/NASM)
 		* [GAS tutorial](https://en.wikibooks.org/wiki/X86_Assembly/GAS_Syntax)
 		* [NASM tutorial](https://en.wikibooks.org/wiki/X86_Assembly/NASM_Syntax)
+* Create a x86_64 UEFI Bootloader
+	* Check what other stuff should be done by the bootloader, read the UEFI manuals
+	1. Setup a framebuffer with GOP(that will work after exiting boot services)
+	2. Exit boot services
+	3. Parse the ELF headers and load OS executable
 
 
 
