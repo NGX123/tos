@@ -11,9 +11,12 @@ extern interpretMultiboot2
 
 %ifndef USE_MULTIBOOT1_PROTOCOL
 ; If problems occur return to equ instead of %define
-%define MAGIC                           0xE85250D6      ; Magic number used by GRUB to detect the executable is multiboot2 compatible
-%define ARCH_x86_32                     0               ; Architecture that is used by executbale, 0 - i386
-%define MULTIBOOT2_HEADER_TAG_END       0               ; Indicates the end of tags section in multiboot2 header
+%define MAGIC                               0xE85250D6      ; Magic number used by GRUB to detect the executable is multiboot2 compatible
+%define ARCH_x86_32                         0               ; Architecture that is used by executbale, 0 - i386
+%define MULTIBOOT2_HEADER_TAG_FRAMEBUFFER   0
+
+%define MULTIBOOT2_HEADER_TAG_END           0               ; Indicates the end of tags section in multiboot2 header
+%define MULTIBOOT2_HEADER_TAG_OPTIONAL      1
 
 
 section .multiboot          ; Has data located that will be used by grub to find the executable
@@ -23,9 +26,20 @@ multiboot_header_start:
     dd  ARCH_x86_32
     dd  multiboot_header_end - multiboot_header_start                               ; Size of the header
     dd  -(MAGIC + ARCH_x86_32 + (multiboot_header_end - multiboot_header_start))    ; Checksum
+    %ifdef ENABLE_MULTIBOOT2_FRAMEBUFFER
     align 8                                                                         ; Tags must start at 8 byte aligned address
-    dd MULTIBOOT2_HEADER_TAG_END                                                    ; The tag which indicates end of tag section is type - 0
-    dd 0                                                                            ; with flags - 0
+    framebuffer_tag_start:
+        dw 5
+        dw MULTIBOOT2_HEADER_TAG_OPTIONAL
+        dd framebuffer_tag_end - framebuffer_tag_start
+        dd 1024
+        dd 768
+        dd 32
+    framebuffer_tag_end:
+    %endif
+    align 8
+    dw MULTIBOOT2_HEADER_TAG_END                                                    ; The tag which indicates end of tag section is type - 0
+    dw 0                                                                            ; with flags - 0
     dd 8                                                                            ; and size - 8
 multiboot_header_end:
 
