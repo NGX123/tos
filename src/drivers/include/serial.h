@@ -20,8 +20,14 @@
 extern void initSerial(void);
 
 /*
-    @brief = send data through the serial port
-    @param a = data to send
+    @brief = print a string to serial port
+    @param a = string pointer
 */
-extern void writeSerial(char* a);
+extern void printSerial(char* a);
+
+/*
+    @brief = send data through the serial port
+    @param data = data to send
+*/
+extern void writeSerial(uint8_t data);
 #endif
