@@ -57,19 +57,27 @@ make all_x86-32_clang
 
 Compile 64 bit OS that can boot from x86 PC/VM with UEFI firmware
 ```
-make all_x86-64-uefiapp_clang
-```
-or
-```
-make all_x86-64-uefiapp_edk2
+make all_x86-64_clang
 ```
 
 
-## Credits(taken from other projects)
+## Credits(files that include code taken from other projects)
 * notes/coding_style.md
     * [Original Source](https://github.com/skiftOS/skift/blob/main/manual/coding_style.md)
-    * Original Authors - @sleepy-monax, @Keyboard-Slayer, @optimisticside
+    * Original Authors - sleepy-monax, Keyboard-Slayer, optimisticside
+    * License: MIT
 
 * src/include/string.h src/lib/string.c
     * [Original Source](https://mirrors.edge.kernel.org/pub/linux/kernel/Historic/)
     * Original Author - Linus Torvalds
+    * License: GPLv2
+
+* src/include/kernel/multiboot*.h
+    * [Original Source](https://www.gnu.org/software/grub/manual/multiboot2/multiboot2.html)
+    * Original Author - Copyright (C) 1999,2003,2007,2008,2009,2010 Free Software Foundation, Inc.
+    * License: MIT
+
+* src/boot/multiboot2/multiboot2.c
+    * [Original Source](https://www.gnu.org/software/grub/manual/multiboot2/multiboot2.html)
+    * Original Author - Copyright (C) 1999, 2010  Free Software Foundation, Inc.
+    * License: GPLv3
