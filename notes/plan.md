@@ -1,14 +1,19 @@
 ## To Do
-1. Switch to long mode
+1. Do a check if the toolchain.sh works right - look through source code, execute and then checks if everything done in source is in the results
+2. Switch to long mode
 	1. Bootstrap into long mode(from the kernel_setup())
 		1. Use CPUID to check if the CPU supports long mode, if not - fail
 		2. Enable the paging
 		3. Switch to long mode
 	* Setup stack
 	* Setup paging
-2. Implement a bootloader control function - kernel will call and path MAGIC and COMMAND to it. If the kernel was loaded by bootloader returning MAGIC - function will interpret COMMAND(number macro) and get appropriate data from where bootloader supplied it, if no command found return error
-3. Add documentation on what OS needs to boot - what init functions should be present, what bootloader functions should be present, what should be called in waht order - function_that_will_be_specific_in_each_bootloader_bootstrap, kernel_setup, kernel_init
-
+3. Implement a bootloader control function - kernel will call and path MAGIC and COMMAND to it. If the kernel was loaded by bootloader returning MAGIC - function will interpret COMMAND(number macro) and get appropriate data from where bootloader supplied it, if no command found return error
+4. Documentation
+	1. Collect the .md notes into one texinfo notes file
+	2. Use texinfo for documentation
+	3. Add documentation on what OS needs to boot - what init functions should be present, what bootloader functions should be present, what should be called in waht order - function_that_will_be_specific_in_each_bootloader_bootstrap, kernel_setup, kernel_init
+	* https://www.gnu.org/software/texinfo/manual/
+	* https://www.gnu.org/software/teximpatient
 
 
 ### [Hardware](https://wiki.osdev.org/Category:Hardware)
