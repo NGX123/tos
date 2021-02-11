@@ -15,6 +15,11 @@
 #define MEMINFO_FLAG_RAM_AMOUNT  0x2
 #define MEMINFO_FLAG_MEM_MAP     0x3
 
+#define MEMMAP_AREA_TYPE_USABLE     0x1
+#define MEMMAP_AREA_TYPE_RESERVED   0x2
+#define MEMMAP_AREA_TYPE_SPECIAL    0x3 // Area that was reserved by kernel
+#define MEMMAP_AREA_TYPE_OTHER      0x4 // Bootloader should be asked about this memory using bootloaderInterface()
+
 
 struct kernelMemMap
 {
