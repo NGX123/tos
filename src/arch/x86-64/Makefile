@@ -71,4 +71,6 @@ qemu_x86-64-uefi:
 	-drive if=pflash,format=raw,unit=0,file=$(BUILDDIR_x86-64)/OVMF_CODE.fd,readonly=on \
 	-drive if=pflash,format=raw,unit=1,file=$(BUILDDIR_x86-64)/OVMF_VARS.fd \
 	-net none \
-	-drive format=raw,file=$(BUILDDIR_x86-64)/$(TARGET).img
+	-drive format=raw,file=$(BUILDDIR_x86-64)/$(TARGET).img \
+	$(QEMU_FLAGS)
+	# QEMU_FLAGS="-serial file:$(BUILDDIR_x86-64)/serial.log"
