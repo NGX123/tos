@@ -13,6 +13,4 @@ extern int putchar(int chara);
 extern int puts(char* str);
 
 extern void printf(const char *fmt, ...);
-
-int atoi(const char *s);
 #endif

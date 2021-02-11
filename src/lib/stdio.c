@@ -112,13 +112,3 @@ void printf(const char *fmt, ...) // only understands %d, %x, %p, %s, %c
     }
   }
 }
-
-int atoi(const char *s) // Transfer to appropriate library
-{
-  int n;
-
-  n = 0;
-  while('0' <= *s && *s <= '9')
-    n = n*10 + *s++ - '0';
-  return n;
-}
