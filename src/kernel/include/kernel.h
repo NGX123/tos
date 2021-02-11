@@ -23,7 +23,6 @@
 #include <drivers/kbd.h>
 #include <drivers/ps2_8042.h>
 #include <kernel/interrupts.h>
-#include <arch/platform.h>
 #include <kernel/multiboot.h>
 #include <arch/init.h>
 

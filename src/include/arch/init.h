@@ -43,4 +43,10 @@ extern struct memInfo getMemInfo(int count);
     @breif = reads needed information from the bootloader based on command and responds with it
 */
 extern void bootloaderInterface(void);
+
+/*
+    @breif = make platform specific initialization
+    @return = 0 on success, -1 on fail
+*/
+extern int hardwarePlatformInit(void);
 #endif
