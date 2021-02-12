@@ -129,6 +129,7 @@
 		* [GAS tutorial](https://en.wikibooks.org/wiki/X86_Assembly/GAS_Syntax)
 		* [NASM tutorial](https://en.wikibooks.org/wiki/X86_Assembly/NASM_Syntax)
 * Create a x86_64 UEFI Bootloader
+	* Use tomatboot sources stripped from multiboot, bios and other useless stuff
 	* Check what other stuff should be done by the bootloader, read the UEFI manuals
 	1. Setup a framebuffer with GOP(that will work after exiting boot services)
 	2. Exit boot services
