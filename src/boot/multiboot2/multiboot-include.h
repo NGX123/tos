@@ -13,6 +13,9 @@
 #define TOGGLE_BIT_ON   1
 #define TOGGLE_BIT_OFF  0
 
+#define AVAILABLE_FLAG_MEMSIZE      0x1
+#define AVAILABLE_FLAG_MEMMAP       0x2
+#define AVAILABLE_FLAG_FRAMEBUFFER  0x4
 
 /*
     @brief = changes the chosen bit in supplied variable to chosen value(ON(1) or OFF(0))
