@@ -25,15 +25,14 @@ struct kernelMemMap
 {
     uint64_t mem_area_start_addr;
     uint64_t mem_area_end_addr;
-    size_t mem_area_size;
-    uint8_t mem_area_type;
+    uint64_t mem_area_size;
+    uint32_t mem_area_type;
 };
 
 struct memInfo
 {
     uint8_t flags;
-    uint64_t lower_ram_size;
-    uint64_t upper_ram_size;
+    uint64_t ram_size;
     struct kernelMemMap memory_map;
 };
 
