@@ -12,8 +12,6 @@
 
 
 #define MEMINFO_FLAG_ERROR       0x1
-#define MEMINFO_FLAG_RAM_AMOUNT  0x2
-#define MEMINFO_FLAG_MEM_MAP     0x3
 
 #define MEMMAP_AREA_TYPE_USABLE     0x1
 #define MEMMAP_AREA_TYPE_RESERVED   0x2
@@ -21,19 +19,33 @@
 #define MEMMAP_AREA_TYPE_OTHER      0x4 // Bootloader should be asked about this memory using bootloaderInterface()
 
 
-struct kernelMemMap
-{
-    uint64_t mem_area_start_addr;
-    uint64_t mem_area_end_addr;
-    uint64_t mem_area_size;
-    uint32_t mem_area_type;
-};
-
 struct memInfo
 {
     uint8_t flags;
-    uint64_t ram_size;
-    struct kernelMemMap memory_map;
+    union       /* Unnamed union of full address and it's parts so two 32 bit variables can be used instead of one 64bit or other way round */
+    {
+        uint64_t addr_full;
+        struct
+        {
+            uint32_t addr_part1;
+            uint32_t addr_part2;
+        };
+    };
+    union
+    {
+        uint64_t size_full;
+        struct
+        {
+            uint32_t size_part1;
+            uint32_t size_part2;
+        };
+    };
+    uint32_t type;
+    /* Fix: if problems occur split the 64bit fields into 32bit fields */
+    // uint32_t addr1;
+    // uint32_t addr2;
+    // uint32_t size1;
+    // uint32_t size2;
 };
 
 /*

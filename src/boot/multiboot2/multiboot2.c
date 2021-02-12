@@ -4,6 +4,7 @@
 
 #include "multiboot-include.h"
 #include "../../drivers/include/serial.h"
+#include "stdio.h"
 
 static void *multiboot_struct_start_ptr, *multiboot_struct_end_ptr;
 static uint16_t avilability_flags;
@@ -39,9 +40,6 @@ void interpretMultiboot2(uint32_t magic, uint32_t infoStruct_addr)
     {
         switch (tag_current->type)
         {
-            case MULTIBOOT_TAG_TYPE_BASIC_MEMINFO:
-                toggleBit((size_t*)&avilability_flags, AVAILABLE_FLAG_MEMSIZE, TOGGLE_BIT_ON);
-                break;
             case MULTIBOOT_TAG_TYPE_MMAP:
                 toggleBit((size_t*)&avilability_flags, AVAILABLE_FLAG_MEMMAP, TOGGLE_BIT_ON);
                 break;
@@ -50,6 +48,68 @@ void interpretMultiboot2(uint32_t magic, uint32_t infoStruct_addr)
                 break;
         }
     }
+
+
+    /* HAS TO BE TRANSFERED TO THE KERNEL CODE */
+    struct memInfo memory_map;
+    int i;
+
+    for (i = 0; ((memory_map = getMemInfo(i)).flags & MEMINFO_FLAG_ERROR) == 0; i++)
+    {
+        printf("addr = 0x%x%x, length = 0x%x%x, type = 0x%x\n", memory_map.addr_part2, memory_map.addr_part1, memory_map.size_part2, memory_map.size_part1, memory_map.type);
+    }
+}
+
+struct memInfo getMemInfo(int count)
+{
+    struct memInfo returnStruct = {0};
+    struct multiboot_tag *tag_current, *tag_start = (struct multiboot_tag *) (multiboot_struct_start_ptr + 8);
+    multiboot_memory_map_t *mmap;
+
+    if (!(avilability_flags & AVAILABLE_FLAG_MEMMAP))
+    {
+        toggleBit((size_t*)&returnStruct.flags, MEMINFO_FLAG_ERROR, TOGGLE_BIT_ON);
+        return returnStruct;
+    }
+
+    for (tag_current = tag_start; tag_current->type != MULTIBOOT_TAG_TYPE_END; tag_current = (struct multiboot_tag *)((multiboot_uint8_t *)tag_current + ((tag_current->size + 7) & ~7)))
+        if (tag_current->type == MULTIBOOT_TAG_TYPE_MMAP)
+        {
+            mmap = ((struct multiboot_tag_mmap *) tag_current)->entries;
+            mmap = (multiboot_memory_map_t *) ((uint64_t)mmap + (((struct multiboot_tag_mmap *)tag_current)->entry_size * count));
+
+            if ((multiboot_uint8_t *) mmap < (multiboot_uint8_t *) tag_current + tag_current->size)
+            {
+                returnStruct.addr_full = mmap->addr;
+                returnStruct.size_full = mmap->len;
+                returnStruct.type = mmap->type;
+
+                /* FIX: if problems occur split the 64bit fields into 32bit fields */
+                // uint32_t *mmap_addr32, *mmap_len32;
+                // mmap_addr32 = (uint32_t*)&mmap->addr;
+                // mmap_len32 = (uint32_t*)&mmap->len;
+                // returnStruct.addr1 = *mmap_addr32;
+                // returnStruct.addr2 = *(mmap_addr32+1);
+                // returnStruct.size1 = *mmap_len32;
+                // returnStruct.size2 = *(mmap_len32+1);
+            }
+            else
+            {
+                toggleBit((size_t*)&returnStruct.flags, MEMINFO_FLAG_ERROR, TOGGLE_BIT_ON);
+                return returnStruct;
+            }
+
+            /* DEBUG */
+            // uint32_t *mmap_addr32, *mmap_len32;
+            // for (mmap = ((struct multiboot_tag_mmap *) tag_current)->entries; (multiboot_uint8_t *) mmap < (multiboot_uint8_t *) tag_current + tag_current->size; mmap = (multiboot_memory_map_t *) ((unsigned long)mmap + ((struct multiboot_tag_mmap *)tag_current)->entry_size))
+            // {
+            //     mmap_addr32 = (uint32_t*)&mmap->addr;
+            //     mmap_len32 = (uint32_t*)&mmap->len;
+            //     printf ("---base_addr = 0x%x%x, length = 0x%x%x, type = 0x%x\n", *(mmap_addr32+1), *mmap_addr32, *(mmap_len32+1), *mmap_len32, mmap->type); //printf ("--- base_addr = 0x%x%x, length = 0x%x%x, type = 0x%x\n", (unsigned) (mmap->addr >> 32), (unsigned) (mmap->addr & 0xffffffff), (unsigned) (mmap->len >> 32), (unsigned) (mmap->len & 0xffffffff), (unsigned) mmap->type);
+            // }
+        }
+
+    return returnStruct;
 }
 
 static void toggleBit(size_t* var, size_t bitmask, uint8_t bit_status)
@@ -158,4 +218,20 @@ void printf(const char *fmt, ...) // only understands %d, %x, %p, %s, %c
         state = 0;
     }
   }
+}
+
+void* memcpy(void *dest, const void *src, size_t n) {	/*CUSTOM*/
+    char *dp = dest;
+    const char *sp = src;
+    while (n--)
+        *dp++ = *sp++;
+    return dest;
+}
+
+void *memset(void *s, int c, size_t n)	/*CUSTOM*/
+{
+    unsigned char* p=s;
+    while(n--)
+        *p++ = (unsigned char)c;
+    return s;
 }
