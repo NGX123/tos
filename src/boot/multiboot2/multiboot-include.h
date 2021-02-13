@@ -1,6 +1,7 @@
-// @author = ngx123
-// @brief = includes defines for multiboot2 bootstrap code
-
+/*
+    @author = ngx123
+    @brief = includes defines for multiboot2 bootstrap code
+*/
 
 #include <stdint.h>
 #include <types.h>
