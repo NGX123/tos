@@ -1,6 +1,7 @@
-// @author = ngx123
-// @brief = includes code needed to get data and setup everything using multiboot2
-
+/*
+    @author = ngx123
+    @brief = includes code needed to get data and setup everything using multiboot2
+*/
 
 #include "multiboot-include.h"
 #include "../../drivers/include/serial.h"
