@@ -88,12 +88,13 @@
 	3. [Memory Allocator - allocates space from virtual pages]()
 2. [Time Library]()
 	* A timer could be set by a programm and kernel will call the binded function when the time is up, the kernel will manage the time with whatever time device was found using the device manager(e.g. PIC)
-3. [Device manager](https://wiki.osdev.org/Device_Management)
+3. Driver functions should be not global symbols and should only be accessed through things like write and read and not symbols
+4. [Device manager](https://wiki.osdev.org/Device_Management)
 	* [Guide](https://wiki.osdev.org/User:Kmcguire/Quick_And_Dirty_Device_Management)
 	* [Thread](https://www.reddit.com/r/osdev/comments/dr2qym/device_driver_model_for_oshypervisor/)
 	* Initialise drivers based on devices found
 	* Make a device tree
-4. [Multitasking](https://wiki.osdev.org/Category:Processes_and_Threads)
+5. [Multitasking](https://wiki.osdev.org/Category:Processes_and_Threads)
 	* [Multitasking types](https://wiki.osdev.org/Multitasking_Systems)
 
 
