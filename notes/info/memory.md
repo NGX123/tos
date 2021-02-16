@@ -58,4 +58,14 @@
 
 ## [Notes](https://wiki.osdev.org/Paging)
 * Releated to paging in x86 https://wiki.osdev.org/TLB
-* Make memory space look better - [Higher Half Kernel](https://wiki.osdev.org/Higher_Half_Kernel)
+* Change the mapping of the kernel after enabling paging - [Higher Half Kernel](https://wiki.osdev.org/Higher_Half_Kernel)
+
+## Ideas
+* To have memory allocator be independant from the architecture and future proof(for 128bits for example:))))  use size_t in declarations
+
+## Questions
+* Higher Half Kernel
+    * Why is 0xC0000000 used - which is below 4GB which means that even in 64 bit mode programm can only access stuff below 0xc0000000 or how does it work, is it remapped beyond end of kernel as soon as programm alocates all the space below?
+    * Is there any use in having the kernel physically there(which is even impossible in some cases like if computer has 2GB RAM)?
+    * What if in 32 bit mode kernel would need more RAM
+then from 0xC000,0000 to 0xFFFF,FFFF, this is okay in 64 bit mode becuase there could be memory beyond that but what to do in 32 bit mode?
