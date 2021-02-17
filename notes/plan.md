@@ -10,7 +10,7 @@
 3. Documentation
 	1. Collect the .md notes into one texinfo notes file
 	2. Use texinfo for documentation
-	3. Add documentation on what OS needs to boot - what init functions should be present, what bootloader functions should be present, what should be called in waht order - function_that_will_be_specific_in_each_bootloader_bootstrap, kernel_setup, kernel_init
+	3. Add documentation on what OS needs to boot - what init functions should be present, what bootloader functions should be present, what should be called in waht order - function_that_will_be_specific_in_each_bootloader_bootstrap, kernel_setup, kernel_init. Functions that are platform specific are prefixed with "arch_" e.g. "arch_funcname"
 	* https://www.gnu.org/software/texinfo/manual/
 	* https://www.gnu.org/software/teximpatient
 
