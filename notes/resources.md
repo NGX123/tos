@@ -57,6 +57,7 @@
 	* [BrokenThron OS Tutorials](http://www.brokenthorn.com/Resources/OSDevIndex.html)
 	* [WhyOS Lectures and Tutorials](http://wyoos.org/impressum.php?redirect=%2Findex.php)
 	* [UEFI From Scratch](https://youtu.be/01-UA2LKQ9Y)
+	* [OS Lectures and Classes](https://ops-class.org/)
 
 * University Courses
 	* [MIT 6.828 Course](https://ocw.mit.edu/courses/electrical-engineering-and-computer-science/6-828-operating-system-engineering-fall-2012/index.htm)
@@ -67,6 +68,7 @@
 	* [Harward Course PintOS Practical](https://web.stanford.edu/class/cs140/projects/pintos/pintos_1.html)
 
 * Not standard OS courses
+	* [RPi OS Tutorial](https://jsandler18.github.io/)
 	* [Rust RISC-V OS](https://osblog.stephenmarz.com/index.html)
 	* [Rust x86 OS](https://os.phil-opp.com/)
 
