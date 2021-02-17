@@ -11,6 +11,7 @@
 	1. Collect the .md notes into one texinfo notes file
 	2. Use texinfo for documentation
 	3. Add documentation on what OS needs to boot - what init functions should be present, what bootloader functions should be present, what should be called in waht order - function_that_will_be_specific_in_each_bootloader_bootstrap, kernel_setup, kernel_init. Functions that are platform specific are prefixed with "arch_" e.g. "arch_funcname"
+	4. The system that runs the kernel should be 32 bit+ and unsigned long should reperesent the largest possible var size, include/types.h has define of address_tt and other global defines that should be changed if the compiler does not follow rules needed by the kernel
 	* https://www.gnu.org/software/texinfo/manual/
 	* https://www.gnu.org/software/teximpatient
 
@@ -44,16 +45,18 @@
 		* PIT interrupts will be sent to the function that was binded to this interrupt with signal() syscall
 	* [RTC(Old)](https://wiki.osdev.org/RTC)
 4. [ACPI](https://wiki.osdev.org/ACPI)
-	1. saveSDT:
-		* Loop through tables pointed to by RSDT, fix the problem where only FADT has the signature
-		* Count size of all tables pointed to by RSDT
-		* Allocate the space for the tables with malloc in a static global variable so it could be used by other functions
-		* Memcpy the tables into allocated buffer
-		* Memcmp the original tables and ones in the buffer
-	2. retrieveSDT:
-		* Find the SDT in the malloced buffer using signature requested by user
-		* Memcpy SDT from buffer to user supplied location if size of table does not exceed max size specified by user
-		* Memcmp buffer and user versions
+	1. Fix the driver
+		1. Make the addresses more architecture independant(instead of uint32_t and uint64_t where possible change to unsigned long)
+		2. saveSDT:
+			* Loop through tables pointed to by RSDT, fix the problem where only FADT has the signature
+			* Count size of all tables pointed to by RSDT
+			* Allocate the space for the tables with malloc in a static global variable so it could be used by other functions
+			* Memcpy the tables into allocated buffer
+			* Memcmp the original tables and ones in the buffer
+		3. retrieveSDT:
+			* Find the SDT in the malloced buffer using signature requested by user
+			* Memcpy SDT from buffer to user supplied location if size of table does not exceed max size specified by user
+			* Memcmp buffer and user versions
 	* [ACPICA support](https://wiki.osdev.org/Category:ACPI)
 5. [ATA](https://wiki.osdev.org/Category:ATA)
 	1. [AHCI(Modern SATA native way)](https://wiki.osdev.org/AHCI)
