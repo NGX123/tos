@@ -15,7 +15,7 @@ void kernel_main()
 
 
     // Initializes the platform specific stuff
-    if (hardwarePlatformInit() != -1)
+    if (arch_hardwarePlatformInit() != -1)
         printsys("Platform\n", PRINTSYS_STATUS_SUCCESS);
     else
         printsys("Platform\n", PRINTSYS_STATUS_SUCCESS);

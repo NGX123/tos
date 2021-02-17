@@ -55,13 +55,13 @@ void interpretMultiboot2(uint32_t magic, uint32_t infoStruct_addr)
     struct memInfo memory_map;
     int i;
 
-    for (i = 0; ((memory_map = getMemInfo(i)).flags & MEMINFO_FLAG_ERROR) == 0; i++)
+    for (i = 0; ((memory_map = arch_getMemInfo(i)).flags & MEMINFO_FLAG_ERROR) == 0; i++)
     {
         printf("addr = 0x%x%x, length = 0x%x%x, type = 0x%x\n", memory_map.addr_part2, memory_map.addr_part1, memory_map.size_part2, memory_map.size_part1, memory_map.type);
     }
 }
 
-struct memInfo getMemInfo(int count)
+struct memInfo arch_getMemInfo(int count)
 {
     struct memInfo returnStruct = {0};
     struct multiboot_tag *tag_current, *tag_start = (struct multiboot_tag *) (multiboot_struct_start_ptr + 8);

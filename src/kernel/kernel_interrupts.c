@@ -26,14 +26,14 @@ int interruptsInit()
     int reserved_interrupts[INTERRUPTS_AMOUNT];
     int reserved_interrupts_amount;
 
-    platformInterruptsInit();
+    arch_platformInterruptsInit();
 
     interrupt_list[INTERRUPTS_HANDLERS_LIST_SIZE-1].function = NULL;
 
-    if (setInterruptInterpreterFunction(&interruptOccured) == -1)
+    if (arch_setInterruptInterpreterFunction(&interruptOccured) == -1)
         return -1;
 
-    if ((reserved_interrupts_amount = requestReservedInterrupts(reserved_interrupts, INTERRUPTS_AMOUNT)) == -1)
+    if ((reserved_interrupts_amount = arch_requestReservedInterrupts(reserved_interrupts, INTERRUPTS_AMOUNT)) == -1)
         return -1;
     else
     {

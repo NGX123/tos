@@ -12,7 +12,7 @@ static struct idt_pointer ip;
 static interrupt_interpreter_func_t interruptInterpreter;
 
 
-int requestReservedInterrupts(int* numbers, int list_size)
+int arch_requestReservedInterrupts(int* numbers, int list_size)
 {
 	int i;
 	int reserved_interrupts_list_size = 1;
@@ -28,7 +28,7 @@ int requestReservedInterrupts(int* numbers, int list_size)
 	return i;
 }
 
-int setInterruptInterpreterFunction(interrupt_interpreter_func_t function)
+int arch_setInterruptInterpreterFunction(interrupt_interpreter_func_t function)
 {
 	interruptInterpreter = function;
 
@@ -49,7 +49,7 @@ static void picRemap()
     outb(0xA1, 0x0);
 }
 
-void platformInterruptsInit()
+void arch_platformInterruptsInit()
 {
     picRemap();
 
