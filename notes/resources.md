@@ -1,31 +1,33 @@
 # OS Development Resources(code, books, websites...)
 ## Books
-* Practical
+* Best
+	* Operating Systems: 3 Easy pieces - Remzi Arpaci-Dusseau
 	* OSs: Design and Implementation - Andrew Tanenbaum
+
+
+* Practical
+	* **OSs: Design and Implementation - Andrew Tanenbaum**
 	* MMURTL - Richard Burgess
 	* OS Design: XINU - Douglas Comer
-	* Different books from Peter Norton
-		* Peter Norton's Assembly Language Book for the IBM PC - Peter Norton
 
 * Theory
 	* Modern OSs - Andrew Tanenbaum
-	* Operating Systems: 3 Easy pieces - Remzi Arpaci-Dusseau
+	* **Operating Systems: 3 Easy pieces - Remzi Arpaci-Dusseau**
 	* OS Concepts - Avi Silberschatz
-	* Operating Systems - W. Stallings
-	* Operating Systems - L. Bic
-	* Operating Systems - D. Choffnes
+	* Operating Systems: Internals and Design Principles - W. Stallings
 
 * Existing OS Theory
 	* Lion's Commentary on UNIX - John Lions
 	* Design and Implementation of FreeBSD - Marshall McKusick
 	* Design of a UNIX OS - Maurice Bach
-	* POSIX Programmers Guide - D. Lewine
+
+* Linux Kernel
+	* Linux Kernel Development - Robert Love
 	* How Linux Works - Brian Ward
 	* Understanding the Linux Kernel - D. Bovet
 	* A Heavily Commented Linux Kernel Code - Zhao Jiong
 
-* Driver/Module & Linux Development
-	* Linux Kernel Development - Robert Love
+* Driver Development
 	* Linux Device Drivers Development - John Madieu
 	* Linux Device Drivers - Jonathan Corbet
 	* FreeBSD Device Drivers - Jospeh Kong
@@ -88,7 +90,7 @@
 * Hobby OSs
 	* [TomatOS - small conveniet c-only OS and bootloader](https://github.com/TomatOrg/TomatOS)
 	* [Micro OS - smallest OS with all PC hardware support(700 lines)](https://github.com/ssaroussi/Micro-OS)
-	* [Melvix OS(8k lines)](https://github.com/marvinborner/Melvix)
-	* [Raspberry Pi OS(10k lines)](https://github.com/s-matyukevich/raspberry-pi-os)
-	* [POSIX Hobby OS](https://gitlab.com/sortix/sortix)
+	* [Melvix OS](https://github.com/marvinborner/Melvix)
+	* [Raspberry Pi OS](https://github.com/s-matyukevich/raspberry-pi-os)
+	* [Sortix - POSIX Hobby OS](https://gitlab.com/sortix/sortix)
 		* Easy C Library implementation - sortix/libc
