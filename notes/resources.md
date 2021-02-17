@@ -3,7 +3,7 @@
 * Best
 	* Operating Systems: 3 Easy pieces - Remzi Arpaci-Dusseau
 	* OSs: Design and Implementation - Andrew Tanenbaum
-
+	* xv6 Book(RISC-V and x86) - MIT
 
 * Practical
 	* **OSs: Design and Implementation - Andrew Tanenbaum**
@@ -12,6 +12,7 @@
 
 * Theory
 	* Modern OSs - Andrew Tanenbaum
+	* **xv6 Book(RISC-V and x86) - MIT**
 	* **Operating Systems: 3 Easy pieces - Remzi Arpaci-Dusseau**
 	* OS Concepts - Avi Silberschatz
 	* Operating Systems: Internals and Design Principles - W. Stallings
