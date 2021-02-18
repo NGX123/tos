@@ -7,6 +7,7 @@
 		3. Switch to long mode
 	* Setup stack
 	* Setup paging
+3. Fix the multiboot2_bootstarp.s and makefile so the multibootsetup does not have to be commented out to run the 32 bit OS
 3. Documentation
 	1. Collect the .md notes into one texinfo notes file
 	2. Use texinfo for documentation
@@ -119,6 +120,7 @@
 
 
 ## Extra
+* Remove the 32bit mode OS, but instead have a BIOS variant of the 64bit OS(maybe by just adding another grub type in makefile)
 * Clean up the source tree
 	1. Change files in boot to boot protocols and not platforms
 	2. Rename all the same name files like init.s to init-x86_64.s
