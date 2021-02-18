@@ -9,9 +9,6 @@
 
 ### Code
 - Align in assembly/linker - aligns the next instruction/piece of data to start at address that is divisible by number align is supplied with. Normally next instruction/data will start right after the finish of previous, but in this case if the address after finish of previos data/instruction is not divisible by supplied number, the instruction after align will be moved to start at the closest address that is divisible by supplied number
-- When splitting fields in structures or variables - like splitting a 64 bit field in structure into two 32 bit fields, on x86 as it is little endian first part will be in second var
-	* e.g. If `struct test {uint64_t i;}` is split into `struct test2 {uint32_t i1; uint32_t i2;}`, and if `test.i = 0x12A05F200` then `test2.i1 = 0x2A05F200` and `test2.i2 = 0x1`
-	* To combine the two split variables back into on x86 - e.g. if `uint64_t original` is split into `uint32_t part1`, `uint32_t part2` then to combine use `part1 | (uint64_t)part2 << 32`
 
 ### Build tools
 - Older c compilers added `_` before all symbols(e.g. "symbol" was made into "_symbol"), newer c compilers do not do this so when interfacing with assembly same function/variable names should be used("symbol" not "_symbol")
@@ -30,8 +27,8 @@
 ## Fixes
 - When compiling x86-32_clang with target set to `i386-elf` the os will link incorrectly
 	* Target change to `i686-elf` will fix linkage
-- If multiboot2 says "no video found" or similar
-	* in grub config before the `multiboot /path/to/bin` insert `insmod efi_gop`
+- If multiboot2 says "no video found" or similar on UEFI systems:
+	* in GRUB config before the `multiboot /path/to/bin` insert `insmod efi_gop`
 - When making a Multiboot2 2 kernel, changes are needed in conifg files to make it work
 	* `multiboot executable` in menuentry {} in grub.cfg should be changed to `multiboot2 executable`
 	+ If grub uefi is used the start of file system is not /, so disk name should be added before the path - instead of `multiboot2 /path/to/exe`, use `multiboot2 (hd0)/path/to/exe`
