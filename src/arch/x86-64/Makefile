@@ -4,7 +4,7 @@
 
 ## Variables ##
 BUILDDIR_x86-64-uefi 		= $(BUILDDIR_x86-64)
-SOURCES_x86-64-uefi			= lib/arch/io_x86.c drivers/serial.c $(MULTIBOOT2_DIR)/*.c #$(INIT_SOURCES_x86-64)/*.c
+SOURCES_x86-64-uefi			= $(INIT_SOURCES_x86-64)/*.c lib/arch/io_x86.c drivers/serial.c $(MULTIBOOT2_DIR)/*.c #$(INIT_SOURCES_x86-64)/*.c
 OBJECTS_x86-64-uefi			= $(BUILDDIR_x86-64-uefi)/*.o
 
 UEFI_ASSEMBLY_DEFINES		= -D ENABLE_MULTIBOOT2_FRAMEBUFFER
