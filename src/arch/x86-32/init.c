@@ -11,15 +11,7 @@ static struct gdt_entry gdt[3]; // Array is used to hold all of the GDT entries 
 static struct gdt_ptr gp;
 
 
-int arch_hardwarePlatformInit()
-{
-    makeMemFlat();
-    //printf("GDT\n");
-
-    return 0;
-}
-
-static void makeMemFlat()
+void makeMemFlat()
 {
     for (int i = 0; i < 3; i++)
     {

@@ -13,13 +13,6 @@ void kernel_main()
     initScreen(CURSOR_ON);
     printsys("VGA Text Mode\n", PRINTSYS_STATUS_SUCCESS);
 
-
-    // Initializes the platform specific stuff
-    if (arch_hardwarePlatformInit() != -1)
-        printsys("Platform\n", PRINTSYS_STATUS_SUCCESS);
-    else
-        printsys("Platform\n", PRINTSYS_STATUS_SUCCESS);
-
     // Initialize interrupts
     if (interruptsInit() != -1)
         printsys("Interrupts\n", PRINTSYS_STATUS_SUCCESS);
