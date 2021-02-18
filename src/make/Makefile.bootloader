@@ -2,16 +2,26 @@
 ### WARNING: THE PATHS TO TOS.DSC and TOS.INF CHANGED TO BOOT/UEFIAPP
 
 
-### VARIABLES ###
-BUILDDIR 						= ../build
-CFLAGS_GLOBAL 					= -Wshadow -Wall -Wextra -c
-BUILDDIR_x86-64					= $(BUILDDIR)/x86-64
-UEFI_SRC_DIR					= ../boot/uefi
-OVMF 							= /usr/share/OVMF
-EDK2							= ../../toolchain/edk2
+
+## VARIABLES ##
+CFLAGS_GLOBAL 					= -Wmissing-prototypes -Wshadow -Wall -Wextra -c
 TARGET							= tos
 
-# x86-64-uefiapp_clang #
+BUILDDIR 						= build
+BUILDDIR_x86-64					= $(BUILDDIR)/efi-loader
+UEFI_SRC_DIR					= boot/uefi
+OVMF 							= /usr/share/OVMF
+EDK2							= ../toolchain/edk2
+
+# EFI Build Env
+ARCH 							= x86_64
+EFI_INCLUDE_PATH 				= /usr/include/efi 																		# Contains all of the headers necessery to compiler EFI apps
+EFI_LINK_OBJ 					= /usr/lib/crt0-efi-$(ARCH).o															# Shared library to link the UEFI header functions
+EFI_LINK_SCRIPT 				= /usr/lib/elf_$(ARCH)_efi.lds															# GNU-EFI custom linker script for linking with it's shared libraries
+EFI_INCS 						= -I /usr/include/efi -I /usr/include/efi/$(ARCH) -I /usr/include/efi/protocol			# Includes general UEFI headers, platform specific UEFI headers and UEFI protocol headers
+EFI_OBJS						= -T $(EFI_LINK_SCRIPT) -L /usr/lib64/gnuefi -L /usr/lib -L /usr/lib64 $(EFI_LINK_OBJ)	# Adds objects and libs for linker to link the UEFI app with
+
+# Clang x86_64
 CC_x86-64-uefiapp_CLANG 		= clang # Can be changed to gcc, then change -DHAVE_USE_MS_ABI to -DEFI_FUNCTION_WRAPPER
 LD_x86-64-uefiapp_CLANG 		= ld
 OBJCPY 							= objcopy
@@ -21,39 +31,30 @@ OBJCPYFLAGS 					= -j .text -j .sdata -j .data -j .dynamic -j .dynsym -j .rel -j
 BUILDDIR_x86-64-uefiapp_CLANG	= $(BUILDDIR_x86-64)
 SOURCES_x86-64-uefiapp_CLANG 	= $(UEFI_SRC_DIR)/*.c
 
-# x86-64-uefiapp_edk2 #
+# EDK2 x86-64
 BUILDDIR_x86-64-uefiapp_EDK2 	= $(EDK2)/UefiAppBootloaderPkg
 SOURCES_x86-64-uefiapp_EDK2 	= $(UEFI_SRC_DIR)/*.c
 
 
-## EFI ##
-ARCH 							= x86_64
-EFI_INCLUDE_PATH 				= /usr/include/efi 																		# Contains all of the headers necessery to compiler EFI apps
-EFI_LINK_OBJ 					= /usr/lib/crt0-efi-$(ARCH).o															# Shared library to link the UEFI header functions
-EFI_LINK_SCRIPT 				= /usr/lib/elf_$(ARCH)_efi.lds															# GNU-EFI custom linker script for linking with it's shared libraries
-EFI_INCS 						= -I /usr/include/efi -I /usr/include/efi/$(ARCH) -I /usr/include/efi/protocol			# Includes general UEFI headers, platform specific UEFI headers and UEFI protocol headers
-EFI_OBJS						= -T $(EFI_LINK_SCRIPT) -L /usr/lib64/gnuefi -L /usr/lib -L /usr/lib64 $(EFI_LINK_OBJ)	# Adds objects and libs for linker to link the UEFI app with
 
-
-
-### START ###
-#all_x86-64-uefiapp_clang:	clean build_x86-64-uefiapp_clang disk_x86-64-uefi_bootloader qemu_x86-64-uefiapp
+## Start ##
+all_x86-64-uefiapp_clang:	clean build_x86-64-uefiapp_clang disk_x86-64-uefi_bootloader qemu_x86-64-uefiapp
 all_x86-64-uefiapp_edk2:	clean build_x86-64-uefiapp_edk2 disk_x86-64-uefi_bootloader qemu_x86-64-uefiapp
 
 
 
-### BUILD ###
-# Compile code for x86-64-uefi with clang #
+## BUILD ##
+# Clang x86_64 compilation
 build_x86-64-uefiapp_clang:
 	rm -rf $(BUILDDIR_x86-64-uefiapp_CLANG)
-	mkdir 						-p 																								$(BUILDDIR_x86-64-uefiapp_CLANG)
+	mkdir -p $(BUILDDIR_x86-64-uefiapp_CLANG)
 
 	$(CC_x86-64-uefiapp_CLANG)	$(CFLAGS_x86-64-uefiapp_CLANG)	$(SOURCES_x86-64-uefiapp_CLANG)
 	mv															*.o																$(BUILDDIR_x86-64-uefiapp_CLANG)
 	$(LD_x86-64-uefiapp_CLANG)	$(LDFLAGS_x86-64-uefiapp_CLANG)	$(BUILDDIR_x86-64-uefiapp_CLANG)/*.o 							-o $(BUILDDIR_x86-64-uefiapp_CLANG)/$(TARGET).so
 	$(OBJCPY) 					$(OBJCPYFLAGS)					$(BUILDDIR_x86-64-uefiapp_CLANG)/$(TARGET).so 					$(BUILDDIR_x86-64-uefiapp_CLANG)/BOOTX64.EFI
 
-# Compile code for x86-64-uefi with edk2 toolchain #
+# EDK2 x86_64 compilation
 build_x86-64-uefiapp_edk2: clean
 	rm -rf $(BUILDDIR_x86-64)
 	rm -rf $(BUILDDIR_x86-64-uefiapp_EDK2)
@@ -69,7 +70,7 @@ build_x86-64-uefiapp_edk2: clean
 
 
 ### Disk Build ###
-# x86-64 UEFI Bootloader Disk Image Build #
+# FAT32 Disk img build #
 disk_x86-64-uefi_bootloader:
 	mkdir -p $(BUILDDIR_x86-64)
 
@@ -88,8 +89,8 @@ disk_x86-64-uefi_bootloader:
 
 
 
-### QEMU ###
-# Start qemu on 64-bit UEFI-only mode CPU with UEFI app inserted #
+## QEMU ##
+# QEMU x86_64 with OVMF firmware
 qemu_x86-64-uefiapp:
 	# Copy over the code and variable vars for OVMF
 	cp $(OVMF)/OVMF_CODE.fd $(OVMF)/OVMF_VARS.fd $(BUILDDIR_x86-64)
@@ -101,6 +102,6 @@ qemu_x86-64-uefiapp:
 
 
 
-# Build clean up #
+## Build clean up ##
 clean:
 	rm -rf *.o *.so *.out *.img *.fd *.efi *iso $(BUILDDIR)
