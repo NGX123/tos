@@ -12,6 +12,7 @@
 	2. Use texinfo for documentation
 	3. Add documentation on what OS needs to boot - what init functions should be present, what bootloader functions should be present, what should be called in waht order - function_that_will_be_specific_in_each_bootloader_bootstrap, kernel_setup, kernel_init. Functions that are platform specific are prefixed with "arch_" e.g. "arch_funcname"
 	4. The system that runs the kernel should be 32 bit+ and unsigned long should reperesent the largest possible var size, include/types.h has define of address_tt and other global defines that should be changed if the compiler does not follow rules needed by the kernel
+	5. The function that should be called by the bootloader bootstar scirpt(e.g. multiboot2_bootstrap.s) is the kernel_setup which in turn should call the kernel_main
 	* https://www.gnu.org/software/texinfo/manual/
 	* https://www.gnu.org/software/teximpatient
 
