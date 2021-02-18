@@ -8,7 +8,7 @@ CFLAGS_GLOBAL 					= -Wmissing-prototypes -Wshadow -Wall -Wextra -c
 TARGET							= tos
 
 BUILDDIR 						= build
-BUILDDIR_x86-64					= $(BUILDDIR)/efi-loader
+BUILDDIR_UEFI_LOADER			= $(BUILDDIR)/efi-loader
 UEFI_SRC_DIR					= boot/uefi
 OVMF 							= /usr/share/OVMF
 EDK2							= ../toolchain/edk2
@@ -28,7 +28,7 @@ OBJCPY 							= objcopy
 CFLAGS_x86-64-uefiapp_CLANG		= $(EFI_INCS) -fno-stack-protector -fpic -fshort-wchar -mno-red-zone -DHAVE_USE_MS_ABI -D GNUEFI_BUILD $(CFLAGS_GLOBAL) # (-fno-stack-protector)Disable monitoring variable at stack end to indicate overflow if overwritten; (-fpic)Position independent code(can be loaded anywhere in memory); (-fshort-wchar)Makes wchar_t short(2 byte), (-mno-red-zone)Disables feature according to ABI; (-DHAVE_USE_MS_ABI)Use windows function calling convention(it is used by UEFI); (-D GNUEFI_BUILD) Define a macro to switch my code from EDK2 to gnuefi(macro checking made by me)
 LDFLAGS_x86-64-uefiapp_CLANG 	= $(EFI_OBJS) -nostdlib -znocombreloc -shared -Bsymbolic -l efi -l gnuefi												# (-nostdlib)Do not link against any libs except specified; (-znocombreloc)Don't combine relocation sections; (-shared)Create a shared lib, for later conversion to binary; (-Bsymbolic)Bind global function references locally; (-l efi, -l gnuefi)Link with GNU EFI libraries
 OBJCPYFLAGS 					= -j .text -j .sdata -j .data -j .dynamic -j .dynsym -j .rel -j .rela -j .reloc --target=efi-app-x86_64 				# (-j)Only copy the specified section to output; (--target=efi-app-x86_64)Select the platform
-BUILDDIR_x86-64-uefiapp_CLANG	= $(BUILDDIR_x86-64)
+BUILDDIR_x86-64-uefiapp_CLANG	= $(BUILDDIR_UEFI_LOADER)
 SOURCES_x86-64-uefiapp_CLANG 	= $(UEFI_SRC_DIR)/*.c
 
 # EDK2 x86-64
@@ -56,36 +56,36 @@ build_x86-64-uefiapp_clang:
 
 # EDK2 x86_64 compilation
 build_x86-64-uefiapp_edk2: clean
-	rm -rf $(BUILDDIR_x86-64)
+	rm -rf $(BUILDDIR_UEFI_LOADER)
 	rm -rf $(BUILDDIR_x86-64-uefiapp_EDK2)
-	mkdir -p $(BUILDDIR_x86-64)
+	mkdir -p $(BUILDDIR_UEFI_LOADER)
 
 	cp -r $(UEFI_SRC_DIR) $(BUILDDIR_x86-64-uefiapp_EDK2)
 	cd $(EDK2) && \
 	. ./edksetup.sh &&		\
 	build -p UefiAppBootloaderPkg/$(TARGET).dsc -t GCC5 -a X64
 
-	cp $(BUILDDIR_x86-64-uefiapp_EDK2)/Build/DEBUG_GCC5/X64/UefiAppBootloaderPkg.efi $(BUILDDIR_x86-64)/BOOTX64.EFI
+	cp $(BUILDDIR_x86-64-uefiapp_EDK2)/Build/DEBUG_GCC5/X64/UefiAppBootloaderPkg.efi $(BUILDDIR_UEFI_LOADER)/BOOTX64.EFI
 
 
 
 ### Disk Build ###
 # FAT32 Disk img build #
 disk_x86-64-uefi_bootloader:
-	mkdir -p $(BUILDDIR_x86-64)
+	mkdir -p $(BUILDDIR_UEFI_LOADER)
 
 	# Create an empty disk image with size of 94 KB
-	dd if=/dev/zero of=$(BUILDDIR_x86-64)/$(TARGET).img bs=512 count=500000
+	dd if=/dev/zero of=$(BUILDDIR_UEFI_LOADER)/$(TARGET).img bs=512 count=500000
 
 	# Format the disk image with 1440 byte sectors, if problems occur add -f 1440
-	mformat -i $(BUILDDIR_x86-64)/$(TARGET).img ::
+	mformat -i $(BUILDDIR_UEFI_LOADER)/$(TARGET).img ::
 
 	# Create EFI and then EFI/BOOT directory on the disk image
-	mmd -i $(BUILDDIR_x86-64)/$(TARGET).img ::/EFI
-	mmd -i $(BUILDDIR_x86-64)/$(TARGET).img ::/EFI/BOOT
+	mmd -i $(BUILDDIR_UEFI_LOADER)/$(TARGET).img ::/EFI
+	mmd -i $(BUILDDIR_UEFI_LOADER)/$(TARGET).img ::/EFI/BOOT
 
 	# Copy the efi executable to the EFI/BOOT folder on the drive
-	mcopy -i $(BUILDDIR_x86-64)/$(TARGET).img $(BUILDDIR_x86-64)/BOOTX64.EFI ::/EFI/BOOT
+	mcopy -i $(BUILDDIR_UEFI_LOADER)/$(TARGET).img $(BUILDDIR_UEFI_LOADER)/BOOTX64.EFI ::/EFI/BOOT
 
 
 
@@ -93,12 +93,12 @@ disk_x86-64-uefi_bootloader:
 # QEMU x86_64 with OVMF firmware
 qemu_x86-64-uefiapp:
 	# Copy over the code and variable vars for OVMF
-	cp $(OVMF)/OVMF_CODE.fd $(OVMF)/OVMF_VARS.fd $(BUILDDIR_x86-64)
+	cp $(OVMF)/OVMF_CODE.fd $(OVMF)/OVMF_VARS.fd $(BUILDDIR_UEFI_LOADER)
 
 	# Run qemu - (-drive ...img) Boot our created disk image; (-net none) No network boot; (-cpu qemu64) Run with 64bit CPU; (-drive ...fd) Insert our compiled UEFI code and variable space
-	qemu-system-x86_64 -drive format=raw,file=$(BUILDDIR_x86-64)/$(TARGET).img \
+	qemu-system-x86_64 -drive format=raw,file=$(BUILDDIR_UEFI_LOADER)/$(TARGET).img \
 	-cpu qemu64 -net none \
-	-drive if=pflash,format=raw,unit=0,file=$(BUILDDIR_x86-64)/OVMF_CODE.fd -drive if=pflash,format=raw,unit=1,file=$(BUILDDIR_x86-64)/OVMF_VARS.fd
+	-drive if=pflash,format=raw,unit=0,file=$(BUILDDIR_UEFI_LOADER)/OVMF_CODE.fd -drive if=pflash,format=raw,unit=1,file=$(BUILDDIR_UEFI_LOADER)/OVMF_VARS.fd
 
 
 
