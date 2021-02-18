@@ -32,7 +32,8 @@ BUILDDIR_x86-64-uefiapp_CLANG	= $(BUILDDIR_UEFI_LOADER)
 SOURCES_x86-64-uefiapp_CLANG 	= $(UEFI_SRC_DIR)/*.c
 
 # EDK2 x86-64
-BUILDDIR_x86-64-uefiapp_EDK2 	= $(EDK2)/UefiAppBootloaderPkg
+BUILDDIR_x86-64-uefiapp_EDK2	= $(BUILDDIR_UEFI_LOADER)
+ENVDIR_x86-64-uefiapp_EDK2 		= $(EDK2)/UefiAppBootloaderPkg
 SOURCES_x86-64-uefiapp_EDK2 	= $(UEFI_SRC_DIR)/*.c
 
 
@@ -56,16 +57,17 @@ build_x86-64-uefiapp_clang:
 
 # EDK2 x86_64 compilation
 build_x86-64-uefiapp_edk2: clean
-	rm -rf $(BUILDDIR_UEFI_LOADER)
 	rm -rf $(BUILDDIR_x86-64-uefiapp_EDK2)
-	mkdir -p $(BUILDDIR_UEFI_LOADER)
+	rm -rf $(ENVDIR_x86-64-uefiapp_EDK2)
+	mkdir -p $(BUILDDIR_x86-64-uefiapp_EDK2)
+	mkdir -p $(ENVDIR_x86-64-uefiapp_EDK2)
 
-	cp -r $(UEFI_SRC_DIR) $(BUILDDIR_x86-64-uefiapp_EDK2)
+	cp -r $(UEFI_SRC_DIR) $(ENVDIR_x86-64-uefiapp_EDK2)
 	cd $(EDK2) && \
 	. ./edksetup.sh &&		\
 	build -p UefiAppBootloaderPkg/$(TARGET).dsc -t GCC5 -a X64
 
-	cp $(BUILDDIR_x86-64-uefiapp_EDK2)/Build/DEBUG_GCC5/X64/UefiAppBootloaderPkg.efi $(BUILDDIR_UEFI_LOADER)/BOOTX64.EFI
+	cp $(ENVDIR_x86-64-uefiapp_EDK2)/Build/DEBUG_GCC5/X64/UefiAppBootloaderPkg.efi $(BUILDDIR_x86-64-uefiapp_EDK2)/BOOTX64.EFI
 
 
 
