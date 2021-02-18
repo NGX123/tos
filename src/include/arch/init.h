@@ -59,10 +59,4 @@ extern struct memInfo arch_getMemInfo(int count);
     @breif = reads needed information from the bootloader based on command and responds with it
 */
 extern void arch_bootloaderInterface(void);
-
-/*
-    @breif = make platform specific initialization
-    @return = 0 on success, -1 on fail
-*/
-extern int arch_hardwarePlatformInit(void);
 #endif
