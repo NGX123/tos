@@ -6,3 +6,6 @@
 * **Pitch:** `pitch = row_width * bytes_per_pixel(depth)`
 * **Pixels per row:** `pixels_per_row = pitch / (depth / 8)`
 * **Pixel offset(location) in a framebuffer:** `offset = pitch * y + (depth / 8) * x`
+
+## Links
+- [Drawing using framebuffer](https://wiki.osdev.org/Drawing_In_Protected_Mode)
