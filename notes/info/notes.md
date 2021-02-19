@@ -6,6 +6,11 @@
 	+ Links
 		* [QEMU ARM Docs](https://wiki.qemu.org/Documentation/Platforms/ARM)
 		* [Forum Post](https://stackoverflow.com/questions/20811203/how-can-i-output-to-vga-through-qemu-arm)
+- Endianness
+	- Little endian(e.g. x86) - here the last bit is located in the start and the first(0) is located at the end
+		* e.g. Value 0xaaff will be stored in memory as 0xffaa
+		* e.g. In a struct with bit fields a(0:7), b(8:15), c(16:31) the fields should be located as follows: a, b, c - this is the same as they should be becuase the endianness only applies to individual variables/values and structure is a collection of them so it does not apply to it as a whole
+		* When you initialize a variable then - var = `Bit 7(last bit) is here ->`0xFF`<- Bit 0(first bit) is here`
 
 ### Code
 - Align in assembly/linker - aligns the next instruction/piece of data to start at address that is divisible by number align is supplied with. Normally next instruction/data will start right after the finish of previous, but in this case if the address after finish of previos data/instruction is not divisible by supplied number, the instruction after align will be moved to start at the closest address that is divisible by supplied number
