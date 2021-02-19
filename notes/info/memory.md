@@ -8,6 +8,7 @@
     - [Segmentation](https://wiki.osdev.org/Segmentation) - separating each memory area(virtual) into units using CS,DS,SS,ES,FS,GS(legacy way available only on x86)
     - [Paging](https://wiki.osdev.org/Paging) - splitting physical memory into chunks(pages) and mapping(virt-phys) page-wise
 
+
 ## Implementation
 + Memory management with paging
     1. malloc() is called to allocate memory
@@ -30,7 +31,6 @@
                 1. Set the entry number `(address - start_address) / 4096` as free(0) in bitmap
             * A seperate function is needed to map specific addresses - e.g. 0xb8000-... to the same address in physical RAM, becuase some devices like VGA require it
 2. [Paging](https://wiki.osdev.org/Paging)
-    - [Identity Paging](https://wiki.osdev.org/Identity_Paging)
     1. Load the paging directory table start address into CR3
     2. Set 32 bit of CR0
 3. Virtual Memory Manager - gets a physical page from PFA and maps it to a virtual page
@@ -38,6 +38,15 @@
 + Memmory allocation
     - [Port an existing memory manager to the OS](https://wiki.osdev.org/Memory_Allocation#Porting_an_existing_Memory_Allocator)
     - [Pancakes memory allocator implementations](https://wiki.osdev.org/User:Pancakes/SimpleHeapImplementation)
+
+
+## Information
+- [Higher Half Kernel](https://wiki.osdev.org/Higher_Half_Kernel) - it is a way to make the memory space cleaner and let the programms start at 0x0, while kernel is right at the end of memory
+    - **Motivation:** Kernel could be located at any physical address in the memory space(where it was loaded) at the start, but when paging is enabled the kernel can be remapped to any address in the address space becuase addresses become virtual. When paging is enabled it could be made that each program has it's own memory space, if the kernel is mapped at the end of memory then the programs recieve all the other memory space for them and can be loaded at 0x0 and use everything till the start of kernel which makes linking the application very easy(no need to take into account that first mb+ is taken up)
+    - **Implementation:** The kernel and the space belowow 1mb(on x86) is remapped using paging to be right at the end of memory(so from their start to end of memory there is left only enough space to fit them)
+- [Identity Paging](https://wiki.osdev.org/Identity_Paging) - when the pages are mapping virtual addresses 1 to 1 whith physical(e.g. 0xb8000 is 0xb8000)
+- [x86 Paging](https://wiki.osdev.org/Paging)
+
 
 ## Resources
 - AMD Manual - VOL 2, Chapters 3 & 4
@@ -55,17 +64,14 @@
     * [Bona Fide Paging](http://www.osdever.net/tutorials/view/implementing-basic-paging)
 - Other
     * [Small malloc implementation](https://github.com/CCareaga/heap_allocator)
+    * [TLB](https://wiki.osdev.org/TLB)
 
-## [Notes](https://wiki.osdev.org/Paging)
-* Releated to paging in x86 https://wiki.osdev.org/TLB
-* Change the mapping of the kernel after enabling paging - [Higher Half Kernel](https://wiki.osdev.org/Higher_Half_Kernel)
-
-## Ideas
-* To have memory allocator be independant from the architecture and future proof(for 128bits for example:))))  use size_t in declarations
 
 ## Questions
 * Higher Half Kernel
-    * Why is 0xC0000000 used - which is below 4GB which means that even in 64 bit mode programm can only access stuff below 0xc0000000 or how does it work, is it remapped beyond end of kernel as soon as programm alocates all the space below?
-    * Is there any use in having the kernel physically there(which is even impossible in some cases like if computer has 2GB RAM)?
-    * What if in 32 bit mode kernel would need more RAM
-then from 0xC000,0000 to 0xFFFF,FFFF, this is okay in 64 bit mode becuase there could be memory beyond that but what to do in 32 bit mode?
+    - Why is 0xC0000000 used - which is below 4GB which means that even in 64 bit mode programm can only access stuff below 0xc0000000 or how does it work, is it remapped beyond end of kernel as soon as programm alocates all the space below?
+        * The 0xC0000000 is used only in 32bit mode because it leaves 3GB free for programms and a little space at the end of memory for the kernel
+    - Is there any use in having the kernel physically there(which is even impossible in some cases like if computer has 2GB RAM)?
+        * No, it is even impossible to have the kernel located there in most configurations and in 64 bit mode it is beyond what motherboards support
+    - What if in 32 bit mode kernel would need more RAM
+        * Kernel could just be remapped to a lower address then 0xc0000000 or any other that is used by the kernel
