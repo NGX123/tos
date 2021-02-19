@@ -16,7 +16,7 @@
 #include "stdio.h"
 
 
-struct gdt_entry
+struct GDTentry
 {
     uint16_t limit_low;
     uint16_t base_low;
@@ -26,7 +26,7 @@ struct gdt_entry
     uint8_t base_high;
 } __attribute__((packed));
 
-struct gdt_ptr
+struct GDTdescriptor
 {
     uint16_t limit;
     void* base;

@@ -7,36 +7,39 @@
 #include "include/init.h"
 
 
-static struct gdt_entry gdt[3]; // Array is used to hold all of the GDT entries as they go one after another
-static struct gdt_ptr gp;
+static struct GDTentry gdt32[3]; // Array is used to hold all of the GDT entries as they go one after another
+static struct GDTdescriptor gdt32_ptr;
 
 
 void makeMemFlat()
 {
-    for (int i = 0; i < 3; i++)
-    {
-        gdt[i].limit_low = 0xffff;
-        gdt[i].base_low = 0x0000;
-        gdt[i].base_middle = 0x00;
-        gdt[i].access = 0x9A;
-        gdt[i].granularity = 0xCF;
-        gdt[i].base_high = 0x00;
+    // Null Descriptor
+    gdt32[0].limit_low = 0x0000;
+    gdt32[0].base_low = 0x0000;
+    gdt32[0].base_middle = 0x00;
+    gdt32[0].access = 0x00;
+    gdt32[0].granularity = 0x00;
+    gdt32[0].base_high = 0x00;
 
-        if (i == 2)
-            gdt[i].access = 0x92;
+    // Code Descriptor
+    gdt32[1].limit_low = 0xffff;
+    gdt32[1].base_low = 0x0000;
+    gdt32[1].base_middle = 0x00;
+    gdt32[1].access = 0x9A;
+    gdt32[1].granularity = 0xCF;
+    gdt32[1].base_high = 0x00;
 
-        if (i == 0)
-        {
-            gdt[i].limit_low = 0x0000;
-            gdt[i].base_low = 0x0000;
-            gdt[i].base_middle = 0x00;
-            gdt[i].access = 0x00;
-            gdt[i].granularity = 0x00;
-            gdt[i].base_high = 0x00;
-        }
-    }
+    // Data Descriptor
+    gdt32[2].limit_low = 0xffff;
+    gdt32[2].base_low = 0x0000;
+    gdt32[2].base_middle = 0x00;
+    gdt32[2].access = 0x92;
+    gdt32[2].granularity = 0xCF;
+    gdt32[2].base_high = 0x00;
 
-    gp.limit = (sizeof(struct gdt_entry) * 3) - 1;
-    gp.base = (void*)gdt;
-    gdtLoadAsm((void*)&gp);
+    // GDT Descriptor
+    gdt32_ptr.limit = sizeof(gdt32) - 1;
+    gdt32_ptr.base = &gdt32;
+
+    gdtLoadAsm(&gdt32_ptr);
 }
