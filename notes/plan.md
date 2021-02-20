@@ -10,6 +10,9 @@
 	2. Setup the new stack for c
 	3. Setup paging(do the mapping of all required regions)
 2. Fix the multiboot2_bootstarp.s and makefile so the multibootsetup does not have to be commented out to run the 32 bit OS
+	* Remove multiboot_setup from the multiboot2_bootstap
+		* Find a place to store the magic value from EAX and the address of multiboot_info in EBX while the bootloaderInterface hasn't been called yet
+		* Instead make the code after the init(64-Bit code in case of x86-32) call bootloaderInterface with INIT command and it would do the needed bootloader setup based on the boot protocol
 3. Documentation
 	1. Collect the .md notes into sevel texinfo notes that will be located in one PDF file later
 	2. Write the Documentation for OS in texinfo
