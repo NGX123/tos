@@ -74,7 +74,7 @@ _start:
 
     push ebx                ; ebx - holds Multiboot2 information struct address
     push eax                ; eax - holds Multiboot2 Bootloader Checksum
-    call interpretMultiboot2
+    ;call interpretMultiboot2
 
     call kernel_setup       ; Switch to the init code of the platform
 
