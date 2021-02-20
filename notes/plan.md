@@ -1,21 +1,24 @@
 ## To Do
-1. Do a check if the toolchain.sh works right - look through source code, execute and then checks if everything done in source is in the results
-2. Switch to long mode
-	1. Bootstrap into long mode(from the kernel_setup())
-		1. Use CPUID to check if the CPU supports long mode, if not - fail
-		2. Enable the paging
-		3. Switch to long mode
-	* Setup stack
-	* Setup paging
-3. Fix the multiboot2_bootstarp.s and makefile so the multibootsetup does not have to be commented out to run the 32 bit OS
+1. Switch to long mode
+	1. Write the assembly bootstrap for the 64-Bit code(start in kernel_setup)
+		1. Switch to Long Mode
+			1. Do the CPUID presence check and Long Mode presence check
+			2. Enable everything needed for paging except the paging on flag in cr3
+		2. Set the bit in CR register to switch to Long Mode
+		3. Enable paging
+		4. Load GDT
+	2. Setup the new stack for c
+	3. Setup paging(do the mapping of all required regions)
+2. Fix the multiboot2_bootstarp.s and makefile so the multibootsetup does not have to be commented out to run the 32 bit OS
 3. Documentation
-	1. Collect the .md notes into one texinfo notes file
-	2. Use texinfo for documentation
+	1. Collect the .md notes into sevel texinfo notes that will be located in one PDF file later
+	2. Write the Documentation for OS in texinfo
 	3. Add documentation on what OS needs to boot - what init functions should be present, what bootloader functions should be present, what should be called in waht order - function_that_will_be_specific_in_each_bootloader_bootstrap, kernel_setup, kernel_init. Functions that are platform specific are prefixed with "arch_" e.g. "arch_funcname"
 	4. The system that runs the kernel should be 32 bit+ and unsigned long should reperesent the largest possible var size, include/types.h has define of address_tt and other global defines that should be changed if the compiler does not follow rules needed by the kernel
 	5. The function that should be called by the bootloader bootstar scirpt(e.g. multiboot2_bootstrap.s) is the kernel_setup which in turn should call the kernel_main
 	* https://www.gnu.org/software/texinfo/manual/
 	* https://www.gnu.org/software/teximpatient
+4. Do a check if the toolchain.sh works right - look through source code, execute and then checks if everything done in source is in the results
 
 
 ### [Hardware](https://wiki.osdev.org/Category:Hardware)
@@ -140,7 +143,9 @@
 	1. Setup a framebuffer with GOP(that will work after exiting boot services)
 	2. Exit boot services
 	3. Parse the ELF headers and load OS executable
-
+* Port the OS to ARM/RISC-V
+	* [ARM Manual Collection](https://community.arm.com/developer/ip-products/processors/b/processors-ip-blog/posts/important-arm-technical-learning-resources)
+	* [RISC-V Manual Collection](https://gist.github.com/cb372/5f6bf16ca0682541260ae52fc11ea3bb)
 
 
 ## Done
