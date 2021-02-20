@@ -16,7 +16,7 @@ CEXTRAWARNINGS 					= -pedantic -Wcast-align -Wcast-qual -Wdisabled-optimization
 ## Start ##
 all: 						all_x86-64_clang
 all_x86-32_gcc: 			clean build_x86-32_gcc disk_x86-32-bios qemu_x86-32-bios
-all_x86-64_clang:     		clean build_x86-64-uefi_clang disk_x86-64-uefi qemu_x86-64-uefi
+all_x86-64_clang:     		clean build_x86-64_clang disk_x86-64-uefi qemu_x86-64-uefi
 all_x86-32_clang:			clean build_x86-32_clang disk_x86-32-bios qemu_x86-32-bios
 
 
