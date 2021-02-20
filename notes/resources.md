@@ -38,14 +38,16 @@
 ## Specifications
 * CPU
 	* [Intel Manuals](https://software.intel.com/content/www/us/en/develop/articles/intel-sdm.html)
-		* [Intel 64 & IA-32 Programmers Manual(All Volums)](https://software.intel.com/content/www/us/en/develop/download/intel-64-and-ia-32-architectures-sdm-combined-volumes-1-2a-2b-2c-2d-3a-3b-3c-3d-and-4.html)
+		* [Intel 64 & IA-32 Programmers Manual(All Volumes)](https://software.intel.com/content/www/us/en/develop/download/intel-64-and-ia-32-architectures-sdm-combined-volumes-1-2a-2b-2c-2d-3a-3b-3c-3d-and-4.html)
 		* [Intel i386(80386)(1986) Programmers Manual](https://css.csail.mit.edu/6.858/2014/readings/i386.pdf)
 	* [AMD64 Manuals](https://developer.amd.com/resources/developer-guides-manuals/)
-		* [AMD64 Programmer's Manual(All Volums)](https://www.amd.com/system/files/TechDocs/40332.pdf)
+		* [AMD64 Programmer's Manual(All Volumes)](https://www.amd.com/system/files/TechDocs/40332.pdf)
 * Boot
 	* [UEFI Specifications](https://www.uefi.org/specifications)
 	* [BIOS Specification](https://www.scs.stanford.edu/nyu/04fa/lab/specsbbs101.pdf)
-	* [GRUB Multiboot 2 Specification](https://www.gnu.org/software/grub/manual/multiboot2/)
+	* [Multiboot 2 Specification(Used by GRUB)](https://www.gnu.org/software/grub/manual/multiboot2/)
+* Programming
+	* [NASM Documentation](https://www.nasm.us/docs.php)
 
 
 
