@@ -26,7 +26,7 @@ multiboot_header_start:
     dd  ARCH_x86_32
     dd  multiboot_header_end - multiboot_header_start                               ; Size of the header
     dd  -(MAGIC + ARCH_x86_32 + (multiboot_header_end - multiboot_header_start))    ; Checksum
-    %ifdef ENABLE_MULTIBOOT2_FRAMEBUFFER
+%ifdef ENABLE_MULTIBOOT2_FRAMEBUFFER
     align 8                                                                         ; Tags must start at 8 byte aligned address
     framebuffer_tag_start:
         dw 5
@@ -36,7 +36,7 @@ multiboot_header_start:
         dd 768
         dd 32
     framebuffer_tag_end:
-    %endif
+%endif
     align 8
     dw MULTIBOOT2_HEADER_TAG_END                                                    ; The tag which indicates end of tag section is type - 0
     dw 0                                                                            ; with flags - 0
