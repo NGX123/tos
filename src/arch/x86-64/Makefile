@@ -33,9 +33,10 @@ build_x86-64_clang:
 
 	# Bootstrap
 	$(AS_x86-32_CLANG) 	$(ASFLAGS_x86-32_CLANG) $(ASSEMBLY_DEFINES) 	$(INIT_SOURCES_x86-64)/init-x86_64.s			-o $(BUILDDIR_x86-64)/boot.o
-	$(CC_x86-32_CLANG) 	$(CFLAGS_x86-32_CLANG)								$(SOURCES_x86-64)
-	mv 																		*.o												$(BUILDDIR_x86-64)
 	$(LD_x86-32_CLANG)	$(LDFLAGS_x86-32_CLANG)								$(OBJECTS_x86-64)								-o $(BUILDDIR_x86-64)/$(TARGET).o
+
+	# $(AS_x86-64_CLANG) 	$(ASFLAGS_x86-64_CLANG) 	$(ASSEMBLY_DEFINES) 	$(INIT_SOURCES_x86-64)/init-x86_64.s			-o $(BUILDDIR_x86-64)/boot.o
+	# $(LD_x86-64_CLANG)	$(LDFLAGS_x86-64_CLANG)								$(OBJECTS_x86-64)								-o $(BUILDDIR_x86-64)/$(TARGET).o
 
 
 ## x86-64 UEFI Readable Disk with bootloader app build ##
