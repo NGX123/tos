@@ -13,6 +13,7 @@
 		* When you initialize a variable then - var = `Bit 7(last bit) is here ->`0xFF`<- Bit 0(first bit) is here`
 
 ### Code
+- Combining 32-Bit and 64-Bit code - code compiled by 32-Bit compiler or assembler can not be linked with code compiled by 64-Bit compiler or assembler. The only way to unite such code(of different bitness) is it to write all the bit switch code(from 16 to 32, and from 32 to 64 bits) in assembly where parts of code could be seperated into 32-Bit and 64-Bit with directives like [BITS 16/32/64] and then make the output format of the assembler be the maximum used bitness(e.g. 64, if there is 32 and 64 bit code) and then it could be linked with 64-Bit C code which would be called by the 64-Bit assembly and switch could be forgot about after that(after switch to 64-Bit C code)
 - Align in assembly/linker - aligns the next instruction/piece of data to start at address that is divisible by number align is supplied with. Normally next instruction/data will start right after the finish of previous, but in this case if the address after finish of previos data/instruction is not divisible by supplied number, the instruction after align will be moved to start at the closest address that is divisible by supplied number
 
 ### Build tools
