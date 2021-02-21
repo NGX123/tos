@@ -76,16 +76,17 @@
 
 ## Questions
 ### Current
-* What if the some data happens to be located between two pages(e.g. several byts on one and others on another)?
-    * * Should the page frame allocator align every page by 4096?
-* Where should be the page tables/structs be stored in memory(should some space be allocated for them using PFA)?
+- Paging
+	* What if the some data happens to be located between two pages(e.g. several byts on one and others on another)?
+    * Should the page frame allocator align every page by 4096?
+	* Where should be the page tables/structs be stored in memory(should some space be allocated for them using PFA)?
 
 
 ### Solved
-* Higher Half Kernel
-    - Why is 0xC0000000 used - which is below 4GB which means that even in 64 bit mode programm can only access stuff below 0xc0000000 or how does it work, is it remapped beyond end of kernel as soon as programm alocates all the space below?
+- Higher Half Kernel
+    + Why is 0xC0000000 used - which is below 4GB which means that even in 64 bit mode programm can only access stuff below 0xc0000000 or how does it work, is it remapped beyond end of kernel as soon as programm alocates all the space below?
         * The 0xC0000000 is used only in 32bit mode because it leaves 3GB free for programms and a little space at the end of memory for the kernel
-    - Is there any use in having the kernel physically there(which is even impossible in some cases like if computer has 2GB RAM)?
+    + Is there any use in having the kernel physically there(which is even impossible in some cases like if computer has 2GB RAM)?
         * No, it is even impossible to have the kernel located there in most configurations and in 64 bit mode it is beyond what motherboards support
-    - What if in 32 bit mode kernel would need more RAM
+    + What if in 32 bit mode kernel would need more RAM
         * Kernel could just be remapped to a lower address then 0xc0000000 or any other that is used by the kernel
