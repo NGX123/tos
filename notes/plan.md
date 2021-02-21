@@ -13,6 +13,7 @@
 	* Remove multiboot_setup from the multiboot2_bootstap
 		* Find a place to store the magic value from EAX and the address of multiboot_info in EBX while the bootloaderInterface hasn't been called yet
 		* Instead make the code after the init(64-Bit code in case of x86-32) call bootloaderInterface with INIT command and it would do the needed bootloader setup based on the boot protocol
+	* Make getmemorymap add entries about where multiboot_info starts and finishes - so it is not touched and where framebuffer starts and finished
 3. Documentation
 	1. Collect the .md notes into sevel texinfo notes that will be located in one PDF file later
 	2. Write the Documentation for OS in texinfo
@@ -22,6 +23,9 @@
 	* https://www.gnu.org/software/texinfo/manual/
 	* https://www.gnu.org/software/teximpatient
 4. Do a check if the toolchain.sh works right - look through source code, execute and then checks if everything done in source is in the results
+5. Implement exeption handling to handle things like page faults
+	* How to spot difference between exeptions and interrupts if same interrupt vectors are used
+	* Map needed interrupt handlers to functions that handler the exeptions
 
 
 ### [Hardware](https://wiki.osdev.org/Category:Hardware)
