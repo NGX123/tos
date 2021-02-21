@@ -61,10 +61,10 @@ disk_x86-64-uefi:
 	mcopy -i $(BUILDDIR_x86-64)/$(TARGET).img $(BUILDDIR_x86-64)/$(TARGET).o ::/EFI/BOOT
 
 
-## Run with qemu-system-x86_64 with UEFI ##
+## Run with qemu-system-x86_64 with UEFI(if problems occur add this flag - "-cpu qemu64") ##
 qemu_x86-64-uefi:
 	cp /usr/share/OVMF/OVMF_CODE.fd /usr/share/OVMF/OVMF_VARS.fd $(BUILDDIR_x86-64)
-	qemu-system-x86_64 -cpu qemu64 \
+	qemu-system-x86_64 \
 	-drive if=pflash,format=raw,unit=0,file=$(BUILDDIR_x86-64)/OVMF_CODE.fd,readonly=on \
 	-drive if=pflash,format=raw,unit=1,file=$(BUILDDIR_x86-64)/OVMF_VARS.fd \
 	-net none \
