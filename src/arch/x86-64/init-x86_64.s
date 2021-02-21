@@ -7,6 +7,7 @@
                 ; Clean the stack - after the function returns, it is the responsibility of the caller to pop the same amount of things as pushed from the stack to leave it clean
 
 
+
 ;;; 32-Bit Bootstrap code ;;;
 [BITS 32]
 %include "boot/multiboot2/multiboot2_bootstrap.s"
@@ -21,9 +22,6 @@
 %define PAGE_SIZE 4096 ; Same as 0x1000
 
 
-global gdtLoadAsm
-
-
 ; @brief = calls all the functions to set up the the long mode and then switch to it
 kernel_setup:
 	call detect.CPUID
@@ -34,7 +32,7 @@ kernel_setup:
 	jmp  setup.load_gdt
 
 	hlt
-	jmp $               ; Loop forever
+	jmp $               			; Loop forever
 
 
 ;; Functions ;;
@@ -79,49 +77,51 @@ detect:
 setup:
 	; @brief = switched to compatibility mode by switching on 64-Bit mode bit and enabling paging after it
 	.compatability64_mode:
-		mov ecx, 0xC0000080          ; Set the C-register to 0xC0000080, which is the EFER MSR.
-		rdmsr                        ; Read from the model-specific register.
-		or eax, 1 << 8               ; Set the LM-bit which is the 9th bit (bit 8).
-		wrmsr                        ; Write to the model-specific register.
+		mov ecx, 0xC0000080							; Set the ECX to 0xC0000080 to specify the register to read from(which is the EFER MSR)
+		rdmsr                 						; Read model specific register(into EAX and EDX) specified in ECX
+		or eax, 1 << 8             					; Set the long-mode bit(bit 8) in MSR(model specific register)
+		wrmsr                      					; Write changed contents(with 64 bit mode ON) of MSR specified in ECX back to MSR(from EAX and EDX)
 
-		mov eax, cr0                 ; Set the A-register to control register 0.
-		or eax, 1 << 31              ; Set the PG-bit, which is the 32nd bit (bit 31).
-		mov cr0, eax                 ; Set control register 0 to the A-register
+		mov eax, cr0                				; Load the value from cr0 to eax(needed because cr0 can't be changed directly)
+		or eax, 1 << 31             				; Turn on paging(set bit 31)
+		mov cr0, eax                				; Write changed contents(with paging on) of cr0 back to cr0
+
 		ret
 
 	; @brief = setups all the tables and loads everything needed for paging, but does not flip the PG bit
 	.paging:
 		; Disable Paging by getting cr0 value into eax, changing it to one with paging off and returning
-		mov eax, cr0
-		and eax, 01111111111111111111111111111111b ; Paging is bit 31, so this bit should be turned off
-		mov cr0, eax
+		mov eax, cr0								; Load the value from cr0 to eax(needed because cr0 can't be changed directly)
+		and eax, 01111111111111111111111111111111b 	; Turn off paging(clear bit 31)
+		mov cr0, eax								; Write changed contents(with paging off) of cr0 back to cr0
 
-		mov edi, PAGE_SIZE    ; Set the destination index to 0x1000.
-		mov cr3, edi       ; Set control register 3 to the destination index.
-		xor eax, eax       ; Nullify the A-register.
-		mov ecx, PAGE_SIZE      ; Set the C-register to 4096.
-		rep stosd          ; Clear the memory.
-		mov edi, cr3       ; Set the destination index to control register 3.
+		mov edi, PAGE_SIZE
+		mov cr3, edi
+		xor eax, eax       							; Nullify EAX.
+		mov ecx, PAGE_SIZE
+		rep stosd          							; Clear the memory.
+		mov edi, cr3       							; Set the destination index to cr3.
 
-		mov DWORD [edi], 0x2003      ; Set the uint32_t at the destination index to 0x2003.
-		add edi, PAGE_SIZE              ; Add 0x1000 to the destination index.
-		mov DWORD [edi], 0x3003      ; Set the uint32_t at the destination index to 0x3003.
-		add edi, PAGE_SIZE              ; Add 0x1000 to the destination index.
-		mov DWORD [edi], 0x4003      ; Set the uint32_t at the destination index to 0x4003.
-		add edi, PAGE_SIZE              ; Add 0x1000 to the destination index.
+		mov DWORD [edi], 0x2003      				; Set the uint32_t at the destination index to 0x2003.
+		add edi, PAGE_SIZE
+		mov DWORD [edi], 0x3003      				; Set the uint32_t at the destination index to 0x3003.
+		add edi, PAGE_SIZE
+		mov DWORD [edi], 0x4003      				; Set the uint32_t at the destination index to 0x4003.
+		add edi, PAGE_SIZE
 
-		mov ebx, 0x00000003          ; Set the B-register to 0x00000003.
-		mov ecx, 512                 ; Set the C-register to 512.
+		mov ebx, 0x00000003
+		mov ecx, 512
 
 		.SetEntry:
-			mov DWORD [edi], ebx         ; Set the uint32_t at the destination index to the B-register.
-			add ebx, PAGE_SIZE              ; Add 0x1000 to the B-register.
-			add edi, 8                   ; Add eight to the destination index.
-			loop .SetEntry               ; Set the next entry.
+			mov DWORD [edi], ebx         			; Set the uint32_t at the destination index to the B-register.
+			add ebx, PAGE_SIZE
+			add edi, 8
+			loop .SetEntry               			; Set the next entry.
 
-		mov eax, cr4                 ; Set the A-register to control register 4.
-		or eax, 1 << 5               ; Set the PAE-bit, which is the 6th bit (bit 5).
-		mov cr4, eax                 ; Set control register 4 to the A-register.
+		mov eax, cr4                 				; Load the cr4 value into eax(becuase cr4 can't be changed directly)
+		or eax, 1 << 5               				; Enable PAE(set bit 5)
+		mov cr4, eax                 				; Write changed contents(with PAE on) of cr4 back to cr4
+
 		ret
 
 	; @brief = load the GDT and flush it into CPU with long jump
