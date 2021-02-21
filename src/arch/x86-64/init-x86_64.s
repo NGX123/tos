@@ -18,6 +18,8 @@
 %define GDT_CODE_SELECTOR 0x8
 %define GDT_DATA_SELECTOR 0x10
 
+%define PAGE_SIZE 4096 ; Same as 0x1000
+
 
 global gdtLoadAsm
 
@@ -94,26 +96,26 @@ setup:
 		and eax, 01111111111111111111111111111111b ; Paging is bit 31, so this bit should be turned off
 		mov cr0, eax
 
-		mov edi, 0x1000    ; Set the destination index to 0x1000.
+		mov edi, PAGE_SIZE    ; Set the destination index to 0x1000.
 		mov cr3, edi       ; Set control register 3 to the destination index.
 		xor eax, eax       ; Nullify the A-register.
-		mov ecx, 4096      ; Set the C-register to 4096.
+		mov ecx, PAGE_SIZE      ; Set the C-register to 4096.
 		rep stosd          ; Clear the memory.
 		mov edi, cr3       ; Set the destination index to control register 3.
 
 		mov DWORD [edi], 0x2003      ; Set the uint32_t at the destination index to 0x2003.
-		add edi, 0x1000              ; Add 0x1000 to the destination index.
+		add edi, PAGE_SIZE              ; Add 0x1000 to the destination index.
 		mov DWORD [edi], 0x3003      ; Set the uint32_t at the destination index to 0x3003.
-		add edi, 0x1000              ; Add 0x1000 to the destination index.
+		add edi, PAGE_SIZE              ; Add 0x1000 to the destination index.
 		mov DWORD [edi], 0x4003      ; Set the uint32_t at the destination index to 0x4003.
-		add edi, 0x1000              ; Add 0x1000 to the destination index.
+		add edi, PAGE_SIZE              ; Add 0x1000 to the destination index.
 
 		mov ebx, 0x00000003          ; Set the B-register to 0x00000003.
 		mov ecx, 512                 ; Set the C-register to 512.
 
 		.SetEntry:
 			mov DWORD [edi], ebx         ; Set the uint32_t at the destination index to the B-register.
-			add ebx, 0x1000              ; Add 0x1000 to the B-register.
+			add ebx, PAGE_SIZE              ; Add 0x1000 to the B-register.
 			add edi, 8                   ; Add eight to the destination index.
 			loop .SetEntry               ; Set the next entry.
 
