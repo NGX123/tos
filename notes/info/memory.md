@@ -10,11 +10,19 @@
 
 
 ## Information
+- [Global Descriptor Table](https://wiki.osdev.org/Global_Descriptor_Table) - it was used for segmentation in protected mode when it was only invented, but now is always set to flat memory model(all virtual addresses map directly to physical)
+    * **Flat memory mode:** in flat memory model all the virtual addresses are mapped direcotry to physical, this is done because both the data and code selectors span through all of the 4 GB space meaning that any access could be done to any address
+    * **Limit** - spans through two fields so the first field is set to 0xffff and second(located later) is set to 0xf and together they make up a number that when multiplied by 4096(size of unit if granularity bit is set) is 4 Billion meaning that selector describes all 4 GB
+    * **Base** - base also spans throgh two fields which both should be 0 on both selectors because the selectors start at 0x0 and span to the end of the memory(4 GB, as described in previous sentance)
+    * **Access** - Access is the only field that differs because the executable bit is set on code selector and off on data other bits are just what they should be for descrptor to work
+    * **Flags** - in the flags the granularity bit should be set so the limit is measured in 4KiB units and not in bytes and bits that depend on it(the one near) should also be set/off
 - [Higher Half Kernel](https://wiki.osdev.org/Higher_Half_Kernel) - it is a way to make the memory space cleaner and let the programms start at 0x0, while kernel is right at the end of memory
     - **Motivation:** Kernel could be located at any physical address in the memory space(where it was loaded) at the start, but when paging is enabled the kernel can be remapped to any address in the address space becuase addresses become virtual. When paging is enabled it could be made that each program has it's own memory space, if the kernel is mapped at the end of memory then the programs recieve all the other memory space for them and can be loaded at 0x0 and use everything till the start of kernel which makes linking the application very easy(no need to take into account that first mb+ is taken up)
     - **Implementation:** The kernel and the space belowow 1mb(on x86) is remapped using paging to be right at the end of memory(so from their start to end of memory there is left only enough space to fit them)
 - [Identity Paging](https://wiki.osdev.org/Identity_Paging) - when the pages are mapping virtual addresses 1 to 1 whith physical(e.g. 0xb8000 is 0xb8000)
 - [x86 Paging](https://wiki.osdev.org/Paging)
+    + 4-level Paging
+
 
 
 ## Implementation
@@ -67,6 +75,13 @@
 
 
 ## Questions
+### Current
+* What if the some data happens to be located between two pages(e.g. several byts on one and others on another)?
+    * * Should the page frame allocator align every page by 4096?
+* Where should be the page tables/structs be stored in memory(should some space be allocated for them using PFA)?
+
+
+### Solved
 * Higher Half Kernel
     - Why is 0xC0000000 used - which is below 4GB which means that even in 64 bit mode programm can only access stuff below 0xc0000000 or how does it work, is it remapped beyond end of kernel as soon as programm alocates all the space below?
         * The 0xC0000000 is used only in 32bit mode because it leaves 3GB free for programms and a little space at the end of memory for the kernel
