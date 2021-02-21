@@ -30,8 +30,10 @@
 	* This should be done because there will be many .text sections and it will cause that any of the could be located first in the executable, on the other side there will most probably only one .multiboot section so it will definitily be linked first
 
 ## Fixes
-- When compiling x86-32_clang with target set to `i386-elf` the os will link incorrectly
-	* Target change to `i686-elf` will fix linkage
+- When compiling x86-32_clang with target set to `i386-elf` the os will link incorrectly or not compile at all(without error). When compiling x86-64-clang with target set to `x86_64-elf` same problem as in previous sentance would occur.
+	* In general, even with other architectures try to look at llc CPU list on selected arch - `llc -march=ARCH -mattr=help`(e.g. ARCH=x86) or recheck how architecture is called in `llc --version`
+	1. Change target from `i386-elf` to `i686-elf`, linkage and compilation would be fixed
+	2. Change target from `x86_64-elf` to `x86-64-elf`, linkage and compilation would be fixed
 - If multiboot2 says "no video found" or similar on UEFI systems:
 	* in GRUB config before the `multiboot /path/to/bin` insert `insmod efi_gop`
 - When making a Multiboot2 2 kernel, changes are needed in conifg files to make it work
