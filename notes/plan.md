@@ -1,19 +1,19 @@
 ## To Do
 1. Switch to long mode
 	1. Write the assembly bootstrap for the 64-Bit code(start in kernel_setup)
-		1. Switch to Long Mode
-			1. Do the CPUID presence check and Long Mode presence check
-			2. Enable everything needed for paging except the paging on flag in cr3
-		2. Set the bit in CR register to switch to Long Mode
-		3. Enable paging
-		4. Load GDT
+		1. Do the CPUID presence check
+		2. Do Long Mode presence check with CPUID
+		3. Enable everything needed for paging except the paging on flag in cr3
+		4. Set the bit in MSR to switch to Long Mode
+		5. Enable paging bit in cr register
+		6. Load GDT and make the long jump to switch to 64 bit mode
 	2. Setup the new stack for c
 	3. Setup paging(do the mapping of all required regions)
-2. Fix the multiboot2_bootstarp.s and makefile so the multibootsetup does not have to be commented out to run the 32 bit OS
-	* Remove multiboot_setup from the multiboot2_bootstap
-		* Find a place to store the magic value from EAX and the address of multiboot_info in EBX while the bootloaderInterface hasn't been called yet
-		* Instead make the code after the init(64-Bit code in case of x86-32) call bootloaderInterface with INIT command and it would do the needed bootloader setup based on the boot protocol
-	* Make getmemorymap add entries about where multiboot_info starts and finishes - so it is not touched and where framebuffer starts and finished
+2. Fix multiboot2_bootstrap(so for example the multibootsetup does not have to be commented out to run the 32 bit OS)
+	1. Remove multiboot_setup from the multiboot2_bootstap
+	2. Find a place to store the magic value from EAX and the address of multiboot_info in EBX while the bootloaderInterface hasn't been called yet
+	3. Instead make the code after the init - kernel(64-Bit code in case of x86-32) call bootloaderInterface with INIT command and it would do the needed bootloader setup based on the boot protocol
+	4. Make getmemorymap add entries about where multiboot_info starts and finishes - so it is not touched and where framebuffer starts and finished
 3. Documentation
 	1. Collect the .md notes into sevel texinfo notes that will be located in one PDF file later
 	2. Write the Documentation for OS in texinfo
