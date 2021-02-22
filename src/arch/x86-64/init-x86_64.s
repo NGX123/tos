@@ -90,34 +90,30 @@ setup:
 
 	; @brief = setups all the tables and loads everything needed for paging, but does not flip the PG bit
 	.paging:
-		; Disable Paging by getting cr0 value into eax, changing it to one with paging off and returning
 		mov eax, cr0								; Load the value from cr0 to eax(needed because cr0 can't be changed directly)
 		and eax, 01111111111111111111111111111111b 	; Turn off paging(clear bit 31)
 		mov cr0, eax								; Write changed contents(with paging off) of cr0 back to cr0
 
-		mov edi, PAGE_SIZE
-		mov cr3, edi
-		xor eax, eax       							; Nullify EAX.
-		mov ecx, PAGE_SIZE
-		rep stosd          							; Clear the memory.
-		mov edi, cr3       							; Set the destination index to cr3.
+		; Map the first PML4(L4) entry to PDPT(L3) address(thus giving access to first GB)
+		mov eax, l3_table							; Store the address of pdpt(for setting the flags and filling in PML4)
+		or eax, 0b11								; Set the present and R/W flags on pdpt table(to have R/W access to the first GB of Virtual Memory - this does not map it, just gives access to it)
+		mov [l4_table], eax							; Move the PDPT address with flags to the first entry in PML4
 
-		mov DWORD [edi], 0x2003      				; Set the uint32_t at the destination index to 0x2003.
-		add edi, PAGE_SIZE
-		mov DWORD [edi], 0x3003      				; Set the uint32_t at the destination index to 0x3003.
-		add edi, PAGE_SIZE
-		mov DWORD [edi], 0x4003      				; Set the uint32_t at the destination index to 0x4003.
-		add edi, PAGE_SIZE
+		; Map the first PDPT(L3) entry to PDTs(PL2) address(thus giving access to first to MB inside the first GB), done in the same way as with l3 and l4, just replaced with addresses of l2 and l3
+		mov eax, l2_table
+		or eax, 0b11								; Set R/W and Present flags
+		mov [l3_table], eax
 
-		mov ebx, 0x00000003
-		mov ecx, 512
+		; Map the first two megabytes by making the first entry in l2 table point to a 2MB page(set with size flag) that starts at 0x0(which means that the first 2MB in the system would be allocated)
+		mov eax, 0x0								; Load 0x0 in eax as it is the start and address in the system and two map first two megabytes they should be mapped starting at 0x0
+		or eax, 0b10000011							; Set R/W, Present and Size(This flag makes this particular entry in l2 table point not to an l1 table, but to a 2MB page instead) flags
+		mov [l2_table], eax							; Load the address into first l2 entry to map the first 2 megabytes
 
-		.SetEntry:
-			mov DWORD [edi], ebx         			; Set the uint32_t at the destination index to the B-register.
-			add ebx, PAGE_SIZE
-			add edi, 8
-			loop .SetEntry               			; Set the next entry.
+		; Set cr3 to address of level 4 table through eax
+		mov eax, l4_table
+		mov cr3, eax
 
+		; Enable PAE(in cr4)
 		mov eax, cr4                 				; Load the cr4 value into eax(becuase cr4 can't be changed directly)
 		or eax, 1 << 5               				; Enable PAE(set bit 5)
 		mov cr4, eax                 				; Write changed contents(with PAE on) of cr4 back to cr4
@@ -149,6 +145,7 @@ error:
 
 
 ;; Data ;;
+;; GDT to load in long mode ;;
 GDT64:
 	.Null:
 		dw 0xFFFF		; Limit(low)
@@ -198,5 +195,16 @@ longMode:
 	; @brief = start of full long mode 64-Bit code execution
 	.start64:
 		mov rax, 0x7FFFFFFFFFFFFFFF	  ; Move the largest 64-Bit number into 64-Bit register(RAX) to test if the switch has happened(otherwsie it just would not fit)
-		mov rax, $
 		hlt
+
+
+[BITS 32]
+section .bss
+;; Page Tables ;;
+align 4096
+l4_table:		; PML4 Table
+	resb 4096
+l3_table:		; PDP Table
+	resb 4096
+l2_table:		; PD Table
+	resb 4096
