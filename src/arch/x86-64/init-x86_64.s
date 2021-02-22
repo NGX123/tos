@@ -22,6 +22,7 @@
 %define PAGE_SIZE 4096 ; Same as 0x1000
 
 
+section .text
 ; @brief = calls all the functions to set up the the long mode and then switch to it
 kernel_setup:
 	call detect.CPUID
@@ -146,6 +147,7 @@ error:
 
 ;; Data ;;
 ;; GDT to load in long mode ;;
+section .rodata
 GDT64:
 	.Null:
 		dw 0xFFFF		; Limit(low)
@@ -178,6 +180,7 @@ GDT64descriptor:
 
 ;;; Bootstrapped 64-Bit Code ;;;
 [BITS 64]
+section .text
 longMode:
 	; @brief = flush all the registers and turn off the interrupts once in 64-Bit Mode
 	.flush64:
