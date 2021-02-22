@@ -23,7 +23,9 @@
 	* https://www.gnu.org/software/texinfo/manual/
 	* https://www.gnu.org/software/teximpatient
 4. Do a check if the toolchain.sh works right - look through source code, execute and then checks if everything done in source is in the results
-5. Implement exeption handling to handle things like page faults
+5. Implement 64-Bit interrupts
+	* Look into APIC
+6. Implement exeption handling to handle things like page faults
 	* How to spot difference between exeptions and interrupts if same interrupt vectors are used
 	* Map needed interrupt handlers to functions that handler the exeptions
 
