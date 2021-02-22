@@ -1,14 +1,7 @@
 ## To Do
 1. Switch to long mode
-	1. Write the assembly bootstrap for the 64-Bit code(start in kernel_setup)
-		1. Do the CPUID presence check
-		2. Do Long Mode presence check with CPUID
-		3. Enable everything needed for paging except the paging on flag in cr3
-		4. Set the bit in MSR to switch to Long Mode
-		5. Enable paging bit in cr register
-		6. Load GDT and make the long jump to switch to 64 bit mode
-	2. Setup the new stack for c
-	3. Setup paging(do the mapping of all required regions)
+	1. Setup the new stack for c
+	2. Setup paging(do the mapping of all required regions)
 2. Fix multiboot2_bootstrap(so for example the multibootsetup does not have to be commented out to run the 32 bit OS)
 	1. Remove multiboot_setup from the multiboot2_bootstap
 	2. Find a place to store the magic value from EAX and the address of multiboot_info in EBX while the bootloaderInterface hasn't been called yet
@@ -32,9 +25,8 @@
 
 ### [Hardware](https://wiki.osdev.org/Category:Hardware)
 1. [64bit CPU support(Long mode)](https://wiki.osdev.org/Category:X86-64)
-	1. [Switch to long mode](https://wiki.osdev.org/Setting_Up_Long_Mode)
-	2. [Setting up stack](https://forum.osdev.org/viewtopic.php?f=1&t=21772)
-	3. [Setup Paging](https://wiki.osdev.org/Setting_Up_Paging)
+	1. [Setting up stack](https://forum.osdev.org/viewtopic.php?f=1&t=21772)
+	2. [Setup Paging](https://wiki.osdev.org/Setting_Up_Paging)
 2. [Graphics](https://wiki.osdev.org/Category:Video)
 	* Implement video output detection - GRUB, GOP, VGA Text Mode...
 	* [GRUB Framebuffer]()
@@ -158,12 +150,15 @@
 
 
 ## Done
+
+
 - Kernel
 	* [Rework Interrupts](https://wiki.osdev.org/Category:Interrupts)
 		* Make a c code for interacting with interrupts(e.g. a function to set that when particular interrupt occures it should call the supplied function pointer), and the implementation of the interrupts will be seperate for arch and will be located in it's folder and then just linked with the kernel interrupts code. Architecture specific code will have all the variables for function pointers, it's own copy of the function to bind a function pointer to interrupt, the interrupts implementation - each interrupt being a function that will call a corresponding function pointer if it was set by user. Kernel wide interrupt code will contain functions for user to bind interrupt to specific function pointer, check if the interrupt exists, permissions for binding to it...
 - Hardware
 	* [64bit CPU support(Long mode)](https://wiki.osdev.org/Category:X86-64)
 		* Find a bootloader to use with long mode
+		* [Switch to long mode](https://wiki.osdev.org/Setting_Up_Long_Mode)
 	* [UEFI firmware support(boot with UEFI services)](https://wiki.osdev.org/Category:UEFI)
 		* Find a working or implement a new UEFI 64bit bootloader
 		* Find a way to setup video output after exitbootservices()
