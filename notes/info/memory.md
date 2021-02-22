@@ -10,6 +10,7 @@
 
 
 ## Information
+### General
 - [Global Descriptor Table](https://wiki.osdev.org/Global_Descriptor_Table) - it was used for segmentation in protected mode when it was only invented, but now is always set to flat memory model(all virtual addresses map directly to physical)
     * **Flat memory mode:** in flat memory model all the virtual addresses are mapped direcotry to physical, this is done because both the data and code selectors span through all of the 4 GB space meaning that any access could be done to any address
     * **Limit** - spans through two fields so the first field is set to 0xffff and second(located later) is set to 0xf and together they make up a number that when multiplied by 4096(size of unit if granularity bit is set) is 4 Billion meaning that selector describes all 4 GB
@@ -19,38 +20,38 @@
 - [Higher Half Kernel](https://wiki.osdev.org/Higher_Half_Kernel) - it is a way to make the memory space cleaner and let the programms start at 0x0, while kernel is right at the end of memory
     - **Motivation:** Kernel could be located at any physical address in the memory space(where it was loaded) at the start, but when paging is enabled the kernel can be remapped to any address in the address space becuase addresses become virtual. When paging is enabled it could be made that each program has it's own memory space, if the kernel is mapped at the end of memory then the programs recieve all the other memory space for them and can be loaded at 0x0 and use everything till the start of kernel which makes linking the application very easy(no need to take into account that first mb+ is taken up)
     - **Implementation:** The kernel and the space belowow 1mb(on x86) is remapped using paging to be right at the end of memory(so from their start to end of memory there is left only enough space to fit them)
+		* There would be variables placed in the linker_script before the kernel and after the kernel to calculate it's size `kernel_size = kernel_end-kernel_start`, then the address where kernel should be reallocated would be counted with - if kernel_size < 512MB then: `kernel_vma = max_address(available in architecture) - 512MB`; if kernel_size > 512MB then - `kernel_vma = max_address(available in arch) - (kernel_size + 512MB)`
 - [Identity Paging](https://wiki.osdev.org/Identity_Paging) - when the pages are mapping virtual addresses 1 to 1 whith physical(e.g. 0xb8000 is 0xb8000)
 - [x86 Paging](https://wiki.osdev.org/Paging)
-    + 4-level Paging
+    + How it works
+		1. malloc() is called to allocate memory
+		2. malloc() requests a page(4KiB) from VMM(Virtual memory manager)
+		3. VMM then asks for page in physical memory from PFA(Page Frame Allocator)
+		4. PFA finds free memory page(free 4KiB of RAM) and gives it's start address to VMM,
+		5. VMM mapes virtual(in virtual address space) page to the physical page provided by the PFA and returns page to the malloc()
+		6. Finally malloc() carves the amount of needed memory from the page and returns it's address to it's caller
 
+### Paging
+- Bullet points
+	* In x86 paging first 12 bits of addresses used in paging data structs(PML4 address in CR3, PDP address in PML4...) are used for flags. It is possible to use first 12 bits for flags because all addresses of pages and tables used for paging should be 4096 aligned , and all numbers that are divisible/aligned by 4096 have first 12 bits as zeros so they could just be discareded by CPU when using as an address and be used for flags
+
+### Page Frame Allocation
+- **Allocation method** - frames pointer and bytemap pointer. Everything not marked as free in the memory map would be marked reserved(2) in the bytemap, everything that is free would be marked as free(0) and all the frames that were allocated by PMM would be marked as allocated(1)
+- **Data structure location** - PMM would sum up sizes of all entries in mmap to get the amount of RAM, then the amount of ram would be devided by 4096(page size) to get size of byte map in bytes - `bytemap_size = RAM_amount / 4096`, then the bytemap_size amount of RAM would be reserved below the kernel and bye map pointer would point there
+	* Frames pointer - would be a `void*` pointer to the 0x0(start of memory that would be used for frame allocation as it is the start of ram) and when finding an address for frame start to return use formula `frame_addr = frames_pointer + (page_number * 4096)`
+	* Bytemap pointer - would be a `uint8_t` list which would contain bytes each of which would correspond to a frame(4096 bytes) in frame list(first byte in bytemap = first 4096 bytes in frame list). The bytes would have information on frame status(e.g. reserved/free...)
 
 
 ## Implementation
-+ Memory management with paging
-    1. malloc() is called to allocate memory
-    2. malloc() requests a page(4KiB) from VMM(Virtual memory manager)
-    3. VMM then asks for page in physical memory from PFA(Page Frame Allocator)
-    4. PFA finds free memory page(free 4KiB of RAM) and gives it's start address to VMM,
-    5. VMM mapes virtual(in virtual address space) page to the physical page provided by the PFA and returns page to the malloc()
-    6. Finally malloc() carves the amount of needed memory from the page and returns it's address to it's caller
-1. [Physical frame allocation(PFA)](https://wiki.osdev.org/Page_Frame_Allocation) - PFA does not really allocate anything and just returns address of free 4KiB(page) in physical RAM
-    - Bitmap method
-        1. A list of `RAM size / 4096` entries is made(called bitmap/bytemap), each entry here corresponds to a page(4KiB) in RAM and represents it's status(e.g. if 0 - free page, 1 - allocated page)
-        2. Pointer to the start of free memory is made(e.g. right after the end of the kernel executable)
-        3. Entries in bytemap are filled with 2(or any other number, to mean that it belongs to device) in places which are not free to use(e.g. needed for devices) based on the obtained memory map - entire page is skipped if some address in it is reserved
-        4. Usage
-            * kalloc_frame()
-                1. First it loops through the bytemap until it finds an entry for a free page(0)
-                2. When entry for free page is found, the start address of the corresponding page is found by `free_mem_start_ptr + bytemap_found_entry_num * 4096`
-                3. The start address of page is returned to the caller, and entry corresponding to the allocated page is marked as allocated(1)
-            * kfree_frame(address)
-                1. Set the entry number `(address - start_address) / 4096` as free(0) in bitmap
-            * A seperate function is needed to map specific addresses - e.g. 0xb8000-... to the same address in physical RAM, becuase some devices like VGA require it
-2. [Paging](https://wiki.osdev.org/Paging)
-    1. Load the paging directory table start address into CR3
-    2. Set 32 bit of CR0
-3. Virtual Memory Manager - gets a physical page from PFA and maps it to a virtual page
-4. Memory allocator - allocates memory by carving needed amount out of virtual page
++ [Physical frame allocation(PFA)](https://wiki.osdev.org/Page_Frame_Allocation) - PFA does not really allocate anything and just returns address of free 4KiB(page) in physical RAM
+	* kalloc_frame()
+		1. First it loops through the bytemap until it finds an entry for a free page(0)
+		2. When entry for free page is found, the start address of the corresponding page is found by `free_mem_start_ptr + bytemap_found_entry_num * 4096`
+		3. The start address of page is returned to the caller, and entry corresponding to the allocated page is marked as allocated(1)
+	* kfree_frame(address)
+		1. Set the entry number `(address - start_address) / 4096` as free(0) in bitmap
++ Virtual Memory Manager - gets a physical page from PFA and maps it to a virtual page
++ Memory allocator - allocates memory by carving needed amount out of virtual page
 
 
 ## Resources
@@ -76,13 +77,15 @@
 
 ## Questions
 ### Current
-- Paging
-	* What if the some data happens to be located between two pages(e.g. several byts on one and others on another)?
-    * Should the page frame allocator align every page by 4096?
-	* Where should be the page tables/structs be stored in memory(should some space be allocated for them using PFA)?
-
 
 ### Solved
+- Paging
+	+ What if the some data happens to be located between two pages(e.g. several byts on one and others on another) and how to prevent it?
+		* This is not a problem ans probably is not even possible
+	+ Should the page frame allocator align every page by 4096?
+		* Yes because becuase all addressess used for paging structs and pages should be 4096, otherwise first 12 bits would not be zeroes(be free for use)
+	+ Where should be the page tables/structs be stored in memory(should some space be allocated for them using PFA)?
+
 - Higher Half Kernel
     + Why is 0xC0000000 used - which is below 4GB which means that even in 64 bit mode programm can only access stuff below 0xc0000000 or how does it work, is it remapped beyond end of kernel as soon as programm alocates all the space below?
         * The 0xC0000000 is used only in 32bit mode because it leaves 3GB free for programms and a little space at the end of memory for the kernel
