@@ -10,6 +10,7 @@ SECTIONS
     /*Put .multiboot & .text sections from all files into one .text section and align it to 4Kb*/
     .text ALIGN(4K) :
     {
+		_kernel_start = .;			/* Variable to count the kernel size, it is placed in text section because it the first section that is plced in memory in this linkerscript and if the varible is outside section, a linkerscript creates a new one for it which can have undefined behaviour*/
         *(.multiboot)
         *(.text)
     }
@@ -30,5 +31,6 @@ SECTIONS
     .bss ALIGN(4K) :
     {
         *(.bss*)
+		_kernel_end = .;
     }
 }

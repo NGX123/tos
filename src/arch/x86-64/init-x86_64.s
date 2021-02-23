@@ -22,6 +22,10 @@
 %define PAGE_SIZE 4096 ; Same as 0x1000
 
 
+extern _kernel_start
+extern _kernel_end
+
+
 section .text
 ; @brief = calls all the functions to set up the the long mode and then switch to it
 kernel_setup:
@@ -105,10 +109,35 @@ setup:
 		or eax, 0b11								; Set R/W and Present flags
 		mov [l3_table], eax
 
+		; Get the size of the kernel(subtract the end address from start address) and depending on that jump to the right page mapping routine
+		.get_kernel_size:
+			mov eax, _kernel_start
+			mov edx, _kernel_end
+			sub edx, eax								; Subtract kernel end address from kernel start address to get it's size
+			cmp edx, 0x100000							; Compare kernel with 1MB(to check if it is smaller or larger)
+			jb .map_2mb									; If the kernel is smaller than 1MB
+														; Continue if kernel is larger then 1 MB
+			cmp edx, 40000000
+			jb .map_1GB									; If the kernel is smaller then 1GB
+			ja .map_large_kern							; If the kernel is bigger then 1GB
+
 		; Map the first two megabytes by making the first entry in l2 table point to a 2MB page(set with size flag) that starts at 0x0(which means that the first 2MB in the system would be allocated)
-		mov eax, 0x0								; Load 0x0 in eax as it is the start and address in the system and two map first two megabytes they should be mapped starting at 0x0
-		or eax, 0b10000011							; Set R/W, Present and Size(This flag makes this particular entry in l2 table point not to an l1 table, but to a 2MB page instead) flags
-		mov [l2_table], eax							; Load the address into first l2 entry to map the first 2 megabytes
+		.map_2mb:
+			mov eax, 0x0								; Load 0x0 in eax as it is the start and address in the system and to map first two megabytes they should be mapped starting at 0x0
+			or eax, 0b10000011							; Set R/W, Present and Size(This flag makes this particular entry in l2 table point not to an l1 table, but to a 2MB page instead) flags
+			mov [l2_table], eax							; Load the address into first l2 entry to map the first 2 megabytes
+			jmp .map_continue
+		; The same thing as previous but maps 1GB page for cases when kernel is larger then 1MB
+		.map_1GB:
+			mov eax, 0x0								; Load 0x0 in eax as it is the start and address in the system and to map the first GB it should be mapped from the start of memory - 0x0
+			or eax, 0b10000011							; Set R/W, Present and Size(This flag makes this particular entry in l2 table point not to an l1 table, but to a 1GB page instead) flags
+			mov [l3_table], eax							; Load the address into frist l3 entry to map first 1GB of RAM
+			jmp .map_continue
+		; Maps multiple 1 GB pages for kernels that are bigger then 1GB
+		.map_large_kern:
+			jmp error.hang; DOES NOT YET SUPPORT KERNELS THAT ARE MORE THAN 1GB, ADD SUPPORT AS NEED COMES
+			jmp .map_continue
+		.map_continue:
 
 		; Set cr3 to address of level 4 table through eax
 		mov eax, l4_table
