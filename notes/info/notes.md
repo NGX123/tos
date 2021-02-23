@@ -22,6 +22,7 @@
 - Clang
 	* To list the architecutres supported by clang use `llc --version`
 	* To list available CPUs/features on an architecture use `llc -march=ARCH -mattr=help`
+- In NASM in the .bss section `align` has to be changed to `alignb`(same as align in everything, but has a different meaning to NASM) because it is a special instruction for .bss section, all other sections should continue using `align`. If the `align` is used in .bss or `alignb` is used in other sections then there will be warnings and errors
 
 ## Information
 - In grub2 there are multiple modules that can be found by searching different folders in `grub-source/grub-core/*`, to understand that something is a module search the c file for `GRUB MOD LICENSE *` or similar, then load the module by the name of c file. e.g. to load `gop_efi.c` add `insmod gop_efi` before the kernel executable entry in grub config
