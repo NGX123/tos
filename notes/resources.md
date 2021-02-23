@@ -49,6 +49,8 @@
 	* [Multiboot 2 Specification(Used by GRUB)](https://www.gnu.org/software/grub/manual/multiboot2/)
 * Programming
 	* [NASM Documentation](https://www.nasm.us/docs.php)
+	* [GNU Binutils(ld)](https://www.gnu.org/software/binutils/docs-2.36/)
+			* [Linkerscript guide](https://sourceware.org/binutils/docs/ld/Scripts.html)
 
 
 
