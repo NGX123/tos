@@ -62,21 +62,24 @@ dd CHECKSUM
 
 
 section .bss
-align 16                        ; Aligning is required for stack
-    stack_bottom:
-            resb 16384      ; Allocate 16 kilobytes for stack
-    stack_top:
+alignb 16                        ; Aligning is required for stack
+stack_bottom:
+	resb 16384      			 ;  16 kilobytes for stack
+stack_top:
+
+multiboot_magic_temp:			; Space to temporarily store the magic number
+	resb 8
+tags_address_temp:				; Space to temporarily store the tags address
+	resb 8
 
 
 section .text
 _start:
-    mov esp, stack_top      ; Load stack address into stack register(initialize)
+    mov esp, stack_top      			; Load stack address into stack register(initialize)
 
-    push ebx                ; ebx - holds Multiboot2 information struct address
-    push eax                ; eax - holds Multiboot2 Bootloader Checksum
-    ;call interpretMultiboot2
-
-    call kernel_setup       ; Switch to the init code of the platform
+	mov dword [multiboot_magic_temp], eax		; ebx - holds Multiboot2 information struct address
+	mov dword [tags_address_temp], ebx		; eax - holds Multiboot2 Bootloader Checksum
+    call kernel_setup       			; Switch to the init code of the platform
 
 
 hang:
