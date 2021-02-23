@@ -227,12 +227,7 @@ longMode:
 	; @brief = start of full long mode 64-Bit code execution
 	.start64:
 		mov rsi, 0x7FFFFFFFFFFFFFFF	  	; Move the largest 64-Bit number into 64-Bit register(RAX) to test if the switch has happened(otherwsie it just would not fit)
-
-		mov rax, [multiboot_magic_temp]	; Get the multiboot magic number from the memory into registers(for full access to it)
-		mov rbx, [tags_address_temp]	; Same as previous, but with multiboot tags pointer
-		push rbx						; Push the multiboot tags pointer as second argument to kernel_main
-		push rax						; Push the multiboot magic as first argument to kernel_main
-		; call kernel_main
+		call kernel_main
 
 		hlt
 
