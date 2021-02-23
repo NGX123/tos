@@ -1,24 +1,20 @@
 ## To Do
-1. Switch to long mode
-	1. Setup the new stack for c
-	2. Setup paging(do the mapping of all required regions)
-2. Fix multiboot2_bootstrap(so for example the multibootsetup does not have to be commented out to run the 32 bit OS)
-	1. Remove multiboot_setup from the multiboot2_bootstap
-	2. Find a place to store the magic value from EAX and the address of multiboot_info in EBX while the bootloaderInterface hasn't been called yet
-	3. Instead make the code after the init - kernel(64-Bit code in case of x86-32) call bootloaderInterface with INIT command and it would do the needed bootloader setup based on the boot protocol
-	4. Make getmemorymap add entries about where multiboot_info starts and finishes - so it is not touched and where framebuffer starts and finished
-3. Documentation
-	1. Collect the .md notes into sevel texinfo notes that will be located in one PDF file later
-	2. Write the Documentation for OS in texinfo
-	3. Add documentation on what OS needs to boot - what init functions should be present, what bootloader functions should be present, what should be called in waht order - function_that_will_be_specific_in_each_bootloader_bootstrap, kernel_setup, kernel_init. Functions that are platform specific are prefixed with "arch_" e.g. "arch_funcname"
-	4. The system that runs the kernel should be 32 bit+ and unsigned long should reperesent the largest possible var size, include/types.h has define of address_tt and other global defines that should be changed if the compiler does not follow rules needed by the kernel
-	5. The function that should be called by the bootloader bootstar scirpt(e.g. multiboot2_bootstrap.s) is the kernel_setup which in turn should call the kernel_main
+1. Fix multiboot2_bootstrap(so for example the multibootsetup does not have to be commented out to run the 32 bit OS)
+	1. Instead make the code after the init - kernel(64-Bit code in case of x86-32) call bootloaderInterface with INIT command and it would do the needed bootloader setup based on the boot protocol
+	2. Make getmemorymap add entries about where multiboot_info starts and finishes - so it is not touched and where framebuffer starts and finished
+2. Documentation
+	1. Write OS requirements in texinfo documentation
+		1. Init functions that should be present - all that are prefixed with `arch_` or `kernel_`
+		2. In what order should the base functions be called - bootstarp script -> kernel_setup -> kernel_init
+		3. Kernel requirements - `32+ Bit` Architecture, `unsigned long` in the compiler should represent largest possible var size - include/types.h has address_tt define which should be changed if compiler does not obej
+		4. The arch_bootloaderInterface should be present and have an INIT function
+	* Translate .md notes to .texinfo to create one file out of them
 	* https://www.gnu.org/software/texinfo/manual/
 	* https://www.gnu.org/software/teximpatient
-4. Do a check if the toolchain.sh works right - look through source code, execute and then checks if everything done in source is in the results
-5. Implement 64-Bit interrupts
+3. Do a check if the toolchain.sh works right - look through source code, execute and then checks if everything done in source is in the results
+4. Implement 64-Bit interrupts
 	* Look into APIC
-6. Implement exeption handling to handle things like page faults
+5. Implement exeption handling to handle things like page faults
 	* How to spot difference between exeptions and interrupts if same interrupt vectors are used
 	* Map needed interrupt handlers to functions that handler the exeptions
 
