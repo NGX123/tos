@@ -50,7 +50,7 @@
 * Programming
 	* [NASM Documentation](https://www.nasm.us/docs.php)
 	* [GNU Binutils(ld)](https://www.gnu.org/software/binutils/docs-2.36/)
-			* [Linkerscript guide](https://sourceware.org/binutils/docs/ld/Scripts.html)
+		* [Linkerscript guide](https://sourceware.org/binutils/docs/ld/Scripts.html)
 
 
 
