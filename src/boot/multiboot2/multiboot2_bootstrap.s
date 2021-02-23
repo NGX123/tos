@@ -4,8 +4,8 @@
 
 ; Kernel start called by grub(_start is specified in linker.ld)
 global _start
-global multiboot_magic_temp
-global multiboot_tags_address_temp
+global multiboot_magic_var
+global multiboot_tags_address_var
 
 extern kernel_main
 extern interpretMultiboot2
