@@ -8,7 +8,7 @@
 #define TTY_H
 
 
-#include <types.h>
+#include <kernel_types.h>
 
 
 #define BUFFER_INPUT_SIZE 250

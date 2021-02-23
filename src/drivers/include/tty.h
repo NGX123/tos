@@ -15,7 +15,6 @@
 #include <drivers/kbd.h>
 #include <drivers/tty.h>
 #include <ringbuf.h>
-#include <types.h>
 
 
 /*

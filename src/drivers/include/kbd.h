@@ -12,7 +12,6 @@
 #include <stddef.h>
 #include <stdio.h>
 #include <ringbuf.h>
-#include <types.h>
 
 #include <arch/io_x86.h>
 #include <drivers/vga.h>

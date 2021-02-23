@@ -8,7 +8,7 @@
 #define INTERRUPTS_LOCAL_H
 
 
-#include <types.h>
+#include <kernel_types.h>
 #include <kernel/interrupts.h>
 
 

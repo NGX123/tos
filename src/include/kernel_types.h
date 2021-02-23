@@ -14,6 +14,5 @@
 
 
 typedef long ssize_t;
-
 typedef unsigned long address_tt;
 #endif

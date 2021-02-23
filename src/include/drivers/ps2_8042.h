@@ -8,7 +8,7 @@
 #define PS2_8042_H
 
 
-#include <types.h>
+#include <kernel_types.h>
 
 
 // Ports

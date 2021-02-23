@@ -9,7 +9,6 @@
 
 
 #include <stdint.h>
-#include <types.h>
 #include <stdarg.h>
 #include <arch/init.h>
 #include "string.h"

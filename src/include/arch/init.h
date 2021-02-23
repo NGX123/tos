@@ -8,7 +8,7 @@
 #define INIT_H
 
 
-#include <types.h>
+#include <kernel_types.h>
 
 
 #define MEMINFO_FLAG_ERROR       0x1

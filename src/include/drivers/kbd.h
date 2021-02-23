@@ -19,7 +19,7 @@
 
 #include <stdint.h>
 #include <stddef.h>
-#include <types.h>
+#include <kernel_types.h>
 
 
 struct keyPacket
