@@ -4,10 +4,10 @@
 */
 
 #include <stdint.h>
-#include <types.h>
 #include <stdarg.h>
 #include <arch/init.h>
 #include <kernel/multiboot2.h>
+#include <kernel_types.h>
 #include "string.h"
 
 
@@ -31,4 +31,4 @@ static void toggleBit(size_t* var, size_t bitmask, uint8_t bit_status);
     @param magic = magic number to check if the OS was booted by a multiboot2 compilent bootloader
     @param infoStruct_addr = pointer to multiboot information structure
 */
-extern void interpretMultiboot2(uint32_t magic, uint32_t infoStruct_addr);
+extern void interpretMultiboot2(void);
