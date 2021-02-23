@@ -11,12 +11,14 @@
 #include <kernel_types.h>
 
 
-#define MEMINFO_FLAG_ERROR       0x1
+#define MEMINFO_FLAG_ERROR       	0x1
 
 #define MEMMAP_AREA_TYPE_USABLE     0x1
 #define MEMMAP_AREA_TYPE_RESERVED   0x2
 #define MEMMAP_AREA_TYPE_SPECIAL    0x3 // Area that was reserved by kernel
 #define MEMMAP_AREA_TYPE_OTHER      0x4 // Bootloader should be asked about this memory using bootloaderInterface()
+
+#define BOOTLOADER_FUNCTION_INIT 	0x1
 
 
 struct memInfo
@@ -58,5 +60,5 @@ extern struct memInfo arch_getMemInfo(int count);
 /*
     @breif = reads needed information from the bootloader based on command and responds with it
 */
-extern void arch_bootloaderInterface(void);
+extern void arch_bootloaderInterface(uint32_t function);
 #endif
