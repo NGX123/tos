@@ -2,22 +2,19 @@
 1. Fix multiboot2_bootstrap(so for example the multibootsetup does not have to be commented out to run the 32 bit OS)
 	1. Instead make the code after the init - kernel(64-Bit code in case of x86-32) call bootloaderInterface with INIT command and it would do the needed bootloader setup based on the boot protocol
 	2. Make getmemorymap add entries about where multiboot_info starts and finishes - so it is not touched and where framebuffer starts and finished
-2. Documentation
-	1. Write OS requirements in texinfo documentation
-		1. Init functions that should be present - all that are prefixed with `arch_` or `kernel_`
-		2. In what order should the base functions be called - bootstarp script -> kernel_setup -> kernel_init
-		3. Kernel requirements - `32+ Bit` Architecture, `unsigned long` in the compiler should represent largest possible var size - include/types.h has address_tt define which should be changed if compiler does not obej
-		4. The arch_bootloaderInterface should be present and have an INIT function
-	* Translate .md notes to .texinfo to create one file out of them
-	* https://www.gnu.org/software/texinfo/manual/
-	* https://www.gnu.org/software/teximpatient
-3. Do a check if the toolchain.sh works right - look through source code, execute and then checks if everything done in source is in the results
-4. Implement 64-Bit interrupts
+2. Implement simple memory management
+	1. Write Page Frame Allocator
+	2. Write Virtual Memory Manager(Page manager)
+	3. Write Virtual Memory allocator(malloc)
+3. Implement 64-Bit interrupts
 	* Look into APIC
-5. Implement exeption handling to handle things like page faults
+	1. Read intel manual on 64 bit interrupt and IDT
+	2. Read Intel manual on APIC
+		* Understand differences between IOAPIC, LAPIC and APIC
+4. Implement exeption handling to handle things like page faults
 	* How to spot difference between exeptions and interrupts if same interrupt vectors are used
 	* Map needed interrupt handlers to functions that handler the exeptions
-
+5. Do a check if the toolchain.sh works right - look through source code, execute and then checks if everything done in source is in the results
 
 ### [Hardware](https://wiki.osdev.org/Category:Hardware)
 1. [64bit CPU support(Long mode)](https://wiki.osdev.org/Category:X86-64)
@@ -120,6 +117,15 @@
 
 
 ## Extra
+* Documentation
+	1. Write OS requirements in texinfo documentation
+		1. Init functions that should be present - all that are prefixed with `arch_` or `kernel_`
+		2. In what order should the base functions be called - bootstarp script -> kernel_setup -> kernel_init
+		3. Kernel requirements - `32+ Bit` Architecture, `unsigned long` in the compiler should represent largest possible var size - include/types.h has address_tt define which should be changed if compiler does not obej
+		4. The arch_bootloaderInterface should be present and have an INIT function
+	* Translate .md notes to .texinfo to create one file out of them
+	* https://www.gnu.org/software/texinfo/manual/
+	* https://www.gnu.org/software/teximpatient
 * Remove the 32bit mode OS, but instead have a BIOS variant of the 64bit OS(maybe by just adding another grub type in makefile)
 * Clean up the source tree
 	1. Change files in boot to boot protocols and not platforms
