@@ -24,30 +24,10 @@
 struct memInfo
 {
     uint8_t flags;
-    union       /* Unnamed union of full address and it's parts so two 32 bit variables can be used instead of one 64bit or other way round */
-    {
-        uint64_t addr_full;
-        struct
-        {
-            uint32_t addr_part1;
-            uint32_t addr_part2;
-        };
-    };
-    union
-    {
-        uint64_t size_full;
-        struct
-        {
-            uint32_t size_part1;
-            uint32_t size_part2;
-        };
-    };
-    uint32_t type;
-    /* Fix: if problems occur split the 64bit fields into 32bit fields */
-    // uint32_t addr1;
-    // uint32_t addr2;
-    // uint32_t size1;
-    // uint32_t size2;
+
+	address_tt start_address;
+	address_tt area_size;
+    uint32_t area_type;
 };
 
 /*
