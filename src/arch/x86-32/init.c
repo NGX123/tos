@@ -43,3 +43,9 @@ void makeMemFlat()
 
     gdtLoadAsm(&gdt32_ptr);
 }
+
+int putchar(int chara)
+{
+    int status = printScreen(chara);
+    return status;
+}
