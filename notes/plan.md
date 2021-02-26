@@ -5,6 +5,7 @@
 2. Implement simple memory management
 	1. Write Page Frame Allocator
 		* Should have a function to reserve physical memory based a request from device driver - special function that asks not to give it a page(4096) but to reserved all pages from start address to end address(and the ones on which start and end are located)
+			* Drivers like the framebuffer driver should mark the memory mapped I/O and the memory areas that they need as reserved using PFA special function
 	2. Write Virtual Memory Manager(Page manager)
 	3. Write Virtual Memory allocator(malloc)
 3. Implement 64-Bit interrupts
@@ -124,6 +125,7 @@
 		2. In what order should the base functions be called - bootstarp script -> kernel_setup -> kernel_init
 		3. Kernel requirements - `32+ Bit` Architecture, `unsigned long` in the compiler should represent largest possible var size - include/types.h has address_tt define which should be changed if compiler does not obej
 		4. The arch_bootloaderInterface should be present and have an INIT function
+	2. Add documentation for the man page-like descriptions for functions that might be used by user or during porting to other platform e.g. *_arch functions
 	* Translate .md notes to .texinfo to create one file out of them
 	* https://www.gnu.org/software/texinfo/manual/
 	* https://www.gnu.org/software/teximpatient
@@ -153,8 +155,6 @@
 
 
 ## Done
-
-
 - Kernel
 	* [Rework Interrupts](https://wiki.osdev.org/Category:Interrupts)
 		* Make a c code for interacting with interrupts(e.g. a function to set that when particular interrupt occures it should call the supplied function pointer), and the implementation of the interrupts will be seperate for arch and will be located in it's folder and then just linked with the kernel interrupts code. Architecture specific code will have all the variables for function pointers, it's own copy of the function to bind a function pointer to interrupt, the interrupts implementation - each interrupt being a function that will call a corresponding function pointer if it was set by user. Kernel wide interrupt code will contain functions for user to bind interrupt to specific function pointer, check if the interrupt exists, permissions for binding to it...
