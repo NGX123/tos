@@ -7,12 +7,14 @@ BUILDDIR_x86-32_CLANG	= $(BUILDDIR_x86-32)
 SOURCES_x86-32			= drivers/*.c kernel/*.c $(INIT_SOURCES_x86-32)/*.c lib/*.c lib/arch/*.c
 OBJECTS_x86-32			= $(BUILDDIR_x86-32)/*.o
 
+OS_MACROS 				= -D PRINTF_NO_LONG_LONG
+
 # x86-32_gcc
 CC_x86-32_GCC 					= $(TOOLCHAIN_PREFIX)/i686-elf-gcc
 AS_x86-32_GCC 					= nasm
 LD_x86-32_GCC					= $(TOOLCHAIN_PREFIX)/i686-elf-gcc
-ASFLAGS_x86-32_GCC 				= -felf32														# (-felf32) Set the target architecture to x86_32-elf
-CFLAGS_x86-32_GCC 				= -I include -std=gnu99 -ffreestanding $(CFLAGS_GLOBAL)			# (-I libs) Include the custo c library; (-std=gnu99) Becuase of code specifics should be older standard; (-ffreestanding) Startup not at main() and no standard lib
+ASFLAGS_x86-32_GCC 				= -felf32																	# (-felf32) Set the target architecture to x86_32-elf
+CFLAGS_x86-32_GCC 				= -I include -std=gnu99 -ffreestanding $(CFLAGS_GLOBAL)	$(OS_MACROS)		# (-I libs) Include the custo c library; (-std=gnu99) Becuase of code specifics should be older standard; (-ffreestanding) Startup not at main() and no standard lib
 LDFLAGS_x86-32_GCC 				= -T $(INIT_SOURCES_x86-32)/link-x86_32.ld -ffreestanding -nostdlib -l gcc	# (-T script) Use custom linker script; (-ffreestanding)Startup not at main() and no standard lib; (-nostdlib) Do not link with standard library; (-l gcc) Link with gcc library
 
 # x86-32_clang
@@ -20,7 +22,7 @@ CC_x86-32_CLANG 				= clang
 AS_x86-32_CLANG 				= nasm
 LD_x86-32_CLANG					= clang
 ASFLAGS_x86-32_CLANG 			= -felf32
-CFLAGS_x86-32_CLANG 			= -I include -std=gnu99 -ffreestanding $(CFLAGS_GLOBAL) -target i686-elf
+CFLAGS_x86-32_CLANG 			= -I include -std=gnu99 -ffreestanding $(CFLAGS_GLOBAL) -target i686-elf $(OS_MACROS)
 LDFLAGS_x86-32_CLANG 			= -T $(INIT_SOURCES_x86-32)/link-x86_32.ld -ffreestanding -nostdlib -target i686-elf # -l gcc
 
 
