@@ -8,11 +8,11 @@
 #include "stdio.h"
 
 
-extern uint64_t multiboot_magic_var;
+extern uint64_t multiboot_magic_var;									/* External variables linking to the ones stored in the .bss section that hold values supplied by grub */
 extern uint64_t multiboot_tags_address_var;
 
-static unsigned long multiboot2_magic_copy;								// Space to store multiboot magic number locally so it is not stored in some random .bss section and can be lost
-static address_tt multiboot2_tags_address_copy;							// Same but for tags address
+static unsigned long multiboot2_magic_copy;								/* Spaces to store multiboot magic and tags start pointer locally(so they are not stored in some random place in .bss section and can be possibly lost) */
+static address_tt multiboot2_tags_address_copy;
 
 static struct multiboot_tag* multiboot2_tags_start_address_converted;	// The address that skipes directly to the start of tags structures without the size and other fields
 
@@ -35,16 +35,16 @@ static int interpretMultiboot2(void)
 
 	if (multiboot_magic_var != MULTIBOOT2_BOOTLOADER_MAGIC)
 		return BOOTLOADER_RETURN_WRONG_PROTOCOL;
-	if (multiboot_tags_address_var & 7)																// addr & 7, checks if the address is divisible 7, if yes - it fails becuase it means it is not aligned
+	if (multiboot_tags_address_var & 7)																	// Make a check if the address tags address is not aligned by 8
 		return BOOTLOADER_RETURN_ADDRESS_PROBLEM;
 
-	multiboot2_magic_copy = multiboot_magic_var;													/* COPY THE MAGIC number and TAGS ptr to local variables */
+	multiboot2_magic_copy = multiboot_magic_var;														/* COPY THE MAGIC number and TAGS ptr to local variables for safety */
 	multiboot2_tags_address_copy = multiboot_tags_address_var;
 
-	multiboot2_all_tags_size = *(uint32_t*)multiboot_tags_address_var;								// First in tags structure the size is located in uint_32 format so to get it the address is just converted to int32 pointer
-	multiboot2_tags_start_address_converted = (struct multiboot_tag*)(multiboot_tags_address_var + 8); 	// The multiboot2 tags pointer points not directly to flags but to a structure where first field is size, so the address has to be converted to point to tags
+	multiboot2_all_tags_size = *(uint32_t*)multiboot_tags_address_var;									// Tags address points to a structure where the first field is size(with 32 bit size)
+	multiboot2_tags_start_address_converted = (struct multiboot_tag*)(multiboot_tags_address_var + 8); 	// As tags address points to a structure, to get to pointer to tags, skip the first two fields
 
-	for (multiboot2_tag_current = multiboot2_tags_start_address_converted; multiboot2_tag_current->type != MULTIBOOT_TAG_TYPE_END; multiboot2_tag_current = (struct multiboot_tag*)((multiboot_uint8_t*)multiboot2_tag_current + ((multiboot2_tag_current->size + 7) & ~7)))	// Loop through all tags and do the needed thing for each tag
+	for (multiboot2_tag_current = multiboot2_tags_start_address_converted; multiboot2_tag_current->type != MULTIBOOT_TAG_TYPE_END; multiboot2_tag_current = (struct multiboot_tag*)((multiboot_uint8_t*)multiboot2_tag_current + ((multiboot2_tag_current->size + 7) & ~7)))	// Loop through all tags(using proccess described in multiboot2 documentation) and do the needed things for chosen ones(with cases)
 	{
 		switch (multiboot2_tag_current->type)
 		{
@@ -89,19 +89,19 @@ struct memInfo arch_getMemInfo(int count, uint8_t mmap_type)
 	int interpreter_mmap_entry_amount = 0;
 	int interpreter_mmap_entry_fill_counter = 0;
 
-    if (!(avilability_flags & AVAILABLE_FLAG_MEMMAP))	// Return error if the bootloader hasn't given the memory map
+    if (!(avilability_flags & AVAILABLE_FLAG_MEMMAP))									// Return error if the bootloader hasn't given the memory map
     {
         toggleBit((size_t*)&returnStruct.flags, MEMINFO_FLAG_ERROR, TOGGLE_BIT_ON);
         return returnStruct;
     }
 
 
-	if (multiboot2_tags_address_copy != 0 && multiboot2_all_tags_size != 0) /* Increment the counter amount of times same as amount of entries bootloader wants to add to memory_map	*/
+	if (multiboot2_tags_address_copy != 0 && multiboot2_all_tags_size != 0) 			// Increment the counter amount of times same as amount of entries bootloader wants to add to memory_map
 		interpreter_mmap_entry_amount++;
 
 	struct memInfo interpreter_mmap[interpreter_mmap_entry_amount];
 
-	if (multiboot2_tags_address_copy != 0 && multiboot2_all_tags_size != 0)	/* Fill in the first entry which is the multiboot structure address and size */
+	if (multiboot2_tags_address_copy != 0 && multiboot2_all_tags_size != 0)				/* Fill in the first entry which is the multiboot structure address and size */
 	{
 		interpreter_mmap[interpreter_mmap_entry_fill_counter].start_address = multiboot2_tags_address_copy;
 		interpreter_mmap[interpreter_mmap_entry_fill_counter].area_size     = multiboot2_all_tags_size;
@@ -111,7 +111,7 @@ struct memInfo arch_getMemInfo(int count, uint8_t mmap_type)
 
 	if (mmap_type == MEMMAP_TYPE_PROTOCOL)
 	{
-		for (tag_current = multiboot2_tags_start_address_converted; tag_current->type != MULTIBOOT_TAG_TYPE_END; tag_current = (struct multiboot_tag *)((multiboot_uint8_t *)tag_current + ((tag_current->size + 7) & ~7)))	// Parse the memory map and put it in the kernels format
+		for (tag_current = multiboot2_tags_start_address_converted; tag_current->type != MULTIBOOT_TAG_TYPE_END; tag_current = (struct multiboot_tag *)((multiboot_uint8_t *)tag_current + ((tag_current->size + 7) & ~7)))	// Parse the memory map and put it in the kernels format(proccess described in multiboot 2 spec)
 			if (tag_current->type == MULTIBOOT_TAG_TYPE_MMAP)
 			{
 				mmap = ((struct multiboot_tag_mmap *) tag_current)->entries;
