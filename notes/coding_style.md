@@ -127,6 +127,15 @@ int foofoo(); // Section 2, element 2
 ## Comments
 
 * Put all of the code description near the code and not above or below it, except for declarations and sections
+* If the comment talks about multiple lines use /* */
+	*	```c
+		int this;				/* Declares a variable for use as a condition and prints hello */
+		if (this)
+			printf("hello");
+* If the comment talks about one line of code use //
+	*	```c
+		int this; 				// A variable declaration
+		```
 
 *Example:*
 
