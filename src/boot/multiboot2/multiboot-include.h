@@ -31,4 +31,4 @@ static void toggleBit(size_t* var, size_t bitmask, uint8_t bit_status);
     @param magic = magic number to check if the OS was booted by a multiboot2 compilent bootloader
     @param infoStruct_addr = pointer to multiboot information structure
 */
-extern void interpretMultiboot2(void);
+static int interpretMultiboot2(void);

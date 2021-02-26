@@ -20,6 +20,10 @@
 
 #define BOOTLOADER_FUNCTION_INIT 	0x1
 
+#define BOOTLOADER_RETURN_SUCCESS			0
+#define BOOTLOADER_RETURN_WRONG_PROTOCOL 	0x1
+#define BOOTLOADER_RETURN_ADDRESS_PROBLEM	0x2
+
 
 struct memInfo
 {
@@ -40,5 +44,5 @@ extern struct memInfo arch_getMemInfo(int count);
 /*
     @breif = reads needed information from the bootloader based on command and responds with it
 */
-extern void arch_bootloaderInterface(uint32_t function);
+extern int arch_bootloaderInterface(uint32_t function);
 #endif

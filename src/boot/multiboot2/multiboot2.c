@@ -19,62 +19,60 @@ static unsigned long multiboot2_all_tags_size;			// Tags structures toatal size 
 static uint16_t avilability_flags;
 
 
-void arch_bootloaderInterface(uint32_t function)
+int  arch_bootloaderInterface(uint32_t function)
 {
 	if (function == BOOTLOADER_FUNCTION_INIT)
-		interpretMultiboot2();
+		return interpretMultiboot2();
+
+	return -1;
 }
 
-void interpretMultiboot2(void)
+static int interpretMultiboot2(void)
 {
 	/* REMOVE THIS */
-    initSerial();
-    printSerial("\n\n---------------------------------------------------------------------------------------\n");
+	initSerial();
+	printSerial("\n\n---------------------------------------------------------------------------------------\n");
 	/*             */
 
 
 
-    struct multiboot_tag *multiboot2_tags_start_address_converted, *multiboot2_tag_current;
+	struct multiboot_tag *multiboot2_tags_start_address_converted, *multiboot2_tag_current;
 
-    if (multiboot_magic_var != MULTIBOOT2_BOOTLOADER_MAGIC)
-    {
-        printf("Magic number check failed\n");
-        return;
-    }
-    if (multiboot_tags_address_var & 7)																// addr & 7, checks if the address is divisible 7, if yes - it fails becuase it means it is not aligned
-    {
-        printf("Align check failed\n");
-        return;
-    }
+	if (multiboot_magic_var != MULTIBOOT2_BOOTLOADER_MAGIC)
+		return BOOTLOADER_RETURN_WRONG_PROTOCOL;
+	if (multiboot_tags_address_var & 7)																// addr & 7, checks if the address is divisible 7, if yes - it fails becuase it means it is not aligned
+		return BOOTLOADER_RETURN_ADDRESS_PROBLEM;
 
 	multiboot2_magic_copy = multiboot_magic_var;													/* COPY THE MAGIC number and TAGS ptr to local variables */
 	multiboot2_tags_address_copy = multiboot_tags_address_var;
 
-    multiboot2_all_tags_size = *(uint32_t*)multiboot_tags_address_var;								// First in tags structure the size is located in uint_32 format so to get it the address is just converted to int32 pointer
-    multiboot2_tags_start_address_converted = (struct multiboot_tag*)(multiboot_tags_address_var + 8); 	// The multiboot2 tags pointer points not directly to flags but to a structure where first field is size, so the address has to be converted to point to tags
+	multiboot2_all_tags_size = *(uint32_t*)multiboot_tags_address_var;								// First in tags structure the size is located in uint_32 format so to get it the address is just converted to int32 pointer
+	multiboot2_tags_start_address_converted = (struct multiboot_tag*)(multiboot_tags_address_var + 8); 	// The multiboot2 tags pointer points not directly to flags but to a structure where first field is size, so the address has to be converted to point to tags
 
-    for (multiboot2_tag_current = multiboot2_tags_start_address_converted; multiboot2_tag_current->type != MULTIBOOT_TAG_TYPE_END; multiboot2_tag_current = (struct multiboot_tag*)((multiboot_uint8_t*)multiboot2_tag_current + ((multiboot2_tag_current->size + 7) & ~7)))	// Loop through all tags and do the needed thing for each tag
-    {
-        switch (multiboot2_tag_current->type)
-        {
-            case MULTIBOOT_TAG_TYPE_MMAP:
-                toggleBit((size_t*)&avilability_flags, AVAILABLE_FLAG_MEMMAP, TOGGLE_BIT_ON);
-                break;
-            case MULTIBOOT_TAG_TYPE_FRAMEBUFFER:
-                toggleBit((size_t*)&avilability_flags, AVAILABLE_FLAG_FRAMEBUFFER, TOGGLE_BIT_ON);
-                break;
-        }
-    }
+	for (multiboot2_tag_current = multiboot2_tags_start_address_converted; multiboot2_tag_current->type != MULTIBOOT_TAG_TYPE_END; multiboot2_tag_current = (struct multiboot_tag*)((multiboot_uint8_t*)multiboot2_tag_current + ((multiboot2_tag_current->size + 7) & ~7)))	// Loop through all tags and do the needed thing for each tag
+	{
+		switch (multiboot2_tag_current->type)
+		{
+			case MULTIBOOT_TAG_TYPE_MMAP:
+				toggleBit((size_t*)&avilability_flags, AVAILABLE_FLAG_MEMMAP, TOGGLE_BIT_ON);
+				break;
+			case MULTIBOOT_TAG_TYPE_FRAMEBUFFER:
+				toggleBit((size_t*)&avilability_flags, AVAILABLE_FLAG_FRAMEBUFFER, TOGGLE_BIT_ON);
+				break;
+		}
+	}
 
 
-    /* HAS TO BE TRANSFERED TO THE KERNEL CODE */
-    struct memInfo memory_map;
-    int i;
+	/* HAS TO BE TRANSFERED TO THE KERNEL CODE */
+	struct memInfo memory_map;
+	int i;
 
-    for (i = 0; ((memory_map = arch_getMemInfo(i)).flags & MEMINFO_FLAG_ERROR) == 0; i++)
-    {
-        printf("addr = 0x%lx, length = 0x%lx, type = 0x%x\n", memory_map.start_address, memory_map.area_size, memory_map.area_type);
-    }
+	for (i = 0; ((memory_map = arch_getMemInfo(i)).flags & MEMINFO_FLAG_ERROR) == 0; i++)
+	{
+		printf("addr = 0x%lx, length = 0x%lx, type = 0x%x\n", memory_map.start_address, memory_map.area_size, memory_map.area_type);
+	}
+
+	return BOOTLOADER_RETURN_SUCCESS;
 }
 
 struct memInfo arch_getMemInfo(int count)
@@ -106,15 +104,6 @@ struct memInfo arch_getMemInfo(int count)
                 toggleBit((size_t*)&returnStruct.flags, MEMINFO_FLAG_ERROR, TOGGLE_BIT_ON);
                 return returnStruct;
             }
-
-            /* DEBUG */
-            // uint32_t *mmap_addr32, *mmap_len32;
-            // for (mmap = ((struct multiboot_tag_mmap *) tag_current)->entries; (multiboot_uint8_t *) mmap < (multiboot_uint8_t *) tag_current + tag_current->size; mmap = (multiboot_memory_map_t *) ((unsigned long)mmap + ((struct multiboot_tag_mmap *)tag_current)->entry_size))
-            // {
-            //     mmap_addr32 = (uint32_t*)&mmap->addr;
-            //     mmap_len32 = (uint32_t*)&mmap->len;
-            //     printf ("---base_addr = 0x%x%x, length = 0x%x%x, type = 0x%x\n", *(mmap_addr32+1), *mmap_addr32, *(mmap_len32+1), *mmap_len32, mmap->type); //printf ("--- base_addr = 0x%x%x, length = 0x%x%x, type = 0x%x\n", (unsigned) (mmap->addr >> 32), (unsigned) (mmap->addr & 0xffffffff), (unsigned) (mmap->len >> 32), (unsigned) (mmap->len & 0xffffffff), (unsigned) mmap->type);
-            // }
         }
 
     return returnStruct;
