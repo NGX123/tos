@@ -4,6 +4,7 @@
 	2. Make getmemorymap add entries about where multiboot_info starts and finishes - so it is not touched and where framebuffer starts and finished
 2. Implement simple memory management
 	1. Write Page Frame Allocator
+		* Should have a function to reserve physical memory based a request from device driver - special function that asks not to give it a page(4096) but to reserved all pages from start address to end address(and the ones on which start and end are located)
 	2. Write Virtual Memory Manager(Page manager)
 	3. Write Virtual Memory allocator(malloc)
 3. Implement 64-Bit interrupts
