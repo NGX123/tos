@@ -23,6 +23,14 @@
 - Clang
 	* To list the architecutres supported by clang use `llc --version`
 	* To list available CPUs/features on an architecture use `llc -march=ARCH -mattr=help`
+	* **When clang is used as a compiler:**
+		* The `-march <target>` and `-arch <target>` should not be used as they are meant(probably, because if arch and march is used with compiler it says it will ignore them or fails) for linker
+		* Instead in compiler `-target <target>` should be used to specify the target
+	* **When clang is used as a linker:**
+		* The `-target <target>` should not be used as it is meant for compiler(probably), `-arch <target>` should not be used as it is also meant for the compiler
+		* Instead in linker `-march <target>` should be used for the linker
+
+	The `-target` is used to specify a specific CPU and should not be used with linker on normal PC, `-arch` should be changed instead
 - In NASM in the .bss section `align` has to be changed to `alignb`(same as align in everything, but has a different meaning to NASM) because it is a special instruction for .bss section, all other sections should continue using `align`. If the `align` is used in .bss or `alignb` is used in other sections then there will be warnings and errors
 
 ## Information
@@ -36,7 +44,7 @@
 - When compiling x86-32_clang with target set to `i386-elf` the os will link incorrectly or not compile at all(without error). When compiling x86-64-clang with target set to `x86_64-elf` same problem as in previous sentance would occur.
 	* In general, even with other architectures try to look at llc CPU list on selected arch - `llc -march=ARCH -mattr=help`(e.g. ARCH=x86) or recheck how architecture is called in `llc --version`
 	1. Change target from `i386-elf` to `i686-elf`, linkage and compilation would be fixed
-	2. Change target from `x86_64-elf` to `x86-64-elf`, linkage and compilation would be fixed
+	2. Change target compiler target to `--target=x86_64-elf` and linker target to `-march=x86_64-elf`
 - If multiboot2 says "no video found" or similar on UEFI systems:
 	* in GRUB config before the `multiboot /path/to/bin` insert `insmod efi_gop`
 - When making a Multiboot2 2 kernel, changes are needed in conifg files to make it work
