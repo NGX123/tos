@@ -11,10 +11,12 @@
 extern uint64_t multiboot_magic_var;
 extern uint64_t multiboot_tags_address_var;
 
-static unsigned long multiboot2_magic_copy;				// Space to store multiboot magic number locally so it is not stored in some random .bss section and can be lost
-static address_tt multiboot2_tags_address_copy;			// Same but for tags address
+static unsigned long multiboot2_magic_copy;								// Space to store multiboot magic number locally so it is not stored in some random .bss section and can be lost
+static address_tt multiboot2_tags_address_copy;							// Same but for tags address
 
-static unsigned long multiboot2_all_tags_size;			// Tags structures toatal size variable, for use in mmap(to mark the space where the tags exist as reserved in the page frame allocator)
+static struct multiboot_tag* multiboot2_tags_start_address_converted;	// The address that skipes directly to the start of tags structures without the size and other fields
+
+static unsigned long multiboot2_all_tags_size;							// Tags structures toatal size variable, for use in mmap(to mark the space where the tags exist as reserved in the page frame allocator)
 
 static uint16_t avilability_flags;
 
@@ -36,7 +38,7 @@ static int interpretMultiboot2(void)
 
 
 
-	struct multiboot_tag *multiboot2_tags_start_address_converted, *multiboot2_tag_current;
+	struct multiboot_tag *multiboot2_tag_current;
 
 	if (multiboot_magic_var != MULTIBOOT2_BOOTLOADER_MAGIC)
 		return BOOTLOADER_RETURN_WRONG_PROTOCOL;
@@ -78,7 +80,7 @@ static int interpretMultiboot2(void)
 struct memInfo arch_getMemInfo(int count)
 {
     struct memInfo returnStruct = {0};
-    struct multiboot_tag *tag_current, *tag_start = (struct multiboot_tag *) (multiboot_tags_address_var + 8);
+    struct multiboot_tag *tag_current;;
     multiboot_memory_map_t *mmap;
 
     if (!(avilability_flags & AVAILABLE_FLAG_MEMMAP))	// Return error if the bootloader hasn't given the memory map
@@ -87,7 +89,7 @@ struct memInfo arch_getMemInfo(int count)
         return returnStruct;
     }
 
-    for (tag_current = tag_start; tag_current->type != MULTIBOOT_TAG_TYPE_END; tag_current = (struct multiboot_tag *)((multiboot_uint8_t *)tag_current + ((tag_current->size + 7) & ~7)))	// Parse the memory map and put it in the kernels format
+    for (tag_current = multiboot2_tags_start_address_converted; tag_current->type != MULTIBOOT_TAG_TYPE_END; tag_current = (struct multiboot_tag *)((multiboot_uint8_t *)tag_current + ((tag_current->size + 7) & ~7)))	// Parse the memory map and put it in the kernels format
         if (tag_current->type == MULTIBOOT_TAG_TYPE_MMAP)
         {
             mmap = ((struct multiboot_tag_mmap *) tag_current)->entries;
