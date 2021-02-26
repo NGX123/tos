@@ -10,7 +10,5 @@
 
 extern int putchar(int chara);
 
-extern int puts(char* str);
-
-extern void printf(const char *fmt, ...);
+extern int printf(char *fmt, ...);
 #endif
