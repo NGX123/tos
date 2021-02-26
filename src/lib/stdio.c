@@ -1,5 +1,5 @@
 /*
-    @author = ngx123
+    @author = ngx123(with use of code from simple-printf)
     @brief = standard c input/output library
 */
 

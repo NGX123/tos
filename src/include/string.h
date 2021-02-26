@@ -1,5 +1,5 @@
 /*
-	@author = COPYRIGHT Linus Torvals Linux v1.3
+	@author = ngx(with use of Sortix code)
 	@brief = basic c string library header
 */
 
