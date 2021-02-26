@@ -9,6 +9,20 @@
 #include <stdarg.h>
 
 
+#ifdef PRINTF_NO_LONG_LONG
+typedef long long_long_int;
+typedef unsigned long ulong_long_int;
+#else
+typedef long long long_long_int;
+typedef unsigned long long ulong_long_int;
+#endif
+#define PRINT_BUF_LEN 64
+enum flags {
+	PAD_ZERO	= 1,
+	PAD_RIGHT	= 2,
+};
+
+
 static void outputchar(char **str, char c)
 {
 	if (str) {
@@ -18,11 +32,6 @@ static void outputchar(char **str, char c)
 		putchar(c);
 	}
 }
-
-enum flags {
-	PAD_ZERO	= 1,
-	PAD_RIGHT	= 2,
-};
 
 static int prints(char **out, const char *string, int width, int flags)
 {
@@ -55,14 +64,12 @@ static int prints(char **out, const char *string, int width, int flags)
 	return pc;
 }
 
-#define PRINT_BUF_LEN 64
-
-static int outputi(char **out, long long i, int base, int sign, int width, int flags, int letbase)
+static int outputi(char **out, long_long_int i, int base, int sign, int width, int flags, int letbase)
 {
 	char print_buf[PRINT_BUF_LEN];
 	char *s;
 	int t, neg = 0, pc = 0;
-	unsigned long long u = i;
+	ulong_long_int u = i;
 
 	if (i == 0) {
 		print_buf[0] = '0';
@@ -100,7 +107,6 @@ static int outputi(char **out, long long i, int base, int sign, int width, int f
 	return pc + prints (out, s, width, flags);
 }
 
-
 static int vsprintf(char **out, char *format, va_list ap)
 {
 	int width, flags;
@@ -113,8 +119,8 @@ static int vsprintf(char **out, char *format, va_list ap)
 		unsigned int u;
 		long li;
 		unsigned long lu;
-		long long lli;
-		unsigned long long llu;
+		long_long_int lli;
+		ulong_long_int llu;
 		short hi;
 		unsigned short hu;
 		signed char hhi;
@@ -201,7 +207,7 @@ static int vsprintf(char **out, char *format, va_list ap)
 							u.lu = va_arg(ap, unsigned long);
 							pc += outputi(out, u.lu, 16, 0, width, flags, 'A');
 							break;
-
+#ifndef PRINTF_NO_LONG_LONG
 						case('l'):
 							++format;
 							switch (*format) {
@@ -229,6 +235,7 @@ static int vsprintf(char **out, char *format, va_list ap)
 									break;
 							}
 							break;
+#endif
 						default:
 							break;
 					}
