@@ -106,3 +106,6 @@
 	* [Raspberry Pi OS](https://github.com/s-matyukevich/raspberry-pi-os)
 	* [Sortix - POSIX Hobby OS](https://gitlab.com/sortix/sortix)
 		* Easy C Library implementation - sortix/libc
+
+* Releated to OSs
+	* [Simple printf implementation](https://github.com/mpredfearn/simple-printf)
