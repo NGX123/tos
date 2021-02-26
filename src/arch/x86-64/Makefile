@@ -3,7 +3,8 @@
 
 
 ## Variables ##
-SOURCES_x86-64			= $(INIT_SOURCES_x86-64)/*.c lib/arch/io_x86.c drivers/serial.c $(MULTIBOOT2_DIR)/*.c #$(INIT_SOURCES_x86-64)/*.c
+SOURCES_x86-64			=  $(MULTIBOOT2_DIR)/*.c kernel/kernel64_temp.c \
+							lib/arch/io_x86.c drivers/serial.c lib/*.c
 OBJECTS_x86-64			= $(BUILDDIR_x86-64)/*.o
 
 ASSEMBLY_DEFINES		= -D ENABLE_MULTIBOOT2_FRAMEBUFFER
@@ -21,8 +22,8 @@ CC_x86-64_CLANG 			= clang
 AS_x86-64_CLANG				= nasm
 LD_x86-64_CLANG				= clang
 ASFLAGS_x86-64_CLANG		= -felf64 $(ASSEMBLY_DEFINES)
-CFLAGS_x86-64_CLANG 		= -I include -ffreestanding $(CFLAGS_GLOBAL) -target x86-64-elf -mcmodel=large -mno-red-zone -mno-mmx -mno-sse -mno-sse2
-LDFLAGS_x86-64_CLANG		= -T $(INIT_SOURCES_x86-64)/link-x86_64.ld -ffreestanding -nostdlib -target x86-64-elf
+CFLAGS_x86-64_CLANG 		= -I include -ffreestanding $(CFLAGS_GLOBAL) -target x86_64-elf -mcmodel=large -mno-red-zone -mno-mmx -mno-sse -mno-sse2
+LDFLAGS_x86-64_CLANG		= -T $(INIT_SOURCES_x86-64)/link-x86_64.ld -ffreestanding -nostdlib -march=x86_64-elf
 
 
 ## Compilation instructions ##
@@ -33,6 +34,8 @@ build_x86-64_clang:
 
 	# Bootstrap
 	$(AS_x86-64_CLANG) 	$(ASFLAGS_x86-64_CLANG) 	$(ASSEMBLY_DEFINES) 	$(INIT_SOURCES_x86-64)/init-x86_64.s			-o $(BUILDDIR_x86-64)/boot.o
+	$(CC_x86-64_CLANG)	$(CFLAGS_x86-64_CLANG)								$(SOURCES_x86-64) -I include
+	mv *.o $(BUILDDIR_x86-64)
 	$(LD_x86-64_CLANG)	$(LDFLAGS_x86-64_CLANG)								$(OBJECTS_x86-64)								-o $(BUILDDIR_x86-64)/$(TARGET).o
 
 
