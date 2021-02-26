@@ -21,8 +21,9 @@
     - **Motivation:** Kernel could be located at any physical address in the memory space(where it was loaded) at the start, but when paging is enabled the kernel can be remapped to any address in the address space becuase addresses become virtual. When paging is enabled it could be made that each program has it's own memory space, if the kernel is mapped at the end of memory then the programs recieve all the other memory space for them and can be loaded at 0x0 and use everything till the start of kernel which makes linking the application very easy(no need to take into account that first mb+ is taken up)
     - **Implementation:** The kernel and the space belowow 1mb(on x86) is remapped using paging to be right at the end of memory(so from their start to end of memory there is left only enough space to fit them)
 		* There would be variables placed in the linker_script before the kernel and after the kernel to calculate it's size `kernel_size = kernel_end-kernel_start`, then the address where kernel should be reallocated would be counted with - if kernel_size < 512MB then: `kernel_vma = max_address(available in architecture) - 512MB`; if kernel_size > 512MB then - `kernel_vma = max_address(available in arch) - (kernel_size + 512MB)`
+- [Page Frame Allocator](https://wiki.osdev.org/Page_Frame_Allocation) - a program which allocates 4096 byte blocks of memory to give to VMM to map the page to
 - [Identity Paging](https://wiki.osdev.org/Identity_Paging) - when the pages are mapping virtual addresses 1 to 1 whith physical(e.g. 0xb8000 is 0xb8000)
-- [x86 Paging](https://wiki.osdev.org/Paging)
+- [xPaging](https://wiki.osdev.org/Paging)
     + How it works
 		1. malloc() is called to allocate memory
 		2. malloc() requests a page(4KiB) from VMM(Virtual memory manager)
@@ -34,6 +35,8 @@
 ### Paging
 - Bullet points
 	* In x86 paging first 12 bits of addresses used in paging data structs(PML4 address in CR3, PDP address in PML4...) are used for flags. It is possible to use first 12 bits for flags because all addresses of pages and tables used for paging should be 4096 aligned , and all numbers that are divisible/aligned by 4096 have first 12 bits as zeros so they could just be discareded by CPU when using as an address and be used for flags
+	* Paging data structs could be allocated dynamically by the PMM because the size of each page is 4096 like the size of page frame allocated by the PMM
+	* All the page tables should be cleared(all bits set to 0) before they are used. The .bss section is nullified(all bits are set 0) before the program is loaded so the bootstrap tables are OK and can be used without cleaning
 
 ### Page Frame Allocation
 - **Allocation method** - frames pointer and bytemap pointer. Everything not marked as free in the memory map would be marked reserved(2) in the bytemap, everything that is free would be marked as free(0) and all the frames that were allocated by PMM would be marked as allocated(1)
@@ -43,7 +46,7 @@
 
 
 ## Implementation
-+ [Physical frame allocation(PFA)](https://wiki.osdev.org/Page_Frame_Allocation) - PFA does not really allocate anything and just returns address of free 4KiB(page) in physical RAM
++ Physical frame allocation(PFA) - PFA does not really allocate anything and just returns address of free 4KiB(page) in physical RAM
 	* kalloc_frame()
 		1. First it loops through the bytemap until it finds an entry for a free page(0)
 		2. When entry for free page is found, the start address of the corresponding page is found by `free_mem_start_ptr + bytemap_found_entry_num * 4096`
@@ -59,12 +62,14 @@
 - Intel Manual - VOL 3A, Chapters 3 & 4
 - [Wiki on how MM works](https://linux-mm.org/)
 - Tutorials
+	* [Make Page frame alloctor](https://wiki.osdev.org/Writing_A_Page_Frame_Allocator)
+	* [Setup paging](https://wiki.osdev.org/Setting_Up_Paging)
+	* [Paging][https://wiki.osdev.org/Paging]
+
     * [Bona Fide OSdev](http://www.osdever.net/tutorials/index#Memory-Management)
     * [Brendan's MM Guide](https://wiki.osdev.org/Brendan%27s_Memory_Management_Guide)
     * [MM Guides from Forum](https://wiki.osdev.org/Page_Frame_Allocation#Threads)
     * [Writing MM](https://wiki.osdev.org/Writing_a_memory_manager)
-    * [Make Page frame alloctor](https://wiki.osdev.org/Writing_A_Page_Frame_Allocator)
-    * [Setup paging](https://wiki.osdev.org/Setting_Up_Paging)
     * [Anastasion Page Frame Allocator Tutorial](https://anastas.io/osdev/memory/2016/08/08/page-frame-allocator.html)
     * [James Molloy Paging](http://www.jamesmolloy.co.uk/tutorial_html/6.-Paging.html)
     * [Bona Fide Paging](http://www.osdever.net/tutorials/view/implementing-basic-paging)
@@ -77,6 +82,8 @@
 
 ## Questions
 ### Current
+- Can I mark the pages kernel is located on as read only(in page flags) so the kernel can't be accidentaly overwritten by data(which in my case is under the kernel)?
+- Can the stack that was setup in protected mode, be used in long mode?
 
 ### Solved
 - Paging
