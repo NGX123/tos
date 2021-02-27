@@ -49,6 +49,10 @@
 	* [Multiboot 2 Specification(Used by GRUB)](https://www.gnu.org/software/grub/manual/multiboot2/)
 * Programming
 	* [NASM Documentation](https://www.nasm.us/docs.php)
+	* [Clang Documentation](https://clang.llvm.org/docs/index.html)
+		* [Cross-compilation Info](https://clang.llvm.org/docs/CrossCompilation.html)
+		* [Assembling Toolchain](https://clang.llvm.org/docs/Toolchain.html)
+	* [LLD Documentation](https://lld.llvm.org/)
 	* [GNU Binutils(ld)](https://www.gnu.org/software/binutils/docs-2.36/)
 		* [Linkerscript guide](https://sourceware.org/binutils/docs/ld/Scripts.html)
 
