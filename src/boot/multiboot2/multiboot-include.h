@@ -6,10 +6,9 @@
 #include <stdint.h>
 #include <stdarg.h>
 #include <arch/init.h>
-#include <kernel/multiboot2.h>
 #include <kernel_types.h>
 #include "string.h"
-
+#include "multiboot2.h"
 
 #define TOGGLE_BIT_ON   1
 #define TOGGLE_BIT_OFF  0
