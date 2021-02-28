@@ -49,6 +49,7 @@
 	* [Multiboot 2 Specification(Used by GRUB)](https://www.gnu.org/software/grub/manual/multiboot2/)
 	* [Stivale Boot Specification and Headers](https://github.com/stivale/stivale)
 		* [Stivale2 Spec](https://github.com/stivale/stivale/blob/master/STIVALE2.md)
+		* [Stivale2 Example Kernel](https://github.com/limine-bootloader/limine/tree/trunk/test)
 * Programming
 	* [NASM Documentation](https://www.nasm.us/docs.php)
 	* [Clang Documentation](https://clang.llvm.org/docs/index.html)
