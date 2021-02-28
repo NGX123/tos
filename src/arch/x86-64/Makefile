@@ -3,12 +3,23 @@
 
 
 ## Variables ##
-SOURCES_x86-64			=  $(MULTIBOOT2_DIR)/*.c kernel/kernel64_temp.c \
-							lib/arch/io_x86.c drivers/serial.c lib/*.c
+SOURCES_x86-64			=  kernel/kernel64_temp.c lib/arch/io_x86.c drivers/serial.c lib/*.c
+ASM_SOURCES_x86-64 		= $(INIT_SOURCES_x86-64)/init-x86_64.s
 OBJECTS_x86-64			= $(BUILDDIR_x86-64)/*.o
+TOMATBOOT_DIR			= ../tomatboot
+STIVALE2_DIR			= boot/stivale2/
 
 UEFI_BOOTLOADER 		= grub
-ASSEMBLY_DEFINES		= -D ENABLE_MULTIBOOT2_FRAMEBUFFER
+
+# Include the bootstrap directories into sources and define the needed macros depending on the bootloader
+ifeq ($(UEFI_BOOTLOADER), grub)
+SOURCES_x86-64 					+= $(MULTIBOOT2_DIR)/*.c
+ASSEMBLY_DEFINES 				+= -D ENABLE_MULTIBOOT2_FRAMEBUFFER -D ENABLE_64_BIT_BOOTSTRAP
+ASSEMBLY_BOOTSTRAP_SOURCES		+= $(MULTIBOOT2_DIR)/multiboot2_bootstrap.s
+endif
+ifeq ($(UEFI_BOOTLOADER), tomatboot)
+SOURCES_x86-64 += $(STIVALE2_DIR)
+endif
 
 # x86-64_gcc
 CC_x86-64_GCC 					= $(TOOLCHAIN_PREFIX)/x86_64-elf-gcc
@@ -35,7 +46,11 @@ build_x86-64_clang:
 	mkdir -p $(BUILDDIR_x86-64)
 
 	# Bootstrap
-	$(AS_x86-64_CLANG) 	$(ASFLAGS_x86-64_CLANG) 	$(ASSEMBLY_DEFINES) 	$(INIT_SOURCES_x86-64)/init-x86_64.s			-o $(BUILDDIR_x86-64)/boot.o
+	$(AS_x86-64_CLANG) 	$(ASFLAGS_x86-64_CLANG) 	$(ASSEMBLY_DEFINES) 	$(ASM_SOURCES_x86-64)							-o $(BUILDDIR_x86-64)/boot.o
+ifdef ASSEMBLY_BOOTSTRAP_SOURCES
+	$(AS_x86-64_CLANG) 	$(ASFLAGS_x86-64_CLANG) 	$(ASSEMBLY_DEFINES) 	$(ASSEMBLY_BOOTSTRAP_SOURCES)					-o $(BUILDDIR_x86-64)/bootloader.o
+endif
+
 	$(CC_x86-64_CLANG)	$(CFLAGS_x86-64_CLANG)								$(SOURCES_x86-64) -I include
 	mv *.o $(BUILDDIR_x86-64)
 	$(LD_x86-64_CLANG)	$(LDFLAGS_x86-64_CLANG)								$(OBJECTS_x86-64)								-o $(BUILDDIR_x86-64)/$(TARGET).o
@@ -68,6 +83,11 @@ disk_x86-64-uefi:
 grub:
 	grub2-mkstandalone -O x86_64-efi -o $(BUILDDIR_x86-64)/BOOTX64.EFI "boot/grub/grub.cfg=$(MULTIBOOT2_DIR)/grub.cfg"	|| \
 	grub-mkstandalone -O x86_64-efi -o $(BUILDDIR_x86-64)/BOOTX64.EFI "boot/grub/grub.cfg=$(MULTIBOOT2_DIR)/grub.cfg"
+
+# Create the tomatboot Uefi application/Bootloader Binary
+tomatboot:
+	make -C $(TOMATBOOT_DIR)
+	cp $(TOMATBOOT_DIR)/bin/BOOTX64.EFI $(BUILDDIR_x86-64)
 
 
 ## Run with qemu-system-x86_64 with UEFI(if problems occur add this flag - "-cpu qemu64") ##
