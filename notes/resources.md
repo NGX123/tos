@@ -47,6 +47,8 @@
 	* [UEFI Specifications](https://www.uefi.org/specifications)
 	* [BIOS Specification](https://www.scs.stanford.edu/nyu/04fa/lab/specsbbs101.pdf)
 	* [Multiboot 2 Specification(Used by GRUB)](https://www.gnu.org/software/grub/manual/multiboot2/)
+	* [Stivale Boot Specification and Headers](https://github.com/stivale/stivale)
+		* [Stivale2 Spec](https://github.com/stivale/stivale/blob/master/STIVALE2.md)
 * Programming
 	* [NASM Documentation](https://www.nasm.us/docs.php)
 	* [Clang Documentation](https://clang.llvm.org/docs/index.html)
@@ -112,4 +114,5 @@
 		* Easy C Library implementation - sortix/libc
 
 * Releated to OSs
+	* [TomatBoot - Modern multi-protocol x86_64 UEFI Bootloader](https://github.com/TomatOrg/TomatBoot)
 	* [Simple printf implementation](https://github.com/mpredfearn/simple-printf)
