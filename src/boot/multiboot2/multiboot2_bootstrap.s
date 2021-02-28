@@ -3,12 +3,12 @@
 
 
 ; Kernel start called by grub(_start is specified in linker.ld)
+[BITS 32]
 global _start
 global multiboot_magic_var
 global multiboot_tags_address_var
 
-extern kernel_main
-extern interpretMultiboot2
+extern kernel_setup
 
 
 %ifndef USE_MULTIBOOT1_PROTOCOL
