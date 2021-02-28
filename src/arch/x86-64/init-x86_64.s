@@ -7,10 +7,14 @@
                 ; Clean the stack - after the function returns, it is the responsibility of the caller to pop the same amount of things as pushed from the stack to leave it clean
 
 
-
+%ifndef ENABLE_64_BIT_BOOTSTRAP
+kernel_setup:
+	call kernel_main
+	hlt
+	jmp $
+%else
 ;;; 32-Bit Bootstrap code ;;;
 [BITS 32]
-%include "boot/multiboot2/multiboot2_bootstrap.s"
 
 
 %define ERROR_NO_64     0xE1 ; No 64 bit mode available
@@ -242,3 +246,4 @@ l3_table:		; PDP Table
 	resb 4096
 l2_table:		; PD Table
 	resb 4096
+%endif
