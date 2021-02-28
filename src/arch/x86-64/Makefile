@@ -7,6 +7,7 @@ SOURCES_x86-64			=  $(MULTIBOOT2_DIR)/*.c kernel/kernel64_temp.c \
 							lib/arch/io_x86.c drivers/serial.c lib/*.c
 OBJECTS_x86-64			= $(BUILDDIR_x86-64)/*.o
 
+UEFI_BOOTLOADER 		= grub
 ASSEMBLY_DEFINES		= -D ENABLE_MULTIBOOT2_FRAMEBUFFER
 
 # x86-64_gcc
@@ -54,15 +55,19 @@ disk_x86-64-uefi:
 	mmd -i $(BUILDDIR_x86-64)/$(TARGET).img ::/EFI
 	mmd -i $(BUILDDIR_x86-64)/$(TARGET).img ::/EFI/BOOT
 
-	# Create the GRUB Uefiapplication/Bootloader Binary
-	grub2-mkstandalone -O x86_64-efi -o $(BUILDDIR_x86-64)/BOOTX64.EFI "boot/grub/grub.cfg=$(MULTIBOOT2_DIR)/grub.cfg"	|| \
-	grub-mkstandalone -O x86_64-efi -o $(BUILDDIR_x86-64)/BOOTX64.EFI "boot/grub/grub.cfg=$(MULTIBOOT2_DIR)/grub.cfg"
+	# Create the uefi app of selected bootloader
+	make $(UEFI_BOOTLOADER)
 
 	# Copy the efi bootloader to the EFI/BOOT folder on the drive
 	mcopy -i $(BUILDDIR_x86-64)/$(TARGET).img $(BUILDDIR_x86-64)/BOOTX64.EFI ::/EFI/BOOT
 
 	# Copy the kernel/executable to the drive
 	mcopy -i $(BUILDDIR_x86-64)/$(TARGET).img $(BUILDDIR_x86-64)/$(TARGET).o ::/EFI/BOOT
+
+# Create the GRUB Uefiapplication/Bootloader Binary
+grub:
+	grub2-mkstandalone -O x86_64-efi -o $(BUILDDIR_x86-64)/BOOTX64.EFI "boot/grub/grub.cfg=$(MULTIBOOT2_DIR)/grub.cfg"	|| \
+	grub-mkstandalone -O x86_64-efi -o $(BUILDDIR_x86-64)/BOOTX64.EFI "boot/grub/grub.cfg=$(MULTIBOOT2_DIR)/grub.cfg"
 
 
 ## Run with qemu-system-x86_64 with UEFI(if problems occur add this flag - "-cpu qemu64") ##
