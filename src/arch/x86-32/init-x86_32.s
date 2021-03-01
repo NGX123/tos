@@ -1,5 +1,5 @@
 ; @author = ngx123
-; @brief = code for the initial setup of the x86-32 platform
+; @brief = code for the initial setup of the x86_32 platform
 
 
 %include "boot/multiboot2/multiboot2_bootstrap.s"
@@ -39,4 +39,4 @@ gdtLoadAsm:
 
 
 ; Assembly interrupt code declarations
-%include "arch/x86-32/platform_interrupts.s"
+%include "arch/x86_32/platform_interrupts.s"

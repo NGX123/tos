@@ -232,7 +232,7 @@ func_build_gcc_linux() {
 
 # Seperate build instructions if the MacOS is used
 func_build_gcc_macos() {
-    # Compile x86-32 gcc cross-compiler
+    # Compile x86_32 gcc cross-compiler
     if [[ $build_gnu_tools == 32 || $build_gnu_tools == all ]]
       then
         func_setup_gcc "i686"
