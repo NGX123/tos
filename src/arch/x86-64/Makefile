@@ -40,7 +40,7 @@ AS_x86-64_CLANG				= nasm
 LD_x86-64_CLANG				= clang
 ASFLAGS_x86-64_CLANG		= -felf64 $(ASSEMBLY_DEFINES)
 # Attributes - (-ffreestanding, -nostdlib) Startup not at main() and no standard lib; (-mno-*) disable different compiler features; (-mcmodel=large) No assumptions about addresses; (-target) specify target arch; (-fuse-lld) choose alternative linker
-CFLAGS_x86-64_CLANG 		= -I include -ffreestanding $(CFLAGS_GLOBAL) -target x86_64-elf -mcmodel=large -mno-red-zone -mno-mmx -mno-sse -mno-sse2
+CFLAGS_x86-64_CLANG 		= -I include -ffreestanding -target x86_64-elf -mcmodel=large -mno-red-zone -mno-mmx -mno-sse -mno-sse2 $(CFLAGS_GLOBAL)
 LDFLAGS_x86-64_CLANG		= -T $(INIT_SOURCES_x86-64)/link-x86_64.ld -ffreestanding -nostdlib -fuse-ld=lld
 
 
@@ -110,4 +110,4 @@ qemu_x86-64-uefi:
 
 
 ## Main Compilation Routines ##
-all_x86-64_clang:     		clean build_x86-64_clang disk_x86-64-uefi qemu_x86-64-uefi
+all_x86-64_clang:	clean build_x86-64_clang disk_x86-64-uefi qemu_x86-64-uefi
