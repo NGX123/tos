@@ -3,6 +3,8 @@
 
 
 ## Variables ##
+BUILDDIR_x86-32			= $(BUILDDIR)/x86-32
+INIT_SOURCES_x86-32 	= arch/x86-32
 BUILDDIR_x86-32_CLANG	= $(BUILDDIR_x86-32)
 SOURCES_x86-32			= drivers/*.c kernel/*.c $(INIT_SOURCES_x86-32)/*.c lib/*.c lib/arch/*.c
 OBJECTS_x86-32			= $(BUILDDIR_x86-32)/*.o
@@ -59,3 +61,8 @@ disk_x86-32-bios:
 ## Run with qemu-system-i386 with BIOS ##
 qemu_x86-32-bios:
 	qemu-system-i386 -cdrom $(BUILDDIR_x86-32)/$(TARGET).iso
+
+
+## Main Compilation Routines ##
+all_x86-32_gcc: 			clean build_x86-32_gcc disk_x86-32-bios qemu_x86-32-bios
+all_x86-32_clang:			clean build_x86-32_clang disk_x86-32-bios qemu_x86-32-bios

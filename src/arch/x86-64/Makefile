@@ -3,22 +3,27 @@
 
 
 ## Variables ##
-SOURCES_x86-64			=  kernel/kernel64_temp.c lib/arch/io_x86.c drivers/serial.c lib/*.c
-ASM_SOURCES_x86-64 		= $(INIT_SOURCES_x86-64)/init-x86_64.s
-OBJECTS_x86-64			= $(BUILDDIR_x86-64)/*.o
-TOMATBOOT_DIR			= ../tomatboot
-STIVALE2_DIR			= boot/stivale2/
+BUILDDIR_x86-64				= $(BUILDDIR)/x86-64
+INIT_SOURCES_x86-64			= arch/x86-64
+SOURCES_x86-64				=  kernel/kernel64_temp.c lib/arch/io_x86.c drivers/serial.c lib/*.c
+ASM_SOURCES_x86-64 			= $(INIT_SOURCES_x86-64)/init-x86_64.s
+OBJECTS_x86-64				= $(BUILDDIR_x86-64)/*.o
 
-UEFI_BOOTLOADER 		= tomatboot
+BOOTLOADER_DIR_TOMATBOOT 	= ../tomatboot
+
+BOOTSTRAP_DIR_MULTIBOOT2	= boot/multiboot2
+BOOTSTRAP_DIR_STIVALE2		= boot/stivale2/
+
+UEFI_BOOTLOADER 			= tomatboot
 
 # Include the bootstrap directories into sources and define the needed macros depending on the bootloader
 ifeq ($(UEFI_BOOTLOADER), grub)
-SOURCES_x86-64 					+= $(MULTIBOOT2_DIR)/*.c
+SOURCES_x86-64 					+= $(BOOTSTRAP_DIR_MULTIBOOT2)/*.c
 ASSEMBLY_DEFINES 				+= -D ENABLE_MULTIBOOT2_FRAMEBUFFER -D ENABLE_64_BIT_BOOTSTRAP
-ASSEMBLY_BOOTSTRAP_SOURCES		+= $(MULTIBOOT2_DIR)/multiboot2_bootstrap.s
+ASSEMBLY_BOOTSTRAP_SOURCES		+= $(BOOTSTRAP_DIR_MULTIBOOT2)/multiboot2_bootstrap.s
 endif
 ifeq ($(UEFI_BOOTLOADER), tomatboot)
-SOURCES_x86-64 += $(STIVALE2_DIR)/*.c
+SOURCES_x86-64 += $(BOOTSTRAP_DIR_STIVALE2)/*.c
 endif
 
 # x86-64_gcc
@@ -81,15 +86,15 @@ disk_x86-64-uefi:
 
 # Create the GRUB Uefiapplication/Bootloader Binary
 grub:
-	grub2-mkstandalone -O x86_64-efi -o $(BUILDDIR_x86-64)/BOOTX64.EFI "boot/grub/grub.cfg=$(MULTIBOOT2_DIR)/grub.cfg"	|| \
-	grub-mkstandalone -O x86_64-efi -o $(BUILDDIR_x86-64)/BOOTX64.EFI "boot/grub/grub.cfg=$(MULTIBOOT2_DIR)/grub.cfg"
+	grub2-mkstandalone -O x86_64-efi -o $(BUILDDIR_x86-64)/BOOTX64.EFI "boot/grub/grub.cfg=$(BOOTSTRAP_DIR_MULTIBOOT2)/grub.cfg"	|| \
+	grub-mkstandalone -O x86_64-efi -o $(BUILDDIR_x86-64)/BOOTX64.EFI "boot/grub/grub.cfg=$(BOOTSTRAP_DIR_MULTIBOOT2)/grub.cfg"
 
 # Create the tomatboot Uefi application/Bootloader Binary
 tomatboot:
-	make -C $(TOMATBOOT_DIR)
-	cp $(TOMATBOOT_DIR)/bin/BOOTX64.EFI $(BUILDDIR_x86-64)
+	make -C $(BOOTLOADER_DIR_TOMATBOOT)
+	cp $(BOOTLOADER_DIR_TOMATBOOT)/bin/BOOTX64.EFI $(BUILDDIR_x86-64)
 
-	mcopy -i $(BUILDDIR_x86-64)/$(TARGET).img $(STIVALE2_DIR)/limine.cfg ::
+	mcopy -i $(BUILDDIR_x86-64)/$(TARGET).img $(BOOTSTRAP_DIR_STIVALE2)/limine.cfg ::
 
 
 ## Run with qemu-system-x86_64 with UEFI(if problems occur add this flag - "-cpu qemu64") ##
@@ -102,3 +107,7 @@ qemu_x86-64-uefi:
 	-drive format=raw,file=$(BUILDDIR_x86-64)/$(TARGET).img \
 	$(QEMU_FLAGS)
 	# QEMU_FLAGS="-serial file:$(BUILDDIR_x86-64)/serial.log"
+
+
+## Main Compilation Routines ##
+all_x86-64_clang:     		clean build_x86-64_clang disk_x86-64-uefi qemu_x86-64-uefi

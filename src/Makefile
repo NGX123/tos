@@ -1,12 +1,6 @@
 ## Variables ##
 BUILDDIR 						= build
 TOOLCHAIN_PREFIX				= ../toolchain/bin
-
-MULTIBOOT2_DIR					= boot/multiboot2
-INIT_SOURCES_x86-64				= arch/x86-64
-INIT_SOURCES_x86-32 			= arch/x86-32
-BUILDDIR_x86-64					= $(BUILDDIR)/x86-64
-BUILDDIR_x86-32					= $(BUILDDIR)/x86-32
 TARGET							= tos
 
 CFLAGS_GLOBAL 					= -Wmissing-prototypes -Wshadow -Wall -Wextra -c
@@ -14,10 +8,7 @@ CEXTRAWARNINGS 					= -pedantic -Wcast-align -Wcast-qual -Wdisabled-optimization
 
 
 ## Start ##
-all: 						all_x86-64_clang
-all_x86-32_gcc: 			clean build_x86-32_gcc disk_x86-32-bios qemu_x86-32-bios
-all_x86-64_clang:     		clean build_x86-64_clang disk_x86-64-uefi qemu_x86-64-uefi
-all_x86-32_clang:			clean build_x86-32_clang disk_x86-32-bios qemu_x86-32-bios
+all: all_x86-64_clang
 
 
 ## Includes ##
