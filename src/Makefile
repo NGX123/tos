@@ -8,7 +8,7 @@ CEXTRAWARNINGS 					= -pedantic -Wcast-align -Wcast-qual -Wdisabled-optimization
 
 
 ## Start ##
-all: all_x86-64_clang
+all: all_x86_64_clang
 
 
 ## Includes ##
