@@ -1,0 +1,2 @@
+# Headers are in  C not C++
+*.h linguist-language=C
