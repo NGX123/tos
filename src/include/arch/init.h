@@ -53,4 +53,9 @@ extern int arch_bootloaderInterface(uint32_t function);
     @brief = main function of the kernel that calls all other functions
 */
 extern void kernel_main(void);
+
+/*
+	@brief = setups the stuff needed(if there is some) on the okatform by the kernel
+*/
+extern void kernel_setup(void);
 #endif
