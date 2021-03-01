@@ -1,3 +1,14 @@
 src/build
 toolchain
-*.o *.so *.out *.img *.fd *.efi *iso
+
+src/*.o 
+src/*.so 
+src/*.out 
+src/*.img 
+src/*.fd 
+src/*.efi 
+src/*iso
+src/*.img
+
+tomatboot/build 
+tomatboot/bin
