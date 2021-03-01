@@ -9,7 +9,8 @@ BUILDDIR_x86-32_CLANG	= $(BUILDDIR_x86-32)
 SOURCES_x86-32			= drivers/*.c kernel/*.c $(INIT_SOURCES_x86-32)/*.c lib/*.c lib/arch/*.c
 OBJECTS_x86-32			= $(BUILDDIR_x86-32)/*.o
 
-OS_MACROS 				= -D PRINTF_NO_LONG_LONG
+BOOTSTRAP_DIR_MULTIBOOT2	= boot/multiboot2
+OS_MACROS 					= -D PRINTF_NO_LONG_LONG
 
 # x86-32_gcc
 CC_x86-32_GCC 					= $(TOOLCHAIN_PREFIX)/i686-elf-gcc
@@ -54,7 +55,7 @@ build_x86-32_clang:
 disk_x86-32-bios:
 	mkdir -p $(BUILDDIR_x86-32)/iso/boot/grub
 	mv $(BUILDDIR_x86-32)/$(TARGET).o $(BUILDDIR_x86-32)/iso/boot
-	cp $(MULTIBOOT2_DIR)/grub.cfg $(BUILDDIR_x86-32)/iso/boot/grub
+	cp $(BOOTSTRAP_DIR_MULTIBOOT2)/grub.cfg $(BUILDDIR_x86-32)/iso/boot/grub
 	grub2-mkrescue -o $(BUILDDIR_x86-32)/$(TARGET).iso $(BUILDDIR_x86-32)/iso || grub-mkrescue -o $(BUILDDIR_x86-32)/$(TARGET).iso $(BUILDDIR_x86-32)/iso
 
 

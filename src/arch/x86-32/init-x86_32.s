@@ -16,9 +16,9 @@ extern makeMemFlat
 kernel_setup:
         call makeMemFlat
         call kernel_main
-kernel_hang:
+
         hlt
-        jmp hang               ; Loop forever
+        jmp $
 
 
 gdtLoadAsm:
