@@ -48,4 +48,9 @@ extern struct memInfo arch_getMemInfo(int count, uint8_t mmap_type);
     @breif = reads needed information from the bootloader based on command and responds with it
 */
 extern int arch_bootloaderInterface(uint32_t function);
+
+/*
+    @brief = main function of the kernel that calls all other functions
+*/
+extern void kernel_main(void);
 #endif

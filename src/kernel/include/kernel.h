@@ -27,11 +27,6 @@
 
 
 /*
-    @brief = main function of the kernel that calls all other functions
-*/
-extern void kernel_main(void);
-
-/*
     @brief = prints a system initialization message
     @param string = the string to print
     @param status = the status of the print - FAIL/SUCCESS
