@@ -9,7 +9,7 @@ OBJECTS_x86-64			= $(BUILDDIR_x86-64)/*.o
 TOMATBOOT_DIR			= ../tomatboot
 STIVALE2_DIR			= boot/stivale2/
 
-UEFI_BOOTLOADER 		= grub
+UEFI_BOOTLOADER 		= tomatboot
 
 # Include the bootstrap directories into sources and define the needed macros depending on the bootloader
 ifeq ($(UEFI_BOOTLOADER), grub)
@@ -18,7 +18,7 @@ ASSEMBLY_DEFINES 				+= -D ENABLE_MULTIBOOT2_FRAMEBUFFER -D ENABLE_64_BIT_BOOTST
 ASSEMBLY_BOOTSTRAP_SOURCES		+= $(MULTIBOOT2_DIR)/multiboot2_bootstrap.s
 endif
 ifeq ($(UEFI_BOOTLOADER), tomatboot)
-SOURCES_x86-64 += $(STIVALE2_DIR)
+SOURCES_x86-64 += $(STIVALE2_DIR)/*.c
 endif
 
 # x86-64_gcc
@@ -88,6 +88,8 @@ grub:
 tomatboot:
 	make -C $(TOMATBOOT_DIR)
 	cp $(TOMATBOOT_DIR)/bin/BOOTX64.EFI $(BUILDDIR_x86-64)
+
+	mcopy -i $(BUILDDIR_x86-64)/$(TARGET).img $(STIVALE2_DIR)/limine.cfg ::
 
 
 ## Run with qemu-system-x86_64 with UEFI(if problems occur add this flag - "-cpu qemu64") ##
