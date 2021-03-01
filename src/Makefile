@@ -13,7 +13,6 @@ all: all_x86_64_clang
 
 ## Includes ##
 include arch/x86_64/Makefile
-include arch/x86_32/Makefile
 
 
 ## Special ##
