@@ -58,6 +58,9 @@
 
 
 ## Fixes
+- When pasting another project repositoy as a folder(like a bootloader) into you own git repo - git will detect it as a submodule and to stop it:
+	* Remove: all .git* files and folders, LICENSE.md, all submodules folders in the project you are pasting(if there are any in the project that is pasted in your git repo)
+
 - When compiling x86-32_clang with target set to `i386-elf` the os will link incorrectly or not compile at all(without error). When compiling x86-64-clang with target set to `x86_64-elf` same problem as in previous sentance would occur.
 	* In general, even with other architectures try to look at llc CPU list on selected arch - `llc -march=ARCH -mattr=help`(e.g. ARCH=x86) or recheck how architecture is called in `llc --version`
 	1. Change target from `i386-elf` to `i686-elf`, linkage and compilation would be fixed
