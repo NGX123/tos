@@ -11,4 +11,7 @@ void kernel_main()
 {
 	// Call the bootloader function to initialize whatever it needs
 	arch_bootloaderInterface(BOOTLOADER_FUNCTION_INIT);
+
+	while(1)
+		;
 }
