@@ -6,7 +6,7 @@
 	1. Write Page Frame Allocator
 		* Should have a function to reserve physical memory based a request from device driver - special function that asks not to give it a page(4096) but to reserved all pages from start address to end address(and the ones on which start and end are located)
 			* Drivers like the framebuffer driver should mark the memory mapped I/O and the memory areas that they need as reserved using PFA special function
-		* Page frame allocator should not be able to touch the physical area where the kernel is(1mb + kernel size if multiboot is used)
+		* Page frame allocator should not be able to touch the physical area where the kernel is(1mb + kernel size if multiboot is used), where the framebuffer is
 	2. Write Virtual Memory Manager(Page manager)
 		* The virtual memory manager should make sure that the bits 48-63 are the same as bit 47
 		* VMM should know about noncanonical addresses and the whole
@@ -28,8 +28,10 @@
 2. [Graphics](https://wiki.osdev.org/Category:Video)
 	* Implement video output detection - GRUB, GOP, VGA Text Mode...
 	* [GRUB Framebuffer]()
-		1. Supply the multiboot2 header with framebuffer tag(5 in documentation)
+		1. Supply the multiboot2 header with framebuffer tag(5 in documentation) or using stivale2 header
 		2. Copy and modify the driver from documentation
+		* The framebuffer should use the arch_bootloaderInterface to get the things like width, address... and they should be in universal structure format to which they will be converted from the boot protocol format
+		* The framebuffer should use the PMM functions to mark the page frames it uses as reserved
 	* [GOP](https://wiki.osdev.org/GOP)
 		1. Use the GRUB Header tags to make it load os into "i386 with EFI boot servicers not exited"
 		2. Setup a framebuffer with GOP
