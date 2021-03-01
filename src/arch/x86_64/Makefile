@@ -3,8 +3,8 @@
 
 
 ## Variables ##
-BUILDDIR_x86_64				= $(BUILDDIR)/x86-64
-INIT_SOURCES_x86_64			= arch/x86-64
+BUILDDIR_x86_64				= $(BUILDDIR)/x86_64
+INIT_SOURCES_x86_64			= arch/x86_64
 SOURCES_x86_64				=  kernel/kernel64_temp.c lib/arch/io_x86.c drivers/serial.c lib/*.c
 ASM_SOURCES_x86_64 			= $(INIT_SOURCES_x86_64)/init-x86_64.s
 OBJECTS_x86_64				= $(BUILDDIR_x86_64)/*.o

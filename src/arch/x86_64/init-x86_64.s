@@ -1,5 +1,5 @@
 ; @author = ngx123
-; @brief = code for the initial setup of the x86-64 platform
+; @brief = code for the initial setup of the x86_64 platform
 ; @notes = the labels starting from . or having . somewhere in their name(e.g. .hello.world k.lel) are just normal labels
         ; Passing functions arguments(https://stackoverflow.com/questions/37975177/how-can-i-pass-parameters-in-assembler-x86-function-call)
                 ; Pass - ```push register/address```, the stack is used to store function arguments, so the first argument pushed on the stack will be the last one that is poped of it(so the last argument in function) and the last argument to be pushed would be the first one to be read
