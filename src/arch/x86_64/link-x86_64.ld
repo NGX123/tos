@@ -12,7 +12,7 @@ SECTIONS
     /*Change current address to change starting from where sections will be placed(current address specified by .)*/
     /* Lower half kernel address(just to test with GRUB if needed */
 	/* . = 0x00100000; */
-	. = 0xffffffff80100000;
+	. = 0xffffffff80100000;	/* The kernel is linked at the higher half + 1mb because space below will have BIOS/UEFI stuff mapped
 
 	/* A hacky way to have the kernel be compatible with GRUB, bootboot and tomatboot/stivale because only the last one depends on the how the section with it's header is called and other bootloaders dont't care in what section their header is so the stivale's section name is used*/
     .stivale2hdr ALIGN(4K) :
