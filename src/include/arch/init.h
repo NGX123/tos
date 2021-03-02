@@ -44,7 +44,7 @@ struct memInfo
 	@param mmap_type = specifies the memory map to use bootloader/kernel
     @return = filled in memory structure
 */
-extern struct memInfo arch_getMemInfo(int count, uint8_t mmap_type);
+extern struct memInfo arch_getMemInfo(size_t count, uint8_t mmap_type);
 
 /*
     @breif = reads needed information from the bootloader based on command and responds with it
