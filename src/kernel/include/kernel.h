@@ -17,7 +17,6 @@
 #include <stdio.h>
 #include <stdarg.h>
 
-#include <drivers/vga.h>
 #include <arch/io_x86.h>
 #include <drivers/acpi.h>
 #include <drivers/kbd.h>
