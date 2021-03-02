@@ -21,11 +21,12 @@
 #define MEMMAP_TYPE_PROTOCOL		0x0	// Make getmeminfo return the memory map supplied by bootloader protocol
 #define MEMMAP_TYPE_INTERPRETER		0x1	// Make getmeminfo return the memory map additional fields created by the boot protocol interpreter(e.g. multiboot2.c)
 
-#define BOOTLOADER_FUNCTION_INIT 	0x1
+#define BOOTLOADER_FUNCTION_INIT 	0x1	// Reads and interprets everything the bootloader has supplied(tags, framebuffer...)
 
 #define BOOTLOADER_RETURN_SUCCESS			0
 #define BOOTLOADER_RETURN_WRONG_PROTOCOL 	0x1
 #define BOOTLOADER_RETURN_ADDRESS_PROBLEM	0x2
+#define BOOTLOADER_RETURN_WRONG_FUNCTION	0x4
 
 
 struct memInfo
@@ -38,14 +39,18 @@ struct memInfo
 };
 
 /*
-    @brief = fills memInfo structure based on "count". Sets error flag if "count" is bigger then amount of entries in the memory map. Example use is - calling memInfo with count 0, reading data from memInfo, incrementing count by one, doing previous steps until error flag is set
+    @brief = returns a memory map entry structure from "count" entry in the memory map. Example usage - supply count with 0, read the returned entry, increment count by 1, read entry, increment count by 1...
     @param count = specifies the entry in the memory map
+	@param mmap_type = specifies the memory map to use bootloader/kernel
     @return = filled in memory structure
 */
 extern struct memInfo arch_getMemInfo(int count, uint8_t mmap_type);
 
 /*
     @breif = reads needed information from the bootloader based on command and responds with it
+	@param functions = selects the function that the bootloader should perform
+	@param data = unspecified pointer(void*) to some data returned by function(can point to nothing)
+	@return = 0 on success, -1 on fail
 */
 extern int arch_bootloaderInterface(uint32_t function);
 
