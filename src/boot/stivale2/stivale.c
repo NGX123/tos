@@ -6,11 +6,10 @@
 
 #include "stivale-include.h"
 
-#include <stdio.h>
-#include "../../drivers/include/serial.h"
-
 
 static uint8_t stack[16384];								// 16 KB reserved for the stack
+static uint16_t avilability_flags;							// Has flags for stuff that bootloader has supplied
+static struct stivale2_struct* stivale2_info_struct_ptr;
 
 struct stivale2_header_tag_framebuffer framebuffer_request = {
     .tag = {
@@ -32,49 +31,26 @@ struct stivale2_header __attribute__((section(".stivale2hdr"), used)) header2 = 
 
 void _start(struct stivale2_struct* info)	/* The function has struct pointer as an argument because stivale protocol printf the pointer to it's info struct into rdi which in "System V AMD64 ABI Calling Convention" is used to store the first argument that is an integer/pointer(not the stack as in i386 ABI) */
 {
-	/* DEBUG CODE */
-	initSerial();
-	printSerial("\n\n---------------------------------------------------------------------------------------\n");
-
-
 	struct stivale2_tag* tags_ptr = (struct stivale2_tag *)info->tags;
 	struct stivale2_tag* tag_current;
 
+	stivale2_info_struct_ptr = info;
+
 	for (tag_current = tags_ptr; tag_current != NULL; tag_current = (struct stivale2_tag *)tag_current->next)
 	{
-		switch (tag_current->identifier) {
-            case STIVALE2_STRUCT_TAG_MEMMAP_ID: {
-                struct stivale2_struct_tag_memmap *m = (struct stivale2_struct_tag_memmap *)tag_current;
-                printf("----- Memmap tag: ----- \n");
-                printf("Entries: %d\n", m->entries);
-                for (size_t i = 0; i < m->entries; i++) {
-                    struct stivale2_mmap_entry me = m->memmap[i];
-                    printf("Base: %x, Size: %x, Type: %x\n", me.base, me.length, me.type);
-                }
+		switch (tag_current->identifier)
+		{
+            case STIVALE2_STRUCT_TAG_MEMMAP_ID:
+                toggleBit((size_t*)&avilability_flags, AVAILABLE_FLAG_MEMMAP, TOGGLE_BIT_ON);
                 break;
-            }
-            case STIVALE2_STRUCT_TAG_FRAMEBUFFER_ID: {
-                struct stivale2_struct_tag_framebuffer *f = (struct stivale2_struct_tag_framebuffer *)tag_current;
-                printf("----- Framebuffer tag: -----\n");
-                printf("Address: %x\n", f->framebuffer_addr);
-                printf("Width:   %d\n", f->framebuffer_width);
-                printf("Height:  %d\n", f->framebuffer_height);
-                printf("Pitch:   %d\n", f->framebuffer_pitch);
-                printf("BPP:     %d\n", f->framebuffer_bpp);
-                printf("Memory model:    %d\n", f->memory_model);
-                printf("Red mask size:   %d\n", f->red_mask_size);
-                printf("Red mask size:   %d\n", f->red_mask_shift);
-                printf("Green mask size: %d\n", f->green_mask_size);
-                printf("Green mask size: %d\n", f->green_mask_shift);
-                printf("Blue mask size:  %d\n", f->blue_mask_size);
-                printf("Blue mask size:  %d\n", f->blue_mask_shift);
+            case STIVALE2_STRUCT_TAG_FRAMEBUFFER_ID:
+                toggleBit((size_t*)&avilability_flags, AVAILABLE_FLAG_FRAMEBUFFER, TOGGLE_BIT_ON);
                 break;
-            }
-            case STIVALE2_STRUCT_TAG_RSDP_ID: {
+            case STIVALE2_STRUCT_TAG_RSDP_ID:
+				toggleBit((size_t*)&avilability_flags, AVAILABLE_FLAG_ACPI, TOGGLE_BIT_ON);
                 break;
-            }
             default:
-                printf("----- Unidentifier tag %x -----\n", tag_current->identifier);
+                break;
         }
 	}
 
@@ -84,13 +60,19 @@ void _start(struct stivale2_struct* info)	/* The function has struct pointer as 
 int arch_bootloaderInterface(uint32_t function)
 {
 	if (function == BOOTLOADER_FUNCTION_INIT){
-		printf("Hello");
-		return 0;
+		return BOOTLOADER_RETURN_SUCCESS;
 	}
 
-	return -1;
+	return BOOTLOADER_RETURN_WRONG_FUNCTION;
 }
 
+static void toggleBit(size_t* var, size_t bitmask, uint8_t bit_status)
+{
+    if ((bit_status == TOGGLE_BIT_ON && (*var & bitmask)) || (bit_status == TOGGLE_BIT_OFF && !(*var & bitmask)))
+        ;
+    else if ((bit_status == TOGGLE_BIT_ON && !(*var & bitmask)) || (bit_status == TOGGLE_BIT_OFF && (*var & bitmask)))
+        *var ^= bitmask;
+}
 
 
 
