@@ -3,9 +3,8 @@
     @brief = includes code needed to get data and setup everything using multiboot2
 */
 
+
 #include "multiboot-include.h"
-#include "../../drivers/include/serial.h"
-#include "stdio.h"
 
 
 extern uint64_t multiboot_magic_var;									/* External variables linking to the ones stored in the .bss section that hold values supplied by grub */
@@ -26,7 +25,7 @@ int  arch_bootloaderInterface(uint32_t function)
 	if (function == BOOTLOADER_FUNCTION_INIT)
 		return interpretMultiboot2();
 
-	return -1;
+	return BOOTLOADER_RETURN_WRONG_FUNCTION;
 }
 
 static int interpretMultiboot2(void)
@@ -56,27 +55,6 @@ static int interpretMultiboot2(void)
 				break;
 		}
 	}
-
-
-	/* HAS TO BE TRANSFERED TO THE KERNEL CODE */
-	initSerial();
-	printSerial("\n\n---------------------------------------------------------------------------------------\n");
-
-	struct memInfo memory_map;
-	int i;
-
-	for (i = 0; ((memory_map = arch_getMemInfo(i, MEMMAP_TYPE_PROTOCOL)).flags & MEMINFO_FLAG_ERROR) == 0; i++)
-	{
-		printf("addr = 0x%lx, length = 0x%lx, type = 0x%x\n", memory_map.start_address, memory_map.area_size, memory_map.area_type);
-	}
-
-	printf("MemMap by Interprter\n");
-
-	for (i = 0; ((memory_map = arch_getMemInfo(i, MEMMAP_TYPE_INTERPRETER)).flags & MEMINFO_FLAG_ERROR) == 0; i++)
-	{
-		printf("addr = 0x%lx, length = 0x%lx, type = 0x%x\n", memory_map.start_address, memory_map.area_size, memory_map.area_type);
-	}
-
 
 	return BOOTLOADER_RETURN_SUCCESS;
 }
