@@ -9,7 +9,7 @@
 
 static uint8_t stack[16384];								// 16 KB reserved for the stack
 static uint16_t avilability_flags;							// Has flags for stuff that bootloader has supplied
-static struct stivale2_struct* stivale2_info_struct_ptr;
+static struct stivale2_tag* stivale2_tags_struct_ptr;
 
 struct stivale2_header_tag_framebuffer framebuffer_request = {
     .tag = {
@@ -31,12 +31,10 @@ struct stivale2_header __attribute__((section(".stivale2hdr"), used)) header2 = 
 
 void _start(struct stivale2_struct* info)	/* The function has struct pointer as an argument because stivale protocol printf the pointer to it's info struct into rdi which in "System V AMD64 ABI Calling Convention" is used to store the first argument that is an integer/pointer(not the stack as in i386 ABI) */
 {
-	struct stivale2_tag* tags_ptr = (struct stivale2_tag *)info->tags;
+	stivale2_tags_struct_ptr = (struct stivale2_tag *)info->tags;
 	struct stivale2_tag* tag_current;
 
-	stivale2_info_struct_ptr = info;
-
-	for (tag_current = tags_ptr; tag_current != NULL; tag_current = (struct stivale2_tag *)tag_current->next)
+	for (tag_current = stivale2_tags_struct_ptr; tag_current != NULL; tag_current = (struct stivale2_tag *)tag_current->next)
 	{
 		switch (tag_current->identifier)
 		{
@@ -57,6 +55,55 @@ void _start(struct stivale2_struct* info)	/* The function has struct pointer as 
 	kernel_setup();
 }
 
+struct memInfo arch_getMemInfo(size_t count, uint8_t mmap_type)
+{
+    struct memInfo returnStruct = {0};
+	struct stivale2_tag *tag_current;
+	struct stivale2_struct_tag_memmap* mmap;
+	struct stivale2_mmap_entry mmap_entry;
+
+	if (!(avilability_flags & AVAILABLE_FLAG_MEMMAP))									// Return error if the bootloader hasn't given the memory map
+    {
+        toggleBit((size_t*)&returnStruct.flags, MEMINFO_FLAG_ERROR, TOGGLE_BIT_ON);
+        return returnStruct;
+    }
+
+	if (mmap_type == MEMMAP_TYPE_PROTOCOL)
+	{
+		for (tag_current = stivale2_tags_struct_ptr; tag_current != NULL; tag_current = (struct stivale2_tag *)tag_current->next)	// Parse the memory map and put it in the kernels format(proccess described in multiboot 2 spec)
+			if (tag_current->identifier == STIVALE2_STRUCT_TAG_MEMMAP_ID)
+			{
+				mmap = (struct stivale2_struct_tag_memmap*)tag_current;
+
+				if (count < mmap->entries)
+				{
+					mmap_entry = mmap->memmap[count];
+
+					returnStruct.start_address = mmap_entry.base;
+					returnStruct.area_size = mmap_entry.length;
+					if (mmap_entry.type == STIVALE2_MMAP_USABLE)
+						returnStruct.area_type = MEMMAP_AREA_TYPE_USABLE;
+					else if (mmap_entry.type == STIVALE2_MMAP_RESERVED)
+						returnStruct.area_type = MEMMAP_AREA_TYPE_RESERVED;
+					else
+						returnStruct.area_type = MEMMAP_AREA_TYPE_OTHER;
+				}
+				else
+				{
+					toggleBit((size_t*)&returnStruct.flags, MEMINFO_FLAG_ERROR, TOGGLE_BIT_ON);
+					return returnStruct;
+				}
+			}
+	}
+	else
+	{
+		toggleBit((size_t*)&returnStruct.flags, MEMINFO_FLAG_ERROR, TOGGLE_BIT_ON);
+		return returnStruct;
+	}
+
+	return returnStruct;
+}
+
 int arch_bootloaderInterface(uint32_t function)
 {
 	if (function == BOOTLOADER_FUNCTION_INIT){
@@ -72,13 +119,4 @@ static void toggleBit(size_t* var, size_t bitmask, uint8_t bit_status)
         ;
     else if ((bit_status == TOGGLE_BIT_ON && !(*var & bitmask)) || (bit_status == TOGGLE_BIT_OFF && (*var & bitmask)))
         *var ^= bitmask;
-}
-
-
-
-/* TEMPORARY IMPLEMENTATION FOR DEBUGGING */
-int putchar(int chara)
-{
-    writeSerial(chara);
-    return 0;
 }

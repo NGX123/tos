@@ -99,7 +99,12 @@ struct memInfo arch_getMemInfo(int count, uint8_t mmap_type)
 				{
 					returnStruct.start_address = mmap->addr;
 					returnStruct.area_size = mmap->len;
-					returnStruct.area_type = mmap->type;
+					if (mmap->type == MULTIBOOT_MEMORY_AVAILABLE)
+						returnStruct.area_type = MEMMAP_AREA_TYPE_USABLE;
+					else if (mmap->type == MULTIBOOT_MEMORY_RESERVED)
+						returnStruct.area_type = MEMMAP_AREA_TYPE_RESERVED;
+					else
+						returnStruct.area_type = MEMMAP_AREA_TYPE_OTHER;
 				}
 				else
 				{
