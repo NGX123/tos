@@ -1,8 +1,5 @@
 ## To Do
-1. Fix multiboot2_bootstrap(so for example the multibootsetup does not have to be commented out to run the 32 bit OS)
-	1. Instead make the code after the init - kernel(64-Bit code in case of x86-32) call bootloaderInterface with INIT command and it would do the needed bootloader setup based on the boot protocol
-	2. Make getmemorymap add entries about where multiboot_info starts and finishes - so it is not touched and where framebuffer starts and finished
-2. Implement simple memory management
+1. Implement simple memory management
 	1. Write Page Frame Allocator
 		* Should have a function to reserve physical memory based a request from device driver - special function that asks not to give it a page(4096) but to reserved all pages from start address to end address(and the ones on which start and end are located)
 			* Drivers like the framebuffer driver should mark the memory mapped I/O and the memory areas that they need as reserved using PFA special function
@@ -11,15 +8,15 @@
 		* The virtual memory manager should make sure that the bits 48-63 are the same as bit 47
 		* VMM should know about noncanonical addresses and the whole
 	3. Write Virtual Memory allocator(malloc)
-3. Implement 64-Bit interrupts
+2. Implement 64-Bit interrupts
 	* Look into APIC
 	1. Read intel manual on 64 bit interrupt and IDT
 	2. Read Intel manual on APIC
 		* Understand differences between IOAPIC, LAPIC and APIC
-4. Implement exeption handling to handle things like page faults
+3. Implement exeption handling to handle things like page faults
 	* How to spot difference between exeptions and interrupts if same interrupt vectors are used
 	* Map needed interrupt handlers to functions that handler the exeptions
-5. Do a check if the toolchain.sh works right - look through source code, execute and then checks if everything done in source is in the results
+4. Do a check if the toolchain.sh works right - look through source code, execute and then checks if everything done in source is in the results
 
 ### [Hardware](https://wiki.osdev.org/Category:Hardware)
 1. [64bit CPU support(Long mode)](https://wiki.osdev.org/Category:X86-64)
@@ -173,3 +170,7 @@
 	* [USB support(PS/2, Serial, Parallel... alternative)](https://wiki.osdev.org/Category:USB)
 		* [PS/2 Controller](https://wiki.osdev.org/%228042%22_PS/2_Controller)
 			* Implement detection of PS/2 controller presence
+- ToDo
+	* Fix multiboot2_bootstrap(so for example the multibootsetup does not have to be commented out to run the 32 bit OS)
+		1. Instead make the code after the init - kernel(64-Bit code in case of x86-32) call bootloaderInterface with INIT command and it would do the needed bootloader setup based on the boot protocol
+		2. Make getmemorymap add entries about where multiboot_info starts and finishes - so it is not touched and where framebuffer starts and finished
