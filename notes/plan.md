@@ -4,9 +4,11 @@
 		* Should have a function to reserve physical memory based a request from device driver - special function that asks not to give it a page(4096) but to reserved all pages from start address to end address(and the ones on which start and end are located)
 			* Drivers like the framebuffer driver should mark the memory mapped I/O and the memory areas that they need as reserved using PFA special function
 		* Page frame allocator should not be able to touch the physical area where the kernel is(1mb + kernel size if multiboot is used), where the framebuffer is
+		* The things in memory should not be to close and should have some space between them to prevent(not all but some) overflow damage
 	2. Write Virtual Memory Manager(Page manager)
 		* The virtual memory manager should make sure that the bits 48-63 are the same as bit 47
 		* VMM should know about noncanonical addresses and the whole
+		* The things in memory should not be to close and should have some space between them to prevent(not all but some) overflow damage
 	3. Write Virtual Memory allocator(malloc)
 2. Implement 64-Bit interrupts
 	* Look into APIC
@@ -93,6 +95,7 @@
 	2. [Virtual Memory Manager - mapps physical pages to virtual](https://wiki.osdev.org/Memory_Allocation)
 	3. [Memory Allocator - allocates space from virtual pages]()
 2. [Time Library]()
+3. Init system - the kernel should not have any utils(shell, coreutils) or programs in it and should call an init system which will be specified at compile time(in some config file) as an executable that will be loaded from the disk
 	* A timer could be set by a programm and kernel will call the binded function when the time is up, the kernel will manage the time with whatever time device was found using the device manager(e.g. PIC)
 3. Driver functions should be not global symbols and should only be accessed through things like write and read and not symbols
 4. [Device manager](https://wiki.osdev.org/Device_Management)
