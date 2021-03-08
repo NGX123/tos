@@ -32,30 +32,45 @@
 
 
 ## Implementation
-+ Physical frame allocation(PFA) - PFA does not really allocate anything and just returns address of free 4KiB(page) in physical RAM
-	Bit/Bytemap - where the statuses of pages are located(a byte per page)
-	+ Initialization
-		1. Receive the start address for the first page(start of page frame allocation memory space - -0x0 on x86) from platform specific arch_ function
-		2. Receive the end address of the last page(end of PFA allocation space) from platform specific arch_ function(end of RAM on x86)
-			* The end address should be rounded DOWN(if it is not 4096 aligned) to the nearest number that is 4096 aligned(this is done by subtracting from address until it is 4096 aligned(divisible))
-		3. Mark all of the pages in which unfree zones(using the memory map) are located as reserved
-		4. Mark memory where kernel is located using variables in the linker script(start/end = . - virtual_load_address; check if the formual is correct by printing addresses)
-		5. Find an address to store the bitmap
-			1. Calculate the amount of pages needed to store the bitmap; The bitmap should be the size of - `RAM / PAGE_SIZE`
-			2. Search for the first place where the right amount of pages is free(they should be one after another)
-			3. Mark pages as used by PMM and record the address of the byte/bitmap
-			4. Zero out all of the pages where the bit/byte map is located
-	+ Functionality
-		1. `palloc()` - Normal frame allocation function
-			1. Search for the first status that equals to FRAME_TYPE_FREE in the bytemap
-			2. Find the address of the page that correspond to the bit/bytemap entry using formulas
-			3. Mark found page frame as FRAME_TYPE_ALLOCATED
-			4. Return the start address of the page frame
-		2.	`pfree(address_tt frame_start_address)` - Normal frame free function
-			1. Use the start address of the page supplied to function to find the entry in byte/bitmap(using formulas)
-			2. Change the entry status to FRAME_TYPE_FREE
+### Bit/Bytemap algorithm
++ Defenitions
+	- Bytemap - an array of bytes where each byte represents the status(reserved/allocated/free) of a page-size(4096 bytes) block of physical RAM
++ Initialization
+	1. Get the span(start and end) of memory addresses from the memory map
+		* Start of RAM 	- start of first entry in the memory map
+		* End of RAM	- `last_entry_addr + last_entry_size`(everything till this byte could be used(not including itself))
+	2. Get the amount of RAM
+		* Sum of sizes of all zones in the memory map
+	3. Find the largest free zone in the memory map(loop until finding largest zone by size out of all) and make the bitmap be a pointer to it (`bitmap_ptr = largest_zone_addr`)
+		* There should be a check, so the area where the bitmap is does not collide with where the kernel is
+			* If it does use the byte right after the kernel finish
+	4. Change statuses of pages where the bitmap is located to **ALLOCATED**(in the bitmap)
+		+ Get the start address of the bitmap and it's size
+			* Bitmap size - `(int/uint)RAM_size / 4096 + 1`
+				* Conversion to int/uint is needed because the number should not be a float, +1 is needed to prevent any overflows
+			* Bitmap address - `largest_zone_addr`
+	5. Zero out all of the pages where the bitmap is located
 
-
+	6. Change statuses of pages that are used by the kernel to **ALLOCATED**
+		* For now physical location of kernel will be determined by linker variables
+			* `start/end = . - virtual_load_address`
+	7. Change statuses of pages which include addresses marked as reserved in memory map to **RESERVED**
++ Functionality
+	- `address_tt palloc(size_t frame_count)` - allocates amount of frames specified starting from frame which includes frame_address
+		1. Search for the first frame status that is **FREE** in the bytemap
+			* Error if a free frame is not found
+		2. Find the address of the frame that corresponds to the bit/bytemap entry
+		3. Do steps 1 and 2 in a loop until frame_count frames are allocated one after another
+			* Error if there are isn't right amount of frames one after another
+		4. Mark all frames as **ALLOCATED**
+		5. Return address of the first allocated frame
+	- `void pfree(address_tt frame_address, size_t frame_count)` - frees amount of frames specified starting from frame which includes frame_address
+		1. Use the start address of the page supplied to function to find the entry in byte/bitmap(using formulas)
+		2. Change the entry status to FRAME_TYPE_FREE
+	- `pReserve(address_tt frame_address, size_t frame_count)` - reserves physical memory(so it can't be allocated)
+	- `pUnreserve(address_tt frame_address, size_t frame_count)` - unreserves physical memory so it can be allocated
++ Problems
+	- The kernel start/end addresses are obtained from the linker script variables which find them by subtracting 0xffff'ffff'8000'0000 from the current address(start of kernel is 0xffffffff80100000)) which means it is dependant on kernel being at 1MB
 
 # [VMM(Virutal Memory Manager)](https://wiki.osdev.org/Memory_Allocation)
 ## Information
