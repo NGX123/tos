@@ -36,6 +36,7 @@
 + Defenitions
 	- Bytemap - an array of bytes where each byte represents the status(reserved/allocated/free) of a page-size(4096 bytes) block of physical RAM
 + Initialization
+	* Declare `size_t reserved_ram_size, free_ram_size, allocated_ram_size` to calculate amount of different types of memory
 	1. Get the span(start and end) of memory addresses from the memory map
 		* Start of RAM 	- start of first entry in the memory map
 		* End of RAM	- `last_entry_addr + last_entry_size`(everything till this byte could be used(not including itself))
@@ -49,26 +50,51 @@
 			* Bitmap size - `(int/uint)RAM_size / 4096 + 1`
 				* Conversion to int/uint is needed because the number should not be a float, +1 is needed to prevent any overflows
 			* Bitmap address - `largest_zone_addr`
-	5. Zero out all of the pages where the bitmap is located
+	5. The address and size of bit map should be recorded
+	6. Zero out all of the pages where the bitmap is located
 
-	6. Change statuses of pages that are used by the kernel to **ALLOCATED**
+	7. Change statuses of pages that are used by the kernel to **ALLOCATED**
 		* For now physical location of kernel will be determined by linker variables
 			* `start/end = . - virtual_load_address`
-	7. Change statuses of pages which include addresses marked as reserved in memory map to **RESERVED**
+		* `kernel_size = kernel_start - kernel_end`
+		* `kernel_pages_amount = kernel_size / 4096 + 1`
+	8. Change statuses of pages which include addresses marked as reserved(anything that is not free is reserved) in memory map to **RESERVED**
 + Functionality
 	- `address_tt palloc(size_t frame_count)` - allocates amount of frames specified starting from frame which includes frame_address
-		1. Search for the first frame status that is **FREE** in the bytemap
-			* Error if a free frame is not found
-		2. Find the address of the frame that corresponds to the bit/bytemap entry
-		3. Do steps 1 and 2 in a loop until frame_count frames are allocated one after another
-			* Error if there are isn't right amount of frames one after another
-		4. Mark all frames as **ALLOCATED**
-		5. Return address of the first allocated frame
-	- `void pfree(address_tt frame_address, size_t frame_count)` - frees amount of frames specified starting from frame which includes frame_address
-		1. Use the start address of the page supplied to function to find the entry in byte/bitmap(using formulas)
-		2. Change the entry status to FRAME_TYPE_FREE
-	- `pReserve(address_tt frame_address, size_t frame_count)` - reserves physical memory(so it can't be allocated)
-	- `pUnreserve(address_tt frame_address, size_t frame_count)` - unreserves physical memory so it can be allocated
+		1. Search for the first frame status that is **FREE** in the bytemap(by looping through the whole bytemap)
+			* Error if a free frame is not found - `return NULL`
+		2. Mark frame as **ALLOCATED**
+		3. Return address of the allocated frame
+			* `return_address = found_index * 4096`
+
+	- `int pfree(address_tt frame_address, size_t frame_count)` - frees amount of frames specified starting from frame which includes frame_address
+		1. Get the index in the bytemap with `index = (uint)frame_address / 4096`
+		2. If the page is allocated then continue, otherwise(free or reserved) `return -1`
+		3. Change the entry status to **FREE**
+		4. Add 4096(page size) to `free_ram_size` as there is now more free RAM
+		5. Remove 4096(page size) from `allocated_ram_size` as RAM was freed
+		6. `return 0`
+
+	- `int reserveRAM(address_tt frame_address, size_t frame_count)` - reserves physical memory(so it can't be allocated)
+		1. Get the index in the bytemap with `index = (uint)frame_address / 4096`
+		2. If the page is free continue, otherwise(resereved or allocated) `return -1`
+		3. Change the bytemap entry status to **RESERVED**
+		4. Add 4096(page size) to `reserved_ram_size` as there is now more reserved RAM
+		5. Remove 4096(page size) from `free_ram_size` as RAM was reserved
+		6. `return 0`
+
+	- `int unreserveRAM(address_tt frame_address, size_t frame_count)` - unreserves physical memory so it can be allocated
+		1. Get the index in the bytemap with `index = (uint)frame_address / 4096`
+		2. If the page is reserved continue, otherwise(free or allocated) `return -1`
+		3. Change the entry status to **FREE**
+		4. Add 4096(page size) to `free_ram_size` as there is now more free RAM
+		5. Remove 4096(page size) from `reserved_ram_size` as RAM was freed
+		6. `return 0`
+
+	- `size_t getRAMsize()` - get's the total amount of RAM
+		* Declare a static variable `RAMsize = 0`
+		1. If RAM size is 0, then the RAM size has not been calculated yet and we can proccedd to step 2, otherwise it is already calculated so we return the `RAMsize` variable
+		2. Add up the sizes of all memory map areas - each time add size to `RAMsize`
 + Problems
 	- The kernel start/end addresses are obtained from the linker script variables which find them by subtracting 0xffff'ffff'8000'0000 from the current address(start of kernel is 0xffffffff80100000)) which means it is dependant on kernel being at 1MB
 
