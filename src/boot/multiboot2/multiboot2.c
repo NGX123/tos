@@ -20,11 +20,13 @@ static unsigned long multiboot2_all_tags_size;							// Tags structures toatal s
 static uint16_t avilability_flags;
 
 
-int  arch_bootloaderInterface(uint32_t function)
+int  arch_bootloaderInterface(uint32_t function, void* data)
 {
 	if (function == BOOTLOADER_FUNCTION_INIT)
 		return interpretMultiboot2();
 
+
+	data = 0;
 	return BOOTLOADER_RETURN_WRONG_FUNCTION;
 }
 
@@ -59,12 +61,12 @@ static int interpretMultiboot2(void)
 	return BOOTLOADER_RETURN_SUCCESS;
 }
 
-struct memInfo arch_getMemInfo(int count, uint8_t mmap_type)
+struct memInfo arch_getMemInfo(size_t count, uint8_t mmap_type)
 {
     struct memInfo returnStruct = {0};
     struct multiboot_tag *tag_current;;
     multiboot_memory_map_t *mmap;
-	int interpreter_mmap_entry_amount = 0;
+	size_t interpreter_mmap_entry_amount = 0;
 	int interpreter_mmap_entry_fill_counter = 0;
 
     if (!(avilability_flags & AVAILABLE_FLAG_MEMMAP))									// Return error if the bootloader hasn't given the memory map
@@ -101,10 +103,8 @@ struct memInfo arch_getMemInfo(int count, uint8_t mmap_type)
 					returnStruct.area_size = mmap->len;
 					if (mmap->type == MULTIBOOT_MEMORY_AVAILABLE)
 						returnStruct.area_type = MEMMAP_AREA_TYPE_USABLE;
-					else if (mmap->type == MULTIBOOT_MEMORY_RESERVED)
-						returnStruct.area_type = MEMMAP_AREA_TYPE_RESERVED;
 					else
-						returnStruct.area_type = MEMMAP_AREA_TYPE_OTHER;
+						returnStruct.area_type = MEMMAP_AREA_TYPE_RESERVED;
 				}
 				else
 				{
@@ -142,14 +142,4 @@ static void toggleBit(size_t* var, size_t bitmask, uint8_t bit_status)
         ;
     else if ((bit_status == TOGGLE_BIT_ON && !(*var & bitmask)) || (bit_status == TOGGLE_BIT_OFF && (*var & bitmask)))
         *var ^= bitmask;
-}
-
-
-
-
-/* TOMPORARY IMPLEMENTATION FOR DEBUGGING */
-int putchar(int chara)
-{
-    writeSerial(chara);
-    return 0;
 }
