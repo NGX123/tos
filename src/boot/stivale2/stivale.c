@@ -81,12 +81,13 @@ struct memInfo arch_getMemInfo(size_t count, uint8_t mmap_type)
 
 					returnStruct.start_address = mmap_entry.base;
 					returnStruct.area_size = mmap_entry.length;
+					//printf("MEMMAP CHECK(arch_getMemInfo - Base: %lx, Length: %lx, Type: %lx\n", mmap_entry.base, mmap_entry.length, mmap_entry.type);
 					if (mmap_entry.type == STIVALE2_MMAP_USABLE)
 						returnStruct.area_type = MEMMAP_AREA_TYPE_USABLE;
-					else if (mmap_entry.type == STIVALE2_MMAP_RESERVED)
-						returnStruct.area_type = MEMMAP_AREA_TYPE_RESERVED;
+					else if (mmap_entry.type == STIVALE2_MMAP_KERNEL_AND_MODULES)
+						returnStruct.area_type = MEMMAP_AREA_TYPE_KERNEL;
 					else
-						returnStruct.area_type = MEMMAP_AREA_TYPE_OTHER;
+						returnStruct.area_type = MEMMAP_AREA_TYPE_RESERVED;
 				}
 				else
 				{
@@ -104,12 +105,13 @@ struct memInfo arch_getMemInfo(size_t count, uint8_t mmap_type)
 	return returnStruct;
 }
 
-int arch_bootloaderInterface(uint32_t function)
+int arch_bootloaderInterface(uint32_t function, void* data)
 {
 	if (function == BOOTLOADER_FUNCTION_INIT){
 		return BOOTLOADER_RETURN_SUCCESS;
 	}
 
+	data = 0;
 	return BOOTLOADER_RETURN_WRONG_FUNCTION;
 }
 
