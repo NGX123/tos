@@ -125,15 +125,19 @@
 
 ## Extra
 * Documentation
-	1. Write OS requirements in texinfo documentation
+	1. Write OS requirements in LaTeX documentation
 		1. Init functions that should be present - all that are prefixed with `arch_` or `kernel_`
 		2. In what order should the base functions be called - bootstarp script -> kernel_setup -> kernel_init
 		3. Kernel requirements - `32+ Bit` Architecture, `unsigned long` in the compiler should represent largest possible var size - include/types.h has address_tt define which should be changed if compiler does not obej
 		4. The arch_bootloaderInterface should be present and have an INIT function
+		5. Write how the functions with arch_ should work - for example memory map should give fields of all types
+		6. bootloaderInterface functions definded in init.h(BOOTLOADER_... macros) should be present
 	2. Add documentation for the man page-like descriptions for functions that might be used by user or during porting to other platform e.g. *_arch functions
-	* Translate .md notes to .texinfo to create one file out of them
-	* https://www.gnu.org/software/texinfo/manual/
-	* https://www.gnu.org/software/teximpatient
+	3. Translate .md notes to .texinfo to create one file out of them
+	- LaTeX and TeX - TeX is a document format which uses macros to convert it the text info PDF, HTML and more and can be used to add mathemtical formulas and technical details. LaTeX is a set of macros on top of TeX. These are just formats and there exists multiple compilers that could compile TeX and LaTex into nearly any format(PDF, HTML, DVI...)
+		* Texlive - command line latex compiler
+		* TexStudio - texinfo editor
+			* Includes utilities to convert to pdf - `sudo apt/dnf install texlive`, `pdflatex file.tex`
 * Remove the 32bit mode OS, but instead have a BIOS variant of the 64bit OS(maybe by just adding another grub type in makefile)
 * Clean up the source tree
 	1. Change files in boot to boot protocols and not platforms
