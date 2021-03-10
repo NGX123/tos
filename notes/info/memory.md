@@ -101,8 +101,19 @@
 		* Declare a static variable `RAMsize = 0`
 		1. If RAM size is 0, then the RAM size has not been calculated yet and we can proccedd to step 2, otherwise it is already calculated so we return the `RAMsize` variable
 		2. Add up the sizes of all memory map areas - each time add size to `RAMsize`
-+ Problems
-	- The kernel start/end addresses are obtained from the linker script variables which find them by subtracting 0xffff'ffff'8000'0000 from the current address(start of kernel is 0xffffffff80100000)) which means it is dependant on kernel being at 1MB
++ Problems - how would multiple frames be allocated one after another (e.g. for HUGE(1GB) pages which are sometimes usefull)
+
+### Linked List + Stack algorithm
+## Information
+- Here stack = linked list
+- Description - in this algorithm a linked list that acts like a stack is used to manage the frames. Here the first `address_length` bytes in the frame are used to store the address of the next free frame, and when the frame is taken or put back on to the linked list it is zerod. The address of the first free frame in the system is a pointer to a pointer to the next free frame which includes pointer to the next and so on. First free frame is the head of the linked list pointing to the next free frame... and the last free frame is in the bottom of the linked list pointing to nothing(until a new frame frees and is put at the bottom of the linked list. NULL - end of linked list). When a frame is allocated - the address of the head of linked list is removed from linked list, frame is zerod and address returned to the caller. When frame is freed - it is put at the bottom of the linked list, so the last element in the linked list becomes a pointer to this new freed frame.
+	* e.g. `frame1.pointer -> frame2.pointer -> frame3.pointer`. Then one frame is allocated and we are left with `frame2.pointer -> frame3.pointer` and so on. When a frame is freed we have `frame2.pointer -> frame3.pointer -> freed_frame.pointer`.
+	* ALL ADDRESSES MUST BE 4096 aligned
+	* FRAMES SHOULD BE ZEROED BEFORE PASSING SO THE POINTER TO NEXT ONE IS NOT EXPOSED.
+	+ Problems
+		* How would multiple frames be allocated one after another
+
+
 
 # [VMM(Virutal Memory Manager)](https://wiki.osdev.org/Memory_Allocation)
 ## Information
