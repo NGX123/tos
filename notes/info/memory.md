@@ -61,7 +61,7 @@
 	8. Change statuses of pages which include addresses marked as reserved(anything that is not free is reserved) in memory map to **RESERVED**
 + Functionality
 	- `address_tt palloc(size_t frame_count)` - allocates amount of frames specified starting from frame which includes frame_address
-		1. Search for the first frame status that is **FREE** in the bytemap(by looping through the whole bytemap)
+		1. Search for the first frame status that is **FREE** in the bytemap(by looping through the whole bytemap till `i < bytemap_size`)
 			* Error if a free frame is not found - `return NULL`
 		2. Mark frame as **ALLOCATED**
 		3. Return address of the allocated frame
@@ -69,27 +69,30 @@
 
 	- `int pfree(address_tt frame_address, size_t frame_count)` - frees amount of frames specified starting from frame which includes frame_address
 		1. Get the index in the bytemap with `index = (uint)frame_address / 4096`
-		2. If the page is allocated then continue, otherwise(free or reserved) `return -1`
-		3. Change the entry status to **FREE**
-		4. Add 4096(page size) to `free_ram_size` as there is now more free RAM
-		5. Remove 4096(page size) from `allocated_ram_size` as RAM was freed
-		6. `return 0`
+		2. Check if the index is below bytemap_size - `i < bytemap_size`
+		3. If the page is allocated then continue, otherwise(free or reserved) `return -1`
+		4. Change the entry status to **FREE**
+		5. Add 4096(page size) to `free_ram_size` as there is now more free RAM
+		6. Remove 4096(page size) from `allocated_ram_size` as RAM was freed
+		7. `return 0`
 
 	- `int reserveRAM(address_tt frame_address, size_t frame_count)` - reserves physical memory(so it can't be allocated)
 		1. Get the index in the bytemap with `index = (uint)frame_address / 4096`
-		2. If the page is free continue, otherwise(resereved or allocated) `return -1`
-		3. Change the bytemap entry status to **RESERVED**
-		4. Add 4096(page size) to `reserved_ram_size` as there is now more reserved RAM
-		5. Remove 4096(page size) from `free_ram_size` as RAM was reserved
-		6. `return 0`
+		2. Check if the index is below bytemap_size - `i < bytemap_size`
+		3. If the page is free continue, otherwise(resereved or allocated) `return -1`
+		4. Change the bytemap entry status to **RESERVED**
+		5. Add 4096(page size) to `reserved_ram_size` as there is now more reserved RAM
+		6. Remove 4096(page size) from `free_ram_size` as RAM was reserved
+		7. `return 0`
 
 	- `int unreserveRAM(address_tt frame_address, size_t frame_count)` - unreserves physical memory so it can be allocated
 		1. Get the index in the bytemap with `index = (uint)frame_address / 4096`
-		2. If the page is reserved continue, otherwise(free or allocated) `return -1`
-		3. Change the entry status to **FREE**
-		4. Add 4096(page size) to `free_ram_size` as there is now more free RAM
-		5. Remove 4096(page size) from `reserved_ram_size` as RAM was freed
-		6. `return 0`
+		2. Check if the index is below bytemap_size - `i < bytemap_size`
+		3. If the page is reserved continue, otherwise(free or allocated) `return -1`
+		4. Change the entry status to **FREE**
+		5. Add 4096(page size) to `free_ram_size` as there is now more free RAM
+		6. Remove 4096(page size) from `reserved_ram_size` as RAM was freed
+		7. `return 0`
 
 	- `size_t getRAMsize()` - get's the total amount of RAM
 		* Declare a static variable `RAMsize = 0`
