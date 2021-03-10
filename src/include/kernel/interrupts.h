@@ -18,7 +18,6 @@
 
 
 typedef void (*interrupt_handler_t)(void);          // Function type of an interrupt handler that is called when certain interrupt occures
-typedef int (*interrupt_interpreter_func_t)(int);   // Function type of the kernels interrupt interpreter function
 
 
 /*

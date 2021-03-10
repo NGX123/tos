@@ -37,6 +37,9 @@ struct memInfo
     uint32_t area_type;
 };
 
+typedef int (*interrupt_interpreter_func_t)(int);   // Function type of the kernels interrupt interpreter function
+
+
 /*
     @brief = specific to hardware platform initializtion of interrupts and setting the kernels function that should be called to interrpret the interrupt
 	@param function = pointer to the kernel interrupt interpreter
