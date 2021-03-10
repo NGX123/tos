@@ -1,0 +1,113 @@
+\documentclass{report}
+\title{ \textbf{tOS Documentation} }
+\author{Authored by: \textbf{NGX}}
+
+\begin{document} %START OF DOCUMENT
+\maketitle
+	
+	
+	
+	
+\begin{abstract}
+	This documentation describes the boot environment needed to boot the OS, functions that are needed for the OS to work on a different architecture and also some algorithms used by the OS.
+\end{abstract}
+
+
+
+
+\chapter{CPU/Architecture requirements}
+\begin{itemize}
+	\item The CPU should be 32 or 64 Bit
+	\item The CPU should have an MMU
+	\item Unsigned long and size\_t should be the size of the address
+\end{itemize}
+
+
+\chapter{Platform specific and bootloader code Requirements}
+\section{Introduction}
+This sections describes how the OS can be ported to be booted with other bootloader or another CPU architecture
+
+\textbf{Any function that is required by the OS from platform specific code is prefixed with arch\_ e.g. arch\_function}
+
+
+
+\section{Interfacing with the boot protocol description}
+To interface with different boot protocols the OS requires a special bootstrap script that would setup everything and provide it in a standardized interface for the OS to work with. The interface is expressed in form of global functions that the OS could call. The link script get's to the OS at compile time - this means that the OS should be compiled and linked with it.
+
+
+
+\section{Boot-loader Functions}
+\subsection*{Info}
+The functions that are required by the kernel to be present in boot protocol interpreter file(a c file containing code to translate everything from bootloader to the kernel platform-independent code)
+
+
+\subsection*{Function to obtain memory map}
+\textbf{struct memInfo arch\_getMemInfo(size\_t count, uint8\_t mmap\_type)}
+\begin{flushleft}
+\begin{itemize}
+	\item \textbf{Argument: count} - specifies the entry in the memory map
+	\item \textbf{Argument: type} - specifies which type of memory map should be searched(supplied by boot protocol, made by the boot protocol interpreter script to add extra things)
+	\item \textbf{Return} - returns a structure containing memory map entry
+\end{itemize}
+
+\textbf{The function should:}
+\begin{enumerate}
+	\item Find the entry in the memory map specified by count. If it does not exist(not within the range of indexes) it should return an error(set error flag in meminfo structure and return it)
+	\item Translate the entry into the tOSs meminfo format by: putting the values from memmap into right fields of the meminfo structure that will be returned(the types should be converted  to the tOSs format also)
+	\item Return translated memmap entry in the form of meminfo structure
+\end{enumerate}	
+\begin{itemize}
+	\item The function should have the area where kernel is located marked as KERNEL memory(there is a special macro for that) in the protocol mem map and not the additional interpreter memory map
+	\item On request for \textbf{Boot protocol memory map} it should use count to return the value of the entry located at the index supplied in count in the memory map supplied by the boot protocol used
+	\item On request for \textbf{Boot protocol interpreter map} it should do the same as with boot protocol map, but instead use index to find entry in interpreter map
+	\item Specify the things it knows about memory like the frame-buffer, modules... in the interpreter map and not the protocol map
+\end{itemize}
+\textbf{Example use -} set some variable to zero and then call getmeminfo with this variable as count, then each call take the supplied data from returned structure and increment the variable(to get to the next entry in the memmap), do this until error flag is set in the returned structure - then finish
+\end{flushleft}
+
+
+\subsection*{Function to do bootloader-specific things}
+\textbf{int arch\_bootloaderInterface(uint32\_t function, void* data)}
+\begin{flushleft}
+\begin{itemize}
+	\item \textbf{Argument: function} - is a code of the function that the bootloader should call
+	\item \textbf{Argument: data} - a pointer that could be used both for additional arguments and the return values(function specific)
+	\item \textbf{Return} - returns -1 on error an 0 on success
+\end{itemize}
+
+\textbf{The functions should:}
+\begin{enumerate}
+	\item Read the functions code supplied in function variable and check if it has that function (switch: case: case:), if it does run it, else return error
+\end{enumerate}
+\begin{itemize}
+	\item Should implement an INIT function that would setup the everything it should as the bootloader needs(it could just return success)
+\end{itemize}
+\end{flushleft}
+
+
+\subsection*{Start of the bootloader interprter and kernel start}
+\textbf{void \_start(void)}
+\begin{flushleft}
+
+\textbf{The functions should:}
+\begin{enumerate}
+	\item Start the OS by calling various bootloader interpreter functions that after setup would call the kernel
+\end{enumerate}
+\begin{itemize}
+	\item Function shouldn't return to it's caller in any case
+\end{itemize}
+\end{flushleft}
+
+
+
+\section{Boot process}
+\begin{itemize}
+	\item First the bootloader(could be any) should load the kernel and call the \textbf{\_start} function which should be implemented by the bootloader interpreter code and start reading of data supplied by bootloader, interpreting it and doing other bootloader specific things
+	\item Next the bootloader interpreter should call the \textbf{kernel\_setup} function
+	\item Kernel setup function does platform specific setup and then calls the \textbf{kernel\_main} which starts the kernel
+\end{itemize}
+
+
+
+
+\end{document} %END OF DOCUMENT
