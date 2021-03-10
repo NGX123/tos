@@ -125,25 +125,8 @@
 
 ## Extra
 * Documentation
-	1. Write OS requirements in LaTeX documentation
-		1. Init functions that should be present - all that are prefixed with `arch_` or `kernel_`
-		2. In what order should the base functions be called - bootstarp script -> kernel_setup -> kernel_init
-		3. Kernel requirements - `32+ Bit` Architecture, `unsigned long` in the compiler should represent largest possible var size - include/types.h has address_tt define which should be changed if compiler does not obej
-		4. The arch_bootloaderInterface should be present and have an INIT function
-		5. Write how the functions with arch_ should work - for example memory map should give fields of all types
-		6. bootloaderInterface functions definded in init.h(BOOTLOADER_... macros) should be present
-	2. Add documentation for the man page-like descriptions for functions that might be used by user or during porting to other platform e.g. *_arch functions
-	3. Translate .md notes to .texinfo to create one file out of them
-	- LaTeX and TeX - TeX is a document format which uses macros to convert it the text info PDF, HTML and more and can be used to add mathemtical formulas and technical details. LaTeX is a set of macros on top of TeX. These are just formats and there exists multiple compilers that could compile TeX and LaTex into nearly any format(PDF, HTML, DVI...)
-		* Texlive - command line latex compiler
-		* TexStudio - texinfo editor
-			* Includes utilities to convert to pdf - `sudo apt/dnf install texlive`, `pdflatex file.tex`
-* Remove the 32bit mode OS, but instead have a BIOS variant of the 64bit OS(maybe by just adding another grub type in makefile)
-* Clean up the source tree
-	1. Change files in boot to boot protocols and not platforms
-	2. Rename all the same name files like init.s to init-x86_64.s
-* Try to use EDK2 headers and EDK2 objects to build a UEFI app with a normal compiler and not the EDK2 build system
-	* [TomatBoot does it](https://github.com/TomatOrg/TomatBoot)
+	1. Add documentation for the man page-like descriptions for functions that might be used by user or during porting to other platform e.g. *_arch functions
+	2. Write the requirements for using things like the interrupts(arch_platformInterruptsInit) or PMM
 * [Assembly](https://wiki.osdev.org/Assembly)
 	* Change assembly compilation from inclusion of everything into one file to seperate compilation and then linking together with other executables
 	* Switch code from NASM to GAS or improve NASM skills
@@ -155,6 +138,8 @@
 * Create a x86_64 UEFI Bootloader
 	* Use tomatboot sources stripped from multiboot, bios and other useless stuff
 	* Check what other stuff should be done by the bootloader, read the UEFI manuals
+	* Try to use EDK2 headers and EDK2 objects to build a UEFI app with a normal compiler and not the EDK2 build system
+		* [TomatBoot does it](https://github.com/TomatOrg/TomatBoot)
 	1. Setup a framebuffer with GOP(that will work after exiting boot services)
 	2. Exit boot services
 	3. Parse the ELF headers and load OS executable
@@ -181,3 +166,15 @@
 	* Fix multiboot2_bootstrap(so for example the multibootsetup does not have to be commented out to run the 32 bit OS)
 		1. Instead make the code after the init - kernel(64-Bit code in case of x86-32) call bootloaderInterface with INIT command and it would do the needed bootloader setup based on the boot protocol
 		2. Make getmemorymap add entries about where multiboot_info starts and finishes - so it is not touched and where framebuffer starts and finished
+
+- Extra
+	* Remove the 32bit mode OS, but instead have a BIOS variant of the 64bit OS(maybe by just adding another grub type in makefile)
+	* Clean up the source tree
+		1. Change files in boot to boot protocols and not platforms
+		2. Rename all the same name files like init.s to init-x86_64.s
+	* Documentation
+		1. arch_ Functions should be implemented by the platform
+		2. In what order should the base functions be called - bootstarp script -> kernel_setup -> kernel_init
+		3. Kernel requirements - `32+ Bit` Architecture, `unsigned long` in the compiler should represent largest possible var size - include/types.h has address_tt define which should be changed if compiler does not obej
+		4. Write how the functions with arch_ should work - for example memory map should give fields of all types
+		5. bootloaderInterface functions definded in init.h(BOOTLOADER_... macros) should be present
