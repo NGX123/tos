@@ -34,22 +34,16 @@ extern int interruptsInit(void);
 extern int bindInterrupt(int interrupt_num, interrupt_handler_t handlerfunc, int priority);
 
 /*
-    @brief = specific to hardware platform side initializtion of interrupts
+    @brief = specific to hardware platform initializtion of interrupts and setting the kernels function that should be called to interrpret the interrupt
+	@param function = pointer to the kernel interrupt interpreter
+	@return = 0 on success, -1 on fail
 */
-extern void arch_platformInterruptsInit(void);
+extern int arch_platformInterruptsInit(interrupt_interpreter_func_t function);
 
 /*
-    @brief = give platform specifc code a pointer to systems main interrupt interpreter function
-    @param function = pointer to the kernel interrupt interpreter
-    @return = 0 on success, -1 on fail
+	@breif = a request from architecture specific code to reserve some interrupt
+	@param interrupt_num = the number of the interrupt that should be reserved(to not be used by kernel or software)
+	@return = 0 on success, -1 on fail
 */
-extern int arch_setInterruptInterpreterFunction(interrupt_interpreter_func_t function);
-
-/*
-    @brief = sends request to platform specific code to get numbers of the interrupts that should be reserved and stay unchanged
-    @param numbers = pointer to a list that should be filled with interrupts that should be reserved
-    @param list_size = maximum amount of interrupts to fill in the list with
-    @return = amount of interrupt in the list on success, -1 on fail
-*/
-extern int arch_requestReservedInterrupts(int* numbers, int list_size);
+extern int interruptReserve(uint32_t interrupt_num);
 #endif
