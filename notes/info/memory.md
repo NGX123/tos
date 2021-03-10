@@ -22,7 +22,7 @@
 
 
 
-# [Page Frame Allocation](https://wiki.osdev.org/Page_Frame_Allocation)
+# [Page Frame Allocation(Also called Physical Memory Manager and Physical Memory Allocator(for easier search in google))](https://wiki.osdev.org/Page_Frame_Allocation)
 ## Information
 - Description - gives out 4096 portions of physical memory to be mapped to virtual memory
 - **Allocation method** - frames pointer and bytemap pointer. Everything not marked as free in the memory map would be marked reserved(2) in the bytemap, everything that is free would be marked as free(0) and all the frames that were allocated by PMM would be marked as allocated(1)
@@ -33,32 +33,35 @@
 
 ## Implementation
 ### Bit/Bytemap algorithm
-+ Defenitions
++ Defenitions/Info
 	- Bytemap - an array of bytes where each byte represents the status(reserved/allocated/free) of a page-size(4096 bytes) block of physical RAM
+	- When determining size(how many frames will fit) in frames(4096) of some memory range
+		* Add +1, so there is one more page reserved as diving by 4096 may give a float which is slightly bigger but requires an extra page
+			* DO THIS IN CASES LIKE RESERVED MEMORY WHERE IT IS REALLY IMPORTANT NOT TO TOUCH IT
+			* Don't do it with areas like free becase there could be half a page lost and it will not harm
 + Initialization
 	* Declare `size_t reserved_ram_size, free_ram_size, allocated_ram_size` to calculate amount of different types of memory
-	1. Get the span(start and end) of memory addresses from the memory map
-		* Start of RAM 	- start of first entry in the memory map
-		* End of RAM	- `last_entry_addr + last_entry_size`(everything till this byte could be used(not including itself))
-	2. Get the amount of RAM
-		* Sum of sizes of all zones in the memory map
-	3. Find the largest free zone in the memory map(loop until finding largest zone by size out of all) and make the bitmap be a pointer to it (`bitmap_ptr = largest_zone_addr`)
+	1. Get the the start of memory from the memory map
+		* Start of the first entry in memmap
+	2. Get the amount/end of RAM
+		* Sum of sizes of all zones in memmap(end - `all_zones_sizes - 1`)
+
+	3. Find the largest free zone in the memory map(loop until finding largest zone by size out of all) and make the bitmap be a pointer to it (`bitmap_ptr = largest_zone_addr`) <!--- A bad descision, find another way to find the location for stroing bitmap -->
 		* There should be a check, so the area where the bitmap is does not collide with where the kernel is
 			* If it does use the byte right after the kernel finish
-	4. Change statuses of pages where the bitmap is located to **ALLOCATED**(in the bitmap)
-		+ Get the start address of the bitmap and it's size
-			* Bitmap size - `(int/uint)RAM_size / 4096 + 1`
-				* Conversion to int/uint is needed because the number should not be a float, +1 is needed to prevent any overflows
-			* Bitmap address - `largest_zone_addr`
-	5. The address and size of bit map should be recorded
-	6. Zero out all of the pages where the bitmap is located
+	4. Record Address and size of bytemap
+		* Bitmap size - `(int/uint)RAM_size / 4096 + 1`
+			* Conversion to int/uint is needed because the number should not be a float, +1 is needed to prevent any overflows
 
-	7. Change statuses of pages that are used by the kernel to **ALLOCATED**
-		* For now physical location of kernel will be determined by linker variables
-			* `start/end = . - virtual_load_address`
-		* `kernel_size = kernel_start - kernel_end`
-		* `kernel_pages_amount = kernel_size / 4096 + 1`
-	8. Change statuses of pages which include addresses marked as reserved(anything that is not free is reserved) in memory map to **RESERVED**
+	4. Change statuses of pages where the bitmap is located to **ALLOCATED**(in the bitmap)
+	5. Zero out all of the pages where the bitmap is located
+	6. Change statuses of pages that are used by the kernel to **ALLOCATED**
+		* The start and size of kernel should be specified in a memory map entry with a special type(KERNEL)
+			* If memory does not specify this, the OS should fail as it is very important information
+
+	7. Change statuses of all pages in the bitmap to **RESERVED**. This is done because memory map does not specify all of the reserved areas(it has gapps)
+	8. Change statuses of pages located in free areas to **FREE**
+
 + Functionality
 	- `address_tt palloc(size_t frame_count)` - allocates amount of frames specified starting from frame which includes frame_address
 		1. Search for the first frame status that is **FREE** in the bytemap(by looping through the whole bytemap till `i < bytemap_size`)
