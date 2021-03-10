@@ -161,6 +161,7 @@
     * [Port an existing memory manager to the OS](https://wiki.osdev.org/Memory_Allocation#Porting_an_existing_Memory_Allocator)
     * [Pancakes memory allocator implementations](https://wiki.osdev.org/User:Pancakes/SimpleHeapImplementation)
 - Other
+	* [Higher Half Kernel Guide on i386](https://medium.com/@connorstack/how-does-a-higher-half-kernel-work-107194e46a64)
     * [Small malloc implementation](https://github.com/CCareaga/heap_allocator)
     * [TLB](https://wiki.osdev.org/TLB)
 
