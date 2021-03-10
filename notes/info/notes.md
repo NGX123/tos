@@ -55,6 +55,11 @@
 	2. In the assembly code it should be put into it's own section and not .text
 	* This should be done because there will be many .text sections and it will cause that any of the could be located first in the executable, on the other side there will most probably only one .multiboot section so it will definitily be linked first
 
+- LaTeX and TeX - TeX is a document format which uses macros to convert it the text info PDF, HTML and more and can be used to add mathemtical formulas and technical details. LaTeX is a set of macros on top of TeX. These are just formats and there exists multiple compilers that could compile TeX and LaTex into nearly any format(PDF, HTML, DVI...)
+	* Texlive - command line latex compiler
+	* TexStudio - texinfo editor
+		* Includes utilities to convert to pdf - `sudo apt/dnf install texlive`, `pdflatex file.tex
+
 
 
 ## Fixes
