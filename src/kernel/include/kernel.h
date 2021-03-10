@@ -22,6 +22,7 @@
 #include <drivers/kbd.h>
 #include <drivers/ps2_8042.h>
 #include <kernel/interrupts.h>
+#include <kernel/pmm.h>
 #include <arch/init.h>
 
 

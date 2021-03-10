@@ -6,22 +6,16 @@
 
 #include <arch/init.h>
 
-
-#define PAGE_TYPE_FREE      0x0
-#define PAGE_TYPE_ALLOCATED 0x1
-#define PAGE_TYPE_RESERVED  0x2
+#include <kernel/pmm.h>
 
 
-typedef size_t address_size;
+#define FRAME_TYPE_FREE      			0x0		// Can be given on allocation request
+#define FRAME_TYPE_ALLOCATED 			0x1		// Can not be given on allocation request
+#define FRAME_TYPE_RESERVED				0x2		// Indicates the frame can not be used as it is reserved by firmware(frames can be unreserved)
 
 
 /*
     @brief = returns the total amount of RAM available
-    @return = total amount of RAM
+    @return = total amount of RAM, 0 on error
 */
-address_size getRAMsize();
-
-/*
-    @brief = marks pages free/reserved based on the memory map
-*/
-void fillByteMap();
+static size_t getRAMsize();

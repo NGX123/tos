@@ -19,19 +19,9 @@ void kernel_main()
 	initSerial();
 	printSerial("\n\n---------------------------------------------------------------------------------------\n");
 
-	struct memInfo memory_map;
-	int i;
-	int check = 0;
+	if (initPMM() == -1)
+		printf("FAIL - initPMM\n");
 
-	for (i = 0; ((memory_map = arch_getMemInfo(i, MEMMAP_TYPE_PROTOCOL)).flags & MEMINFO_FLAG_ERROR) == 0; i++)
-	{
-		printf("addr = 0x%lx, length = 0x%lx, type = 0x%x\n", memory_map.start_address, memory_map.area_size, memory_map.area_type);
-		if (memory_map.area_type == MEMMAP_AREA_TYPE_KERNEL)
-			check = 1;
-	}
-
-	if (check == 0)
-		printf("FAIL\n");
 
 	while(1)
 		;

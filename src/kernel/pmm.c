@@ -4,28 +4,39 @@
 */
 
 
-// #include "include/pmm.h"
-// #include <stdio.h>
-
-// uint8_t page_status_bytemap[3]; /* THIS IS INCORRECT AND IS JUST TO ELIMINATE WARNINGS IN IDE BECUASE THE SIZE OF THE BYTEMAP SHOULD BE DETERMINED AT RUNTIME DEPENDING ON THE RAM SIZE */
+#include "include/pmm.h"
+#include <stdio.h>
 
 
-// address_size getRAMsize()
-// {
-//     int i;
-//     size_t ram_size = 0;
-//     struct memInfo memory_map;
+size_t RAMsize, freeRAM, reservedRAM, allocatedRAM;
+uint8_t page_status_bytemap[3]; /* THIS IS INCORRECT AND IS JUST TO ELIMINATE WARNINGS IN IDE BECUASE THE SIZE OF THE BYTEMAP SHOULD BE DETERMINED AT RUNTIME DEPENDING ON THE RAM SIZE */
 
-//     for (i = 0; ((memory_map = arch_getMemInfo(i)).flags & MEMINFO_FLAG_ERROR) == 0; i++)
-//     {
-//         printf("addr = 0x%x%x, length = 0x%x%x, type = 0x%x\n", memory_map.addr_part2, memory_map.addr_part1, memory_map.size_part2, memory_map.size_part1, memory_map.type);
-//         ram_size += memory_map.size_full;
-//     }
 
-//     return ram_size;
-// }
+int initPMM()
+{
+	if ((RAMsize = getRAMsize()) == 0)
+		return -1;
 
-// void fillByteMap()
-// {
+	return 0;
+}
 
-// }
+static size_t getRAMsize()
+{
+    size_t ram_size = 0;
+	int kernel_area_presence_status = 0;
+    struct memInfo memory_map;
+
+    for (size_t i = 0; ((memory_map = arch_getMemInfo(i, MEMMAP_TYPE_PROTOCOL)).flags & MEMINFO_FLAG_ERROR) == 0; i++)
+    {
+        ram_size += memory_map.area_size;
+		if (memory_map.area_type == MEMMAP_AREA_TYPE_KERNEL)
+			kernel_area_presence_status = 1;
+
+		printf("addr = 0x%lx, length = 0x%lx, type = 0x%x\n", memory_map.start_address, memory_map.area_size, memory_map.area_type);
+	}
+
+	if (kernel_area_presence_status == 0)
+		return 0;				// FAIL
+
+    return ram_size;
+}
