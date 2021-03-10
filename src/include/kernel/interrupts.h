@@ -14,6 +14,9 @@
 #define INTERRUPT_PRIORITY_USER 3
 
 
+#include <arch/init.h>
+
+
 typedef void (*interrupt_handler_t)(void);          // Function type of an interrupt handler that is called when certain interrupt occures
 typedef int (*interrupt_interpreter_func_t)(int);   // Function type of the kernels interrupt interpreter function
 
@@ -32,13 +35,6 @@ extern int interruptsInit(void);
     @return = 0 on success, -1 on fail
 */
 extern int bindInterrupt(int interrupt_num, interrupt_handler_t handlerfunc, int priority);
-
-/*
-    @brief = specific to hardware platform initializtion of interrupts and setting the kernels function that should be called to interrpret the interrupt
-	@param function = pointer to the kernel interrupt interpreter
-	@return = 0 on success, -1 on fail
-*/
-extern int arch_platformInterruptsInit(interrupt_interpreter_func_t function);
 
 /*
 	@breif = a request from architecture specific code to reserve some interrupt

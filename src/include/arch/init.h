@@ -38,6 +38,13 @@ struct memInfo
 };
 
 /*
+    @brief = specific to hardware platform initializtion of interrupts and setting the kernels function that should be called to interrpret the interrupt
+	@param function = pointer to the kernel interrupt interpreter
+	@return = 0 on success, -1 on fail
+*/
+extern int arch_platformInterruptsInit(interrupt_interpreter_func_t function);
+
+/*
     @brief = returns a memory map entry structure from "count" entry in the memory map. Example usage - supply count with 0, read the returned entry, increment count by 1, read entry, increment count by 1...
     @param count = specifies the entry in the memory map
 	@param mmap_type = specifies the memory map to use bootloader/kernel
