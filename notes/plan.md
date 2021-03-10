@@ -9,6 +9,7 @@
 		* The virtual memory manager should make sure that the bits 48-63 are the same as bit 47
 		* VMM should know about noncanonical addresses and the whole
 		* The things in memory should not be to close and should have some space between them to prevent(not all but some) overflow damage
+		* The area before the hole(non-canonical addresses) should be used by applications and area after should be used only by the kernel
 	3. Write Virtual Memory allocator(malloc)
 2. Implement 64-Bit interrupts
 	* Look into APIC
