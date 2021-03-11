@@ -1,20 +1,27 @@
 ## To Do
-1. Implement simple memory management
+1. Implement a bootloader framebuffer driver
+	1. Framebuffer driver should call the bootloaderInterface with a function code to receive a standardized frambuffer struct(with fields like length width...)
+		* Add this functionto documentation as it must be standardized(but it is not required for kernel to work)
+	2. Driver should unreserve the area where the framebuffer is located and mark it as allocated
+	3. Find a way to write the PSF file in C(temporary solution while the disk can't be read)
+	4. Implement functions to output font on to the screen
+	5. Check why the screen is yellow on boot - maybe something overwrites framebuffer
+2. Implement 64-Bit interrupts
+	* Look into APIC
+	1. Read intel manual on 64 bit interrupt and IDT
+	2. Read Intel manual on APIC
+		* Understand differences between IOAPIC, LAPIC and APIC
+3. Implement simple memory management
 	1. Write Virtual Memory Manager(Page manager)
 		* The virtual memory manager should make sure that the bits 48-63 are the same as bit 47
 		* VMM should know about noncanonical addresses and the whole
 		* The things in memory should not be to close and should have some space between them to prevent(not all but some) overflow damage
 		* The area before the hole(non-canonical addresses) should be used by applications and area after should be used only by the kernel
 	2. Write Virtual Memory allocator(malloc)
-2. Implement 64-Bit interrupts
-	* Look into APIC
-	1. Read intel manual on 64 bit interrupt and IDT
-	2. Read Intel manual on APIC
-		* Understand differences between IOAPIC, LAPIC and APIC
-3. Implement exeption handling to handle things like page faults
+4. Implement exeption handling to handle things like page faults
 	* How to spot difference between exeptions and interrupts if same interrupt vectors are used
 	* Map needed interrupt handlers to functions that handler the exeptions
-4. Toolchain
+5. Toolchain
 	* Do a check if the toolchain.sh works right - look through source code, execute and then checks if everything done in source is in the results
 	* Implement gcc x86_64 compilation
 		+ Check gcc utils one by one
@@ -29,12 +36,6 @@
 	1. [Setting up stack](https://forum.osdev.org/viewtopic.php?f=1&t=21772)
 	2. [Setup Paging](https://wiki.osdev.org/Setting_Up_Paging)
 2. [Graphics](https://wiki.osdev.org/Category:Video)
-	* Implement video output detection - GRUB, GOP, VGA Text Mode...
-	* [GRUB Framebuffer]()
-		1. Supply the multiboot2 header with framebuffer tag(5 in documentation) or using stivale2 header
-		2. Copy and modify the driver from documentation
-		* The framebuffer should use the arch_bootloaderInterface to get the things like width, address... and they should be in universal structure format to which they will be converted from the boot protocol format
-		* The framebuffer should use the PMM functions to mark the page frames it uses as reserved
 	* [GOP](https://wiki.osdev.org/GOP)
 		1. Use the GRUB Header tags to make it load os into "i386 with EFI boot servicers not exited"
 		2. Setup a framebuffer with GOP
