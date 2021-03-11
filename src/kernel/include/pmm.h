@@ -21,3 +21,9 @@
     @return = total amount of RAM, 0 on error
 */
 static size_t getRAMsize();
+
+/*
+	@brief = initialises the bitmap by finding it's location reserving everything...
+	@return = 0 on success, -1 on error
+*/
+static int initBitmap();
