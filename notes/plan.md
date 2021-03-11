@@ -1,16 +1,11 @@
 ## To Do
 1. Implement simple memory management
-	1. Write Page Frame Allocator
-		* Should have a function to reserve physical memory based a request from device driver - special function that asks not to give it a page(4096) but to reserved all pages from start address to end address(and the ones on which start and end are located)
-			* Drivers like the framebuffer driver should mark the memory mapped I/O and the memory areas that they need as reserved using PFA special function
-		* Page frame allocator should not be able to touch the physical area where the kernel is(1mb + kernel size if multiboot is used), where the framebuffer is
-		* The things in memory should not be to close and should have some space between them to prevent(not all but some) overflow damage
-	2. Write Virtual Memory Manager(Page manager)
+	1. Write Virtual Memory Manager(Page manager)
 		* The virtual memory manager should make sure that the bits 48-63 are the same as bit 47
 		* VMM should know about noncanonical addresses and the whole
 		* The things in memory should not be to close and should have some space between them to prevent(not all but some) overflow damage
 		* The area before the hole(non-canonical addresses) should be used by applications and area after should be used only by the kernel
-	3. Write Virtual Memory allocator(malloc)
+	2. Write Virtual Memory allocator(malloc)
 2. Implement 64-Bit interrupts
 	* Look into APIC
 	1. Read intel manual on 64 bit interrupt and IDT
@@ -173,17 +168,23 @@
 			* Implement detection of PS/2 controller presence
 - ToDo
 	* Fix multiboot2_bootstrap(so for example the multibootsetup does not have to be commented out to run the 32 bit OS)
-		1. Instead make the code after the init - kernel(64-Bit code in case of x86-32) call bootloaderInterface with INIT command and it would do the needed bootloader setup based on the boot protocol
-		2. Make getmemorymap add entries about where multiboot_info starts and finishes - so it is not touched and where framebuffer starts and finished
+		* Instead make the code after the init - kernel(64-Bit code in case of x86-32) call bootloaderInterface with INIT command and it would do the needed bootloader setup based on the boot protocol
+		* Make getmemorymap add entries about where multiboot_info starts and finishes - so it is not touched and where framebuffer starts and finished
+	* Implement simple memory management
+		* Write Page Frame Allocator
+			* Should have a function to reserve physical memory based a request from device driver - special function that asks not to give it a page(4096) but to reserved all pages from start address to end address(and the ones on which start and end are located)
+				* Drivers like the framebuffer driver should mark the memory mapped I/O and the memory areas that they need as reserved using PFA special function
+			* Page frame allocator should not be able to touch the physical area where the kernel is, where the framebuffer is
+			* The things in memory should not be to close and should have some space between them to prevent(not all but some) overflow damage
 
 - Extra
 	* Remove the 32bit mode OS, but instead have a BIOS variant of the 64bit OS(maybe by just adding another grub type in makefile)
 	* Clean up the source tree
-		1. Change files in boot to boot protocols and not platforms
-		2. Rename all the same name files like init.s to init-x86_64.s
+		* Change files in boot to boot protocols and not platforms
+		* Rename all the same name files like init.s to init-x86_64.s
 	* Documentation
-		1. arch_ Functions should be implemented by the platform
-		2. In what order should the base functions be called - bootstarp script -> kernel_setup -> kernel_init
-		3. Kernel requirements - `32+ Bit` Architecture, `unsigned long` in the compiler should represent largest possible var size - include/types.h has address_tt define which should be changed if compiler does not obej
-		4. Write how the functions with arch_ should work - for example memory map should give fields of all types
-		5. bootloaderInterface functions definded in init.h(BOOTLOADER_... macros) should be present
+		* arch_ Functions should be implemented by the platform
+		* In what order should the base functions be called - bootstarp script -> kernel_setup -> kernel_init
+		* Kernel requirements - `32+ Bit` Architecture, `unsigned long` in the compiler should represent largest possible var size - include/types.h has address_tt define which should be changed if compiler does not obej
+		* Write how the functions with arch_ should work - for example memory map should give fields of all types
+		* bootloaderInterface functions definded in init.h(BOOTLOADER_... macros) should be present
