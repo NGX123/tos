@@ -35,72 +35,65 @@
 ### Bit/Bytemap algorithm
 + Defenitions/Info
 	- Bytemap - an array of bytes where each byte represents the status(reserved/allocated/free) of a page-size(4096 bytes) block of physical RAM
+		* Bytemap size - `(uint)RAM_size / 4096 + 1`, convert to int as the division may have a float as the output
 	- When determining size(how many frames will fit) in frames(4096) of some memory range
 		* Add +1, so there is one more page reserved as diving by 4096 may give a float which is slightly bigger but requires an extra page
 			* DO THIS IN CASES LIKE RESERVED MEMORY WHERE IT IS REALLY IMPORTANT NOT TO TOUCH IT
 			* Don't do it with areas like free becase there could be half a page lost and it will not harm
 + Initialization
-	* Declare `size_t reserved_ram_size, free_ram_size, allocated_ram_size` to calculate amount of different types of memory
-	1. Get the the start of memory from the memory map
-		* Start of the first entry in memmap
-	2. Get the amount/end of RAM
-		* Sum of sizes of all zones in memmap
+	* Declare `size_t RAMsize, RAMstart, freeRAMsize, reservedRAMsize, allocatedRAMsize`
+	1. Get the amount/end of RAM
+		* `Sum of sizes of all zones in memmap` - Not the end of last entry because some entries may be beyond the usable RAM(like if you have 256mb, some entries may start at 4GB as they are not real RAM, but memory mapped IO)
 
-	3. Find the largest free zone in the memory map(loop until finding largest zone by size out of all) and make the bitmap be a pointer to it (`bitmap_ptr = largest_zone_addr`) <!--- A bad descision, find another way to find the location for stroing bitmap -->
-		* There should be a check, so the area where the bitmap is does not collide with where the kernel is
-			* If it does use the byte right after the kernel finish
-	4. Record Address and size of bytemap
-		* Bitmap size - `(int/uint)RAM_size / 4096 + 1`
-			* Conversion to int/uint is needed because the number should not be a float, +1 is needed to prevent any overflows
+	2. Get the the start of memory from the memory map
+		* `Start of the first entry in memmap`
+	3. Check if there is a kernel memory area in memory map, if not - fail
+	4. Get the size and start address of the kernel
+	5. Find the largest free zone in memory map
+		* Check if there is enough space to fit the bitmap, if not fail
+	6. Check if the putting the bytemap at the start of largest free memory zone would make it intersect with where the kernel is
+		* If yes - try to put the bitmap on the byte after end of kernel, if there is not enough space from kernel end to this free sections end to fit the bitmap fail
+	7. Set all the entries in the bitmap to reserved as the memory map does not tell about everything that should be reserved
+	8. Record Address and size of bytemap
 
-	4. Change all statuses in the bitmap to **RESERVED**, because memory map has gaps(so memory should not be free and then some pieces reserved. But memory should be reserved and some pieces should be freed)
-	6. Change statuses of pages that are used by the kernel to **ALLOCATED**
-		* The start and size of kernel should be specified in a memory map entry with a special type(KERNEL)
-			* If memory does not specify this, the OS should fail as it is very important information
+	9. Change statuses of pages located in free areas to **FREE**
+	10. Change statuses of pages that are used by the kernel to **RESERVED**(IT IS VERY IMPORTANT THAT KERNEL PAGES ARE RESERVED AFTER FREE ZONES ARE FREED OR IT MAY LEAD TO KERNEL OVERWRITE)
 
-	7. Change statuses of all pages in the bitmap to **RESERVED**. This is done because memory map does not specify all of the reserved areas(it has gapps)
-	8. Change statuses of pages located in free areas to **FREE**
 
 + Functionality
 	- `void* palloc(size_t frame_count)` - allocates amount of frames specified starting from frame which includes frame_address
-		1. Search for the first frame status that is **FREE** in the bytemap(by looping through the whole bytemap till `i < bytemap_size`)
-			* Error if a free frame is not found - `return NULL`
-		2. Mark frame as **ALLOCATED**
-		3. Return address of the allocated frame
+		1. Find the a free frame in the bytemap
+		2. Check if next `frame_count` frames are free
+			* If yes return address of the first one
+		3. Mark all frames as allocated
+		4. Return address of the allocated frame
 			* `return_address = found_index * 4096`
 
 	- `int pfree(address_tt frame_address, size_t frame_count)` - frees amount of frames specified starting from frame which includes frame_address
-		1. Get the index in the bytemap with `index = (uint)frame_address / 4096`
-		2. Check if the index is below bytemap_size - `i < bytemap_size`
-		3. If the page is allocated then continue, otherwise(free or reserved) `return -1`
-		4. Change the entry status to **FREE**
-		5. Add 4096(page size) to `free_ram_size` as there is now more free RAM
-		6. Remove 4096(page size) from `allocated_ram_size` as RAM was freed
-		7. `return 0`
+		1. Get the start index for freeing in the bytemap with `index = (uint)frame_address / 4096`
+		2. Check if the index is below bytemap_size - `index < bytemap_size`, else return -1
+		3. Starting from start index(including itself) set all frames to **FREE**, if they were **ALLOCATED**
+			* If any one of they frames is not **ALLOCATED**, return -1
+		4. Add 4096(page size) to `free_ram_size` as there is now more free RAM
+		5. Remove 4096(page size) from `allocated_ram_size` as RAM was freed
 
 	- `int reserveRAM(address_tt frame_address, size_t frame_count)` - reserves physical memory(so it can't be allocated)
-		1. Get the index in the bytemap with `index = (uint)frame_address / 4096`
-		2. Check if the index is below bytemap_size - `i < bytemap_size`
-		3. If the page is free continue, otherwise(resereved or allocated) `return -1`
-		4. Change the bytemap entry status to **RESERVED**
-		5. Add 4096(page size) to `reserved_ram_size` as there is now more reserved RAM
-		6. Remove 4096(page size) from `free_ram_size` as RAM was reserved
-		7. `return 0`
+		1. Get the start index for reserving in the bytemap with `index = (uint)frame_address / 4096`
+		2. Check if the index is below bytemap_size - `index < bytemap_size`, else return -1
+		3. Starting from start index(including itself) set all frames to **RESERVED**, if they were **FREE** or **RESERVED**
+			* If any of the frames is not **FREE** or **RESERVED**, return -1
+		4. Add 4096(page size) to `reserved_ram_size` as there is now more reserved RAM
+		5. Remove 4096(page size) from `free_ram_size` as RAM was reserved
 
 	- `int unreserveRAM(address_tt frame_address, size_t frame_count)` - unreserves physical memory so it can be allocated
 		1. Get the index in the bytemap with `index = (uint)frame_address / 4096`
-		2. Check if the index is below bytemap_size - `i < bytemap_size`
-		3. If the page is reserved continue, otherwise(free or allocated) `return -1`
-		4. Change the entry status to **FREE**
-		5. Add 4096(page size) to `free_ram_size` as there is now more free RAM
-		6. Remove 4096(page size) from `reserved_ram_size` as RAM was freed
-		7. `return 0`
+		2. Check if the index is below bytemap_size - `index < bytemap_size`
+		3. Starting from start index(including itself) set all frames to **FREE**, if they were **RESERVED**
+			* If any of the frames is not **FREE**, fial
+		4. Add 4096(page size) to `free_ram_size` as there is now more free RAM
+		5. Remove 4096(page size) from `reserved_ram_size` as RAM was freed
 
-	- `size_t getRAMsize()` - get's the total amount of RAM
-		* Declare a static variable `RAMsize = 0`
-		1. If RAM size is 0, then the RAM size has not been calculated yet and we can proccedd to step 2, otherwise it is already calculated so we return the `RAMsize` variable
-		2. Add up the sizes of all memory map areas - each time add size to `RAMsize`
-+ Problems - how would multiple frames be allocated one after another (e.g. for HUGE(1GB) pages which are sometimes usefull)
+
 
 ### Linked List + Stack algorithm
 ## Information
@@ -109,8 +102,13 @@
 	* e.g. `frame1.pointer -> frame2.pointer -> frame3.pointer`. Then one frame is allocated and we are left with `frame2.pointer -> frame3.pointer` and so on. When a frame is freed we have `freed_frame.pointer -> frame2.pointer -> frame3.pointer`.
 	* ALL ADDRESSES MUST BE 4096 aligned
 	* FRAMES SHOULD BE ZEROED BEFORE PASSING SO THE POINTER TO NEXT ONE IS NOT EXPOSED.
-	+ Problems
-		* How would multiple frames be allocated one after another
+
+
+## Questions
+- How to allocate several frame and make them be one after another(for example if a user need 8 or 16 continous kilobytes of RAM)?
+- How to make sure while freeing that reserved pages will not be freed instead of allocated pages(allocated - by OS, reserved - by firmware)?
+- How to make sure that a free page will not be freed twice or otherwise it could end up twice in the list leading to serouous problems because two programs use one page?
+- How to track amount of memory free/used/reserved?
 
 
 
@@ -146,23 +144,30 @@
 - Intel Manual - VOL 3A, Chapters 3 & 4
 - [Wiki on how MM works](https://linux-mm.org/)
 - Tutorials
-	* [Make Page frame alloctor](https://wiki.osdev.org/Writing_A_Page_Frame_Allocator)
-	* [Setup paging](https://wiki.osdev.org/Setting_Up_Paging)
-	* [Paging][https://wiki.osdev.org/Paging]
-
-    * [Bona Fide OSdev](http://www.osdever.net/tutorials/index#Memory-Management)
-    * [Brendan's MM Guide](https://wiki.osdev.org/Brendan%27s_Memory_Management_Guide)
-    * [MM Guides from Forum](https://wiki.osdev.org/Page_Frame_Allocation#Threads)
-    * [Writing MM](https://wiki.osdev.org/Writing_a_memory_manager)
-    * [Anastasion Page Frame Allocator Tutorial](https://anastas.io/osdev/memory/2016/08/08/page-frame-allocator.html)
-    * [James Molloy Paging](http://www.jamesmolloy.co.uk/tutorial_html/6.-Paging.html)
-    * [Bona Fide Paging](http://www.osdever.net/tutorials/view/implementing-basic-paging)
-    * [Port an existing memory manager to the OS](https://wiki.osdev.org/Memory_Allocation#Porting_an_existing_Memory_Allocator)
-    * [Pancakes memory allocator implementations](https://wiki.osdev.org/User:Pancakes/SimpleHeapImplementation)
+	+ Best
+		* [Make Page frame alloctor](https://wiki.osdev.org/Writing_A_Page_Frame_Allocator)
+		* [Setup paging](https://wiki.osdev.org/Setting_Up_Paging)
+		* [Paging][https://wiki.osdev.org/Paging]
+	+ General Memory Management
+		* [Bona Fide OSdev](http://www.osdever.net/tutorials/index#Memory-Management)
+		* [Brendan's MM Guide](https://wiki.osdev.org/Brendan%27s_Memory_Management_Guide)
+    	* [Writing MM](https://wiki.osdev.org/Writing_a_memory_manager)
+	+ Physical Memory Management
+		* [MM Guides from Forum](https://wiki.osdev.org/Page_Frame_Allocation#Threads)
+		* [Anastasion Page Frame Allocator Tutorial](https://anastas.io/osdev/memory/2016/08/08/page-frame-allocator.html)
+		* Poncho PMM
+			* [Part 1](https://www.youtube.com/watch?v=fDGi3uSlQIA&list=WL&index=3)
+			* [Part 2](https://www.youtube.com/watch?v=v2bn7fjbnb8&list=WL&index=4)
+			* [Bug Fixes](https://www.youtube.com/watch?v=6jme-fSXYJM&list=WL&index=5)
+	+ Virtual Memory Management
+    	* [James Molloy Paging](http://www.jamesmolloy.co.uk/tutorial_html/6.-Paging.html)
+    	* [Bona Fide Paging](http://www.osdever.net/tutorials/view/implementing-basic-paging)
+    + Other
+		* [Port an existing memory manager to the OS](https://wiki.osdev.org/Memory_Allocation#Porting_an_existing_Memory_Allocator)
+		* [Pancakes memory allocator implementations](https://wiki.osdev.org/User:Pancakes/SimpleHeapImplementation)
+		* [Small malloc implementation](https://github.com/CCareaga/heap_allocator)
 - Other
 	* [Higher Half Kernel Guide on i386](https://medium.com/@connorstack/how-does-a-higher-half-kernel-work-107194e46a64)
-    * [Small malloc implementation](https://github.com/CCareaga/heap_allocator)
-    * [TLB](https://wiki.osdev.org/TLB)
 
 
 
