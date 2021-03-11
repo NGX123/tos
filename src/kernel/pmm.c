@@ -15,6 +15,9 @@ uint8_t* bitmap_ptr;
 address_tt bitmap_addr;
 size_t bitmap_size;
 
+address_tt kernel_addr;
+size_t kernel_size;
+
 
 int initPMM()
 {
@@ -36,18 +39,28 @@ void* palloc(size_t frame_count)
 {
 	size_t first_frame_index = 0;
 	size_t free_frames_count = 0;
+	size_t free_frames_start_index = 0;
 	void* free_frames_start_addr = NULL;
 
 	for (size_t current_frame_index = first_frame_index; current_frame_index < bitmap_size; current_frame_index++)
 	{
 		if (free_frames_count == frame_count && free_frames_start_addr != NULL)
+		{
+			for (size_t i = 0; i < frame_count; i++)
+				bitmap_ptr[free_frames_start_index+i] = FRAME_TYPE_ALLOCATED;
+
 			return free_frames_start_addr;
+		}
 
 		if (bitmap_ptr[current_frame_index] == FRAME_TYPE_FREE)
 		{
 			free_frames_count++;
 			if (free_frames_start_addr == NULL)
-				free_frames_start_addr = &bitmap_ptr[current_frame_index];
+			{
+				free_frames_start_addr = current_frame_index * FRAME_SIZE;
+				free_frames_start_index = current_frame_index;
+			}
+
 		}
 
 		else if (bitmap_ptr[current_frame_index] != FRAME_TYPE_FREE)
@@ -63,7 +76,7 @@ void* palloc(size_t frame_count)
 
 int pfree(address_tt frame_address, size_t frame_count)
 {
-	size_t first_frame_index = (size_t)(frame_address / 4096);
+	size_t first_frame_index = (size_t)(frame_address / FRAME_SIZE);
 	if (first_frame_index >= bitmap_size)
 		return -1;
 
@@ -74,8 +87,8 @@ int pfree(address_tt frame_address, size_t frame_count)
 		else
 			return -1;
 
-		freeRAMsize += 4096;
-		allocatedRAMsize -= 4096;
+		freeRAMsize += FRAME_SIZE;
+		allocatedRAMsize -= FRAME_SIZE;
 	}
 
 	return 0;
@@ -83,7 +96,7 @@ int pfree(address_tt frame_address, size_t frame_count)
 
 int reserveRAM(address_tt frame_address, size_t frame_count)
 {
-	size_t first_frame_index = (size_t)(frame_address / 4096);
+	size_t first_frame_index = (size_t)(frame_address / FRAME_SIZE);
 	if (first_frame_index >= bitmap_size)
 		return -1;
 
@@ -94,8 +107,8 @@ int reserveRAM(address_tt frame_address, size_t frame_count)
 		else
 			return -1;
 
-		freeRAMsize -= 4096;
-		reservedRAMsize += 4096;
+		freeRAMsize -= FRAME_SIZE;
+		reservedRAMsize += FRAME_SIZE;
 	}
 
 	return 0;
@@ -103,7 +116,7 @@ int reserveRAM(address_tt frame_address, size_t frame_count)
 
 int unreserveRAM(address_tt frame_address, size_t frame_count)
 {
-	size_t first_frame_index = (size_t)(frame_address / 4096);
+	size_t first_frame_index = (size_t)(frame_address / FRAME_SIZE);
 	if (first_frame_index >= bitmap_size)
 		return -1;
 
@@ -114,8 +127,8 @@ int unreserveRAM(address_tt frame_address, size_t frame_count)
 		else
 			return -1;
 
-		freeRAMsize += 4096;
-		reservedRAMsize -= 4096;
+		freeRAMsize += FRAME_SIZE;
+		reservedRAMsize -= FRAME_SIZE;
 	}
 
 	return 0;
@@ -128,13 +141,13 @@ static int interpretMemoryMap()
     {
 		if (mmap_entry.area_type == MEMMAP_AREA_TYPE_USABLE)
 		{
-			if (unreserveRAM(mmap_entry.start_address, (mmap_entry.area_size / 4096)) == -1)
+			if (unreserveRAM(mmap_entry.start_address, (mmap_entry.area_size / FRAME_SIZE)) == -1)
 				return -1;
 		}
-		else if (mmap_entry.area_type == MEMMAP_AREA_TYPE_KERNEL)
-			if (reserveRAM(mmap_entry.start_address, (mmap_entry.area_size / 4096)) == -1)
-				return -1;
 	}
+
+	if (reserveRAM(kernel_addr, (kernel_addr / FRAME_SIZE)) == -1)
+		return -1;
 
 	return 0;
 }
@@ -146,9 +159,6 @@ static int initBitmap()
 
 	address_tt largest_mmap_area_addr;
 	size_t largest_mmap_area_size = 0;
-
-	address_tt kernel_addr = 0;
-	size_t kernel_size = 0;
 
 	for (size_t i = 0; ((mmap_entry = arch_getMemInfo(i, MEMMAP_TYPE_PROTOCOL)).flags & MEMINFO_FLAG_ERROR) == 0; i++)
     {
@@ -209,7 +219,7 @@ static int initBitmap()
 	for (size_t i = 0; i < bitmap_size; i++)	// Set all the memory to reserved in the memory map
 	{
 		bitmap_ptr[i] = MEMMAP_AREA_TYPE_RESERVED;
-		reservedRAMsize += 4096;
+		reservedRAMsize += FRAME_SIZE;
 	}
 
 	return 0;
