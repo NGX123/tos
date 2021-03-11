@@ -19,7 +19,15 @@
 3. Implement exeption handling to handle things like page faults
 	* How to spot difference between exeptions and interrupts if same interrupt vectors are used
 	* Map needed interrupt handlers to functions that handler the exeptions
-4. Do a check if the toolchain.sh works right - look through source code, execute and then checks if everything done in source is in the results
+4. Toolchain
+	* Do a check if the toolchain.sh works right - look through source code, execute and then checks if everything done in source is in the results
+	* Implement gcc x86_64 compilation
+		+ Check gcc utils one by one
+			* All clang utils and gcc compiler
+			* All clang utils and gcc linker
+			* All clang utils and gcc vars
+			* If all of these work, try to do the same thing but with every change keep it the same(first only gcc compiler then gcc linker + compiler...)
+		* Ask on reddit/osdev form about the problem when the cause is found
 
 ### [Hardware](https://wiki.osdev.org/Category:Hardware)
 1. [64bit CPU support(Long mode)](https://wiki.osdev.org/Category:X86-64)
