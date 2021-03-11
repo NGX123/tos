@@ -24,8 +24,10 @@ int initPMM()
 	if (initBitmap() == -1)
 		return -1;
 
-	printf("Size - 0x%lx\n", RAMsize);
-	printf("Start - 0x%lx\n", RAMstart);
+	if (interpretMemoryMap() == -1)
+		return -1;
+
+	printf("Start - 0x%lx, Size - 0x%lx, Free - 0x%lx, Reserved - 0x%lx, Allocated - 0x%lx\n", RAMstart, RAMsize, freeRAMsize, reservedRAMsize, allocatedRAMsize);
 
 	return 0;
 }
@@ -87,7 +89,7 @@ int reserveRAM(address_tt frame_address, size_t frame_count)
 
 	for (size_t current_frame_index = first_frame_index; frame_count > 0 && current_frame_index < bitmap_size; frame_count--, current_frame_index++)
 	{
-		if (bitmap_ptr[current_frame_index] == FRAME_TYPE_FREE)
+		if (bitmap_ptr[current_frame_index] == FRAME_TYPE_FREE || bitmap_ptr[current_frame_index] == FRAME_TYPE_RESERVED)
 			bitmap_ptr[current_frame_index] = FRAME_TYPE_RESERVED;
 		else
 			return -1;
@@ -114,6 +116,24 @@ int unreserveRAM(address_tt frame_address, size_t frame_count)
 
 		freeRAMsize += 4096;
 		reservedRAMsize -= 4096;
+	}
+
+	return 0;
+}
+
+static int interpretMemoryMap()
+{
+    struct memInfo mmap_entry;
+    for (size_t i = 0; ((mmap_entry = arch_getMemInfo(i, MEMMAP_TYPE_PROTOCOL)).flags & MEMINFO_FLAG_ERROR) == 0; i++)
+    {
+		if (mmap_entry.area_type == MEMMAP_AREA_TYPE_USABLE)
+		{
+			if (unreserveRAM(mmap_entry.start_address, (mmap_entry.area_size / 4096)) == -1)
+				return -1;
+		}
+		else if (mmap_entry.area_type == MEMMAP_AREA_TYPE_KERNEL)
+			if (reserveRAM(mmap_entry.start_address, (mmap_entry.area_size / 4096)) == -1)
+				return -1;
 	}
 
 	return 0;
@@ -158,7 +178,7 @@ static int initBitmap()
 		return -1;
 
 	bitmap_addr = largest_mmap_area_addr;
-	bitmap_size = RAMstart / FRAME_SIZE;
+	bitmap_size = RAMsize / FRAME_SIZE;
 	uint8_t bitmap_kernel_collision = 0;						// 0 if Kernel and bitmap do not collide in memory(some or all addresses are the same), 1 if they collide
 	address_tt largest_mmap_area_end = largest_mmap_area_addr + largest_mmap_area_size - 1;
 	address_tt kernel_end = kernel_addr + kernel_size - 1;

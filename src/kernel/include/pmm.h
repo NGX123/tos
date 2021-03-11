@@ -27,3 +27,9 @@ static size_t getRAMsize();
 	@return = 0 on success, -1 on error
 */
 static int initBitmap();
+
+/*
+	@brief = marks all the areas in bitmap according to the memory map
+	@return = 0 on success, -1 on error
+*/
+static int interpretMemoryMap();
