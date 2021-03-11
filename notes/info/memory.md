@@ -44,7 +44,7 @@
 	1. Get the the start of memory from the memory map
 		* Start of the first entry in memmap
 	2. Get the amount/end of RAM
-		* Sum of sizes of all zones in memmap(end - `all_zones_sizes - 1`)
+		* Sum of sizes of all zones in memmap
 
 	3. Find the largest free zone in the memory map(loop until finding largest zone by size out of all) and make the bitmap be a pointer to it (`bitmap_ptr = largest_zone_addr`) <!--- A bad descision, find another way to find the location for stroing bitmap -->
 		* There should be a check, so the area where the bitmap is does not collide with where the kernel is
@@ -53,8 +53,7 @@
 		* Bitmap size - `(int/uint)RAM_size / 4096 + 1`
 			* Conversion to int/uint is needed because the number should not be a float, +1 is needed to prevent any overflows
 
-	4. Change statuses of pages where the bitmap is located to **ALLOCATED**(in the bitmap)
-	5. Zero out all of the pages where the bitmap is located
+	4. Change all statuses in the bitmap to **RESERVED**, because memory map has gaps(so memory should not be free and then some pieces reserved. But memory should be reserved and some pieces should be freed)
 	6. Change statuses of pages that are used by the kernel to **ALLOCATED**
 		* The start and size of kernel should be specified in a memory map entry with a special type(KERNEL)
 			* If memory does not specify this, the OS should fail as it is very important information
@@ -63,7 +62,7 @@
 	8. Change statuses of pages located in free areas to **FREE**
 
 + Functionality
-	- `address_tt palloc(size_t frame_count)` - allocates amount of frames specified starting from frame which includes frame_address
+	- `void* palloc(size_t frame_count)` - allocates amount of frames specified starting from frame which includes frame_address
 		1. Search for the first frame status that is **FREE** in the bytemap(by looping through the whole bytemap till `i < bytemap_size`)
 			* Error if a free frame is not found - `return NULL`
 		2. Mark frame as **ALLOCATED**
@@ -106,8 +105,8 @@
 ### Linked List + Stack algorithm
 ## Information
 - Here stack = linked list
-- Description - in this algorithm a linked list that acts like a stack is used to manage the frames. Here the first `address_length` bytes in the frame are used to store the address of the next free frame, and when the frame is taken or put back on to the linked list it is zerod. The address of the first free frame in the system is a pointer to a pointer to the next free frame which includes pointer to the next and so on. First free frame is the head of the linked list pointing to the next free frame... and the last free frame is in the bottom of the linked list pointing to nothing(until a new frame frees and is put at the bottom of the linked list. NULL - end of linked list). When a frame is allocated - the address of the head of linked list is removed from linked list, frame is zerod and address returned to the caller. When frame is freed - it is put at the bottom of the linked list, so the last element in the linked list becomes a pointer to this new freed frame.
-	* e.g. `frame1.pointer -> frame2.pointer -> frame3.pointer`. Then one frame is allocated and we are left with `frame2.pointer -> frame3.pointer` and so on. When a frame is freed we have `frame2.pointer -> frame3.pointer -> freed_frame.pointer`.
+- Description - in this algorithm a linked list that acts like a stack is used to manage the frames. Here the first `address_length` bytes in the frame are used to store the address of the next free frame, and when the frame is taken or put back on to the linked list it is zerod. The address of the first free frame in the system is a pointer to a pointer to the next free frame which includes pointer to the next and so on. First free frame is the head of the linked list pointing to the next free frame(as all frames are zerod , the last frame will point to 0, so NULL pointer is end of the linked list). When a frame is allocated - frame at head address is removed from the linked list, it is zerod and address is returned to the caller. When frame is freed - it is put at the head of the list(so into it there is a pointer inserted to the current head making it the head), and can be allocated again;
+	* e.g. `frame1.pointer -> frame2.pointer -> frame3.pointer`. Then one frame is allocated and we are left with `frame2.pointer -> frame3.pointer` and so on. When a frame is freed we have `freed_frame.pointer -> frame2.pointer -> frame3.pointer`.
 	* ALL ADDRESSES MUST BE 4096 aligned
 	* FRAMES SHOULD BE ZEROED BEFORE PASSING SO THE POINTER TO NEXT ONE IS NOT EXPOSED.
 	+ Problems
