@@ -11,11 +11,63 @@ extern kernel_main
 global kernel_setup
 
 
+%define GDT_CODE_SELECTOR 0x8
+%define GDT_DATA_SELECTOR 0x10
+
+
 %ifndef ENABLE_64_BIT_BOOTSTRAP
+[BITS 64]
+section .text
 kernel_setup:
+	call load_gdt
 	call kernel_main
 	hlt
 	jmp $
+
+load_gdt:
+	lgdt [GDT64descriptor]					; Reload GDT, as one supplied by the bootloader is not reliable
+
+	mov ax, GDT_DATA_SELECTOR				; Put the data offset in ax, and then copy it to all segment registers(as nothing can be put into them directly - only through another regiser)
+	mov ds, ax
+	mov es, ax
+	mov fs, ax
+	mov gs, ax
+	mov ss, ax
+
+	push GDT_CODE_SELECTOR		; GDT offset to use when far returning
+	push .reload_registers		; Return address
+	retfq						; Retfq is like a far jump, but instead is a far return. So like a normal return it needs the return address to be on the stack, but the second thing on the stack should be the segment offset in GDT to jump to. This is done to reload the code selector register
+	.reload_registers:
+		ret
+
+section .rodata
+GDT64:
+	.Null:
+		dw 0xFFFF		; Limit(low)
+		dw 0			; Base(low)
+		db 0			; Base(middle)
+		db 0			; Access
+		db 1			; Granularity
+		db 0			; Base(high)
+	.Code:
+		dw 0			; Limit(low)
+		dw 0			; Base(low)
+		db 0			; Base(middle)
+		db 10011010b	; Access
+		db 10101111b	; Granularity
+		db 0			; Base(high)
+	.Data:
+		dw 0			; Limit(low)
+		dw 0			; Base(low)
+		db 0			; Base(middle)
+		db 10010010b	; Access
+		db 0			; Granularity
+		db 0			; Base(high)
+	.End:
+
+GDT64descriptor:
+	.Limit: dw GDT64.End - GDT64 - 1
+	.Base:	dq GDT64
 %else
 ;;; 32-Bit Bootstrap code ;;;
 [BITS 32]
@@ -23,9 +75,6 @@ kernel_setup:
 
 %define ERROR_NO_64     0xE1 ; No 64 bit mode available
 %define ERROR_NO_CPUID  0xE2 ; No CPUID available
-
-%define GDT_CODE_SELECTOR 0x8
-%define GDT_DATA_SELECTOR 0x10
 
 %define PAGE_SIZE 4096 ; Same as 0x1000
 
