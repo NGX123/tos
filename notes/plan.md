@@ -102,13 +102,14 @@
 2. [Time Library]()
 3. Init system - the kernel should not have any utils(shell, coreutils) or programs in it and should call an init system which will be specified at compile time(in some config file) as an executable that will be loaded from the disk
 	* A timer could be set by a programm and kernel will call the binded function when the time is up, the kernel will manage the time with whatever time device was found using the device manager(e.g. PIC)
-3. Driver functions should be not global symbols and should only be accessed through things like write and read and not symbols
-4. [Device manager](https://wiki.osdev.org/Device_Management)
+4. Boot sequence - the kernel should boot in following order - `bootloaderInterface(INIT), platformInit(), interruptsInit(), Device Detection, Init systam(that will start shell...)
+5. Driver functions should be not global symbols and should only be accessed through things like write and read and not symbols
+6. [Device manager](https://wiki.osdev.org/Device_Management)
 	* [Guide](https://wiki.osdev.org/User:Kmcguire/Quick_And_Dirty_Device_Management)
 	* [Thread](https://www.reddit.com/r/osdev/comments/dr2qym/device_driver_model_for_oshypervisor/)
 	* Initialise drivers based on devices found
 	* Make a device tree
-5. [Multitasking](https://wiki.osdev.org/Category:Processes_and_Threads)
+7. [Multitasking](https://wiki.osdev.org/Category:Processes_and_Threads)
 	* [Multitasking types](https://wiki.osdev.org/Multitasking_Systems)
 
 
