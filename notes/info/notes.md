@@ -22,6 +22,8 @@
 
 - Storage for global varibles(that are initialized at run time and not at write time) could be allocated in the .bss section when programming in assembly(with directives like `resb`) and labels could just be placed near it for easy access
 
+- When memory addresses are used in arithmetic operations, the compiler will give warnings as it is incorrect. To fix warnings the address should be converted to integer - there is a specific type they should be converted to `uintptr_t`
+
 
 
 ## Build tools
