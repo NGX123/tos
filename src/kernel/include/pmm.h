@@ -15,12 +15,15 @@
 
 #define FRAME_SIZE						4096
 
+#define TRUE							1
+#define FALSE							0
+
 
 /*
-    @brief = returns the total amount of RAM available
+    @brief = fills different status variables with info about RAM based on the memory map
     @return = total amount of RAM, 0 on error
 */
-static size_t getRAMsize();
+static void getRAMinfo();
 
 /*
 	@brief = initialises the bitmap by finding it's location reserving everything...

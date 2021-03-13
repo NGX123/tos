@@ -7,9 +7,13 @@
 #include "include/pmm.h"
 #include <stdio.h>
 
+uint8_t RAMinfoStatus = FALSE;	// If the RAM info was already obtained then it is false
 
-size_t RAMsize, freeRAMsize, reservedRAMsize, allocatedRAMsize;
-size_t RAMstart;
+size_t RAMsize;				/* RAM Info */
+address_tt RAMstart;		// Start of lowest area in the memory map
+address_tt RAMend;			// End(base + size - 1) of the highest memory area in mmap
+
+size_t freeRAMsize, reservedRAMsize, allocatedRAMsize;	// Current RAM usage stats
 
 uint8_t* bitmap_ptr;
 address_tt bitmap_addr;
@@ -21,8 +25,7 @@ size_t kernel_size;
 
 int initPMM()
 {
-	if ((RAMsize = getRAMsize()) == 0)
-		return -1;
+	getRAMinfo();
 
 	if (initBitmap() == -1)
 		return -1;
@@ -34,6 +37,63 @@ int initPMM()
 
 	return 0;
 }
+
+static void getRAMinfo()
+{
+	if (RAMinfoStatus == TRUE)
+		return;
+
+    struct memInfo mmap_entry;
+
+	for (size_t i = 0; ((mmap_entry = arch_getMemInfo(i, MEMMAP_TYPE_PROTOCOL)).flags & MEMINFO_FLAG_ERROR) == 0; i++)
+	{
+		if (i == 0)											// Set the end and start to the first area in memmap in case there is not more
+		{
+			RAMstart = mmap_entry.start_address;
+			RAMend = mmap_entry.start_address + mmap_entry.area_size - 1;
+		}
+
+		if (mmap_entry.start_address < RAMstart)			// Change the RAM start if something lower then first entry is found
+			RAMstart = mmap_entry.start_address;
+
+		if (mmap_entry.start_address > RAMend)				// Change the RAM end if something higher then first entry is found
+			RAMend = mmap_entry.start_address + mmap_entry.area_size - 1;
+
+		RAMsize += mmap_entry.area_size;
+
+		printf("addr = 0x%lx, length = 0x%lx, type = 0x%x\n", mmap_entry.start_address, mmap_entry.area_size, mmap_entry.area_type);
+	}
+
+
+	RAMinfoStatus = TRUE;
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 void* palloc(size_t frame_count)
 {
@@ -223,18 +283,4 @@ static int initBitmap()
 	}
 
 	return 0;
-}
-
-static size_t getRAMsize()
-{
-    size_t ram_size = 0;
-    struct memInfo mmap_entry;
-
-    for (size_t i = 0; ((mmap_entry = arch_getMemInfo(i, MEMMAP_TYPE_PROTOCOL)).flags & MEMINFO_FLAG_ERROR) == 0; i++)
-    {
-        ram_size += mmap_entry.area_size;
-		printf("addr = 0x%lx, length = 0x%lx, type = 0x%x\n", mmap_entry.start_address, mmap_entry.area_size, mmap_entry.area_type);
-	}
-
-    return ram_size;
 }
