@@ -57,7 +57,7 @@ void* palloc(size_t frame_count)
 			free_frames_count++;
 			if (free_frames_start_addr == NULL)
 			{
-				free_frames_start_addr = current_frame_index * FRAME_SIZE;
+				free_frames_start_addr = (void*)((uintptr_t)current_frame_index * FRAME_SIZE);
 				free_frames_start_index = current_frame_index;
 			}
 
